@@ -1,10 +1,24 @@
-import Config from 'react-native-config';
+import { Platform } from 'react-native';
 
 /**
- * Single source of truth for the base URL and every endpoint path.
- * BASE_URL comes from .env via react-native-config — never hardcode it.
+ * Base URL for the backend API (development).
+ *
+ * Host cheatsheet:
+ *   • iOS simulator          → localhost
+ *   • Android emulator       → 10.0.2.2 (host alias) OR the LAN IP below
+ *   • Physical device (iOS/Android) → your Mac's LAN IP, on the same Wi-Fi
+ *
+ * LAN_IP is currently this machine's IP. If your Wi-Fi/network changes,
+ * update it (find it with `ipconfig getifaddr en0`).
+ * For production, swap this for your deployed API URL.
  */
-const BASE_URL = Config.BASE_URL || 'http://localhost:4000/api/v1';
+const LAN_IP = '192.168.1.2';
+
+// Android runs on a physical device here, so use the LAN IP (also works on the
+// emulator). iOS uses localhost for the simulator.
+const DEV_HOST = Platform.OS === 'android' ? LAN_IP : 'localhost';
+
+const BASE_URL = `http://${DEV_HOST}:4000/api/v1`;
 
 export default BASE_URL;
 
@@ -15,13 +29,10 @@ export const endpoints = {
   refresh: '/auth/refresh',
   me: '/auth/me',
 
-  // Categories
+  // Categories (shared)
   categories: '/categories',
 
-  // Providers
-  providers: '/providers',
-  providerById: (id: string) => `/providers/${id}`,
-
-  // Bookings
-  myBookings: '/bookings/mine',
+  // Customer discovery
+  providers: '/customer/providers',
+  providerById: (id: string) => `/customer/providers/${id}`,
 };

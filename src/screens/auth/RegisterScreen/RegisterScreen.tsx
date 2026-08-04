@@ -5,13 +5,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppInput } from '@/components/AppInput';
 import { AppButton } from '@/components/AppButton';
 
-import { useLoginScreen } from './useLoginScreen';
+import { useRegisterScreen } from './useRegisterScreen';
 import { styles } from './styles';
 
-/** JSX only — all logic comes from useLoginScreen. */
-export default function LoginScreen() {
-  const { form, errors, serverError, isLoading, onChange, onSubmit, goToRegister } =
-    useLoginScreen();
+/** JSX only — all logic comes from useRegisterScreen. */
+export default function RegisterScreen() {
+  const { form, errors, serverError, isLoading, onChange, onSubmit, goToLogin } =
+    useRegisterScreen();
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -28,11 +28,20 @@ export default function LoginScreen() {
             <View style={styles.logoBadge}>
               <Text style={styles.logoText}>DNX</Text>
             </View>
-            <Text style={styles.tagline}>Book any service, instantly</Text>
           </View>
 
-          <Text style={styles.heading}>Welcome back</Text>
-          <Text style={styles.subheading}>Sign in to continue</Text>
+          <Text style={styles.heading}>Create your account</Text>
+          <Text style={styles.subheading}>Sign up to start booking services</Text>
+
+          <AppInput
+            label="Full name"
+            placeholder="Your name"
+            autoCapitalize="words"
+            autoComplete="name"
+            value={form.fullName}
+            onChangeText={(v) => onChange('fullName', v)}
+            error={errors.fullName}
+          />
 
           <AppInput
             label="Email"
@@ -46,28 +55,47 @@ export default function LoginScreen() {
           />
 
           <AppInput
+            label="Phone"
+            placeholder="9876543210"
+            keyboardType="phone-pad"
+            autoComplete="tel"
+            value={form.phone}
+            onChangeText={(v) => onChange('phone', v)}
+            error={errors.phone}
+          />
+
+          <AppInput
             label="Password"
-            placeholder="Enter your password"
+            placeholder="Min. 8 characters"
             secureTextEntry
-            autoComplete="password"
+            autoComplete="password-new"
             value={form.password}
             onChangeText={(v) => onChange('password', v)}
             error={errors.password}
+          />
+
+          <AppInput
+            label="Confirm password"
+            placeholder="Re-enter password"
+            secureTextEntry
+            value={form.confirmPassword}
+            onChangeText={(v) => onChange('confirmPassword', v)}
+            error={errors.confirmPassword}
           />
 
           {!!serverError && <Text style={styles.serverError}>{serverError}</Text>}
 
           <AppButton
             style={styles.submit}
-            title="Sign in"
+            title="Create account"
             onPress={onSubmit}
             loading={isLoading}
           />
 
           <View style={styles.switchRow}>
-            <Text style={styles.switchText}>Don&apos;t have an account? </Text>
-            <TouchableOpacity onPress={goToRegister}>
-              <Text style={styles.switchLink}>Sign up</Text>
+            <Text style={styles.switchText}>Already have an account? </Text>
+            <TouchableOpacity onPress={goToLogin}>
+              <Text style={styles.switchLink}>Sign in</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

@@ -13,26 +13,22 @@ export const styles = StyleSheet.create({
   },
   brand: {
     alignItems: 'center',
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.lg,
   },
   logoBadge: {
-    width: 64,
-    height: 64,
+    width: 56,
+    height: 56,
     borderRadius: Radius.lg,
     backgroundColor: Color.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   logoText: {
     color: Color.white,
-    fontSize: FontSize.xl,
+    fontSize: FontSize.lg,
     fontWeight: FontWeight.extrabold,
     letterSpacing: 1,
-  },
-  tagline: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
   },
   heading: {
     fontSize: FontSize.xxl,
