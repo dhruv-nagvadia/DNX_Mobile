@@ -1,6 +1,7 @@
 import { StyleProp, ViewStyle } from 'react-native';
 
-export type AppButtonVariant = 'primary' | 'secondary';
+/** `accent` is for dark surfaces, where navy-on-ink has too little contrast. */
+export type AppButtonVariant = 'primary' | 'secondary' | 'accent';
 
 export interface AppButtonProps {
   title: string;

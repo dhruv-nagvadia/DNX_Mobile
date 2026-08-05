@@ -5,7 +5,14 @@ import { Color } from '@/utils/Theme';
 import { AppButtonProps } from './types';
 import { styles } from './styles';
 
-/** Themed primary/secondary button with a loading state. */
+/** Spinner color per variant, so it stays visible on that background. */
+const SPINNER_COLOR = {
+  primary: Color.white,
+  secondary: Color.primary,
+  accent: Color.ink,
+} as const;
+
+/** Themed button with a loading state. */
 export function AppButton({
   title,
   onPress,
@@ -21,21 +28,14 @@ export function AppButton({
       activeOpacity={0.85}
       onPress={onPress}
       disabled={isDisabled}
-      style={[
-        styles.base,
-        variant === 'primary' ? styles.primary : styles.secondary,
-        isDisabled && styles.disabled,
-        style,
-      ]}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: isDisabled, busy: loading }}
+      style={[styles.base, styles[variant], isDisabled && styles.disabled, style]}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? Color.white : Color.primary} />
+        <ActivityIndicator color={SPINNER_COLOR[variant]} />
       ) : (
-        <Text
-          style={[styles.text, variant === 'primary' ? styles.primaryText : styles.secondaryText]}
-        >
-          {title}
-        </Text>
+        <Text style={[styles.text, styles[`${variant}Text`]]}>{title}</Text>
       )}
     </TouchableOpacity>
   );

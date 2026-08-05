@@ -32,13 +32,29 @@ export function useRegisterScreen() {
   const [form, setForm] = useState<RegisterForm>(EMPTY);
   const [errors, setErrors] = useState<RegisterErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
+  // True when the email is already taken, so the UI can offer sign-in instead.
+  const [accountExists, setAccountExists] = useState(false);
 
   const onChange = useCallback((key: keyof RegisterForm, value: string) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
+    // Phone is digits-only and capped at 10, so it can't drift out of shape.
+    const next = key === 'phone' ? value.replace(/\D/g, '').slice(0, 10) : value;
+    setForm((prev) => ({ ...prev, [key]: next }));
+    // Clear a field's error the moment the user starts correcting it.
+    setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev));
   }, []);
+
+  /** Validates just the field being left, so errors surface before submit. */
+  const onBlur = useCallback(
+    (key: keyof RegisterForm) => {
+      const fieldErrors = validateRegister(form);
+      setErrors((prev) => ({ ...prev, [key]: fieldErrors[key] }));
+    },
+    [form],
+  );
 
   const onSubmit = useCallback(async () => {
     setServerError(null);
+    setAccountExists(false);
     const validationErrors = validateRegister(form);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
@@ -69,11 +85,17 @@ export function useRegisterScreen() {
     } catch (err) {
       const status = (err as { status?: number })?.status;
       DEBUG_LOGGER('Register failed', 'onSubmit', FILE, '58', ERROR);
-      setServerError(
-        status === 409
-          ? 'An account with this email already exists.'
-          : 'Something went wrong. Please try again.',
-      );
+
+      if (status === 409) {
+        // One person can be both a customer and a provider, so an existing
+        // email means "sign in", never "register again with another address".
+        setAccountExists(true);
+        setServerError(
+          'You already have a DNX account with this email. The same account works here and on DNX for Business.',
+        );
+        return;
+      }
+      setServerError('Something went wrong while creating your account. Please try again.');
     }
   }, [form, registerUser, dispatch]);
 
@@ -81,5 +103,15 @@ export function useRegisterScreen() {
     navigation.navigate(ROUTES.LOGIN);
   }, [navigation]);
 
-  return { form, errors, serverError, isLoading, onChange, onSubmit, goToLogin };
+  return {
+    form,
+    errors,
+    serverError,
+    accountExists,
+    isLoading,
+    onChange,
+    onBlur,
+    onSubmit,
+    goToLogin,
+  };
 }

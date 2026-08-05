@@ -2,66 +2,55 @@ import { StyleSheet } from 'react-native';
 import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
 
 export const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-    backgroundColor: Color.background,
+    // Ink behind everything, so the status bar area matches the hero.
+    backgroundColor: Color.ink,
   },
-  scroll: {
-    flexGrow: 1,
-    padding: Spacing.lg,
-    justifyContent: 'center',
+  flex: {
+    flex: 1,
   },
-  brand: {
-    alignItems: 'center',
-    marginBottom: Spacing.xl,
+
+  /**
+   * Takes the remaining height and clips its scrolling child to the rounded
+   * top corners — this is what keeps scrolling inside the sheet instead of
+   * moving the whole screen.
+   */
+  sheet: {
+    flex: 1,
+    backgroundColor: Color.surface,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
+    marginTop: -Spacing.lg,
+    overflow: 'hidden',
   },
-  logoBadge: {
-    width: 64,
-    height: 64,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.md,
+  sheetContent: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.xl,
   },
-  logoText: {
-    color: Color.white,
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.extrabold,
-    letterSpacing: 1,
-  },
-  tagline: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
+
+  formSection: {
+    gap: Spacing.xs,
   },
   heading: {
     fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.5,
     color: Color.textPrimary,
-    marginBottom: Spacing.xs,
   },
   subheading: {
-    fontSize: FontSize.md,
+    fontSize: FontSize.sm,
+    lineHeight: FontSize.sm * 1.5,
     color: Color.textSecondary,
     marginBottom: Spacing.lg,
   },
-  serverError: {
-    backgroundColor: '#FEECEC',
-    borderColor: Color.error,
-    borderWidth: 1,
-    borderRadius: Radius.md,
-    padding: Spacing.sm + 2,
-    color: Color.error,
-    fontSize: FontSize.sm,
-    marginBottom: Spacing.md,
-    overflow: 'hidden',
-  },
   submit: {
-    marginTop: Spacing.xs,
+    marginTop: Spacing.sm,
   },
   switchRow: {
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     marginTop: Spacing.lg,
   },
   switchText: {
@@ -70,7 +59,7 @@ export const styles = StyleSheet.create({
   },
   switchLink: {
     fontSize: FontSize.sm,
-    color: Color.primary,
     fontWeight: FontWeight.semibold,
+    color: Color.primary,
   },
 });

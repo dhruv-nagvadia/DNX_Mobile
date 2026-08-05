@@ -27,7 +27,18 @@ export function useLoginScreen() {
 
   const onChange = useCallback((key: keyof LoginForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+    // Clear a field's error the moment the user starts correcting it.
+    setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev));
   }, []);
+
+  /** Validates just the field being left, so errors surface before submit. */
+  const onBlur = useCallback(
+    (key: keyof LoginForm) => {
+      const fieldErrors = validateLogin(form);
+      setErrors((prev) => ({ ...prev, [key]: fieldErrors[key] }));
+    },
+    [form],
+  );
 
   const onSubmit = useCallback(async () => {
     setServerError(null);
@@ -55,7 +66,7 @@ export function useLoginScreen() {
       );
     } catch (err) {
       DEBUG_LOGGER('Login failed', 'onSubmit', FILE, '48', ERROR);
-      setServerError('Invalid email or password. Please try again.');
+      setServerError('That email and password don’t match. Please try again.');
     }
   }, [form, login, dispatch]);
 
@@ -63,5 +74,5 @@ export function useLoginScreen() {
     navigation.navigate(ROUTES.REGISTER);
   }, [navigation]);
 
-  return { form, errors, serverError, isLoading, onChange, onSubmit, goToRegister };
+  return { form, errors, serverError, isLoading, onChange, onBlur, onSubmit, goToRegister };
 }

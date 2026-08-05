@@ -1,6 +1,7 @@
 /** Route name constants — never use raw string route names. */
 export const ROUTES = {
   SPLASH: 'SplashScreen',
+  ONBOARDING: 'OnboardingScreen',
   LOGIN: 'LoginScreen',
   REGISTER: 'RegisterScreen',
   HOME: 'HomeScreen',
@@ -13,6 +14,7 @@ export const ROUTES = {
 /** Type-safe params for every route. `undefined` = no params. */
 export type RootStackParamList = {
   [ROUTES.SPLASH]: undefined;
+  [ROUTES.ONBOARDING]: undefined;
   [ROUTES.LOGIN]: undefined;
   [ROUTES.REGISTER]: undefined;
   [ROUTES.HOME]: undefined;

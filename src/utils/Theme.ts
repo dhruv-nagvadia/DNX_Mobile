@@ -22,9 +22,34 @@ export const Color = {
 
   border: '#E2E8F0',
   error: '#EF4444',
+  errorSoft: '#FEF0F0',
   success: '#16A34A',
   warning: '#F59E0B',
   overlay: 'rgba(15, 23, 42, 0.5)',
+
+  // ── Dark "ink" surfaces — the auth hero and any dark hero strip ──────
+  ink: '#060B18',
+  ink2: '#0D1730',
+  onDark: '#F8FAFC',
+  onDarkMuted: 'rgba(248, 250, 252, 0.66)',
+  onDarkFaint: 'rgba(248, 250, 252, 0.42)',
+
+  // Glass layers that sit on top of ink.
+  glass: 'rgba(255, 255, 255, 0.06)',
+  glassStrong: 'rgba(255, 255, 255, 0.1)',
+  glassBorder: 'rgba(255, 255, 255, 0.12)',
+
+  // Accent — reserved for live/AI signals. Never body text.
+  accent: '#38BDF8',
+  accent2: '#818CF8',
+  accentSoft: 'rgba(56, 189, 248, 0.16)',
+};
+
+/** Animation durations, in ms. Mirrors --dur-* on the web app. */
+export const Duration = {
+  fast: 140,
+  mid: 260,
+  slow: 560,
 };
 
 // Using the system font; weight is controlled per-style via fontWeight.
@@ -65,5 +90,6 @@ export const Radius = {
   sm: 8,
   md: 12,
   lg: 20,
+  xl: 28,
   pill: 999,
 };

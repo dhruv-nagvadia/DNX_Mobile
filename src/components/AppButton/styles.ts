@@ -18,6 +18,10 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Color.border,
   },
+  // For dark surfaces — navy on ink has too little contrast.
+  accent: {
+    backgroundColor: Color.accent,
+  },
   disabled: {
     opacity: 0.6,
   },
@@ -30,5 +34,9 @@ export const styles = StyleSheet.create({
   },
   secondaryText: {
     color: Color.primary,
+  },
+  accentText: {
+    color: Color.ink,
+    fontWeight: FontWeight.bold,
   },
 });
