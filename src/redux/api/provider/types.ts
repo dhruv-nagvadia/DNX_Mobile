@@ -1,5 +1,5 @@
 import { ApiEnvelope, Paginated } from '../types';
-import { Category } from '../category/types';
+import { Category, Subcategory } from '../category/types';
 
 export interface Service {
   id: string;
@@ -21,11 +21,13 @@ export interface Provider {
   ratingCount: number;
   isVerified: boolean;
   category: Category;
+  subcategory?: Subcategory | null;
   services: Service[];
 }
 
 export interface ListProvidersParams {
   categorySlug?: string;
+  subcategorySlug?: string;
   city?: string;
   search?: string;
   page?: number;

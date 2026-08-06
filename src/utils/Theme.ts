@@ -93,3 +93,14 @@ export const Radius = {
   xl: 28,
   pill: 999,
 };
+
+/** Soft card shadow (iOS) + elevation (Android). */
+export const Shadow = {
+  card: {
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    elevation: 3,
+  },
+};

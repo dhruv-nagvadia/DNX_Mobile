@@ -23,9 +23,9 @@ const BASE_URL = `http://${DEV_HOST}:4000/api/v1`;
 export default BASE_URL;
 
 export const endpoints = {
-  // Auth
-  register: '/auth/register',
-  login: '/auth/login',
+  // Auth — customer accounts (USER); refresh/me are shared/token-based
+  register: '/customer/auth/register',
+  login: '/customer/auth/login',
   refresh: '/auth/refresh',
   me: '/auth/me',
 
@@ -35,4 +35,7 @@ export const endpoints = {
   // Customer discovery
   providers: '/customer/providers',
   providerById: (id: string) => `/customer/providers/${id}`,
+
+  // Bookings
+  myBookings: '/customer/bookings/mine',
 };

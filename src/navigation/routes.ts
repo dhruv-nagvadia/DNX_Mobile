@@ -19,7 +19,7 @@ export type RootStackParamList = {
   [ROUTES.REGISTER]: undefined;
   [ROUTES.HOME]: undefined;
   [ROUTES.CATEGORY]: { slug: string; name: string };
-  [ROUTES.PROVIDER_LIST]: { categorySlug?: string; title?: string };
+  [ROUTES.PROVIDER_LIST]: { categorySlug?: string; subcategorySlug?: string; title: string };
   [ROUTES.PROVIDER_DETAILS]: { providerId: string };
   [ROUTES.ACCOUNT]: undefined;
 };
