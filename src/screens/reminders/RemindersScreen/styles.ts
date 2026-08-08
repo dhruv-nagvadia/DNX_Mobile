@@ -6,13 +6,23 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.background,
   },
-  content: {
-    padding: Spacing.lg,
+  header: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
   },
-  lead: {
+  title: {
+    fontSize: FontSize.xxl,
+    fontWeight: FontWeight.extrabold,
+    letterSpacing: -0.5,
+    color: Color.textPrimary,
+  },
+  subtitle: {
+    marginTop: 4,
     fontSize: FontSize.sm,
     color: Color.textSecondary,
-    marginBottom: Spacing.md,
+  },
+  content: {
+    padding: Spacing.lg,
   },
   card: {
     flexDirection: 'row',
@@ -25,57 +35,28 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Color.border,
   },
-  avatar: {
-    width: 56,
-    height: 56,
+  icon: {
+    width: 46,
+    height: 46,
     borderRadius: Radius.md,
     backgroundColor: Color.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
   },
-  avatarImg: {
-    width: '100%',
-    height: '100%',
-  },
-  info: {
-    flex: 1,
-    minWidth: 0,
-  },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-  },
-  name: {
-    flexShrink: 1,
+  info: { flex: 1, minWidth: 0 },
+  cardTitle: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
     color: Color.textPrimary,
   },
-  meta: {
-    marginTop: 3,
+  cardSub: {
+    marginTop: 2,
     fontSize: FontSize.sm,
     color: Color.textSecondary,
   },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 6,
-  },
-  ratingText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.textSecondary,
-  },
-  center: {
-    paddingTop: Spacing.xl,
-    alignItems: 'center',
-  },
-  stateText: {
+  cta: {
     fontSize: FontSize.sm,
-    color: Color.textSecondary,
-    textAlign: 'center',
+    fontWeight: FontWeight.bold,
+    color: Color.primary,
   },
 });

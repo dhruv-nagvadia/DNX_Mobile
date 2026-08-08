@@ -4,10 +4,15 @@ export const ROUTES = {
   ONBOARDING: 'OnboardingScreen',
   LOGIN: 'LoginScreen',
   REGISTER: 'RegisterScreen',
+  TABS: 'Tabs',
   HOME: 'HomeScreen',
+  BOOKINGS: 'BookingsScreen',
+  REMINDERS: 'RemindersScreen',
+  PROFILE: 'ProfileScreen',
   CATEGORY: 'CategoryScreen',
   PROVIDER_LIST: 'ProviderListScreen',
   PROVIDER_DETAILS: 'ProviderDetailsScreen',
+  GALLERY: 'GalleryScreen',
   ACCOUNT: 'AccountScreen',
 } as const;
 
@@ -17,9 +22,14 @@ export type RootStackParamList = {
   [ROUTES.ONBOARDING]: undefined;
   [ROUTES.LOGIN]: undefined;
   [ROUTES.REGISTER]: undefined;
+  [ROUTES.TABS]: undefined;
   [ROUTES.HOME]: undefined;
+  [ROUTES.BOOKINGS]: undefined;
+  [ROUTES.REMINDERS]: undefined;
+  [ROUTES.PROFILE]: undefined;
   [ROUTES.CATEGORY]: { slug: string; name: string };
   [ROUTES.PROVIDER_LIST]: { categorySlug?: string; subcategorySlug?: string; title: string };
-  [ROUTES.PROVIDER_DETAILS]: { providerId: string };
+  [ROUTES.PROVIDER_DETAILS]: { providerId: string; name?: string };
+  [ROUTES.GALLERY]: { images: string[]; index?: number };
   [ROUTES.ACCOUNT]: undefined;
 };

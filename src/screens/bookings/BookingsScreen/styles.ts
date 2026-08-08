@@ -6,13 +6,20 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.background,
   },
+  header: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.sm,
+  },
+  title: {
+    fontSize: FontSize.xxl,
+    fontWeight: FontWeight.extrabold,
+    letterSpacing: -0.5,
+    color: Color.textPrimary,
+  },
   content: {
     padding: Spacing.lg,
-  },
-  lead: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-    marginBottom: Spacing.md,
+    paddingTop: Spacing.sm,
   },
   card: {
     flexDirection: 'row',
@@ -25,55 +32,49 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Color.border,
   },
-  avatar: {
-    width: 56,
-    height: 56,
+  icon: {
+    width: 50,
+    height: 50,
     borderRadius: Radius.md,
     backgroundColor: Color.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
   },
-  avatarImg: {
-    width: '100%',
-    height: '100%',
-  },
-  info: {
-    flex: 1,
-    minWidth: 0,
-  },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-  },
+  info: { flex: 1, minWidth: 0 },
   name: {
-    flexShrink: 1,
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
     color: Color.textPrimary,
   },
   meta: {
-    marginTop: 3,
+    marginTop: 2,
     fontSize: FontSize.sm,
     color: Color.textSecondary,
   },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 6,
+  statusPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: Radius.pill,
+    backgroundColor: Color.primarySoft,
   },
-  ratingText: {
+  statusText: {
     fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.textSecondary,
+    fontWeight: FontWeight.bold,
+    color: Color.primary,
   },
   center: {
-    paddingTop: Spacing.xl,
+    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    padding: Spacing.xl,
+    gap: Spacing.sm,
   },
-  stateText: {
+  emptyTitle: {
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.bold,
+    color: Color.textPrimary,
+  },
+  emptyText: {
     fontSize: FontSize.sm,
     color: Color.textSecondary,
     textAlign: 'center',

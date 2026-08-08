@@ -182,6 +182,96 @@ export const styles = StyleSheet.create({
     color: Color.textPrimary,
   },
 
+  // ── Top trust banner ─────────────────────────────────────────────────
+  trustBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: Spacing.lg,
+    padding: Spacing.lg,
+    borderRadius: Radius.lg,
+    backgroundColor: Color.primary,
+    overflow: 'hidden',
+  },
+  trustBannerBody: {
+    flex: 1,
+  },
+  trustBannerTitle: {
+    color: Color.white,
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+    marginBottom: Spacing.md,
+  },
+  trustStatsRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.xl,
+  },
+  trustStat: {},
+  trustStatValue: {
+    color: Color.white,
+    fontSize: FontSize.xl,
+    fontWeight: FontWeight.extrabold,
+  },
+  trustStatLabel: {
+    marginTop: 2,
+    color: Color.onDarkMuted,
+    fontSize: FontSize.xs,
+  },
+  trustBannerIcon: {
+    width: 54,
+    height: 54,
+    borderRadius: Radius.pill,
+    backgroundColor: Color.glassStrong,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: Spacing.md,
+  },
+
+  // ── Most booked (business rows) ──────────────────────────────────────
+  mbCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
+    borderRadius: Radius.lg,
+    backgroundColor: Color.surface,
+    borderWidth: 1,
+    borderColor: Color.border,
+  },
+  mbAvatar: {
+    width: 54,
+    height: 54,
+    borderRadius: Radius.md,
+    backgroundColor: Color.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  mbAvatarImg: { width: '100%', height: '100%' },
+  mbInfo: { flex: 1, minWidth: 0 },
+  mbName: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+    color: Color.textPrimary,
+  },
+  mbMeta: {
+    marginTop: 2,
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+  },
+  mbRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    marginTop: 6,
+  },
+  mbRatingText: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.semibold,
+    color: Color.textSecondary,
+  },
+
   // ── Category grid ────────────────────────────────────────────────────
   grid: {
     flexDirection: 'row',

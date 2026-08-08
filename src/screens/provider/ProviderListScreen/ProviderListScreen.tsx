@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Star, BadgeCheck } from 'lucide-react-native';
 
 import { CategoryIcon } from '@/components/CategoryIcon';
@@ -37,7 +37,11 @@ export default function ProviderListScreen() {
                 onPress={() => onProviderPress(p)}
               >
                 <View style={styles.avatar}>
-                  <CategoryIcon slug={p.category.slug} size={24} />
+                  {p.images.length > 0 ? (
+                    <Image source={{ uri: p.images[0] }} style={styles.avatarImg} />
+                  ) : (
+                    <CategoryIcon slug={p.category.slug} size={24} />
+                  )}
                 </View>
                 <View style={styles.info}>
                   <View style={styles.nameRow}>

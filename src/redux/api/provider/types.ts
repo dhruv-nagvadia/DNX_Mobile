@@ -10,6 +10,14 @@ export interface Service {
   durationMin: number;
 }
 
+export interface BusinessHour {
+  id?: string;
+  dayOfWeek: number; // 0 = Sunday ... 6 = Saturday
+  isOpen: boolean;
+  openTime: string; // "HH:MM"
+  closeTime: string;
+}
+
 export interface Provider {
   id: string;
   businessName: string;
@@ -17,12 +25,14 @@ export interface Provider {
   phone: string;
   email?: string | null;
   city?: string | null;
+  images: string[];
   ratingAvg: number;
   ratingCount: number;
   isVerified: boolean;
   category: Category;
   subcategory?: Subcategory | null;
   services: Service[];
+  businessHours: BusinessHour[];
 }
 
 export interface ListProvidersParams {

@@ -1,12 +1,14 @@
 import { useCallback } from 'react';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { useGetProvidersQuery } from '@/redux/api/provider/providerApi';
 import { Provider } from '@/redux/api/provider/types';
-import { ProviderListRouteProp } from './types';
+import { ROUTES } from '@/navigation/routes';
+import { ProviderListNavigationProp, ProviderListRouteProp } from './types';
 
 /** Loads the available providers for the selected category/business type. */
 export function useProviderListScreen() {
+  const navigation = useNavigation<ProviderListNavigationProp>();
   const { params } = useRoute<ProviderListRouteProp>();
 
   const { data, isLoading } = useGetProvidersQuery({
@@ -17,8 +19,15 @@ export function useProviderListScreen() {
 
   const providers = data?.items ?? [];
 
-  // Provider detail is the next build — inert for now.
-  const onProviderPress = useCallback((_provider: Provider) => {}, []);
+  const onProviderPress = useCallback(
+    (provider: Provider) => {
+      navigation.navigate(ROUTES.PROVIDER_DETAILS, {
+        providerId: provider.id,
+        name: provider.businessName,
+      });
+    },
+    [navigation],
+  );
 
   return {
     title: params.title,

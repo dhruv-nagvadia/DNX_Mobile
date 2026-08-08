@@ -12,15 +12,6 @@ export interface Offer {
   bg: string;
 }
 
-export type ReminderKind = 'insurance' | 'passport' | 'vehicle' | 'appliance';
-
-export interface Reminder {
-  id: string;
-  title: string;
-  subtitle: string;
-  kind: ReminderKind;
-}
-
 export interface RecentProvider {
   id: string;
   name: string;

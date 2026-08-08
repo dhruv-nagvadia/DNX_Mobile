@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
 
-import { CategoryIcon } from '@/components/CategoryIcon';
 import { Color } from '@/utils/Theme';
 
 import { useCategoryScreen } from './useCategoryScreen';
@@ -10,7 +9,7 @@ import { styles } from './styles';
 
 /** JSX only — logic comes from useCategoryScreen. */
 export default function CategoryScreen() {
-  const { categorySlug, subcategories, isLoading, onSubcategoryPress } = useCategoryScreen();
+  const { subcategories, isLoading, onSubcategoryPress } = useCategoryScreen();
 
   return (
     <View style={styles.container}>
@@ -33,9 +32,6 @@ export default function CategoryScreen() {
               activeOpacity={0.85}
               onPress={() => onSubcategoryPress(sub)}
             >
-              <View style={styles.iconWrap}>
-                <CategoryIcon slug={categorySlug} size={22} />
-              </View>
               <Text style={styles.rowName}>{sub.name}</Text>
               <ChevronRight size={20} color={Color.placeholder} />
             </TouchableOpacity>

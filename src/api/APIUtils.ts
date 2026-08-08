@@ -35,7 +35,9 @@ export const endpoints = {
   // Customer discovery
   providers: '/customer/providers',
   providerById: (id: string) => `/customer/providers/${id}`,
+  providerBookedSlots: (id: string) => `/customer/providers/${id}/booked-slots`,
 
   // Bookings
+  bookings: '/customer/bookings',
   myBookings: '/customer/bookings/mine',
 };

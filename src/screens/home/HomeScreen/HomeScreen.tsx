@@ -1,40 +1,21 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  Search,
-  MapPin,
-  ChevronDown,
-  ShieldCheck,
-  FileText,
-  Car,
-  Refrigerator,
-  Bell,
-  Star,
-  type LucideIcon,
-} from 'lucide-react-native';
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  StatusBar,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Search, MapPin, ChevronDown, Bell, Star, Users } from 'lucide-react-native';
 
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Color } from '@/utils/Theme';
-import { Booking } from '@/redux/api/booking/types';
 
 import { useHomeScreen } from './useHomeScreen';
-import { ReminderKind } from './types';
 import { styles } from './styles';
-
-function formatBookingTime(iso: string): string {
-  const d = new Date(iso);
-  const date = d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
-  const time = d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
-  return `${date} · ${time}`;
-}
-
-const REMINDER_ICON: Record<ReminderKind, LucideIcon> = {
-  insurance: ShieldCheck,
-  passport: FileText,
-  vehicle: Car,
-  appliance: Refrigerator,
-};
 
 /** JSX only — logic comes from useHomeScreen. */
 export default function HomeScreen() {
@@ -44,14 +25,13 @@ export default function HomeScreen() {
     location,
     offers,
     mostBooked,
-    reminders,
     recentlyViewed,
     trustStats,
     categories,
     categoriesLoading,
-    bookings,
     onCategoryPress,
-    logout,
+    onProviderPress,
+    goToProfile,
   } = useHomeScreen();
 
   return (
@@ -59,7 +39,7 @@ export default function HomeScreen() {
       <StatusBar barStyle="dark-content" backgroundColor={Color.background} />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Header: location + avatar */}
+        {/* Header: location + notifications + avatar */}
         <View style={styles.headerTop}>
           <TouchableOpacity style={styles.locationPill} activeOpacity={0.7}>
             <MapPin size={16} color={Color.primary} />
@@ -67,6 +47,7 @@ export default function HomeScreen() {
             <Text style={styles.locationText}>{location}</Text>
             <ChevronDown size={16} color={Color.textSecondary} />
           </TouchableOpacity>
+
           <View style={styles.headerRight}>
             <TouchableOpacity style={styles.bellBtn} activeOpacity={0.8} accessibilityLabel="Notifications">
               <Bell size={20} color={Color.textPrimary} />
@@ -74,7 +55,7 @@ export default function HomeScreen() {
                 <Text style={styles.bellBadgeText}>2</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.avatar} onPress={logout} accessibilityLabel="Account">
+            <TouchableOpacity style={styles.avatar} onPress={goToProfile} accessibilityLabel="Profile">
               <Text style={styles.avatarText}>{firstName.charAt(0).toUpperCase()}</Text>
             </TouchableOpacity>
           </View>
@@ -89,7 +70,25 @@ export default function HomeScreen() {
           <Text style={styles.searchText}>Search salons, doctors, plumbers…</Text>
         </TouchableOpacity>
 
-        {/* Offers carousel */}
+        {/* Trust banner (top) */}
+        <View style={styles.trustBanner}>
+          <View style={styles.trustBannerBody}>
+            <Text style={styles.trustBannerTitle}>Trusted by thousands across India</Text>
+            <View style={styles.trustStatsRow}>
+              {trustStats.map((t) => (
+                <View key={t.id} style={styles.trustStat}>
+                  <Text style={styles.trustStatValue}>{t.value}</Text>
+                  <Text style={styles.trustStatLabel}>{t.label}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+          <View style={styles.trustBannerIcon}>
+            <Users size={26} color={Color.white} />
+          </View>
+        </View>
+
+        {/* Offers */}
         <View style={styles.sectionHead}>
           <Text style={styles.sectionTitle}>Offers for you</Text>
         </View>
@@ -105,35 +104,7 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
 
-        {/* Your bookings — only when there are any */}
-        {bookings.length > 0 && (
-          <>
-            <View style={styles.sectionHead}>
-              <Text style={styles.sectionTitle}>Your bookings</Text>
-              <Text style={styles.sectionLink}>See all</Text>
-            </View>
-            {bookings.slice(0, 3).map((b: Booking) => (
-              <View key={b.id} style={styles.bookingCard}>
-                <View style={styles.bookingIcon}>
-                  <CategoryIcon slug={b.provider.category.slug} size={22} />
-                </View>
-                <View style={styles.bookingInfo}>
-                  <Text style={styles.bookingName} numberOfLines={1}>
-                    {b.provider.businessName}
-                  </Text>
-                  <Text style={styles.bookingMeta} numberOfLines={1}>
-                    {b.service.name} · {formatBookingTime(b.startTime)}
-                  </Text>
-                </View>
-                <View style={styles.statusPill}>
-                  <Text style={styles.statusText}>{b.status}</Text>
-                </View>
-              </View>
-            ))}
-          </>
-        )}
-
-        {/* Categories */}
+        {/* Categories (most-booked first) */}
         <View style={styles.sectionHead}>
           <Text style={styles.sectionTitle}>What do you need?</Text>
         </View>
@@ -159,39 +130,45 @@ export default function HomeScreen() {
           </View>
         )}
 
-        {/* Most booked services */}
-        <View style={styles.sectionHead}>
-          <Text style={styles.sectionTitle}>Most booked services</Text>
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
-          {mostBooked.map((s) => (
-            <TouchableOpacity key={s} style={styles.chip} activeOpacity={0.8}>
-              <Text style={styles.chipText}>{s}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {/* Reminders / renewals */}
-        <View style={styles.sectionHead}>
-          <Text style={styles.sectionTitle}>Don&apos;t forget</Text>
-        </View>
-        {reminders.map((r) => {
-          const Icon = REMINDER_ICON[r.kind] ?? Bell;
-          return (
-            <View key={r.id} style={styles.reminderCard}>
-              <View style={styles.reminderIcon}>
-                <Icon size={22} color={Color.primary} />
-              </View>
-              <View style={styles.reminderInfo}>
-                <Text style={styles.reminderTitle}>{r.title}</Text>
-                <Text style={styles.reminderSub}>{r.subtitle}</Text>
-              </View>
-              <TouchableOpacity activeOpacity={0.7}>
-                <Text style={styles.reminderCta}>Renew</Text>
-              </TouchableOpacity>
+        {/* Most booked businesses */}
+        {mostBooked.length > 0 && (
+          <>
+            <View style={styles.sectionHead}>
+              <Text style={styles.sectionTitle}>Most booked</Text>
             </View>
-          );
-        })}
+            {mostBooked.map((p) => (
+              <TouchableOpacity
+                key={p.id}
+                style={styles.mbCard}
+                activeOpacity={0.85}
+                onPress={() => onProviderPress(p)}
+              >
+                <View style={styles.mbAvatar}>
+                  {p.images.length > 0 ? (
+                    <Image style={styles.mbAvatarImg} source={{ uri: p.images[0] }} />
+                  ) : (
+                    <CategoryIcon slug={p.category.slug} size={24} />
+                  )}
+                </View>
+                <View style={styles.mbInfo}>
+                  <Text style={styles.mbName} numberOfLines={1}>
+                    {p.businessName}
+                  </Text>
+                  <Text style={styles.mbMeta} numberOfLines={1}>
+                    {p.subcategory?.name ?? p.category.name}
+                    {p.city ? ` · ${p.city}` : ''}
+                  </Text>
+                  <View style={styles.mbRating}>
+                    <Star size={12} color={Color.warning} fill={Color.warning} />
+                    <Text style={styles.mbRatingText}>
+                      {p.ratingAvg.toFixed(1)} ({p.ratingCount})
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </>
+        )}
 
         {/* Recently viewed */}
         <View style={styles.sectionHead}>
@@ -216,19 +193,6 @@ export default function HomeScreen() {
             </TouchableOpacity>
           ))}
         </ScrollView>
-
-        {/* Trust strip */}
-        <View style={styles.trust}>
-          {trustStats.map((t, i) => (
-            <React.Fragment key={t.id}>
-              {i > 0 && <View style={styles.trustDivider} />}
-              <View style={styles.trustItem}>
-                <Text style={styles.trustValue}>{t.value}</Text>
-                <Text style={styles.trustLabel}>{t.label}</Text>
-              </View>
-            </React.Fragment>
-          ))}
-        </View>
       </ScrollView>
     </SafeAreaView>
   );

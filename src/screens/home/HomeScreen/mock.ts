@@ -1,5 +1,5 @@
 import { Color } from '@/utils/Theme';
-import { Offer, RecentProvider, Reminder, TrustStat } from './types';
+import { Offer, RecentProvider, TrustStat } from './types';
 
 /**
  * Static placeholder content for the home screen. Replace each of these with a
@@ -14,18 +14,24 @@ export const OFFERS: Offer[] = [
   { id: 'o3', title: '₹200 OFF cleaning', subtitle: 'Use code CLEAN200', tag: 'CLEAN200', bg: Color.ink2 },
 ];
 
-export const MOST_BOOKED: string[] = [
-  'Haircut',
-  'Dental checkup',
-  'AC service',
-  'Home cleaning',
-  'Full body massage',
-  'Car wash',
-];
-
-export const REMINDERS: Reminder[] = [
-  { id: 'r1', title: 'Car insurance', subtitle: 'Renews in 12 days', kind: 'insurance' },
-  { id: 'r2', title: 'Passport', subtitle: 'Expires in 3 months', kind: 'passport' },
+/**
+ * Static "most booked" popularity order for categories (swap for a real
+ * booking-count sort later). Categories not listed here fall back to the
+ * server's sortOrder.
+ */
+export const POPULAR_CATEGORY_ORDER: string[] = [
+  'healthcare',
+  'beauty',
+  'home',
+  'fitness',
+  'food',
+  'automotive',
+  'education',
+  'professional',
+  'retail',
+  'events',
+  'government',
+  'other',
 ];
 
 export const RECENTLY_VIEWED: RecentProvider[] = [
@@ -35,7 +41,7 @@ export const RECENTLY_VIEWED: RecentProvider[] = [
 ];
 
 export const TRUST_STATS: TrustStat[] = [
-  { id: 't1', value: '4.8★', label: 'Avg rating' },
-  { id: 't2', value: '10k+', label: 'Verified pros' },
-  { id: 't3', value: '50k+', label: 'Bookings' },
+  { id: 't1', value: '50k+', label: 'Happy users' },
+  { id: 't2', value: '1L+', label: 'Bookings' },
+  { id: 't3', value: '10k+', label: 'Verified pros' },
 ];

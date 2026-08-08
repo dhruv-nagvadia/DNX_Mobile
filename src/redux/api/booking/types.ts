@@ -11,3 +11,15 @@ export interface Booking {
 }
 
 export type MyBookingsResponse = ApiEnvelope<Booking[]>;
+
+/** An already-booked interval, used to hide unavailable time slots. */
+export interface BookedSlot {
+  startTime: string; // ISO datetime
+  endTime: string; // ISO datetime
+}
+
+export interface CreateBookingRequest {
+  providerId: string;
+  serviceId: string;
+  startTime: string; // ISO datetime
+}
