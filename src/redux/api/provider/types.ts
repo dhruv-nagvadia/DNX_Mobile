@@ -18,6 +18,15 @@ export interface BusinessHour {
   closeTime: string;
 }
 
+/** A date-specific override of the weekly hours (future dates only). */
+export interface DateHour {
+  id: string;
+  date: string; // ISO date (may include a T00:00:00Z suffix)
+  isOpen: boolean;
+  openTime: string; // "HH:MM"
+  closeTime: string;
+}
+
 export interface Provider {
   id: string;
   businessName: string;
@@ -33,6 +42,15 @@ export interface Provider {
   subcategory?: Subcategory | null;
   services: Service[];
   businessHours: BusinessHour[];
+  dateHours?: DateHour[];
+}
+
+export interface Review {
+  id: string;
+  rating: number;
+  comment?: string | null;
+  createdAt: string;
+  user: { fullName: string };
 }
 
 export interface ListProvidersParams {

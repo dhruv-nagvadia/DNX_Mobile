@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Star, BadgeCheck } from 'lucide-react-native';
 
+import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Color } from '@/utils/Theme';
 
@@ -14,6 +15,7 @@ export default function ProviderListScreen() {
 
   return (
     <View style={styles.container}>
+      <AppHeader title={title} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {isLoading ? (
           <View style={styles.center}>

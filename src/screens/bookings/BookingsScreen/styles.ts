@@ -21,16 +21,20 @@ export const styles = StyleSheet.create({
     padding: Spacing.lg,
     paddingTop: Spacing.sm,
   },
+
+  // Card
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
     borderRadius: Radius.lg,
     backgroundColor: Color.surface,
     borderWidth: 1,
     borderColor: Color.border,
+  },
+  cardTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
   },
   icon: {
     width: 50,
@@ -51,17 +55,89 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: Color.textSecondary,
   },
+
   statusPill: {
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: Radius.pill,
-    backgroundColor: Color.primarySoft,
   },
   statusText: {
     fontSize: FontSize.xs,
     fontWeight: FontWeight.bold,
-    color: Color.primary,
   },
+
+  // Actions
+  actions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+  },
+  actionBtn: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 8,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+  },
+  actionPrimary: {
+    backgroundColor: Color.primary,
+    borderColor: Color.primary,
+  },
+  actionPrimaryText: {
+    color: Color.white,
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
+  },
+  actionGhost: {
+    backgroundColor: Color.surface,
+    borderColor: Color.border,
+  },
+  actionGhostText: {
+    color: Color.textPrimary,
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+  },
+  actionDanger: {
+    backgroundColor: Color.errorSoft,
+    borderColor: Color.error,
+  },
+  actionDangerText: {
+    color: Color.error,
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
+  },
+
+  reasonBox: {
+    marginTop: Spacing.md,
+    padding: Spacing.md,
+    borderRadius: Radius.md,
+    backgroundColor: Color.background,
+    borderWidth: 1,
+    borderColor: Color.border,
+  },
+  reasonLabel: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.bold,
+    color: Color.textSecondary,
+    marginBottom: 2,
+  },
+  reasonText: {
+    fontSize: FontSize.sm,
+    color: Color.textPrimary,
+    lineHeight: FontSize.sm * 1.4,
+  },
+  reviewedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: Spacing.md,
+  },
+  reviewedText: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+    marginLeft: 4,
+  },
+
   center: {
     flex: 1,
     alignItems: 'center',
@@ -78,5 +154,55 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: Color.textSecondary,
     textAlign: 'center',
+  },
+
+  // Review modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: Color.overlay,
+    justifyContent: 'center',
+    padding: Spacing.lg,
+  },
+  modalCard: {
+    backgroundColor: Color.surface,
+    borderRadius: Radius.lg,
+    padding: Spacing.lg,
+    gap: Spacing.md,
+  },
+  modalTitle: {
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.bold,
+    color: Color.textPrimary,
+  },
+  modalSub: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+  },
+  starsRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.sm,
+  },
+  commentInput: {
+    borderWidth: 1,
+    borderColor: Color.border,
+    borderRadius: Radius.md,
+    padding: Spacing.md,
+    minHeight: 84,
+    textAlignVertical: 'top',
+    color: Color.textPrimary,
+    fontSize: FontSize.md,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    marginTop: Spacing.xs,
+  },
+  modalBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: Radius.md,
+    alignItems: 'center',
   },
 });

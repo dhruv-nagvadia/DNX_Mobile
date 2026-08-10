@@ -40,4 +40,10 @@ export const endpoints = {
   // Bookings
   bookings: '/customer/bookings',
   myBookings: '/customer/bookings/mine',
+  cancelBooking: (id: string) => `/customer/bookings/${id}/cancel`,
+  rescheduleBooking: (id: string) => `/customer/bookings/${id}/reschedule`,
+  bookingReview: (id: string) => `/customer/bookings/${id}/review`,
+
+  // Reviews (public)
+  providerReviews: (id: string) => `/customer/providers/${id}/reviews`,
 };

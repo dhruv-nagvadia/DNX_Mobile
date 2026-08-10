@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
 
+import { AppHeader } from '@/components/AppHeader';
 import { Color } from '@/utils/Theme';
 
 import { useCategoryScreen } from './useCategoryScreen';
@@ -9,10 +10,11 @@ import { styles } from './styles';
 
 /** JSX only — logic comes from useCategoryScreen. */
 export default function CategoryScreen() {
-  const { subcategories, isLoading, onSubcategoryPress } = useCategoryScreen();
+  const { title, subcategories, isLoading, onSubcategoryPress } = useCategoryScreen();
 
   return (
     <View style={styles.container}>
+      <AppHeader title={title} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.lead}>Choose the service you need</Text>
 

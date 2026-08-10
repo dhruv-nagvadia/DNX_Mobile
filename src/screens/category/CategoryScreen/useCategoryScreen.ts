@@ -26,6 +26,7 @@ export function useCategoryScreen() {
   );
 
   return {
+    title: params.name,
     categorySlug: params.slug,
     subcategories: category?.subcategories ?? [],
     isLoading,

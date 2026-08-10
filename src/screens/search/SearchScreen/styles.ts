@@ -1,0 +1,80 @@
+import { StyleSheet } from 'react-native';
+import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Color.background,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginHorizontal: Spacing.lg,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    height: 48,
+    borderRadius: Radius.md,
+    backgroundColor: Color.surface,
+    borderWidth: 1,
+    borderColor: Color.border,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: FontSize.md,
+    color: Color.textPrimary,
+  },
+  content: {
+    padding: Spacing.lg,
+    paddingTop: Spacing.sm,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
+    borderRadius: Radius.lg,
+    backgroundColor: Color.surface,
+    borderWidth: 1,
+    borderColor: Color.border,
+  },
+  avatar: {
+    width: 52,
+    height: 52,
+    borderRadius: Radius.md,
+    backgroundColor: Color.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  avatarImg: { width: '100%', height: '100%' },
+  info: { flex: 1, minWidth: 0 },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  name: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+    color: Color.textPrimary,
+    flexShrink: 1,
+  },
+  meta: {
+    marginTop: 2,
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+  },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
+  ratingText: { fontSize: FontSize.xs, color: Color.textSecondary },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: Spacing.xl,
+    gap: Spacing.sm,
+  },
+  hint: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+    textAlign: 'center',
+  },
+});

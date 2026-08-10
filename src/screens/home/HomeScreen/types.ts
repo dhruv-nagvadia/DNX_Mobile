@@ -12,14 +12,6 @@ export interface Offer {
   bg: string;
 }
 
-export interface RecentProvider {
-  id: string;
-  name: string;
-  type: string;
-  categorySlug: string;
-  rating: number;
-}
-
 export interface TrustStat {
   id: string;
   value: string;

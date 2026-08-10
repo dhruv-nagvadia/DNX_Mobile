@@ -1,13 +1,13 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { axiosBaseQuery } from '@/api/apiConfigs';
 import { endpoints } from '@/api/APIUtils';
-import { ListProvidersParams, Provider } from './types';
+import { ListProvidersParams, Provider, Review } from './types';
 import { ApiEnvelope, Paginated } from '../types';
 
 export const providerApi = createApi({
   reducerPath: 'providerApi',
   baseQuery: axiosBaseQuery(),
-  tagTypes: ['Providers', 'Provider'],
+  tagTypes: ['Providers', 'Provider', 'Reviews'],
   endpoints: (builder) => ({
     getProviders: builder.query<Paginated<Provider>, ListProvidersParams | void>({
       query: (params) => ({
@@ -24,8 +24,18 @@ export const providerApi = createApi({
       transformResponse: (res: ApiEnvelope<Provider>) => res.data,
       providesTags: (_result, _error, id) => [{ type: 'Provider', id }],
     }),
+
+    getProviderReviews: builder.query<Review[], string>({
+      query: (id) => ({ endpoint: endpoints.providerReviews(id), method: 'get' }),
+      transformResponse: (res: ApiEnvelope<Review[]>) => res.data,
+      providesTags: (_r, _e, id) => [{ type: 'Reviews', id }],
+    }),
   }),
 });
 
-export const { useGetProvidersQuery, useLazyGetProvidersQuery, useGetProviderByIdQuery } =
-  providerApi;
+export const {
+  useGetProvidersQuery,
+  useLazyGetProvidersQuery,
+  useGetProviderByIdQuery,
+  useGetProviderReviewsQuery,
+} = providerApi;

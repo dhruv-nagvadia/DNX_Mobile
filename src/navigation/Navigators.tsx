@@ -19,6 +19,9 @@ import CategoryScreen from '@/screens/category/CategoryScreen';
 import ProviderListScreen from '@/screens/provider/ProviderListScreen';
 import ProviderDetailScreen from '@/screens/provider/ProviderDetailScreen';
 import GalleryScreen from '@/screens/gallery/GalleryScreen';
+import SearchScreen from '@/screens/search/SearchScreen';
+import BookingDetailScreen from '@/screens/bookings/BookingDetailScreen';
+import ReviewsScreen from '@/screens/reviews/ReviewsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -89,46 +92,28 @@ export function AuthStack() {
   );
 }
 
-/** Screens available after login. */
+/**
+ * Screens available after login.
+ *
+ * The native-stack header is disabled everywhere — screens render the custom
+ * <AppHeader> instead, which avoids the translucent "bubble" header iOS shows.
+ */
 export function MainStack() {
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        headerStyle: { backgroundColor: Color.surface },
-        headerTintColor: Color.primary,
-        headerTitleStyle: { color: Color.textPrimary, fontWeight: FontWeight.bold },
-        headerShadowVisible: false,
         contentStyle: { backgroundColor: Color.background },
       }}
     >
       <Stack.Screen name={ROUTES.TABS} component={TabNavigator} />
-      <Stack.Screen
-        name={ROUTES.CATEGORY}
-        component={CategoryScreen}
-        options={({ route }) => ({ headerShown: true, title: route.params.name })}
-      />
-      <Stack.Screen
-        name={ROUTES.PROVIDER_LIST}
-        component={ProviderListScreen}
-        options={({ route }) => ({ headerShown: true, title: route.params.title })}
-      />
-      <Stack.Screen
-        name={ROUTES.PROVIDER_DETAILS}
-        component={ProviderDetailScreen}
-        options={({ route }) => ({ headerShown: true, title: route.params.name ?? 'Business' })}
-      />
-      <Stack.Screen
-        name={ROUTES.GALLERY}
-        component={GalleryScreen}
-        options={{
-          headerShown: true,
-          title: 'Photos',
-          headerStyle: { backgroundColor: Color.ink },
-          headerTintColor: Color.onDark,
-          headerTitleStyle: { color: Color.onDark, fontWeight: FontWeight.bold },
-        }}
-      />
+      <Stack.Screen name={ROUTES.CATEGORY} component={CategoryScreen} />
+      <Stack.Screen name={ROUTES.PROVIDER_LIST} component={ProviderListScreen} />
+      <Stack.Screen name={ROUTES.PROVIDER_DETAILS} component={ProviderDetailScreen} />
+      <Stack.Screen name={ROUTES.GALLERY} component={GalleryScreen} />
+      <Stack.Screen name={ROUTES.SEARCH} component={SearchScreen} />
+      <Stack.Screen name={ROUTES.BOOKING_DETAILS} component={BookingDetailScreen} />
+      <Stack.Screen name={ROUTES.REVIEWS} component={ReviewsScreen} />
     </Stack.Navigator>
   );
 }

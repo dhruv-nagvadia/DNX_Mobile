@@ -3,6 +3,7 @@ export const StorageKeys = {
   accessToken: '@dnx/accessToken',
   refreshToken: '@dnx/refreshToken',
   onboardingDone: '@dnx/onboardingDone',
+  recentlyViewed: '@dnx/recentlyViewed',
 } as const;
 
 export const AppConfig = {

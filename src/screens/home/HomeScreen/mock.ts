@@ -1,5 +1,5 @@
 import { Color } from '@/utils/Theme';
-import { Offer, RecentProvider, TrustStat } from './types';
+import { Offer, TrustStat } from './types';
 
 /**
  * Static placeholder content for the home screen. Replace each of these with a
@@ -32,12 +32,6 @@ export const POPULAR_CATEGORY_ORDER: string[] = [
   'events',
   'government',
   'other',
-];
-
-export const RECENTLY_VIEWED: RecentProvider[] = [
-  { id: 'rp1', name: 'Sharma Dental Clinic', type: 'Dentist', categorySlug: 'healthcare', rating: 4.8 },
-  { id: 'rp2', name: 'GlowUp Salon', type: 'Unisex Salon', categorySlug: 'beauty', rating: 4.6 },
-  { id: 'rp3', name: 'FitZone Gym', type: 'Gym', categorySlug: 'fitness', rating: 4.7 },
 ];
 
 export const TRUST_STATS: TrustStat[] = [

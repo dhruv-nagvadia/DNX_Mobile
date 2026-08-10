@@ -31,7 +31,9 @@ export default function HomeScreen() {
     categoriesLoading,
     onCategoryPress,
     onProviderPress,
+    onRecentPress,
     goToProfile,
+    goToSearch,
   } = useHomeScreen();
 
   return (
@@ -65,7 +67,7 @@ export default function HomeScreen() {
         <Text style={styles.name}>{firstName}</Text>
 
         {/* Search */}
-        <TouchableOpacity style={styles.search} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.search} activeOpacity={0.85} onPress={goToSearch}>
           <Search size={18} color={Color.placeholder} />
           <Text style={styles.searchText}>Search salons, doctors, plumbers…</Text>
         </TouchableOpacity>
@@ -171,28 +173,41 @@ export default function HomeScreen() {
         )}
 
         {/* Recently viewed */}
-        <View style={styles.sectionHead}>
-          <Text style={styles.sectionTitle}>Recently viewed</Text>
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hRow}>
-          {recentlyViewed.map((p) => (
-            <TouchableOpacity key={p.id} style={styles.recentCard} activeOpacity={0.85}>
-              <View style={styles.recentIcon}>
-                <CategoryIcon slug={p.categorySlug} size={20} />
-              </View>
-              <Text style={styles.recentName} numberOfLines={1}>
-                {p.name}
-              </Text>
-              <Text style={styles.recentType} numberOfLines={1}>
-                {p.type}
-              </Text>
-              <View style={styles.recentRating}>
-                <Star size={12} color={Color.warning} fill={Color.warning} />
-                <Text style={styles.recentRatingText}>{p.rating.toFixed(1)}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        {recentlyViewed.length > 0 && (
+          <>
+            <View style={styles.sectionHead}>
+              <Text style={styles.sectionTitle}>Recently viewed</Text>
+            </View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.hRow}
+            >
+              {recentlyViewed.map((p) => (
+                <TouchableOpacity
+                  key={p.id}
+                  style={styles.recentCard}
+                  activeOpacity={0.85}
+                  onPress={() => onRecentPress(p)}
+                >
+                  <View style={styles.recentIcon}>
+                    <CategoryIcon slug={p.categorySlug} size={20} />
+                  </View>
+                  <Text style={styles.recentName} numberOfLines={1}>
+                    {p.name}
+                  </Text>
+                  <Text style={styles.recentType} numberOfLines={1}>
+                    {p.type}
+                  </Text>
+                  <View style={styles.recentRating}>
+                    <Star size={12} color={Color.warning} fill={Color.warning} />
+                    <Text style={styles.recentRatingText}>{p.rating.toFixed(1)}</Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

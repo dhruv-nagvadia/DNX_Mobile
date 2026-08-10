@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 
-import { Color } from '@/utils/Theme';
+import { AppHeader } from '@/components/AppHeader';
 import { useGalleryScreen } from './useGalleryScreen';
 import { styles } from './styles';
 
@@ -11,7 +11,7 @@ export default function GalleryScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Color.ink} />
+      <AppHeader title="Photos" variant="dark" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <Image style={styles.hero} source={{ uri: images[selected] }} resizeMode="cover" />
 

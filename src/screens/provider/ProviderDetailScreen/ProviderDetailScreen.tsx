@@ -12,8 +12,10 @@ import {
 } from 'react-native';
 import { Star, BadgeCheck, MapPin, Clock } from 'lucide-react-native';
 
+import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { AppButton } from '@/components/AppButton';
+import { ReviewItem } from '@/components/ReviewItem';
 import { Color } from '@/utils/Theme';
 
 import { useProviderDetail } from './useProviderDetail';
@@ -47,8 +49,13 @@ export default function ProviderDetailScreen() {
   const {
     provider,
     isLoading,
+    isReschedule,
+    headerTitle,
+    reviews,
+    onViewAllReviews,
     openGallery,
     services,
+    selectedService,
     selectedServiceId,
     selectService,
     days,
@@ -69,8 +76,11 @@ export default function ProviderDetailScreen() {
 
   if (isLoading || !provider) {
     return (
-      <View style={[styles.container, styles.center]}>
-        <ActivityIndicator color={Color.primary} />
+      <View style={styles.container}>
+        <AppHeader title={headerTitle} />
+        <View style={styles.center}>
+          <ActivityIndicator color={Color.primary} />
+        </View>
       </View>
     );
   }
@@ -79,6 +89,7 @@ export default function ProviderDetailScreen() {
 
   return (
     <View style={styles.container}>
+      <AppHeader title={headerTitle} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Gallery */}
         {provider.images.length > 0 ? (
@@ -155,9 +166,21 @@ export default function ProviderDetailScreen() {
             <Text style={styles.muted}>No description added yet.</Text>
           )}
 
-          {/* Services (pick one) */}
-          <Text style={styles.sectionTitle}>Select a service</Text>
-          {services.length === 0 ? (
+          {/* Services — locked to the original service when rescheduling. */}
+          <Text style={styles.sectionTitle}>{isReschedule ? 'Rescheduling' : 'Select a service'}</Text>
+          {isReschedule ? (
+            selectedService && (
+              <View style={[styles.serviceRow, styles.serviceRowActive]}>
+                <View style={styles.serviceInfo}>
+                  <Text style={styles.serviceName}>{selectedService.name}</Text>
+                  <Text style={styles.serviceMeta}>{formatDuration(selectedService.durationMin)}</Text>
+                </View>
+                <Text style={styles.servicePrice}>
+                  {formatPrice(selectedService.priceMinor, selectedService.currency)}
+                </Text>
+              </View>
+            )
+          ) : services.length === 0 ? (
             <Text style={styles.muted}>No services listed yet.</Text>
           ) : (
             services.map((s) => {
@@ -217,8 +240,18 @@ export default function ProviderDetailScreen() {
             </View>
           ) : (
             <View style={styles.slotWrap}>
-              {slots.map((slot) => {
-                const iso = slot.toISOString();
+              {slots.map(({ time, booked }) => {
+                const iso = time.toISOString();
+
+                if (booked) {
+                  return (
+                    <View key={iso} style={[styles.slot, styles.slotBooked]}>
+                      <Text style={[styles.slotText, styles.slotTextBooked]}>{timeLabel(time)}</Text>
+                      <Text style={styles.slotBookedTag}>Booked</Text>
+                    </View>
+                  );
+                }
+
                 const active = iso === selectedSlot;
                 return (
                   <TouchableOpacity
@@ -228,12 +261,31 @@ export default function ProviderDetailScreen() {
                     onPress={() => selectSlot(iso)}
                   >
                     <Text style={[styles.slotText, active && styles.slotTextActive]}>
-                      {timeLabel(slot)}
+                      {timeLabel(time)}
                     </Text>
                   </TouchableOpacity>
                 );
               })}
             </View>
+          )}
+
+          {/* Reviews (preview) */}
+          {!isReschedule && reviews.length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>Reviews ({reviews.length})</Text>
+              {reviews.slice(0, 3).map((r) => (
+                <ReviewItem key={r.id} review={r} />
+              ))}
+              {reviews.length > 3 && (
+                <TouchableOpacity
+                  style={styles.viewAllBtn}
+                  activeOpacity={0.85}
+                  onPress={onViewAllReviews}
+                >
+                  <Text style={styles.viewAllBtnText}>View all {reviews.length} reviews</Text>
+                </TouchableOpacity>
+              )}
+            </>
           )}
         </View>
       </ScrollView>
@@ -243,7 +295,7 @@ export default function ProviderDetailScreen() {
         <Text style={styles.bookHint}>{hint}</Text>
         <AppButton
           style={styles.bookBtn}
-          title="Book now"
+          title={isReschedule ? 'Reschedule' : 'Book now'}
           onPress={onBook}
           loading={booking}
           disabled={!canBook}

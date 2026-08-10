@@ -2,10 +2,8 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { BaseQueryFn } from '@reduxjs/toolkit/query';
 
-import BASE_URL from './APIUtils';
+import BASE_URL, { endpoints } from './APIUtils';
 import { StorageKeys } from '@/utils/Constants';
-import { replace } from '@/navigation/NavigationService';
-import { ROUTES } from '@/navigation/routes';
 import DEBUG_LOGGER, { ERROR, INFO } from '@/utils/DebugLogger';
 
 const FILE = 'apiConfigs';
@@ -46,16 +44,72 @@ networkCall.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Response interceptor — global 401 handling (session expired → login).
+// ── Token refresh (on 401) ───────────────────────────────────────────────────
+// The access token is short-lived (15m). When a request 401s we transparently
+// mint a new access token from the stored refresh token and retry — so a long
+// session (e.g. browse, then book) doesn't fail. Concurrent 401s share one
+// refresh via `refreshPromise`.
+let refreshPromise: Promise<string | null> | null = null;
+
+async function refreshAccessToken(): Promise<string | null> {
+  const refreshToken = await AsyncStorage.getItem(StorageKeys.refreshToken);
+  if (!refreshToken) return null;
+  try {
+    // Bare axios (not `networkCall`) so this request skips the interceptors.
+    const res = await axios.post(`${BASE_URL}${endpoints.refresh}`, { refreshToken });
+    const tokens = res.data?.data ?? res.data;
+    const accessToken: string | undefined = tokens?.accessToken;
+    if (!accessToken) return null;
+    setTokenCache(accessToken);
+    await AsyncStorage.multiSet([
+      [StorageKeys.accessToken, accessToken],
+      [StorageKeys.refreshToken, tokens.refreshToken ?? refreshToken],
+    ]);
+    return accessToken;
+  } catch {
+    return null;
+  }
+}
+
+/** Clears the session in Redux; RootNavigator swaps to the auth stack on its own. */
+async function endSession() {
+  clearTokenCache();
+  await AsyncStorage.multiRemove([StorageKeys.accessToken, StorageKeys.refreshToken]);
+  try {
+    // Lazy require avoids a circular import (store → apis → apiConfigs).
+    const store = require('../redux/store').default;
+    const { clearCurrentUser } = require('../redux/slices/userSlice');
+    store.dispatch(clearCurrentUser());
+  } catch {
+    // If the store isn't ready, the next launch starts unauthenticated anyway.
+  }
+}
+
+// Response interceptor — refresh the token on 401 and retry once.
 networkCall.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      DEBUG_LOGGER('401 received — clearing session', 'interceptor', FILE, '55', ERROR);
-      clearTokenCache();
-      await AsyncStorage.multiRemove([StorageKeys.accessToken, StorageKeys.refreshToken]);
-      replace(ROUTES.LOGIN);
+    const original = error.config as (AxiosRequestConfig & { _retry?: boolean }) | undefined;
+
+    if (error.response?.status === 401 && original && !original._retry) {
+      original._retry = true;
+      if (!refreshPromise) {
+        refreshPromise = refreshAccessToken().finally(() => {
+          refreshPromise = null;
+        });
+      }
+      const newToken = await refreshPromise;
+
+      if (newToken) {
+        // Retry the original request; the request interceptor re-attaches the
+        // freshly cached token.
+        return networkCall(original);
+      }
+
+      DEBUG_LOGGER('Refresh failed — signing out', 'interceptor', FILE, '55', ERROR);
+      await endSession();
     }
+
     return Promise.reject(error);
   },
 );

@@ -4,6 +4,20 @@ import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
 const SCREEN_W = Dimensions.get('window').width;
 
 export const styles = StyleSheet.create({
+  viewAllBtn: {
+    marginTop: Spacing.md,
+    paddingVertical: 12,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Color.border,
+    backgroundColor: Color.surface,
+    alignItems: 'center',
+  },
+  viewAllBtnText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
+    color: Color.primary,
+  },
   container: {
     flex: 1,
     backgroundColor: Color.background,
@@ -218,6 +232,7 @@ export const styles = StyleSheet.create({
     marginTop: Spacing.md,
   },
   slot: {
+    alignItems: 'center',
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
     borderRadius: Radius.md,
@@ -229,6 +244,10 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.primary,
     borderColor: Color.primary,
   },
+  slotBooked: {
+    backgroundColor: Color.background,
+    borderColor: Color.border,
+  },
   slotText: {
     fontSize: FontSize.sm,
     fontWeight: FontWeight.semibold,
@@ -236,6 +255,16 @@ export const styles = StyleSheet.create({
   },
   slotTextActive: {
     color: Color.white,
+  },
+  slotTextBooked: {
+    color: Color.placeholder,
+    textDecorationLine: 'line-through',
+  },
+  slotBookedTag: {
+    marginTop: 2,
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.semibold,
+    color: Color.textSecondary,
   },
 
   // Sticky book bar
