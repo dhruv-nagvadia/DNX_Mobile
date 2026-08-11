@@ -54,6 +54,15 @@ export function useBookingDetail() {
     });
   }, [booking, navigation]);
 
+  const onRemind = useCallback(() => {
+    if (!booking) return;
+    navigation.navigate(ROUTES.ADD_REMINDER, {
+      prefillTitle: `${booking.provider.businessName} — next ${booking.service.name}`,
+      prefillType: 'appointment',
+      providerId: booking.provider.id,
+    });
+  }, [booking, navigation]);
+
   const openReview = useCallback(() => {
     setRating(5);
     setComment('');
@@ -81,6 +90,7 @@ export function useBookingDetail() {
     cancelling,
     onCancel,
     onReschedule,
+    onRemind,
     reviewOpen,
     openReview,
     closeReview,

@@ -43,6 +43,7 @@ export default function BookingDetailScreen() {
     isLoading,
     onCancel,
     onReschedule,
+    onRemind,
     reviewOpen,
     openReview,
     closeReview,
@@ -187,6 +188,16 @@ export default function BookingDetailScreen() {
             onPress={openReview}
           >
             <Text style={styles.actionPrimaryText}>Leave a review</Text>
+          </TouchableOpacity>
+        )}
+
+        {booking.status === 'COMPLETED' && (
+          <TouchableOpacity
+            style={[styles.actionBtn, styles.actionGhost]}
+            activeOpacity={0.85}
+            onPress={onRemind}
+          >
+            <Text style={styles.actionGhostText}>Remind me to book again</Text>
           </TouchableOpacity>
         )}
       </ScrollView>

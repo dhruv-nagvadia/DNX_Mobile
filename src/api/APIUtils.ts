@@ -46,4 +46,9 @@ export const endpoints = {
 
   // Reviews (public)
   providerReviews: (id: string) => `/customer/providers/${id}/reviews`,
+
+  // Reminders
+  reminders: '/customer/reminders',
+  reminder: (id: string) => `/customer/reminders/${id}`,
+  reminderDone: (id: string) => `/customer/reminders/${id}/done`,
 };

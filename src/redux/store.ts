@@ -5,6 +5,7 @@ import { authApi } from './api/auth/authApi';
 import { categoryApi } from './api/category/categoryApi';
 import { providerApi } from './api/provider/providerApi';
 import { bookingApi } from './api/booking/bookingApi';
+import { reminderApi } from './api/reminder/reminderApi';
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     [categoryApi.reducerPath]: categoryApi.reducer,
     [providerApi.reducerPath]: providerApi.reducer,
     [bookingApi.reducerPath]: bookingApi.reducer,
+    [reminderApi.reducerPath]: reminderApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -23,6 +25,7 @@ const store = configureStore({
       categoryApi.middleware,
       providerApi.middleware,
       bookingApi.middleware,
+      reminderApi.middleware,
     ),
 });
 

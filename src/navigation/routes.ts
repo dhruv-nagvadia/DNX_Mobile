@@ -9,6 +9,7 @@ export const ROUTES = {
   BOOKINGS: 'BookingsScreen',
   BOOKING_DETAILS: 'BookingDetailsScreen',
   REMINDERS: 'RemindersScreen',
+  ADD_REMINDER: 'AddReminderScreen',
   PROFILE: 'ProfileScreen',
   CATEGORY: 'CategoryScreen',
   PROVIDER_LIST: 'ProviderListScreen',
@@ -30,6 +31,12 @@ export type RootStackParamList = {
   [ROUTES.BOOKINGS]: undefined;
   [ROUTES.BOOKING_DETAILS]: { bookingId: string };
   [ROUTES.REMINDERS]: undefined;
+  [ROUTES.ADD_REMINDER]: {
+    id?: string;
+    prefillTitle?: string;
+    prefillType?: string;
+    providerId?: string;
+  };
   [ROUTES.PROFILE]: undefined;
   [ROUTES.CATEGORY]: { slug: string; name: string };
   [ROUTES.PROVIDER_LIST]: { categorySlug?: string; subcategorySlug?: string; title: string };

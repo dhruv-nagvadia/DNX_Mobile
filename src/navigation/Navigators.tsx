@@ -22,6 +22,7 @@ import GalleryScreen from '@/screens/gallery/GalleryScreen';
 import SearchScreen from '@/screens/search/SearchScreen';
 import BookingDetailScreen from '@/screens/bookings/BookingDetailScreen';
 import ReviewsScreen from '@/screens/reviews/ReviewsScreen';
+import AddReminderScreen from '@/screens/reminders/AddReminderScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -114,6 +115,7 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.SEARCH} component={SearchScreen} />
       <Stack.Screen name={ROUTES.BOOKING_DETAILS} component={BookingDetailScreen} />
       <Stack.Screen name={ROUTES.REVIEWS} component={ReviewsScreen} />
+      <Stack.Screen name={ROUTES.ADD_REMINDER} component={AddReminderScreen} />
     </Stack.Navigator>
   );
 }
