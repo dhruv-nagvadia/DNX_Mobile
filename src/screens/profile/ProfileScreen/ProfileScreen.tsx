@@ -23,6 +23,7 @@ import {
 } from 'lucide-react-native';
 
 import { Glow } from '@/components/AuthHero/Glow';
+import { GradientBackground } from '@/components/GradientBackground';
 import { Color } from '@/utils/Theme';
 
 import { useProfileScreen } from './useProfileScreen';
@@ -46,8 +47,9 @@ export default function ProfileScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Ink hero */}
         <View style={[styles.hero, { paddingTop: insets.top + 20 }]}>
-          <Glow size={340} color={Color.accent} top={-150} left={-110} opacity={0.5} />
-          <Glow size={280} color={Color.accent2} top={-80} right={-100} opacity={0.45} />
+          <GradientBackground />
+          <Glow size={340} color={Color.heroBlue1} top={-150} left={-110} opacity={0.5} />
+          <Glow size={290} color={Color.heroBlue2} top={-80} right={-100} opacity={0.44} />
 
           <TouchableOpacity
             style={[styles.editBtn, { top: insets.top + 8 }]}

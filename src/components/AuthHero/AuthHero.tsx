@@ -3,6 +3,7 @@ import { AccessibilityInfo, Animated, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Color, Duration } from '@/utils/Theme';
+import { GradientBackground } from '@/components/GradientBackground';
 
 import { Glow } from './Glow';
 import { AuthHeroProps } from './types';
@@ -57,9 +58,10 @@ export function AuthHero({ promise, accentTail, compact = false }: AuthHeroProps
         { paddingTop: insets.top + (compact ? 14 : 20) },
       ]}
     >
-      {/* Decorative aurora — two offset glows behind the content. */}
-      <Glow size={360} color={Color.accent} top={-150} left={-120} opacity={0.5} />
-      <Glow size={300} color={Color.accent2} top={-90} right={-110} opacity={0.45} />
+      {/* Dark ink→navy gradient base with a blue aurora over it. */}
+      <GradientBackground />
+      <Glow size={380} color={Color.heroBlue1} top={-150} left={-120} opacity={0.5} />
+      <Glow size={320} color={Color.heroBlue2} top={-90} right={-110} opacity={0.44} />
 
       <Animated.View style={animatedStyle}>
         <View style={styles.logoRow}>

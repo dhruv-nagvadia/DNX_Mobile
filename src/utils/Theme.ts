@@ -43,6 +43,10 @@ export const Color = {
   accent: '#38BDF8',
   accent2: '#818CF8',
   accentSoft: 'rgba(56, 189, 248, 0.16)',
+
+  // Light-blue hero gradient — used only by the login & profile heroes.
+  heroBlue1: '#38BDF8',
+  heroBlue2: '#5AA9FF',
 };
 
 /** Animation durations, in ms. Mirrors --dur-* on the web app. */
