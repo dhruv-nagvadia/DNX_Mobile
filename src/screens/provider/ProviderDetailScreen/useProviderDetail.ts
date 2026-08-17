@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import {
@@ -9,9 +9,12 @@ import {
 import { BusinessHour, DateHour } from '@/redux/api/provider/types';
 import {
   useCreateBookingMutation,
+  useCreatePaymentLinkMutation,
   useGetBookedSlotsQuery,
   useRescheduleBookingMutation,
+  useSimulatePaymentMutation,
 } from '@/redux/api/booking/bookingApi';
+import { PaymentMethod } from '@/redux/api/booking/types';
 import { addRecentlyViewed } from '@/utils/recentlyViewed';
 import { ROUTES } from '@/navigation/routes';
 import { ProviderDetailNavigationProp, ProviderDetailRouteProp } from './types';
@@ -106,6 +109,9 @@ export function useProviderDetail() {
   const { data: reviews = [] } = useGetProviderReviewsQuery(params.providerId);
   const [createBooking, { isLoading: booking }] = useCreateBookingMutation();
   const [reschedule, { isLoading: rescheduling }] = useRescheduleBookingMutation();
+  const [createPaymentLink, { isLoading: linking }] = useCreatePaymentLinkMutation();
+  const [simulatePayment, { isLoading: simulating }] = useSimulatePaymentMutation();
+  const [methodOpen, setMethodOpen] = useState(false);
 
   // When rescheduling, the service is fixed to the original booking's service.
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
@@ -142,6 +148,7 @@ export function useProviderDetail() {
   const dayOpen = dayConfig !== null;
 
   const submitting = booking || rescheduling;
+  const paymentBusy = booking || linking || simulating;
 
   // Drop a chosen slot that's no longer available (day/service change, or
   // someone else just booked it).
@@ -189,6 +196,7 @@ export function useProviderDetail() {
 
   const canBook = !!selectedServiceId && !!selectedSlot && !submitting;
 
+  // The book button: reschedule directly, otherwise open the payment sheet.
   const onBook = useCallback(async () => {
     if (!provider) return;
     if (!selectedServiceId) {
@@ -199,8 +207,8 @@ export function useProviderDetail() {
       Alert.alert('Pick a time', 'Choose an available time slot to continue.');
       return;
     }
-    try {
-      if (isReschedule && params.rescheduleBookingId) {
+    if (isReschedule && params.rescheduleBookingId) {
+      try {
         await reschedule({
           id: params.rescheduleBookingId,
           providerId: provider.id,
@@ -209,35 +217,77 @@ export function useProviderDetail() {
         Alert.alert('Booking rescheduled', 'Your new time is saved.', [
           { text: 'Done', onPress: () => navigation.goBack() },
         ]);
-      } else {
-        await createBooking({
+      } catch (err) {
+        const status = (err as { status?: number })?.status;
+        Alert.alert(
+          'Could not reschedule',
+          status === 409
+            ? 'That slot was just taken. Please pick another time.'
+            : 'Something went wrong. Please try again.',
+        );
+      }
+      return;
+    }
+    setMethodOpen(true);
+  }, [provider, selectedServiceId, selectedSlot, isReschedule, params.rescheduleBookingId, reschedule, navigation]);
+
+  // Create the booking with the chosen method, then pay if online/partial.
+  const chooseMethod = useCallback(
+    async (method: PaymentMethod) => {
+      if (!provider || !selectedServiceId || !selectedSlot) return;
+      let created;
+      try {
+        created = await createBooking({
           providerId: provider.id,
           serviceId: selectedServiceId,
           startTime: selectedSlot,
+          paymentMethod: method,
         }).unwrap();
-        Alert.alert('Booking confirmed', 'You can see it under “Your bookings”.', [
+      } catch (err) {
+        setMethodOpen(false);
+        const status = (err as { status?: number })?.status;
+        Alert.alert(
+          'Could not book',
+          status === 409
+            ? 'That slot was just taken. Please pick another time.'
+            : 'Something went wrong. Please try again.',
+        );
+        return;
+      }
+
+      if (method === 'CASH') {
+        setMethodOpen(false);
+        Alert.alert('Booking confirmed', 'Pay cash at the venue. See it under “Your bookings”.', [
           { text: 'Done', onPress: () => navigation.goBack() },
         ]);
+        return;
       }
-    } catch (err) {
-      const status = (err as { status?: number })?.status;
-      Alert.alert(
-        isReschedule ? 'Could not reschedule' : 'Could not book',
-        status === 409
-          ? 'That slot was just taken. Please pick another time.'
-          : 'Something went wrong. Please try again.',
-      );
-    }
-  }, [
-    provider,
-    selectedServiceId,
-    selectedSlot,
-    isReschedule,
-    params.rescheduleBookingId,
-    reschedule,
-    createBooking,
-    navigation,
-  ]);
+
+      try {
+        const link = await createPaymentLink({ bookingId: created.id }).unwrap();
+        setMethodOpen(false);
+        if (link.simulated) {
+          await simulatePayment({ bookingId: created.id }).unwrap();
+          Alert.alert('Payment successful', 'Your booking is paid and confirmed.', [
+            { text: 'Done', onPress: () => navigation.goBack() },
+          ]);
+        } else if (link.url) {
+          await Linking.openURL(link.url);
+          Alert.alert('Complete your payment', 'Finish paying in your browser — see it under “Your bookings”.', [
+            { text: 'Done', onPress: () => navigation.goBack() },
+          ]);
+        } else {
+          navigation.goBack();
+        }
+      } catch {
+        setMethodOpen(false);
+        Alert.alert('Booked — payment pending', 'Your booking is saved. You can pay it from “Your bookings”.', [
+          { text: 'OK', onPress: () => navigation.goBack() },
+        ]);
+      }
+    },
+    [provider, selectedServiceId, selectedSlot, createBooking, createPaymentLink, simulatePayment, navigation],
+  );
 
   const headerTitle = isReschedule
     ? 'Reschedule'
@@ -265,5 +315,15 @@ export function useProviderDetail() {
     canBook,
     booking: submitting,
     onBook,
+    // Payment method sheet
+    methodOpen,
+    closeMethod: () => setMethodOpen(false),
+    chooseMethod,
+    paymentBusy,
+    payTotal: selectedService?.priceMinor ?? 0,
+    payCurrency: selectedService?.currency ?? 'INR',
+    // Default to 20% when the provider hasn't configured a deposit.
+    depositPercent: provider?.depositPercent || 20,
+    payServiceName: selectedService?.name,
   };
 }

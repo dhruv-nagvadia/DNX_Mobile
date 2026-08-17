@@ -15,6 +15,7 @@ import { Star, BadgeCheck, MapPin, Clock } from 'lucide-react-native';
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { AppButton } from '@/components/AppButton';
+import { PaymentMethodModal } from '@/components/PaymentMethodModal';
 import { ReviewItem } from '@/components/ReviewItem';
 import { Color } from '@/utils/Theme';
 
@@ -68,6 +69,14 @@ export default function ProviderDetailScreen() {
     canBook,
     booking,
     onBook,
+    methodOpen,
+    closeMethod,
+    chooseMethod,
+    paymentBusy,
+    payTotal,
+    payCurrency,
+    depositPercent,
+    payServiceName,
   } = useProviderDetail();
 
   const [activeImage, setActiveImage] = useState(0);
@@ -301,6 +310,17 @@ export default function ProviderDetailScreen() {
           disabled={!canBook}
         />
       </View>
+
+      <PaymentMethodModal
+        visible={methodOpen}
+        total={payTotal}
+        currency={payCurrency}
+        depositPercent={depositPercent}
+        serviceName={payServiceName}
+        loading={paymentBusy}
+        onSelect={chooseMethod}
+        onClose={closeMethod}
+      />
     </View>
   );
 }

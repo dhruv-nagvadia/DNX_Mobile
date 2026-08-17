@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppButton } from '@/components/AppButton';
 import { Glow } from '@/components/AuthHero';
+import { GradientBackground } from '@/components/GradientBackground';
 import { Color, Spacing } from '@/utils/Theme';
 
 import { SlideVisual } from './SlideVisual';
@@ -20,9 +21,10 @@ export default function OnboardingScreen() {
     <View style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor={Color.ink} />
 
-      {/* Same aurora as the auth hero, so onboarding and sign-in feel like one app. */}
-      <Glow size={420} color={Color.accent} top={-190} left={-150} opacity={0.45} />
-      <Glow size={340} color={Color.accent2} top={-110} right={-130} opacity={0.4} />
+      {/* Same dark gradient + blue aurora as the auth hero, so it feels like one app. */}
+      <GradientBackground />
+      <Glow size={420} color={Color.heroBlue1} top={-190} left={-150} opacity={0.45} />
+      <Glow size={340} color={Color.heroBlue2} top={-110} right={-130} opacity={0.4} />
 
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <View style={styles.logoRow}>

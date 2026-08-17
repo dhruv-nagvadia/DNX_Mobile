@@ -1,7 +1,13 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { axiosBaseQuery } from '@/api/apiConfigs';
 import { endpoints } from '@/api/APIUtils';
-import { Booking, BookedSlot, CreateBookingRequest, CreateReviewRequest } from './types';
+import {
+  Booking,
+  BookedSlot,
+  CreateBookingRequest,
+  CreateReviewRequest,
+  PaymentLinkResponse,
+} from './types';
 import { ApiEnvelope } from '../types';
 
 export const bookingApi = createApi({
@@ -68,6 +74,25 @@ export const bookingApi = createApi({
       transformResponse: (res: ApiEnvelope<{ id: string }>) => res.data,
       invalidatesTags: ['MyBookings'],
     }),
+
+    // Payments
+    createPaymentLink: builder.mutation<PaymentLinkResponse, { bookingId: string }>({
+      query: (data) => ({ endpoint: endpoints.paymentLink, method: 'post', data }),
+      transformResponse: (res: ApiEnvelope<PaymentLinkResponse>) => res.data,
+    }),
+
+    simulatePayment: builder.mutation<{ bookingId: string }, { bookingId: string }>({
+      query: (data) => ({ endpoint: endpoints.paymentSimulate, method: 'post', data }),
+      transformResponse: (res: ApiEnvelope<{ bookingId: string }>) => res.data,
+      invalidatesTags: ['MyBookings'],
+    }),
+
+    // Reconciles a payment's status with Razorpay (fallback when no webhook).
+    syncPayment: builder.mutation<{ paymentStatus: string }, { bookingId: string }>({
+      query: (data) => ({ endpoint: endpoints.paymentSync, method: 'post', data }),
+      transformResponse: (res: ApiEnvelope<{ paymentStatus: string }>) => res.data,
+      invalidatesTags: ['MyBookings'],
+    }),
   }),
 });
 
@@ -78,4 +103,7 @@ export const {
   useCancelBookingMutation,
   useRescheduleBookingMutation,
   useCreateReviewMutation,
+  useCreatePaymentLinkMutation,
+  useSimulatePaymentMutation,
+  useSyncPaymentMutation,
 } = bookingApi;

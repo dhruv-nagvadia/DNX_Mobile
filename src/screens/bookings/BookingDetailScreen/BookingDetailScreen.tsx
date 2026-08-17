@@ -44,6 +44,8 @@ export default function BookingDetailScreen() {
     onCancel,
     onReschedule,
     onRemind,
+    onPay,
+    paying,
     reviewOpen,
     openReview,
     closeReview,
@@ -80,6 +82,19 @@ export default function BookingDetailScreen() {
   const [pillBg, pillColor] = statusColors(booking.status);
   const upcoming = isUpcomingBooking(booking.status, booking.endTime);
   const canReview = booking.status === 'COMPLETED' && !booking.review;
+  const canPay =
+    booking.paymentStatus === 'PENDING' &&
+    booking.paymentMethod !== 'CASH' &&
+    booking.status !== 'CANCELLED';
+  const remaining = Math.max(0, (booking.amountMinor ?? 0) - booking.amountPaidMinor);
+  const payInfo =
+    booking.paymentStatus === 'PAID'
+      ? { text: 'Paid', color: Color.success }
+      : booking.paymentStatus === 'PARTIAL'
+        ? { text: `Partial · ${formatPrice(remaining, booking.currency)} due`, color: Color.warning }
+        : booking.paymentMethod === 'CASH'
+          ? { text: 'Cash · pay at venue', color: Color.textSecondary }
+          : { text: 'Payment pending', color: Color.warning };
 
   return (
     <View style={styles.container}>
@@ -125,13 +140,37 @@ export default function BookingDetailScreen() {
             <Text style={styles.rowLabel}>Duration</Text>
             <Text style={styles.rowValue}>{formatDuration(booking.service.durationMin)}</Text>
           </View>
-          <View style={[styles.row, styles.rowLast]}>
+          <View style={styles.row}>
             <Text style={styles.rowLabel}>Price</Text>
             <Text style={styles.priceValue}>
               {formatPrice(booking.amountMinor, booking.currency)}
             </Text>
           </View>
+          <View style={[styles.row, styles.rowLast]}>
+            <Text style={styles.rowLabel}>Payment</Text>
+            <Text style={[styles.rowValue, { color: payInfo.color }]}>{payInfo.text}</Text>
+          </View>
         </View>
+
+        {/* Pay now */}
+        {canPay && (
+          <TouchableOpacity
+            style={[styles.actionBtn, styles.actionPrimary]}
+            activeOpacity={0.85}
+            onPress={onPay}
+            disabled={paying}
+          >
+            {paying ? (
+              <ActivityIndicator color={Color.white} />
+            ) : (
+              <Text style={styles.actionPrimaryText}>
+                {booking.paymentMethod === 'ONLINE'
+                  ? `Pay ${formatPrice(booking.amountMinor, booking.currency)} now`
+                  : 'Pay now'}
+              </Text>
+            )}
+          </TouchableOpacity>
+        )}
 
         {/* Provider's cancel note */}
         {booking.status === 'CANCELLED' && !!booking.cancelReason && (

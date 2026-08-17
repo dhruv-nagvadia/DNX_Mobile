@@ -38,6 +38,7 @@ export interface Provider {
   ratingAvg: number;
   ratingCount: number;
   isVerified: boolean;
+  depositPercent?: number;
   category: Category;
   subcategory?: Subcategory | null;
   services: Service[];

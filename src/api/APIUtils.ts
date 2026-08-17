@@ -44,6 +44,11 @@ export const endpoints = {
   rescheduleBooking: (id: string) => `/customer/bookings/${id}/reschedule`,
   bookingReview: (id: string) => `/customer/bookings/${id}/review`,
 
+  // Payments
+  paymentLink: '/customer/payments/link',
+  paymentSimulate: '/customer/payments/simulate',
+  paymentSync: '/customer/payments/sync',
+
   // Reviews (public)
   providerReviews: (id: string) => `/customer/providers/${id}/reviews`,
 
