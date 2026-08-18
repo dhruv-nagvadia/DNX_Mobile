@@ -255,7 +255,9 @@ export default function ProviderDetailScreen() {
                 if (booked) {
                   return (
                     <View key={iso} style={[styles.slot, styles.slotBooked]}>
-                      <Text style={[styles.slotText, styles.slotTextBooked]}>{timeLabel(time)}</Text>
+                      <Text numberOfLines={1} style={[styles.slotText, styles.slotTextBooked]}>
+                        {timeLabel(time)}
+                      </Text>
                       <Text style={styles.slotBookedTag}>Booked</Text>
                     </View>
                   );
@@ -269,7 +271,7 @@ export default function ProviderDetailScreen() {
                     activeOpacity={0.85}
                     onPress={() => selectSlot(iso)}
                   >
-                    <Text style={[styles.slotText, active && styles.slotTextActive]}>
+                    <Text numberOfLines={1} style={[styles.slotText, active && styles.slotTextActive]}>
                       {timeLabel(time)}
                     </Text>
                   </TouchableOpacity>

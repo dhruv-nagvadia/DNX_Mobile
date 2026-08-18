@@ -232,9 +232,12 @@ export const styles = StyleSheet.create({
     marginTop: Spacing.md,
   },
   slot: {
+    // ~3 even columns; every slot the same size so rows line up.
+    width: '31.5%',
+    height: 50,
     alignItems: 'center',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 10,
+    justifyContent: 'center',
+    paddingHorizontal: 4,
     borderRadius: Radius.md,
     backgroundColor: Color.surface,
     borderWidth: 1,

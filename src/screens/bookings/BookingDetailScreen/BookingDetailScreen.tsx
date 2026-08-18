@@ -5,7 +5,7 @@ import { Star, BadgeCheck } from 'lucide-react-native';
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Color, FontWeight } from '@/utils/Theme';
-import { STATUS_LABEL, statusColors, isUpcomingBooking } from '@/utils/bookingStatus';
+import { STATUS_LABEL, statusColors, isUpcomingBooking, paymentSummary } from '@/utils/bookingStatus';
 
 import { useBookingDetail } from './useBookingDetail';
 import { styles } from './styles';
@@ -86,15 +86,7 @@ export default function BookingDetailScreen() {
     booking.paymentStatus === 'PENDING' &&
     booking.paymentMethod !== 'CASH' &&
     booking.status !== 'CANCELLED';
-  const remaining = Math.max(0, (booking.amountMinor ?? 0) - booking.amountPaidMinor);
-  const payInfo =
-    booking.paymentStatus === 'PAID'
-      ? { text: 'Paid', color: Color.success }
-      : booking.paymentStatus === 'PARTIAL'
-        ? { text: `Partial · ${formatPrice(remaining, booking.currency)} due`, color: Color.warning }
-        : booking.paymentMethod === 'CASH'
-          ? { text: 'Cash · pay at venue', color: Color.textSecondary }
-          : { text: 'Payment pending', color: Color.warning };
+  const pay = paymentSummary(booking);
 
   return (
     <View style={styles.container}>
@@ -136,19 +128,42 @@ export default function BookingDetailScreen() {
               {formatTime(booking.startTime)} – {formatTime(booking.endTime)}
             </Text>
           </View>
-          <View style={styles.row}>
+          <View style={[styles.row, styles.rowLast]}>
             <Text style={styles.rowLabel}>Duration</Text>
             <Text style={styles.rowValue}>{formatDuration(booking.service.durationMin)}</Text>
           </View>
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Price</Text>
-            <Text style={styles.priceValue}>
-              {formatPrice(booking.amountMinor, booking.currency)}
-            </Text>
-          </View>
-          <View style={[styles.row, styles.rowLast]}>
-            <Text style={styles.rowLabel}>Payment</Text>
-            <Text style={[styles.rowValue, { color: payInfo.color }]}>{payInfo.text}</Text>
+        </View>
+
+        {/* Payment receipt */}
+        <View>
+          <Text style={styles.sectionTitle}>Payment</Text>
+          <View style={styles.card}>
+            <View style={styles.row}>
+              <Text style={styles.rowLabel}>Method</Text>
+              <Text style={styles.rowValue}>{pay.methodLabel}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.rowLabel}>Total</Text>
+              <Text style={styles.priceValue}>
+                {formatPrice(booking.amountMinor, booking.currency)}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.rowLabel}>Paid</Text>
+              <Text style={styles.rowValue}>{formatPrice(pay.paid, booking.currency)}</Text>
+            </View>
+            {pay.due > 0 && (
+              <View style={styles.row}>
+                <Text style={styles.rowLabel}>Due</Text>
+                <Text style={[styles.rowValue, styles.dueValue]}>
+                  {formatPrice(pay.due, booking.currency)}
+                </Text>
+              </View>
+            )}
+            <View style={[styles.row, styles.rowLast]}>
+              <Text style={styles.rowLabel}>Status</Text>
+              <Text style={[styles.rowValue, { color: pay.color }]}>{pay.label}</Text>
+            </View>
           </View>
         </View>
 

@@ -55,6 +55,11 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: Color.textSecondary,
   },
+  pay: {
+    marginTop: 3,
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.semibold,
+  },
 
   statusPill: {
     paddingHorizontal: 10,

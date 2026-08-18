@@ -115,6 +115,10 @@ export const styles = StyleSheet.create({
     fontWeight: FontWeight.extrabold,
     color: Color.textPrimary,
   },
+  dueValue: {
+    color: Color.warning,
+    fontWeight: FontWeight.extrabold,
+  },
 
   // Section title
   sectionTitle: {

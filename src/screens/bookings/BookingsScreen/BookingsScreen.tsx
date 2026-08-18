@@ -5,7 +5,7 @@ import { CalendarDays, ChevronRight } from 'lucide-react-native';
 
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Color } from '@/utils/Theme';
-import { STATUS_LABEL, statusColors } from '@/utils/bookingStatus';
+import { STATUS_LABEL, statusColors, paymentSummary } from '@/utils/bookingStatus';
 
 import { useBookingsScreen } from './useBookingsScreen';
 import { styles } from './styles';
@@ -15,6 +15,11 @@ function formatWhen(iso: string): string {
   const date = d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
   const time = d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
   return `${date} · ${time}`;
+}
+
+function formatPrice(minor: number, currency: string | null): string {
+  const amount = (minor / 100).toLocaleString('en-IN');
+  return currency === 'INR' || !currency ? `₹${amount}` : `${amount} ${currency}`;
 }
 
 /** Bookings tab — tap a booking to see its full detail. */
@@ -43,6 +48,12 @@ export default function BookingsScreen() {
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           {bookings.map((b) => {
             const [pillBg, pillColor] = statusColors(b.status);
+            const pay = paymentSummary(b);
+            const showPay = b.status !== 'CANCELLED' && b.status !== 'NO_SHOW';
+            const payText =
+              b.paymentStatus === 'PARTIAL' && pay.due > 0
+                ? `${formatPrice(pay.due, b.currency)} due`
+                : pay.label;
             return (
               <TouchableOpacity
                 key={b.id}
@@ -61,6 +72,11 @@ export default function BookingsScreen() {
                     <Text style={styles.meta} numberOfLines={1}>
                       {b.service.name} · {formatWhen(b.startTime)}
                     </Text>
+                    {showPay && (
+                      <Text style={[styles.pay, { color: pay.color }]} numberOfLines={1}>
+                        {payText}
+                      </Text>
+                    )}
                   </View>
                   <View style={[styles.statusPill, { backgroundColor: pillBg }]}>
                     <Text style={[styles.statusText, { color: pillColor }]}>
