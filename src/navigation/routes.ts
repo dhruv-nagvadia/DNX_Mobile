@@ -18,6 +18,7 @@ export const ROUTES = {
   SEARCH: 'SearchScreen',
   REVIEWS: 'ReviewsScreen',
   ACCOUNT: 'AccountScreen',
+  CART: 'CartScreen',
 } as const;
 
 /** Type-safe params for every route. `undefined` = no params. */
@@ -51,4 +52,5 @@ export type RootStackParamList = {
   [ROUTES.SEARCH]: undefined;
   [ROUTES.REVIEWS]: { providerId: string; businessName?: string };
   [ROUTES.ACCOUNT]: undefined;
+  [ROUTES.CART]: undefined;
 };

@@ -9,7 +9,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, MapPin, ChevronDown, Bell, Star, Users } from 'lucide-react-native';
+import { Search, MapPin, ChevronDown, Bell, Star, Users, ShoppingBag } from 'lucide-react-native';
 
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Color } from '@/utils/Theme';
@@ -25,6 +25,7 @@ export default function HomeScreen() {
     location,
     offers,
     mostBooked,
+    stores,
     recentlyViewed,
     trustStats,
     categories,
@@ -34,6 +35,8 @@ export default function HomeScreen() {
     onRecentPress,
     goToProfile,
     goToSearch,
+    goToCart,
+    cartCount,
   } = useHomeScreen();
 
   return (
@@ -51,6 +54,19 @@ export default function HomeScreen() {
           </TouchableOpacity>
 
           <View style={styles.headerRight}>
+            <TouchableOpacity
+              style={styles.bellBtn}
+              activeOpacity={0.8}
+              onPress={goToCart}
+              accessibilityLabel="Cart"
+            >
+              <ShoppingBag size={20} color={Color.textPrimary} />
+              {cartCount > 0 && (
+                <View style={styles.bellBadge}>
+                  <Text style={styles.bellBadgeText}>{cartCount}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
             <TouchableOpacity style={styles.bellBtn} activeOpacity={0.8} accessibilityLabel="Notifications">
               <Bell size={20} color={Color.textPrimary} />
               <View style={styles.bellBadge}>
@@ -69,7 +85,7 @@ export default function HomeScreen() {
         {/* Search */}
         <TouchableOpacity style={styles.search} activeOpacity={0.85} onPress={goToSearch}>
           <Search size={18} color={Color.placeholder} />
-          <Text style={styles.searchText}>Search salons, doctors, plumbers…</Text>
+          <Text style={styles.searchText}>Search stores, salons, doctors…</Text>
         </TouchableOpacity>
 
         {/* Trust banner (top) */}
@@ -132,11 +148,61 @@ export default function HomeScreen() {
           </View>
         )}
 
+        {/* Stores you can order from */}
+        {stores.length > 0 && (
+          <>
+            <View style={styles.sectionHead}>
+              <Text style={styles.sectionTitle}>Order from stores</Text>
+              <View style={styles.sectionTag}>
+                <ShoppingBag size={12} color={Color.primaryDark} />
+                <Text style={styles.sectionTagText}>Shop groceries & more</Text>
+              </View>
+            </View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.hRow}
+            >
+              {stores.map((s) => (
+                <TouchableOpacity
+                  key={s.id}
+                  style={styles.storeCard}
+                  activeOpacity={0.85}
+                  onPress={() => onProviderPress(s)}
+                >
+                  <View style={styles.storeThumb}>
+                    {s.images.length > 0 ? (
+                      <Image style={styles.storeThumbImg} source={{ uri: s.images[0] }} />
+                    ) : (
+                      <CategoryIcon slug={s.category.slug} size={26} />
+                    )}
+                  </View>
+                  <Text style={styles.storeName} numberOfLines={1}>
+                    {s.businessName}
+                  </Text>
+                  <Text style={styles.storeMeta} numberOfLines={1}>
+                    {s.subcategory?.name ?? s.category.name}
+                  </Text>
+                  <View style={styles.storeFooter}>
+                    <View style={styles.storeRating}>
+                      <Star size={12} color={Color.warning} fill={Color.warning} />
+                      <Text style={styles.storeRatingText}>{s.ratingAvg.toFixed(1)}</Text>
+                    </View>
+                    <View style={styles.shopChip}>
+                      <Text style={styles.shopChipText}>Shop</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </>
+        )}
+
         {/* Most booked businesses */}
         {mostBooked.length > 0 && (
           <>
             <View style={styles.sectionHead}>
-              <Text style={styles.sectionTitle}>Most booked</Text>
+              <Text style={styles.sectionTitle}>Popular services to book</Text>
             </View>
             {mostBooked.map((p) => (
               <TouchableOpacity

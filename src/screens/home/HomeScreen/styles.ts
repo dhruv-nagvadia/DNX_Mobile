@@ -127,6 +127,62 @@ export const styles = StyleSheet.create({
     fontWeight: FontWeight.semibold,
     color: Color.primary,
   },
+  sectionTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: Radius.pill,
+    backgroundColor: Color.primarySoft,
+  },
+  sectionTagText: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.semibold,
+    color: Color.primaryDark,
+  },
+
+  // ── Store cards (horizontal) ─────────────────────────────────────────
+  storeCard: {
+    width: 150,
+    padding: Spacing.md,
+    borderRadius: Radius.lg,
+    backgroundColor: Color.surface,
+    borderWidth: 1,
+    borderColor: Color.border,
+  },
+  storeThumb: {
+    width: '100%',
+    height: 84,
+    borderRadius: Radius.md,
+    backgroundColor: Color.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    marginBottom: Spacing.sm,
+  },
+  storeThumbImg: { width: '100%', height: '100%' },
+  storeName: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
+  storeMeta: { marginTop: 2, fontSize: FontSize.xs, color: Color.textSecondary },
+  storeFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: Spacing.sm,
+  },
+  storeRating: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  storeRatingText: {
+    fontSize: FontSize.xs,
+    color: Color.textSecondary,
+    fontWeight: FontWeight.semibold,
+  },
+  shopChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: Radius.pill,
+    backgroundColor: Color.primary,
+  },
+  shopChipText: { fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Color.white },
 
   // ── Offers carousel ──────────────────────────────────────────────────
   hRow: {

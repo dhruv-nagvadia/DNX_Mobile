@@ -71,6 +71,54 @@ export const styles = StyleSheet.create({
     fontWeight: FontWeight.bold,
   },
 
+  // Section label between orders / appointments
+  sectionLabel: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0.4,
+    textTransform: 'uppercase',
+    color: Color.textSecondary,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+
+  // Order card lines
+  orderItems: {
+    marginTop: Spacing.sm,
+    paddingTop: Spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: Color.border,
+    gap: 2,
+  },
+  orderLine: {
+    fontSize: FontSize.sm,
+    color: Color.textPrimary,
+  },
+  orderMore: {
+    fontSize: FontSize.xs,
+    color: Color.textSecondary,
+    marginTop: 2,
+  },
+  orderFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: Spacing.sm,
+    paddingTop: Spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: Color.border,
+  },
+  orderFooterLabel: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+    fontWeight: FontWeight.semibold,
+  },
+  orderTotal: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.extrabold,
+    color: Color.textPrimary,
+  },
+
   // Actions
   actions: {
     flexDirection: 'row',

@@ -10,6 +10,21 @@ export interface Service {
   durationMin: number;
 }
 
+export type BusinessType = 'SERVICE' | 'STORE';
+
+/** A sellable item in a STORE business's catalog. */
+export interface Product {
+  id: string;
+  name: string;
+  description?: string | null;
+  priceMinor: number;
+  currency: string;
+  unit: string; // "kg", "litre", "piece"…
+  section?: string | null;
+  stockQty: number;
+  imageUrl?: string | null;
+}
+
 export interface BusinessHour {
   id?: string;
   dayOfWeek: number; // 0 = Sunday ... 6 = Saturday
@@ -30,10 +45,14 @@ export interface DateHour {
 export interface Provider {
   id: string;
   businessName: string;
+  type?: BusinessType;
   description?: string | null;
   phone: string;
   email?: string | null;
+  addressLine?: string | null;
   city?: string | null;
+  state?: string | null;
+  postalCode?: string | null;
   images: string[];
   ratingAvg: number;
   ratingCount: number;
@@ -42,6 +61,7 @@ export interface Provider {
   category: Category;
   subcategory?: Subcategory | null;
   services: Service[];
+  products?: Product[];
   businessHours: BusinessHour[];
   dateHours?: DateHour[];
 }
@@ -59,6 +79,7 @@ export interface ListProvidersParams {
   subcategorySlug?: string;
   city?: string;
   search?: string;
+  type?: BusinessType;
   page?: number;
   limit?: number;
 }

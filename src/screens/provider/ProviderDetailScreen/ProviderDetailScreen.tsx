@@ -11,15 +11,20 @@ import {
   NativeScrollEvent,
 } from 'react-native';
 import { Star, BadgeCheck, MapPin, Clock } from 'lucide-react-native';
+import { useRoute } from '@react-navigation/native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { AppButton } from '@/components/AppButton';
+import { BusinessContact } from '@/components/BusinessContact';
 import { PaymentMethodModal } from '@/components/PaymentMethodModal';
 import { ReviewItem } from '@/components/ReviewItem';
 import { Color } from '@/utils/Theme';
+import { useGetProviderByIdQuery } from '@/redux/api/provider/providerApi';
 
+import { StoreDetail } from '../StoreDetailScreen/StoreDetailScreen';
 import { useProviderDetail } from './useProviderDetail';
+import { ProviderDetailRouteProp } from './types';
 import { styles } from './styles';
 
 const SCREEN_W = Dimensions.get('window').width;
@@ -45,8 +50,34 @@ function timeLabel(d: Date): string {
   return d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
 }
 
-/** JSX only — logic comes from useProviderDetail. */
+/**
+ * Entry point: picks the store catalog view for STORE businesses, otherwise the
+ * service booking view below.
+ */
 export default function ProviderDetailScreen() {
+  const { params } = useRoute<ProviderDetailRouteProp>();
+  const { data: provider, isLoading } = useGetProviderByIdQuery(params.providerId);
+
+  if (isLoading && !provider) {
+    return (
+      <View style={styles.container}>
+        <AppHeader title={params.name ?? 'Business'} />
+        <View style={styles.center}>
+          <ActivityIndicator color={Color.primary} />
+        </View>
+      </View>
+    );
+  }
+
+  if (provider?.type === 'STORE') {
+    return <StoreDetail provider={provider} />;
+  }
+
+  return <ServiceDetail />;
+}
+
+/** Service (appointment) view — JSX only; logic comes from useProviderDetail. */
+function ServiceDetail() {
   const {
     provider,
     isLoading,
@@ -174,6 +205,18 @@ export default function ProviderDetailScreen() {
           ) : (
             <Text style={styles.muted}>No description added yet.</Text>
           )}
+
+          {/* Contact */}
+          <Text style={styles.sectionTitle}>Contact & location</Text>
+          <BusinessContact
+            phone={provider.phone}
+            email={provider.email}
+            addressLine={provider.addressLine}
+            city={provider.city}
+            state={provider.state}
+            postalCode={provider.postalCode}
+            callLabel="Call the business"
+          />
 
           {/* Services — locked to the original service when rescheduling. */}
           <Text style={styles.sectionTitle}>{isReschedule ? 'Rescheduling' : 'Select a service'}</Text>

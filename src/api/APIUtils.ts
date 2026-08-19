@@ -49,6 +49,10 @@ export const endpoints = {
   paymentSimulate: '/customer/payments/simulate',
   paymentSync: '/customer/payments/sync',
 
+  // Product orders (store businesses)
+  orders: '/customer/orders',
+  myOrders: '/customer/orders/mine',
+
   // Reviews (public)
   providerReviews: (id: string) => `/customer/providers/${id}/reviews`,
 

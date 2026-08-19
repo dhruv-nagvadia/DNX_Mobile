@@ -19,8 +19,10 @@ export function useHomeScreen() {
   const currentUser = useAppSelector((state) => state.user.currentUser);
 
   const { data: categories = [], isLoading: categoriesLoading } = useGetCategoriesQuery();
-  // "Most booked" businesses — top-ranked providers (a booking-count sort later).
-  const { data: providersPage } = useGetProvidersQuery({ limit: 3 });
+  // "Most booked" service businesses — top-ranked providers (booking-count sort later).
+  const { data: providersPage } = useGetProvidersQuery({ type: 'SERVICE', limit: 3 });
+  // Nearby stores you can order products from.
+  const { data: storesPage } = useGetProvidersQuery({ type: 'STORE', limit: 6 });
 
   // Recently opened businesses (cached on-device); refresh each time Home focuses.
   const [recentlyViewed, setRecentlyViewed] = useState<RecentProvider[]>([]);
@@ -73,6 +75,9 @@ export function useHomeScreen() {
 
   const goToProfile = useCallback(() => navigation.navigate(ROUTES.PROFILE), [navigation]);
   const goToSearch = useCallback(() => navigation.navigate(ROUTES.SEARCH), [navigation]);
+  const goToCart = useCallback(() => navigation.navigate(ROUTES.CART), [navigation]);
+
+  const cartCount = useAppSelector((s) => s.cart.items.reduce((n, i) => n + i.quantity, 0));
 
   return {
     firstName,
@@ -80,12 +85,15 @@ export function useHomeScreen() {
     categories: orderedCategories,
     categoriesLoading,
     mostBooked: providersPage?.items ?? [],
+    stores: storesPage?.items ?? [],
     recentlyViewed,
     onCategoryPress,
     onProviderPress,
     onRecentPress,
     goToProfile,
     goToSearch,
+    goToCart,
+    cartCount,
     // Static placeholder content (swap for real data later).
     location: LOCATION,
     offers: OFFERS,
