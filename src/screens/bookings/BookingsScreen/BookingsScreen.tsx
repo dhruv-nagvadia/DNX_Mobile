@@ -7,7 +7,7 @@ import { CategoryIcon } from '@/components/CategoryIcon';
 import { Color } from '@/utils/Theme';
 import { STATUS_LABEL, statusColors, paymentSummary } from '@/utils/bookingStatus';
 import { ORDER_STATUS_LABEL, orderStatusColors, orderPayLabel } from '@/utils/orderStatus';
-import { unitShort, formatMoney } from '@/utils/units';
+import { formatAmount, formatMoney } from '@/utils/units';
 import { useGetMyOrdersQuery } from '@/redux/api/order/orderApi';
 
 import { useBookingsScreen } from './useBookingsScreen';
@@ -87,7 +87,7 @@ export default function BookingsScreen() {
                     <View style={styles.orderItems}>
                       {o.items.slice(0, 3).map((it) => (
                         <Text key={it.id} style={styles.orderLine} numberOfLines={1}>
-                          {it.name} × {it.quantity} {unitShort(it.unit)}
+                          {it.name} · {formatAmount(it.quantity, it.measure)}
                         </Text>
                       ))}
                       {o.items.length > 3 && (

@@ -12,16 +12,21 @@ export interface Service {
 
 export type BusinessType = 'SERVICE' | 'STORE';
 
-/** A sellable item in a STORE business's catalog. */
+export type Measure = 'weight' | 'volume' | 'count';
+
+/** A sellable item in a STORE business's catalog (amounts in base units). */
 export interface Product {
   id: string;
   name: string;
   description?: string | null;
-  priceMinor: number;
+  measure: Measure;
+  priceMinor: number; // price for `priceQty` base units
+  priceQty: number;
   currency: string;
-  unit: string; // "kg", "litre", "piece"…
+  unit: string; // base unit label (g / ml / piece)
   section?: string | null;
-  stockQty: number;
+  stockQty: number; // base units
+  stepQty: number; // minimum + increment, base units
   imageUrl?: string | null;
 }
 

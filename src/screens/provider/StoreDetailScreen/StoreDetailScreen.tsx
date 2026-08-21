@@ -18,7 +18,7 @@ import { CategoryIcon } from '@/components/CategoryIcon';
 import { BusinessContact } from '@/components/BusinessContact';
 import { ReviewItem } from '@/components/ReviewItem';
 import { Color } from '@/utils/Theme';
-import { unitShort, stockLabel, formatMoney } from '@/utils/units';
+import { formatAmount, stockLabel, priceLabel, amountPrice, formatMoney } from '@/utils/units';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCartQty } from '@/redux/slices/cartSlice';
 import { useGetProviderReviewsQuery } from '@/redux/api/provider/providerApi';
@@ -64,17 +64,19 @@ export function StoreDetail({ provider }: { provider: Provider }) {
           providerId: provider.id,
           providerName: provider.businessName,
           name: p.name,
+          measure: p.measure,
           priceMinor: p.priceMinor,
+          priceQty: p.priceQty,
           currency: p.currency,
-          unit: p.unit,
           stockQty: p.stockQty,
+          stepQty: p.stepQty,
         },
-        quantity,
+        quantity: Math.max(0, Math.min(quantity, p.stockQty)),
       }),
     );
 
-  const cartCount = cartItems.reduce((n, i) => n + i.quantity, 0);
-  const cartTotal = cartItems.reduce((s, i) => s + i.priceMinor * i.quantity, 0);
+  const cartCount = cartItems.filter((i) => i.quantity > 0).length;
+  const cartTotal = cartItems.reduce((s, i) => s + amountPrice(i.quantity, i.priceQty, i.priceMinor), 0);
 
   const onGalleryScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) =>
     setActiveImage(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W));
@@ -100,36 +102,36 @@ export function StoreDetail({ provider }: { provider: Provider }) {
           <Text style={styles.eName} numberOfLines={2}>
             {p.name}
           </Text>
-          <Text style={styles.ePrice}>
-            {formatMoney(p.priceMinor, p.currency)}
-            <Text style={styles.eUnit}> / {unitShort(p.unit)}</Text>
-          </Text>
-          <Text style={[styles.eStock, out && styles.eStockOut]}>{stockLabel(p.stockQty, p.unit)}</Text>
+          <Text style={styles.ePrice}>{priceLabel(p.priceMinor, p.priceQty, p.measure, p.currency)}</Text>
+          <Text style={[styles.eStock, out && styles.eStockOut]}>{stockLabel(p.stockQty, p.measure)}</Text>
 
           {qty === 0 ? (
             <TouchableOpacity
               style={[styles.eAddBtn, out && styles.disabled]}
               activeOpacity={0.85}
               disabled={out}
-              onPress={() => changeQty(p, 1)}
+              onPress={() => changeQty(p, p.stepQty)}
             >
               <Plus size={14} color={Color.white} />
-              <Text style={styles.eAddText}>Add</Text>
+              <Text style={styles.eAddText}>Add {formatAmount(p.stepQty, p.measure)}</Text>
             </TouchableOpacity>
           ) : (
-            <View style={styles.eStepper}>
-              <TouchableOpacity style={styles.eStepBtn} onPress={() => changeQty(p, qty - 1)}>
-                <Minus size={14} color={Color.primary} />
-              </TouchableOpacity>
-              <Text style={styles.eQty}>{qty}</Text>
-              <TouchableOpacity
-                style={[styles.eStepBtn, qty >= p.stockQty && styles.disabled]}
-                disabled={qty >= p.stockQty}
-                onPress={() => changeQty(p, qty + 1)}
-              >
-                <Plus size={14} color={Color.primary} />
-              </TouchableOpacity>
-            </View>
+            <>
+              <View style={styles.eStepper}>
+                <TouchableOpacity style={styles.eStepBtn} onPress={() => changeQty(p, qty - p.stepQty)}>
+                  <Minus size={14} color={Color.primary} />
+                </TouchableOpacity>
+                <Text style={styles.eQty}>{formatAmount(qty, p.measure)}</Text>
+                <TouchableOpacity
+                  style={[styles.eStepBtn, qty + p.stepQty > p.stockQty && styles.disabled]}
+                  disabled={qty + p.stepQty > p.stockQty}
+                  onPress={() => changeQty(p, qty + p.stepQty)}
+                >
+                  <Plus size={14} color={Color.primary} />
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.eLinePrice}>{formatMoney(amountPrice(qty, p.priceQty, p.priceMinor), p.currency)}</Text>
+            </>
           )}
         </View>
       </View>

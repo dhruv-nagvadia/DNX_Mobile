@@ -186,6 +186,13 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.primarySoft,
   },
   eQty: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
+  eLinePrice: {
+    marginTop: 4,
+    textAlign: 'center',
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.extrabold,
+    color: Color.primary,
+  },
 
   // Product card
   pCard: {

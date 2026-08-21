@@ -1,16 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-/** One line in the cart. Snapshots price/unit/stock so the cart stays accurate. */
+/** One line in the cart. Amounts are in base units (g / ml / piece). */
 export interface CartItem {
   productId: string;
   providerId: string;
   providerName: string;
   name: string;
-  priceMinor: number;
+  measure: 'weight' | 'volume' | 'count';
+  priceMinor: number; // price for `priceQty` base units
+  priceQty: number;
   currency: string;
-  unit: string;
-  stockQty: number;
-  quantity: number;
+  stockQty: number; // base units
+  stepQty: number; // minimum + increment, base units
+  quantity: number; // chosen amount, base units
 }
 
 interface CartState {

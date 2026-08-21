@@ -6,7 +6,7 @@ import { Store, Plus, Minus, Trash2, ShoppingCart, Check } from 'lucide-react-na
 
 import { AppHeader } from '@/components/AppHeader';
 import { Color } from '@/utils/Theme';
-import { unitShort, formatMoney } from '@/utils/units';
+import { formatAmount, priceLabel, amountPrice, formatMoney } from '@/utils/units';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCartQty, removeFromCart, clearProviderItems } from '@/redux/slices/cartSlice';
 import type { CartItem } from '@/redux/slices/cartSlice';
@@ -41,7 +41,7 @@ export default function CartScreen() {
         map.get(it.providerId) ??
         { providerId: it.providerId, providerName: it.providerName, items: [], subtotal: 0 };
       g.items.push(it);
-      g.subtotal += it.priceMinor * it.quantity;
+      g.subtotal += amountPrice(it.quantity, it.priceQty, it.priceMinor);
       map.set(it.providerId, g);
     }
     return Array.from(map.values());
@@ -57,12 +57,14 @@ export default function CartScreen() {
           providerId: it.providerId,
           providerName: it.providerName,
           name: it.name,
+          measure: it.measure,
           priceMinor: it.priceMinor,
+          priceQty: it.priceQty,
           currency: it.currency,
-          unit: it.unit,
           stockQty: it.stockQty,
+          stepQty: it.stepQty,
         },
-        quantity,
+        quantity: Math.max(0, Math.min(quantity, it.stockQty)),
       }),
     );
   };
@@ -138,25 +140,27 @@ export default function CartScreen() {
                     {it.name}
                   </Text>
                   <Text style={styles.itemPrice}>
-                    {formatMoney(it.priceMinor, it.currency)} / {unitShort(it.unit)}
+                    {priceLabel(it.priceMinor, it.priceQty, it.measure, it.currency)}
                   </Text>
                 </View>
 
                 <View style={styles.stepper}>
-                  <TouchableOpacity style={styles.stepBtn} onPress={() => setQty(it, it.quantity - 1)}>
+                  <TouchableOpacity style={styles.stepBtn} onPress={() => setQty(it, it.quantity - it.stepQty)}>
                     <Minus size={15} color={Color.primary} />
                   </TouchableOpacity>
-                  <Text style={styles.qty}>{it.quantity}</Text>
+                  <Text style={styles.qty}>{formatAmount(it.quantity, it.measure)}</Text>
                   <TouchableOpacity
-                    style={[styles.stepBtn, it.quantity >= it.stockQty && styles.disabled]}
-                    disabled={it.quantity >= it.stockQty}
-                    onPress={() => setQty(it, it.quantity + 1)}
+                    style={[styles.stepBtn, it.quantity + it.stepQty > it.stockQty && styles.disabled]}
+                    disabled={it.quantity + it.stepQty > it.stockQty}
+                    onPress={() => setQty(it, it.quantity + it.stepQty)}
                   >
                     <Plus size={15} color={Color.primary} />
                   </TouchableOpacity>
                 </View>
 
-                <Text style={styles.lineTotal}>{formatMoney(it.priceMinor * it.quantity, it.currency)}</Text>
+                <Text style={styles.lineTotal}>
+                  {formatMoney(amountPrice(it.quantity, it.priceQty, it.priceMinor), it.currency)}
+                </Text>
                 <TouchableOpacity style={styles.removeBtn} onPress={() => dispatch(removeFromCart(it.productId))}>
                   <Trash2 size={15} color={Color.error} />
                 </TouchableOpacity>

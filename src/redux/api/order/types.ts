@@ -6,9 +6,11 @@ export interface OrderItem {
   id: string;
   productId?: string | null;
   name: string;
-  priceMinor: number;
+  measure: 'weight' | 'volume' | 'count';
+  priceMinor: number; // price for `priceQty` base units
+  priceQty: number;
   unit: string;
-  quantity: number;
+  quantity: number; // base units
 }
 
 export interface Order {
