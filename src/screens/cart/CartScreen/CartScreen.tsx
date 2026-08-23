@@ -6,11 +6,12 @@ import { Store, Plus, Minus, Trash2, ShoppingCart, Check } from 'lucide-react-na
 
 import { AppHeader } from '@/components/AppHeader';
 import { Color } from '@/utils/Theme';
-import { formatAmount, priceLabel, amountPrice, formatMoney } from '@/utils/units';
+import { formatAmount, unitPriceLabel, amountPrice, formatMoney, baseIncrement } from '@/utils/units';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCartQty, removeFromCart, clearProviderItems } from '@/redux/slices/cartSlice';
 import type { CartItem } from '@/redux/slices/cartSlice';
 import { useCreateOrderMutation } from '@/redux/api/order/orderApi';
+import { providerApi } from '@/redux/api/provider/providerApi';
 import { OrderPaymentMethod } from '@/redux/api/order/types';
 import { ROUTES } from '@/navigation/routes';
 
@@ -48,6 +49,8 @@ export default function CartScreen() {
   }, [items]);
 
   const grandTotal = groups.reduce((s, g) => s + g.subtotal, 0);
+  // Any item below the store's required minimum blocks checkout.
+  const hasBelowMin = items.some((i) => i.quantity < i.stepQty);
 
   const setQty = (it: CartItem, quantity: number) => {
     dispatch(
@@ -80,6 +83,10 @@ export default function CartScreen() {
           items: g.items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
         }).unwrap();
         dispatch(clearProviderItems(g.providerId));
+        // Stock changed — refresh this store (and the lists) so it isn't stale.
+        dispatch(
+          providerApi.util.invalidateTags([{ type: 'Provider', id: g.providerId }, 'Providers']),
+        );
       } catch {
         failed.push(g.providerName);
       }
@@ -133,39 +140,51 @@ export default function CartScreen() {
               </TouchableOpacity>
             </View>
 
-            {g.items.map((it) => (
-              <View key={it.productId} style={styles.itemRow}>
-                <View style={styles.itemMain}>
-                  <Text style={styles.itemName} numberOfLines={1}>
-                    {it.name}
-                  </Text>
-                  <Text style={styles.itemPrice}>
-                    {priceLabel(it.priceMinor, it.priceQty, it.measure, it.currency)}
-                  </Text>
-                </View>
+            {g.items.map((it) => {
+              const inc = baseIncrement(it.measure);
+              const belowMin = it.quantity < it.stepQty;
+              return (
+                <View key={it.productId} style={styles.itemRow}>
+                  <View style={styles.itemTop}>
+                    <Text style={styles.itemName} numberOfLines={1}>
+                      {it.name}
+                    </Text>
+                    <TouchableOpacity style={styles.removeBtn} onPress={() => dispatch(removeFromCart(it.productId))}>
+                      <Trash2 size={15} color={Color.error} />
+                    </TouchableOpacity>
+                  </View>
 
-                <View style={styles.stepper}>
-                  <TouchableOpacity style={styles.stepBtn} onPress={() => setQty(it, it.quantity - it.stepQty)}>
-                    <Minus size={15} color={Color.primary} />
-                  </TouchableOpacity>
-                  <Text style={styles.qty}>{formatAmount(it.quantity, it.measure)}</Text>
-                  <TouchableOpacity
-                    style={[styles.stepBtn, it.quantity + it.stepQty > it.stockQty && styles.disabled]}
-                    disabled={it.quantity + it.stepQty > it.stockQty}
-                    onPress={() => setQty(it, it.quantity + it.stepQty)}
-                  >
-                    <Plus size={15} color={Color.primary} />
-                  </TouchableOpacity>
-                </View>
+                  <View style={styles.itemBottom}>
+                    <View style={styles.stepper}>
+                      <TouchableOpacity style={styles.stepBtn} onPress={() => setQty(it, it.quantity - inc)}>
+                        <Minus size={15} color={Color.primary} />
+                      </TouchableOpacity>
+                      <Text style={styles.qty}>{formatAmount(it.quantity, it.measure)}</Text>
+                      <TouchableOpacity
+                        style={[styles.stepBtn, it.quantity + inc > it.stockQty && styles.disabled]}
+                        disabled={it.quantity + inc > it.stockQty}
+                        onPress={() => setQty(it, it.quantity + inc)}
+                      >
+                        <Plus size={15} color={Color.primary} />
+                      </TouchableOpacity>
+                    </View>
 
-                <Text style={styles.lineTotal}>
-                  {formatMoney(amountPrice(it.quantity, it.priceQty, it.priceMinor), it.currency)}
-                </Text>
-                <TouchableOpacity style={styles.removeBtn} onPress={() => dispatch(removeFromCart(it.productId))}>
-                  <Trash2 size={15} color={Color.error} />
-                </TouchableOpacity>
-              </View>
-            ))}
+                    <Text style={styles.itemUnit} numberOfLines={1}>
+                      {unitPriceLabel(it.priceMinor, it.priceQty, it.measure, it.currency)}
+                    </Text>
+                    <Text style={styles.lineTotal}>
+                      {formatMoney(amountPrice(it.quantity, it.priceQty, it.priceMinor), it.currency)}
+                    </Text>
+                  </View>
+
+                  {belowMin && (
+                    <Text style={styles.minMsg}>
+                      Minimum order is {formatAmount(it.stepQty, it.measure)} — add a little more.
+                    </Text>
+                  )}
+                </View>
+              );
+            })}
 
             <View style={styles.subtotalRow}>
               <Text style={styles.subtotalLabel}>Subtotal</Text>
@@ -200,12 +219,19 @@ export default function CartScreen() {
           <Text style={styles.barLabel}>Total ({groups.length} shop{groups.length > 1 ? 's' : ''})</Text>
           <Text style={styles.barTotal}>{formatMoney(grandTotal)}</Text>
         </View>
-        <TouchableOpacity style={styles.placeBtn} activeOpacity={0.9} disabled={placing} onPress={placeAll}>
+        <TouchableOpacity
+          style={[styles.placeBtn, (placing || hasBelowMin) && styles.disabled]}
+          activeOpacity={0.9}
+          disabled={placing || hasBelowMin}
+          onPress={placeAll}
+        >
           {placing ? (
             <ActivityIndicator color={Color.white} />
           ) : (
             <Text style={styles.placeText}>
-              Place {groups.length} order{groups.length > 1 ? 's' : ''}
+              {hasBelowMin
+                ? 'Below minimum'
+                : `Place ${groups.length} order${groups.length > 1 ? 's' : ''}`}
             </Text>
           )}
         </TouchableOpacity>

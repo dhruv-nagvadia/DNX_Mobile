@@ -52,8 +52,13 @@ const cartSlice = createSlice({
     clearCart: (state) => {
       state.items = [];
     },
+    // Replace the whole cart (used when loading the saved cart from the server).
+    hydrateCart: (state, action: PayloadAction<CartItem[]>) => {
+      state.items = action.payload;
+    },
   },
 });
 
-export const { setCartQty, removeFromCart, clearProviderItems, clearCart } = cartSlice.actions;
+export const { setCartQty, removeFromCart, clearProviderItems, clearCart, hydrateCart } =
+  cartSlice.actions;
 export default cartSlice.reducer;

@@ -7,6 +7,7 @@ import { categoryApi } from './api/category/categoryApi';
 import { providerApi } from './api/provider/providerApi';
 import { bookingApi } from './api/booking/bookingApi';
 import { orderApi } from './api/order/orderApi';
+import { cartApi } from './api/cart/cartApi';
 import { reminderApi } from './api/reminder/reminderApi';
 
 const store = configureStore({
@@ -21,6 +22,7 @@ const store = configureStore({
     [providerApi.reducerPath]: providerApi.reducer,
     [bookingApi.reducerPath]: bookingApi.reducer,
     [orderApi.reducerPath]: orderApi.reducer,
+    [cartApi.reducerPath]: cartApi.reducer,
     [reminderApi.reducerPath]: reminderApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -30,6 +32,7 @@ const store = configureStore({
       providerApi.middleware,
       bookingApi.middleware,
       orderApi.middleware,
+      cartApi.middleware,
       reminderApi.middleware,
     ),
 });

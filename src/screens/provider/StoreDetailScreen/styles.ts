@@ -151,6 +151,8 @@ export const styles = StyleSheet.create({
   eOutText: { fontSize: 10, fontWeight: FontWeight.bold, color: Color.white },
 
   eBody: { padding: Spacing.sm, gap: 3 },
+  eInfo: { paddingHorizontal: Spacing.sm, paddingTop: Spacing.sm, gap: 3 },
+  eControl: { paddingHorizontal: Spacing.sm, paddingBottom: Spacing.sm, paddingTop: 2 },
   eName: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary, minHeight: 34 },
   ePrice: { fontSize: FontSize.md, fontWeight: FontWeight.extrabold, color: Color.textPrimary },
   eUnit: { fontSize: FontSize.xs, fontWeight: FontWeight.semibold, color: Color.textSecondary },

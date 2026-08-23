@@ -77,7 +77,8 @@ export function useHomeScreen() {
   const goToSearch = useCallback(() => navigation.navigate(ROUTES.SEARCH), [navigation]);
   const goToCart = useCallback(() => navigation.navigate(ROUTES.CART), [navigation]);
 
-  const cartCount = useAppSelector((s) => s.cart.items.reduce((n, i) => n + i.quantity, 0));
+  // Number of distinct products in the cart (not the summed amounts).
+  const cartCount = useAppSelector((s) => s.cart.items.filter((i) => i.quantity > 0).length);
 
   return {
     firstName,

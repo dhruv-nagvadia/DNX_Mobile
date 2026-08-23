@@ -19,6 +19,8 @@ export const ROUTES = {
   REVIEWS: 'ReviewsScreen',
   ACCOUNT: 'AccountScreen',
   CART: 'CartScreen',
+  PRODUCT_DETAILS: 'ProductDetailScreen',
+  DEBUG_LOGS: 'DebugLogsScreen',
 } as const;
 
 /** Type-safe params for every route. `undefined` = no params. */
@@ -53,4 +55,6 @@ export type RootStackParamList = {
   [ROUTES.REVIEWS]: { providerId: string; businessName?: string };
   [ROUTES.ACCOUNT]: undefined;
   [ROUTES.CART]: undefined;
+  [ROUTES.PRODUCT_DETAILS]: { providerId: string; productId: string };
+  [ROUTES.DEBUG_LOGS]: undefined;
 };

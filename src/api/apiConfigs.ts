@@ -5,6 +5,7 @@ import type { BaseQueryFn } from '@reduxjs/toolkit/query';
 import BASE_URL, { endpoints } from './APIUtils';
 import { StorageKeys } from '@/utils/Constants';
 import DEBUG_LOGGER, { ERROR, INFO } from '@/utils/DebugLogger';
+import { logApi } from '@/utils/logger';
 
 const FILE = 'apiConfigs';
 
@@ -79,6 +80,8 @@ async function endSession() {
     // Lazy require avoids a circular import (store → apis → apiConfigs).
     const store = require('../redux/store').default;
     const { clearCurrentUser } = require('../redux/slices/userSlice');
+    const { clearCart } = require('../redux/slices/cartSlice');
+    store.dispatch(clearCart());
     store.dispatch(clearCurrentUser());
   } catch {
     // If the store isn't ready, the next launch starts unauthenticated anyway.
@@ -131,17 +134,32 @@ export interface AxiosBaseQueryArgs {
 export const axiosBaseQuery =
   (): BaseQueryFn<AxiosBaseQueryArgs, unknown, { status?: number; data?: unknown }> =>
   async ({ endpoint, method = 'get', data, params, headers }) => {
+    const started = Date.now();
+    // Skip FormData (file uploads) in logs — it isn't JSON-serialisable.
+    const request =
+      data instanceof FormData
+        ? { form: true }
+        : data !== undefined || params !== undefined
+          ? { params, data }
+          : undefined;
     try {
       const result = await networkCall({ url: endpoint, method, data, params, headers });
+      logApi({
+        method,
+        endpoint,
+        status: result.status,
+        ms: Date.now() - started,
+        ok: true,
+        request,
+        response: result.data,
+      });
       return { data: result.data };
     } catch (axiosError) {
       const err = axiosError as AxiosError;
-      return {
-        error: {
-          status: err.response?.status,
-          data: err.response?.data || err.message,
-        },
-      };
+      const status = err.response?.status;
+      const errData = err.response?.data || err.message;
+      logApi({ method, endpoint, status, ms: Date.now() - started, ok: false, request, error: errData });
+      return { error: { status, data: errData } };
     }
   };
 

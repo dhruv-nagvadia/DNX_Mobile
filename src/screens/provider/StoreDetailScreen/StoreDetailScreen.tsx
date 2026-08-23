@@ -11,16 +11,17 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { Plus, Minus, ShoppingBag, Star, BadgeCheck } from 'lucide-react-native';
+import { ShoppingBag, Star, BadgeCheck } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { BusinessContact } from '@/components/BusinessContact';
+import { CartHeaderButton } from '@/components/CartHeaderButton';
+import { ProductAmountControl } from '@/components/ProductAmountControl';
 import { ReviewItem } from '@/components/ReviewItem';
 import { Color } from '@/utils/Theme';
-import { formatAmount, stockLabel, priceLabel, amountPrice, formatMoney } from '@/utils/units';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { setCartQty } from '@/redux/slices/cartSlice';
+import { stockLabel, unitPriceLabel, amountPrice, formatMoney } from '@/utils/units';
+import { useAppSelector } from '@/redux/hooks';
 import { useGetProviderReviewsQuery } from '@/redux/api/provider/providerApi';
 import { ROUTES } from '@/navigation/routes';
 import { Provider, Product } from '@/redux/api/provider/types';
@@ -35,7 +36,6 @@ const SCREEN_W = Dimensions.get('window').width;
 export function StoreDetail({ provider }: { provider: Provider }) {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<{ navigate: (r: string, p?: object) => void }>();
-  const dispatch = useAppDispatch();
   const cartItems = useAppSelector((s) => s.cart.items);
   const { data: reviews = [] } = useGetProviderReviewsQuery(provider.id);
 
@@ -54,85 +54,44 @@ export function StoreDetail({ provider }: { provider: Provider }) {
     return Array.from(map.entries()).map(([section, items]) => ({ section, items }));
   }, [products]);
 
-  const qtyOf = (productId: string) => cartItems.find((i) => i.productId === productId)?.quantity ?? 0;
-
-  const changeQty = (p: Product, quantity: number) =>
-    dispatch(
-      setCartQty({
-        item: {
-          productId: p.id,
-          providerId: provider.id,
-          providerName: provider.businessName,
-          name: p.name,
-          measure: p.measure,
-          priceMinor: p.priceMinor,
-          priceQty: p.priceQty,
-          currency: p.currency,
-          stockQty: p.stockQty,
-          stepQty: p.stepQty,
-        },
-        quantity: Math.max(0, Math.min(quantity, p.stockQty)),
-      }),
-    );
-
   const cartCount = cartItems.filter((i) => i.quantity > 0).length;
   const cartTotal = cartItems.reduce((s, i) => s + amountPrice(i.quantity, i.priceQty, i.priceMinor), 0);
 
   const onGalleryScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) =>
     setActiveImage(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W));
 
+  const openProduct = (productId: string) =>
+    navigation.navigate(ROUTES.PRODUCT_DETAILS, { providerId: provider.id, productId });
+
   const renderProductCard = (p: Product) => {
-    const qty = qtyOf(p.id);
     const out = p.stockQty <= 0;
     return (
       <View key={p.id} style={styles.eCard}>
-        <View style={styles.eImageWrap}>
-          {p.imageUrl ? (
-            <Image source={{ uri: p.imageUrl }} style={styles.eImage} />
-          ) : (
-            <CategoryIcon slug={provider.category.slug} size={32} />
-          )}
-          {out && (
-            <View style={styles.eOutBadge}>
-              <Text style={styles.eOutText}>Out of stock</Text>
-            </View>
-          )}
-        </View>
-        <View style={styles.eBody}>
-          <Text style={styles.eName} numberOfLines={2}>
-            {p.name}
-          </Text>
-          <Text style={styles.ePrice}>{priceLabel(p.priceMinor, p.priceQty, p.measure, p.currency)}</Text>
-          <Text style={[styles.eStock, out && styles.eStockOut]}>{stockLabel(p.stockQty, p.measure)}</Text>
-
-          {qty === 0 ? (
-            <TouchableOpacity
-              style={[styles.eAddBtn, out && styles.disabled]}
-              activeOpacity={0.85}
-              disabled={out}
-              onPress={() => changeQty(p, p.stepQty)}
-            >
-              <Plus size={14} color={Color.white} />
-              <Text style={styles.eAddText}>Add {formatAmount(p.stepQty, p.measure)}</Text>
-            </TouchableOpacity>
-          ) : (
-            <>
-              <View style={styles.eStepper}>
-                <TouchableOpacity style={styles.eStepBtn} onPress={() => changeQty(p, qty - p.stepQty)}>
-                  <Minus size={14} color={Color.primary} />
-                </TouchableOpacity>
-                <Text style={styles.eQty}>{formatAmount(qty, p.measure)}</Text>
-                <TouchableOpacity
-                  style={[styles.eStepBtn, qty + p.stepQty > p.stockQty && styles.disabled]}
-                  disabled={qty + p.stepQty > p.stockQty}
-                  onPress={() => changeQty(p, qty + p.stepQty)}
-                >
-                  <Plus size={14} color={Color.primary} />
-                </TouchableOpacity>
+        {/* Tap the image/details to open the full product page. */}
+        <TouchableOpacity activeOpacity={0.9} onPress={() => openProduct(p.id)}>
+          <View style={styles.eImageWrap}>
+            {p.imageUrl ? (
+              <Image source={{ uri: p.imageUrl }} style={styles.eImage} />
+            ) : (
+              <CategoryIcon slug={provider.category.slug} size={32} />
+            )}
+            {out && (
+              <View style={styles.eOutBadge}>
+                <Text style={styles.eOutText}>Out of stock</Text>
               </View>
-              <Text style={styles.eLinePrice}>{formatMoney(amountPrice(qty, p.priceQty, p.priceMinor), p.currency)}</Text>
-            </>
-          )}
+            )}
+          </View>
+          <View style={styles.eInfo}>
+            <Text style={styles.eName} numberOfLines={2}>
+              {p.name}
+            </Text>
+            <Text style={styles.ePrice}>{unitPriceLabel(p.priceMinor, p.priceQty, p.measure, p.currency)}</Text>
+            <Text style={[styles.eStock, out && styles.eStockOut]}>{stockLabel(p.stockQty, p.measure)}</Text>
+          </View>
+        </TouchableOpacity>
+
+        <View style={styles.eControl}>
+          <ProductAmountControl product={p} providerId={provider.id} providerName={provider.businessName} />
         </View>
       </View>
     );
@@ -140,7 +99,7 @@ export function StoreDetail({ provider }: { provider: Provider }) {
 
   return (
     <View style={ds.container}>
-      <AppHeader title={provider.businessName} />
+      <AppHeader title={provider.businessName} right={<CartHeaderButton />} />
 
       <ScrollView
         contentContainerStyle={[ds.content, { paddingBottom: cartCount > 0 ? 120 : 24 }]}

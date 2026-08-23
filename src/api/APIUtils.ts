@@ -53,6 +53,9 @@ export const endpoints = {
   orders: '/customer/orders',
   myOrders: '/customer/orders/mine',
 
+  // Persistent cart
+  cart: '/customer/cart',
+
   // Reviews (public)
   providerReviews: (id: string) => `/customer/providers/${id}/reviews`,
 

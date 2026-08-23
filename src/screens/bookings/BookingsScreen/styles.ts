@@ -17,6 +17,23 @@ export const styles = StyleSheet.create({
     letterSpacing: -0.5,
     color: Color.textPrimary,
   },
+
+  // Mini header: Bookings / Orders
+  segmentBar: {
+    flexDirection: 'row',
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.sm,
+    backgroundColor: Color.surface,
+    borderWidth: 1,
+    borderColor: Color.border,
+    borderRadius: Radius.md,
+    padding: 3,
+  },
+  seg: { flex: 1, alignItems: 'center', paddingVertical: 8, borderRadius: Radius.sm },
+  segActive: { backgroundColor: Color.primary },
+  segText: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textSecondary },
+  segTextActive: { color: Color.white },
+
   content: {
     padding: Spacing.lg,
     paddingTop: Spacing.sm,

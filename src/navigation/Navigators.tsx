@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home, CalendarDays, Bell, User } from 'lucide-react-native';
@@ -24,6 +24,8 @@ import BookingDetailScreen from '@/screens/bookings/BookingDetailScreen';
 import ReviewsScreen from '@/screens/reviews/ReviewsScreen';
 import AddReminderScreen from '@/screens/reminders/AddReminderScreen';
 import CartScreen from '@/screens/cart/CartScreen';
+import ProductDetailScreen from '@/screens/store/ProductDetailScreen';
+import DebugLogsScreen from '@/screens/debug/DebugLogsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -54,7 +56,15 @@ function TabNavigator() {
         name={ROUTES.BOOKINGS}
         component={BookingsScreen}
         options={{
-          tabBarLabel: 'Bookings',
+          // Two-line label so it isn't truncated ("Bookings &" / "Orders").
+          tabBarLabel: ({ color }) => (
+            <Text
+              numberOfLines={2}
+              style={{ color, fontSize: 10, fontWeight: FontWeight.semibold, textAlign: 'center' }}
+            >
+              Bookings &{'\n'}Orders
+            </Text>
+          ),
           tabBarIcon: ({ color, size }) => <CalendarDays color={color} size={size} />,
         }}
       />
@@ -118,6 +128,8 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.REVIEWS} component={ReviewsScreen} />
       <Stack.Screen name={ROUTES.ADD_REMINDER} component={AddReminderScreen} />
       <Stack.Screen name={ROUTES.CART} component={CartScreen} />
+      <Stack.Screen name={ROUTES.PRODUCT_DETAILS} component={ProductDetailScreen} />
+      <Stack.Screen name={ROUTES.DEBUG_LOGS} component={DebugLogsScreen} />
     </Stack.Navigator>
   );
 }

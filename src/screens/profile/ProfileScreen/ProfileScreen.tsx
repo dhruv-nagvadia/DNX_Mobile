@@ -19,6 +19,7 @@ import {
   ChevronRight,
   LogOut,
   Pencil,
+  ScrollText,
   UserRound,
 } from 'lucide-react-native';
 
@@ -140,6 +141,17 @@ export default function ProfileScreen() {
               <Info size={19} color={Color.primary} />
             </View>
             <Text style={styles.rowLabel}>About DNX</Text>
+            <ChevronRight size={20} color={Color.placeholder} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.row, styles.rowBorder]}
+            activeOpacity={0.8}
+            onPress={p.goToDebugLogs}
+          >
+            <View style={styles.rowIcon}>
+              <ScrollText size={19} color={Color.primary} />
+            </View>
+            <Text style={styles.rowLabel}>Debug logs</Text>
             <ChevronRight size={20} color={Color.placeholder} />
           </TouchableOpacity>
         </View>

@@ -1,8 +1,10 @@
 /**
- * Dev-only structured logger. In production, wire the ERROR branch to
- * Crashlytics/Sentry. Signature mirrors the Healppy convention:
+ * Structured logger. Routes through the centralized logger so every entry is
+ * both printed to the console and captured in the in-app Debug Logs screen.
  *   DEBUG_LOGGER(message, functionName, file, line, level)
  */
+import { addLog } from './logger';
+
 export const INFO = 'INFO';
 export const SUCCESS = 'SUCCESS';
 export const WARNING = 'WARNING';
@@ -17,9 +19,6 @@ export default function DEBUG_LOGGER(
   line = '',
   level: Level = INFO,
 ) {
-  if (!__DEV__ && level !== ERROR) return;
-  const tag = `[${level}] ${file}${fn ? `::${fn}` : ''}${line ? `:${line}` : ''}`;
-  // eslint-disable-next-line no-console
-  const out = level === ERROR ? console.error : console.log;
-  out(`${tag} — ${message}`);
+  const tag = `${file}${fn ? `::${fn}` : ''}${line ? `:${line}` : ''}`;
+  addLog(level, message, undefined, tag);
 }

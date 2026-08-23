@@ -7,6 +7,7 @@ import { useGetRemindersQuery } from '@/redux/api/reminder/reminderApi';
 import { useUpdateMeMutation } from '@/redux/api/auth/authApi';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { clearCurrentUser, setCurrentUser } from '@/redux/slices/userSlice';
+import { clearCart } from '@/redux/slices/cartSlice';
 import { clearTokenCache } from '@/api/apiConfigs';
 import { StorageKeys } from '@/utils/Constants';
 import { ROUTES } from '@/navigation/routes';
@@ -64,6 +65,7 @@ export function useProfileScreen() {
   const logout = useCallback(async () => {
     await AsyncStorage.multiRemove([StorageKeys.accessToken, StorageKeys.refreshToken]);
     clearTokenCache();
+    dispatch(clearCart()); // drop the local copy; it's saved on the server per user
     dispatch(clearCurrentUser());
   }, [dispatch]);
 
@@ -82,5 +84,6 @@ export function useProfileScreen() {
     logout,
     goToBookings: useCallback(() => navigation.navigate(ROUTES.BOOKINGS), [navigation]),
     goToReminders: useCallback(() => navigation.navigate(ROUTES.REMINDERS), [navigation]),
+    goToDebugLogs: useCallback(() => navigation.navigate(ROUTES.DEBUG_LOGS), [navigation]),
   };
 }

@@ -38,11 +38,16 @@ export const styles = StyleSheet.create({
   shopName: { flex: 1, fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Color.textPrimary },
   clearShop: { fontSize: FontSize.xs, fontWeight: FontWeight.semibold, color: Color.error },
 
-  // Item row
-  itemRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, paddingVertical: Spacing.sm },
-  itemMain: { flex: 1, minWidth: 0 },
-  itemName: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.textPrimary },
-  itemPrice: { marginTop: 2, fontSize: FontSize.xs, color: Color.textSecondary },
+  // Item row (two rows: name/remove, then stepper · unit price · line total)
+  itemRow: {
+    paddingVertical: Spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: Color.border,
+    gap: Spacing.sm,
+  },
+  itemTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Spacing.sm },
+  itemName: { flex: 1, minWidth: 0, fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
+  itemBottom: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
 
   stepper: {
     flexDirection: 'row',
@@ -52,12 +57,14 @@ export const styles = StyleSheet.create({
     borderRadius: Radius.sm,
     overflow: 'hidden',
   },
-  stepBtn: { width: 30, height: 30, alignItems: 'center', justifyContent: 'center', backgroundColor: Color.primarySoft },
+  stepBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center', backgroundColor: Color.primarySoft },
   disabled: { opacity: 0.4 },
-  qty: { minWidth: 26, textAlign: 'center', fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
+  qty: { minWidth: 44, textAlign: 'center', fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
 
-  lineTotal: { minWidth: 56, textAlign: 'right', fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
+  itemUnit: { flex: 1, textAlign: 'right', fontSize: FontSize.xs, color: Color.textSecondary },
+  lineTotal: { minWidth: 60, textAlign: 'right', fontSize: FontSize.md, fontWeight: FontWeight.extrabold, color: Color.primary },
   removeBtn: { padding: 4 },
+  minMsg: { fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Color.error },
 
   subtotalRow: {
     flexDirection: 'row',

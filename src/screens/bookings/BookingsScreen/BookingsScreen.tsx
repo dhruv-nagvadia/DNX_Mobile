@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { CalendarDays, ChevronRight } from 'lucide-react-native';
+import { CalendarDays, ChevronRight, ShoppingBag } from 'lucide-react-native';
 
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Color } from '@/utils/Theme';
@@ -9,9 +9,13 @@ import { STATUS_LABEL, statusColors, paymentSummary } from '@/utils/bookingStatu
 import { ORDER_STATUS_LABEL, orderStatusColors, orderPayLabel } from '@/utils/orderStatus';
 import { formatAmount, formatMoney } from '@/utils/units';
 import { useGetMyOrdersQuery } from '@/redux/api/order/orderApi';
+import type { Order } from '@/redux/api/order/types';
+import type { Booking } from '@/redux/api/booking/types';
 
 import { useBookingsScreen } from './useBookingsScreen';
 import { styles } from './styles';
+
+type Tab = 'bookings' | 'orders';
 
 function formatWhen(iso: string): string {
   const d = new Date(iso);
@@ -25,134 +29,135 @@ function formatPrice(minor: number, currency: string | null): string {
   return currency === 'INR' || !currency ? `₹${amount}` : `${amount} ${currency}`;
 }
 
-/** Bookings tab — service appointments + store pickup orders. */
+/** Bookings & Orders tab — split into service appointments and store orders. */
 export default function BookingsScreen() {
   const { bookings, isLoading: bookingsLoading, onOpen } = useBookingsScreen();
   const { data: orders = [], isLoading: ordersLoading } = useGetMyOrdersQuery();
+  const [tab, setTab] = useState<Tab>('bookings');
 
-  const isLoading = bookingsLoading || ordersLoading;
-  const isEmpty = bookings.length === 0 && orders.length === 0;
+  const isLoading = tab === 'bookings' ? bookingsLoading : ordersLoading;
+
+  const renderBooking = (b: Booking) => {
+    const [pillBg, pillColor] = statusColors(b.status);
+    const pay = paymentSummary(b);
+    const showPay = b.status !== 'CANCELLED' && b.status !== 'NO_SHOW';
+    const payText =
+      b.paymentStatus === 'PARTIAL' && pay.due > 0 ? `${formatPrice(pay.due, b.currency)} due` : pay.label;
+    return (
+      <TouchableOpacity key={b.id} style={styles.card} activeOpacity={0.85} onPress={() => onOpen(b)}>
+        <View style={styles.cardTop}>
+          <View style={styles.icon}>
+            <CategoryIcon slug={b.provider.category.slug} size={22} />
+          </View>
+          <View style={styles.info}>
+            <Text style={styles.name} numberOfLines={1}>
+              {b.provider.businessName}
+            </Text>
+            <Text style={styles.meta} numberOfLines={1}>
+              {b.service.name} · {formatWhen(b.startTime)}
+            </Text>
+            {showPay && (
+              <Text style={[styles.pay, { color: pay.color }]} numberOfLines={1}>
+                {payText}
+              </Text>
+            )}
+          </View>
+          <View style={[styles.statusPill, { backgroundColor: pillBg }]}>
+            <Text style={[styles.statusText, { color: pillColor }]}>{STATUS_LABEL[b.status]}</Text>
+          </View>
+          <ChevronRight size={18} color={Color.placeholder} />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderOrder = (o: Order) => {
+    const [pillBg, pillColor] = orderStatusColors(o.status);
+    const pay = orderPayLabel(o);
+    return (
+      <View key={o.id} style={styles.card}>
+        <View style={styles.cardTop}>
+          <View style={styles.icon}>
+            <CategoryIcon slug={o.provider.category.slug} size={22} />
+          </View>
+          <View style={styles.info}>
+            <Text style={styles.name} numberOfLines={1}>
+              {o.provider.businessName}
+            </Text>
+            <Text style={styles.meta} numberOfLines={1}>
+              {o.items.length} item{o.items.length > 1 ? 's' : ''} · {formatWhen(o.createdAt)}
+            </Text>
+            <Text style={[styles.pay, { color: pay.color }]} numberOfLines={1}>
+              {pay.text}
+            </Text>
+          </View>
+          <View style={[styles.statusPill, { backgroundColor: pillBg }]}>
+            <Text style={[styles.statusText, { color: pillColor }]}>{ORDER_STATUS_LABEL[o.status]}</Text>
+          </View>
+        </View>
+
+        <View style={styles.orderItems}>
+          {o.items.slice(0, 3).map((it) => (
+            <Text key={it.id} style={styles.orderLine} numberOfLines={1}>
+              {it.name} · {formatAmount(it.quantity, it.measure)}
+            </Text>
+          ))}
+          {o.items.length > 3 && <Text style={styles.orderMore}>+{o.items.length - 3} more</Text>}
+        </View>
+
+        <View style={styles.orderFooter}>
+          <Text style={styles.orderFooterLabel}>Total</Text>
+          <Text style={styles.orderTotal}>{formatMoney(o.amountMinor, o.currency)}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  const list = tab === 'bookings' ? bookings : orders;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.title}>Your orders & bookings</Text>
+        <Text style={styles.title}>Bookings & Orders</Text>
+      </View>
+
+      {/* Mini header: Bookings (default) / Orders */}
+      <View style={styles.segmentBar}>
+        {(['bookings', 'orders'] as Tab[]).map((t) => (
+          <TouchableOpacity
+            key={t}
+            style={[styles.seg, tab === t && styles.segActive]}
+            activeOpacity={0.85}
+            onPress={() => setTab(t)}
+          >
+            <Text style={[styles.segText, tab === t && styles.segTextActive]}>
+              {t === 'bookings' ? 'Bookings' : 'Orders'}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
       {isLoading ? (
         <View style={styles.center}>
           <ActivityIndicator color={Color.primary} />
         </View>
-      ) : isEmpty ? (
+      ) : list.length === 0 ? (
         <View style={styles.center}>
-          <CalendarDays size={48} color={Color.placeholder} strokeWidth={1.4} />
-          <Text style={styles.emptyTitle}>Nothing here yet</Text>
+          {tab === 'bookings' ? (
+            <CalendarDays size={48} color={Color.placeholder} strokeWidth={1.4} />
+          ) : (
+            <ShoppingBag size={48} color={Color.placeholder} strokeWidth={1.4} />
+          )}
+          <Text style={styles.emptyTitle}>{tab === 'bookings' ? 'No bookings yet' : 'No orders yet'}</Text>
           <Text style={styles.emptyText}>
-            Book a service or order from a store on the Home tab and it will show up here.
+            {tab === 'bookings'
+              ? 'Book a service from the Home tab and it will show up here.'
+              : 'Order from a store on the Home tab and it will show up here.'}
           </Text>
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          {/* Store orders */}
-          {orders.length > 0 && (
-            <>
-              <Text style={styles.sectionLabel}>Store orders</Text>
-              {orders.map((o) => {
-                const [pillBg, pillColor] = orderStatusColors(o.status);
-                const pay = orderPayLabel(o);
-                return (
-                  <View key={o.id} style={styles.card}>
-                    <View style={styles.cardTop}>
-                      <View style={styles.icon}>
-                        <CategoryIcon slug={o.provider.category.slug} size={22} />
-                      </View>
-                      <View style={styles.info}>
-                        <Text style={styles.name} numberOfLines={1}>
-                          {o.provider.businessName}
-                        </Text>
-                        <Text style={styles.meta} numberOfLines={1}>
-                          {o.items.length} item{o.items.length > 1 ? 's' : ''} · {formatWhen(o.createdAt)}
-                        </Text>
-                        <Text style={[styles.pay, { color: pay.color }]} numberOfLines={1}>
-                          {pay.text}
-                        </Text>
-                      </View>
-                      <View style={[styles.statusPill, { backgroundColor: pillBg }]}>
-                        <Text style={[styles.statusText, { color: pillColor }]}>
-                          {ORDER_STATUS_LABEL[o.status]}
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.orderItems}>
-                      {o.items.slice(0, 3).map((it) => (
-                        <Text key={it.id} style={styles.orderLine} numberOfLines={1}>
-                          {it.name} · {formatAmount(it.quantity, it.measure)}
-                        </Text>
-                      ))}
-                      {o.items.length > 3 && (
-                        <Text style={styles.orderMore}>+{o.items.length - 3} more</Text>
-                      )}
-                    </View>
-
-                    <View style={styles.orderFooter}>
-                      <Text style={styles.orderFooterLabel}>Total</Text>
-                      <Text style={styles.orderTotal}>{formatMoney(o.amountMinor, o.currency)}</Text>
-                    </View>
-                  </View>
-                );
-              })}
-            </>
-          )}
-
-          {/* Service appointments */}
-          {bookings.length > 0 && (
-            <>
-              <Text style={styles.sectionLabel}>Appointments</Text>
-              {bookings.map((b) => {
-                const [pillBg, pillColor] = statusColors(b.status);
-                const pay = paymentSummary(b);
-                const showPay = b.status !== 'CANCELLED' && b.status !== 'NO_SHOW';
-                const payText =
-                  b.paymentStatus === 'PARTIAL' && pay.due > 0
-                    ? `${formatPrice(pay.due, b.currency)} due`
-                    : pay.label;
-                return (
-                  <TouchableOpacity
-                    key={b.id}
-                    style={styles.card}
-                    activeOpacity={0.85}
-                    onPress={() => onOpen(b)}
-                  >
-                    <View style={styles.cardTop}>
-                      <View style={styles.icon}>
-                        <CategoryIcon slug={b.provider.category.slug} size={22} />
-                      </View>
-                      <View style={styles.info}>
-                        <Text style={styles.name} numberOfLines={1}>
-                          {b.provider.businessName}
-                        </Text>
-                        <Text style={styles.meta} numberOfLines={1}>
-                          {b.service.name} · {formatWhen(b.startTime)}
-                        </Text>
-                        {showPay && (
-                          <Text style={[styles.pay, { color: pay.color }]} numberOfLines={1}>
-                            {payText}
-                          </Text>
-                        )}
-                      </View>
-                      <View style={[styles.statusPill, { backgroundColor: pillBg }]}>
-                        <Text style={[styles.statusText, { color: pillColor }]}>
-                          {STATUS_LABEL[b.status]}
-                        </Text>
-                      </View>
-                      <ChevronRight size={18} color={Color.placeholder} />
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </>
-          )}
+          {tab === 'bookings' ? bookings.map(renderBooking) : orders.map(renderOrder)}
         </ScrollView>
       )}
     </SafeAreaView>
