@@ -60,7 +60,9 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
+  iconImg: { width: '100%', height: '100%' },
   info: { flex: 1, minWidth: 0 },
   name: {
     fontSize: FontSize.md,
@@ -87,6 +89,7 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.xs,
     fontWeight: FontWeight.bold,
   },
+  orderRight: { flexDirection: 'row', alignItems: 'center', gap: 2 },
 
   // Section label between orders / appointments
   sectionLabel: {

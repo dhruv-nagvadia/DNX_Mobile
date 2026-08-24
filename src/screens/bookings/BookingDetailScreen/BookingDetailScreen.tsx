@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { Star, BadgeCheck } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
@@ -96,7 +96,11 @@ export default function BookingDetailScreen() {
         {/* Summary */}
         <View style={styles.summary}>
           <View style={styles.avatar}>
-            <CategoryIcon slug={booking.provider.category.slug} size={30} />
+            {booking.provider.images && booking.provider.images.length > 0 ? (
+              <Image source={{ uri: booking.provider.images[0] }} style={styles.avatarImg} />
+            ) : (
+              <CategoryIcon slug={booking.provider.category.slug} size={30} />
+            )}
           </View>
           <Text style={styles.bizName}>{booking.provider.businessName}</Text>
           <View style={styles.chipRow}>

@@ -91,7 +91,12 @@ export function StoreDetail({ provider }: { provider: Provider }) {
         </TouchableOpacity>
 
         <View style={styles.eControl}>
-          <ProductAmountControl product={p} providerId={provider.id} providerName={provider.businessName} />
+          <ProductAmountControl
+            product={p}
+            providerId={provider.id}
+            providerName={provider.businessName}
+            depositPercent={provider.depositPercent ?? 20}
+          />
         </View>
       </View>
     );

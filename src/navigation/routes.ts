@@ -20,6 +20,8 @@ export const ROUTES = {
   ACCOUNT: 'AccountScreen',
   CART: 'CartScreen',
   PRODUCT_DETAILS: 'ProductDetailScreen',
+  ORDER_DETAILS: 'OrderDetailScreen',
+  NOTIFICATIONS: 'NotificationsScreen',
   DEBUG_LOGS: 'DebugLogsScreen',
 } as const;
 
@@ -56,5 +58,7 @@ export type RootStackParamList = {
   [ROUTES.ACCOUNT]: undefined;
   [ROUTES.CART]: undefined;
   [ROUTES.PRODUCT_DETAILS]: { providerId: string; productId: string };
+  [ROUTES.ORDER_DETAILS]: { orderId: string };
+  [ROUTES.NOTIFICATIONS]: undefined;
   [ROUTES.DEBUG_LOGS]: undefined;
 };

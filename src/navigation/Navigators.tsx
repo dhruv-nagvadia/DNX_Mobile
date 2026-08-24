@@ -25,6 +25,8 @@ import ReviewsScreen from '@/screens/reviews/ReviewsScreen';
 import AddReminderScreen from '@/screens/reminders/AddReminderScreen';
 import CartScreen from '@/screens/cart/CartScreen';
 import ProductDetailScreen from '@/screens/store/ProductDetailScreen';
+import OrderDetailScreen from '@/screens/store/OrderDetailScreen';
+import NotificationsScreen from '@/screens/notifications/NotificationsScreen';
 import DebugLogsScreen from '@/screens/debug/DebugLogsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -129,6 +131,8 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.ADD_REMINDER} component={AddReminderScreen} />
       <Stack.Screen name={ROUTES.CART} component={CartScreen} />
       <Stack.Screen name={ROUTES.PRODUCT_DETAILS} component={ProductDetailScreen} />
+      <Stack.Screen name={ROUTES.ORDER_DETAILS} component={OrderDetailScreen} />
+      <Stack.Screen name={ROUTES.NOTIFICATIONS} component={NotificationsScreen} />
       <Stack.Screen name={ROUTES.DEBUG_LOGS} component={DebugLogsScreen} />
     </Stack.Navigator>
   );

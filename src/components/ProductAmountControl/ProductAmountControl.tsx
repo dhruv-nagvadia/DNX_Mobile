@@ -19,6 +19,7 @@ interface Props {
   product: Product;
   providerId: string;
   providerName: string;
+  depositPercent?: number;
 }
 
 /**
@@ -26,7 +27,7 @@ interface Props {
  * Amounts are kept in base units; the toggle only changes how the buyer
  * enters and reads the amount. Shared by the store card and product detail.
  */
-export function ProductAmountControl({ product: p, providerId, providerName }: Props) {
+export function ProductAmountControl({ product: p, providerId, providerName, depositPercent }: Props) {
   const dispatch = useAppDispatch();
   const qty = useAppSelector((s) => s.cart.items.find((i) => i.productId === p.id)?.quantity ?? 0);
 
@@ -52,6 +53,8 @@ export function ProductAmountControl({ product: p, providerId, providerName }: P
           currency: p.currency,
           stockQty: p.stockQty,
           stepQty: p.stepQty,
+          imageUrl: p.imageUrl,
+          depositPercent,
         },
         quantity: Math.max(0, Math.min(amount, p.stockQty)),
       }),

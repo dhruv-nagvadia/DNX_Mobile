@@ -19,7 +19,9 @@ export function useBookingDetail() {
   const navigation = useNavigation<BookingDetailNavigationProp>();
   const { params } = useRoute<BookingDetailRouteProp>();
 
-  const { data: bookings = [], isLoading, refetch } = useGetMyBookingsQuery();
+  const { data: bookings = [], isLoading, refetch } = useGetMyBookingsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
   const booking = bookings.find((b) => b.id === params.bookingId) ?? null;
 
   const [cancelBooking, { isLoading: cancelling }] = useCancelBookingMutation();

@@ -87,6 +87,7 @@ export default function ProductDetailScreen() {
               product={product}
               providerId={provider.id}
               providerName={provider.businessName}
+              depositPercent={provider.depositPercent ?? 20}
             />
           </View>
 

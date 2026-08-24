@@ -1,6 +1,6 @@
 export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'READY' | 'COMPLETED' | 'CANCELLED';
 export type OrderPaymentStatus = 'PENDING' | 'PARTIAL' | 'PAID' | 'FAILED' | 'REFUNDED';
-export type OrderPaymentMethod = 'ONLINE' | 'CASH';
+export type OrderPaymentMethod = 'ONLINE' | 'CASH' | 'PARTIAL';
 
 export interface OrderItem {
   id: string;
@@ -11,6 +11,7 @@ export interface OrderItem {
   priceQty: number;
   unit: string;
   quantity: number; // base units
+  product?: { imageUrl?: string | null } | null;
 }
 
 export interface Order {
@@ -28,6 +29,7 @@ export interface Order {
     id: string;
     businessName: string;
     phone?: string | null;
+    images?: string[];
     category: { slug: string; name: string };
   };
 }

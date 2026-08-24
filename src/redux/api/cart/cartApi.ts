@@ -4,10 +4,9 @@ import { endpoints } from '@/api/APIUtils';
 import type { CartItem } from '@/redux/slices/cartSlice';
 import { ApiEnvelope } from '../types';
 
-// The server returns a superset of CartItem (extra unit/imageUrl); map to CartItem.
+// The server returns a superset of CartItem (extra unit); map to CartItem.
 interface ServerCartItem extends CartItem {
   unit?: string;
-  imageUrl?: string | null;
 }
 
 function toCartItem(s: ServerCartItem): CartItem {
@@ -23,6 +22,8 @@ function toCartItem(s: ServerCartItem): CartItem {
     stockQty: s.stockQty,
     stepQty: s.stepQty,
     quantity: s.quantity,
+    imageUrl: s.imageUrl,
+    depositPercent: s.depositPercent,
   };
 }
 

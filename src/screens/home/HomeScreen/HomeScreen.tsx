@@ -9,9 +9,10 @@ import {
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, MapPin, ChevronDown, Bell, Star, Users, ShoppingBag } from 'lucide-react-native';
+import { Search, MapPin, ChevronDown, Star, Users, ShoppingBag } from 'lucide-react-native';
 
 import { CategoryIcon } from '@/components/CategoryIcon';
+import { NotificationBellButton } from '@/components/NotificationBellButton';
 import { Color } from '@/utils/Theme';
 
 import { useHomeScreen } from './useHomeScreen';
@@ -67,12 +68,7 @@ export default function HomeScreen() {
                 </View>
               )}
             </TouchableOpacity>
-            <TouchableOpacity style={styles.bellBtn} activeOpacity={0.8} accessibilityLabel="Notifications">
-              <Bell size={20} color={Color.textPrimary} />
-              <View style={styles.bellBadge}>
-                <Text style={styles.bellBadgeText}>2</Text>
-              </View>
-            </TouchableOpacity>
+            <NotificationBellButton style={styles.bellBtn} />
             <TouchableOpacity style={styles.avatar} onPress={goToProfile} accessibilityLabel="Profile">
               <Text style={styles.avatarText}>{firstName.charAt(0).toUpperCase()}</Text>
             </TouchableOpacity>

@@ -32,6 +32,12 @@ export const endpoints = {
   // Categories (shared)
   categories: '/categories',
 
+  // In-app notifications (shared/token-based; any role)
+  notifications: '/notifications',
+  notificationsUnreadCount: '/notifications/unread-count',
+  notificationsReadAll: '/notifications/read-all',
+  notificationRead: (id: string) => `/notifications/${id}/read`,
+
   // Customer discovery
   providers: '/customer/providers',
   providerById: (id: string) => `/customer/providers/${id}`,
@@ -52,6 +58,7 @@ export const endpoints = {
   // Product orders (store businesses)
   orders: '/customer/orders',
   myOrders: '/customer/orders/mine',
+  cancelOrder: (id: string) => `/customer/orders/${id}/cancel`,
 
   // Persistent cart
   cart: '/customer/cart',

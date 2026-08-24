@@ -38,16 +38,28 @@ export const styles = StyleSheet.create({
   shopName: { flex: 1, fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Color.textPrimary },
   clearShop: { fontSize: FontSize.xs, fontWeight: FontWeight.semibold, color: Color.error },
 
-  // Item row (two rows: name/remove, then stepper · unit price · line total)
+  // Item row — e-commerce style: image on the left, details on the right.
   itemRow: {
-    paddingVertical: Spacing.sm,
+    flexDirection: 'row',
+    gap: Spacing.md,
+    paddingVertical: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: Color.border,
-    gap: Spacing.sm,
   },
-  itemTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Spacing.sm },
+  thumb: {
+    width: 62,
+    height: 62,
+    borderRadius: Radius.md,
+    backgroundColor: Color.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  thumbImg: { width: '100%', height: '100%' },
+  itemMain: { flex: 1, minWidth: 0, gap: 5 },
+  itemTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: Spacing.sm },
   itemName: { flex: 1, minWidth: 0, fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
-  itemBottom: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  itemBottom: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Spacing.sm },
 
   stepper: {
     flexDirection: 'row',
@@ -61,8 +73,8 @@ export const styles = StyleSheet.create({
   disabled: { opacity: 0.4 },
   qty: { minWidth: 44, textAlign: 'center', fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
 
-  itemUnit: { flex: 1, textAlign: 'right', fontSize: FontSize.xs, color: Color.textSecondary },
-  lineTotal: { minWidth: 60, textAlign: 'right', fontSize: FontSize.md, fontWeight: FontWeight.extrabold, color: Color.primary },
+  itemUnit: { fontSize: FontSize.xs, color: Color.textSecondary },
+  lineTotal: { fontSize: FontSize.md, fontWeight: FontWeight.extrabold, color: Color.primary },
   removeBtn: { padding: 4 },
   minMsg: { fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Color.error },
 

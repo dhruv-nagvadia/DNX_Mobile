@@ -40,7 +40,9 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
+  avatarImg: { width: '100%', height: '100%' },
   bizName: {
     fontSize: FontSize.xl,
     fontWeight: FontWeight.extrabold,

@@ -13,6 +13,8 @@ export interface CartItem {
   stockQty: number; // base units
   stepQty: number; // minimum + increment, base units
   quantity: number; // chosen amount, base units
+  imageUrl?: string | null;
+  depositPercent?: number; // provider's partial-pay deposit %
 }
 
 interface CartState {

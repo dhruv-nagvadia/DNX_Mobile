@@ -20,7 +20,13 @@ export const orderApi = createApi({
       transformResponse: (res: ApiEnvelope<CreateOrderResponse>) => res.data,
       invalidatesTags: ['MyOrders'],
     }),
+
+    cancelOrder: builder.mutation<Order, string>({
+      query: (id) => ({ endpoint: endpoints.cancelOrder(id), method: 'patch' }),
+      transformResponse: (res: ApiEnvelope<Order>) => res.data,
+      invalidatesTags: ['MyOrders'],
+    }),
   }),
 });
 
-export const { useGetMyOrdersQuery, useCreateOrderMutation } = orderApi;
+export const { useGetMyOrdersQuery, useCreateOrderMutation, useCancelOrderMutation } = orderApi;

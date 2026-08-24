@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { CalendarDays, ChevronRight, ShoppingBag } from 'lucide-react-native';
+
+import { ROUTES } from '@/navigation/routes';
 
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Color } from '@/utils/Theme';
@@ -32,7 +35,10 @@ function formatPrice(minor: number, currency: string | null): string {
 /** Bookings & Orders tab — split into service appointments and store orders. */
 export default function BookingsScreen() {
   const { bookings, isLoading: bookingsLoading, onOpen } = useBookingsScreen();
-  const { data: orders = [], isLoading: ordersLoading } = useGetMyOrdersQuery();
+  const { data: orders = [], isLoading: ordersLoading } = useGetMyOrdersQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+  const navigation = useNavigation<{ navigate: (r: string, p?: object) => void }>();
   const [tab, setTab] = useState<Tab>('bookings');
 
   const isLoading = tab === 'bookings' ? bookingsLoading : ordersLoading;
@@ -47,7 +53,11 @@ export default function BookingsScreen() {
       <TouchableOpacity key={b.id} style={styles.card} activeOpacity={0.85} onPress={() => onOpen(b)}>
         <View style={styles.cardTop}>
           <View style={styles.icon}>
-            <CategoryIcon slug={b.provider.category.slug} size={22} />
+            {b.provider.images && b.provider.images.length > 0 ? (
+              <Image source={{ uri: b.provider.images[0] }} style={styles.iconImg} />
+            ) : (
+              <CategoryIcon slug={b.provider.category.slug} size={22} />
+            )}
           </View>
           <View style={styles.info}>
             <Text style={styles.name} numberOfLines={1}>
@@ -75,10 +85,19 @@ export default function BookingsScreen() {
     const [pillBg, pillColor] = orderStatusColors(o.status);
     const pay = orderPayLabel(o);
     return (
-      <View key={o.id} style={styles.card}>
+      <TouchableOpacity
+        key={o.id}
+        style={styles.card}
+        activeOpacity={0.85}
+        onPress={() => navigation.navigate(ROUTES.ORDER_DETAILS, { orderId: o.id })}
+      >
         <View style={styles.cardTop}>
           <View style={styles.icon}>
-            <CategoryIcon slug={o.provider.category.slug} size={22} />
+            {o.provider.images && o.provider.images.length > 0 ? (
+              <Image source={{ uri: o.provider.images[0] }} style={styles.iconImg} />
+            ) : (
+              <CategoryIcon slug={o.provider.category.slug} size={22} />
+            )}
           </View>
           <View style={styles.info}>
             <Text style={styles.name} numberOfLines={1}>
@@ -91,8 +110,11 @@ export default function BookingsScreen() {
               {pay.text}
             </Text>
           </View>
-          <View style={[styles.statusPill, { backgroundColor: pillBg }]}>
-            <Text style={[styles.statusText, { color: pillColor }]}>{ORDER_STATUS_LABEL[o.status]}</Text>
+          <View style={styles.orderRight}>
+            <View style={[styles.statusPill, { backgroundColor: pillBg }]}>
+              <Text style={[styles.statusText, { color: pillColor }]}>{ORDER_STATUS_LABEL[o.status]}</Text>
+            </View>
+            <ChevronRight size={18} color={Color.placeholder} />
           </View>
         </View>
 
@@ -109,7 +131,7 @@ export default function BookingsScreen() {
           <Text style={styles.orderFooterLabel}>Total</Text>
           <Text style={styles.orderTotal}>{formatMoney(o.amountMinor, o.currency)}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
