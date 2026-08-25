@@ -42,6 +42,8 @@ export const styles = StyleSheet.create({
   statusPill: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: Radius.pill },
   statusText: { fontSize: FontSize.xs, fontWeight: FontWeight.bold },
   placed: { fontSize: FontSize.xs, color: Color.textSecondary },
+  viewLink: { flexDirection: 'row', alignItems: 'center', gap: 2, marginTop: 4 },
+  viewLinkText: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.primary },
 
   sectionTitle: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
 
@@ -103,4 +105,106 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelText: { color: Color.error, fontSize: FontSize.md, fontWeight: FontWeight.bold },
+
+  // Provider's cancellation note
+  cancelNote: {
+    borderRadius: Radius.lg,
+    backgroundColor: Color.errorSoft,
+    borderWidth: 1,
+    borderColor: Color.error,
+    padding: Spacing.md,
+    gap: 4,
+  },
+  cancelNoteLabel: { fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Color.error },
+  cancelNoteText: { fontSize: FontSize.sm, color: Color.textPrimary, lineHeight: FontSize.sm * 1.4 },
+
+  // Per-product rating rows (completed order)
+  rateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: Spacing.md,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Color.border,
+  },
+  rateName: { flex: 1, fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.textPrimary },
+  rateStars: { flexDirection: 'row', gap: 3 },
+  rateProductBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: Radius.pill,
+    backgroundColor: Color.primarySoft,
+  },
+  rateProductText: { fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Color.primary },
+
+  // Your review (read-only stars)
+  ratingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: Spacing.md,
+  },
+  ratingText: {
+    marginLeft: 4,
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
+    color: Color.textPrimary,
+  },
+
+  // Rate-your-order button (primary)
+  reviewBtn: {
+    marginTop: Spacing.sm,
+    flexDirection: 'row',
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: Radius.md,
+    backgroundColor: Color.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  reviewText: { color: Color.white, fontSize: FontSize.md, fontWeight: FontWeight.bold },
+
+  // Review modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15,23,42,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: Spacing.lg,
+  },
+  modalCard: {
+    width: '100%',
+    borderRadius: Radius.lg,
+    backgroundColor: Color.surface,
+    padding: Spacing.lg,
+    gap: Spacing.md,
+  },
+  modalTitle: {
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.extrabold,
+    color: Color.textPrimary,
+    textAlign: 'center',
+  },
+  modalSub: { fontSize: FontSize.sm, color: Color.textSecondary, textAlign: 'center', marginTop: -8 },
+  starsRow: { flexDirection: 'row', justifyContent: 'center', gap: Spacing.sm, paddingVertical: Spacing.sm },
+  commentInput: {
+    minHeight: 90,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Color.border,
+    padding: Spacing.md,
+    fontSize: FontSize.sm,
+    color: Color.textPrimary,
+    textAlignVertical: 'top',
+  },
+  modalActions: { flexDirection: 'row', gap: Spacing.md },
+  modalBtn: { flex: 1, paddingVertical: 13, borderRadius: Radius.md, alignItems: 'center' },
+  modalGhost: { borderWidth: 1, borderColor: Color.border, backgroundColor: Color.surface },
+  modalGhostText: { color: Color.textPrimary, fontSize: FontSize.md, fontWeight: FontWeight.semibold },
+  modalPrimary: { backgroundColor: Color.primary },
+  modalPrimaryText: { color: Color.white, fontSize: FontSize.md, fontWeight: FontWeight.bold },
 });

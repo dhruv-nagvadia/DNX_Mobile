@@ -30,6 +30,12 @@ export const providerApi = createApi({
       transformResponse: (res: ApiEnvelope<Review[]>) => res.data,
       providesTags: (_r, _e, id) => [{ type: 'Reviews', id }],
     }),
+
+    getProductReviews: builder.query<Review[], string>({
+      query: (id) => ({ endpoint: endpoints.productReviews(id), method: 'get' }),
+      transformResponse: (res: ApiEnvelope<Review[]>) => res.data,
+      providesTags: (_r, _e, id) => [{ type: 'Reviews', id: `product-${id}` }],
+    }),
   }),
 });
 
@@ -38,4 +44,5 @@ export const {
   useLazyGetProvidersQuery,
   useGetProviderByIdQuery,
   useGetProviderReviewsQuery,
+  useGetProductReviewsQuery,
 } = providerApi;

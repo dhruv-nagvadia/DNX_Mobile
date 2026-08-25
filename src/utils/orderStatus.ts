@@ -27,6 +27,7 @@ export function orderStatusColors(status: OrderStatus): [string, string] {
 
 /** Short payment line for an order: label + colour. */
 export function orderPayLabel(o: Order): { text: string; color: string } {
+  if (o.paymentStatus === 'REFUNDED') return { text: 'Refunded', color: Color.primary };
   if (o.paymentStatus === 'PAID') return { text: 'Paid', color: Color.success };
   if (o.paymentMethod === 'CASH') return { text: 'Pay cash at pickup', color: Color.textSecondary };
   return { text: 'Payment pending', color: Color.warning };

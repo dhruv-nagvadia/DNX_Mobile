@@ -23,6 +23,8 @@ export interface Order {
   paymentMethod: OrderPaymentMethod;
   paymentStatus: OrderPaymentStatus;
   note?: string | null;
+  // Message the provider left when they cancelled the order.
+  cancelReason?: string | null;
   createdAt: string;
   items: OrderItem[];
   provider: {
@@ -32,6 +34,23 @@ export interface Order {
     images?: string[];
     category: { slug: string; name: string };
   };
+  // The customer's review of this order, once left (COMPLETED orders only).
+  review?: { id: string; rating: number } | null;
+  // Per-product ratings the customer left for items in this order.
+  productReviews?: { productId: string; rating: number }[];
+}
+
+export interface CreateOrderReviewRequest {
+  orderId: string;
+  rating: number;
+  comment?: string;
+}
+
+export interface CreateProductReviewRequest {
+  orderId: string;
+  productId: string;
+  rating: number;
+  comment?: string;
 }
 
 export interface CreateOrderItem {

@@ -27,6 +27,9 @@ export const styles = StyleSheet.create({
 
   body: { padding: Spacing.lg },
   name: { fontSize: FontSize.xl, fontWeight: FontWeight.extrabold, color: Color.textPrimary },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
+  ratingText: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
+  ratingCount: { fontSize: FontSize.sm, color: Color.textSecondary },
 
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, flexWrap: 'wrap', marginTop: 4 },
   price: { fontSize: FontSize.lg, fontWeight: FontWeight.extrabold, color: Color.textPrimary },

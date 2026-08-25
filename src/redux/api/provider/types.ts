@@ -28,6 +28,8 @@ export interface Product {
   stockQty: number; // base units
   stepQty: number; // minimum + increment, base units
   imageUrl?: string | null;
+  ratingAvg?: number;
+  ratingCount?: number;
 }
 
 export interface BusinessHour {

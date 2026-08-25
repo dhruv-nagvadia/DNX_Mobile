@@ -50,6 +50,8 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: -0.3,
   },
+  viewLink: { flexDirection: 'row', alignItems: 'center', gap: 2, marginTop: 8 },
+  viewLinkText: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.primary },
   chipRow: {
     flexDirection: 'row',
     alignItems: 'center',

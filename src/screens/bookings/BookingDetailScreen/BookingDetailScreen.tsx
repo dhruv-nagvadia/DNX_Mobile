@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity, Modal, TextInput } from 'react-native';
-import { Star, BadgeCheck } from 'lucide-react-native';
+import { Star, BadgeCheck, ChevronRight } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
@@ -44,6 +44,7 @@ export default function BookingDetailScreen() {
     onCancel,
     onReschedule,
     onRemind,
+    openProvider,
     onPay,
     paying,
     reviewOpen,
@@ -93,8 +94,8 @@ export default function BookingDetailScreen() {
       <AppHeader title="Booking details" />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Summary */}
-        <View style={styles.summary}>
+        {/* Summary — tap to open the business */}
+        <TouchableOpacity style={styles.summary} activeOpacity={0.85} onPress={openProvider}>
           <View style={styles.avatar}>
             {booking.provider.images && booking.provider.images.length > 0 ? (
               <Image source={{ uri: booking.provider.images[0] }} style={styles.avatarImg} />
@@ -114,7 +115,11 @@ export default function BookingDetailScreen() {
               </Text>
             </View>
           </View>
-        </View>
+          <View style={styles.viewLink}>
+            <Text style={styles.viewLinkText}>View business</Text>
+            <ChevronRight size={14} color={Color.primary} />
+          </View>
+        </TouchableOpacity>
 
         {/* Details */}
         <View style={styles.card}>

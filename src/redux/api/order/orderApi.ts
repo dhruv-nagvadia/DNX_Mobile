@@ -1,7 +1,13 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { axiosBaseQuery } from '@/api/apiConfigs';
 import { endpoints } from '@/api/APIUtils';
-import { CreateOrderRequest, CreateOrderResponse, Order } from './types';
+import {
+  CreateOrderRequest,
+  CreateOrderResponse,
+  CreateOrderReviewRequest,
+  CreateProductReviewRequest,
+  Order,
+} from './types';
 import { ApiEnvelope } from '../types';
 
 export const orderApi = createApi({
@@ -26,7 +32,33 @@ export const orderApi = createApi({
       transformResponse: (res: ApiEnvelope<Order>) => res.data,
       invalidatesTags: ['MyOrders'],
     }),
+
+    createOrderReview: builder.mutation<{ id: string }, CreateOrderReviewRequest>({
+      query: ({ orderId, rating, comment }) => ({
+        endpoint: endpoints.orderReview(orderId),
+        method: 'post',
+        data: { rating, comment },
+      }),
+      transformResponse: (res: ApiEnvelope<{ id: string }>) => res.data,
+      invalidatesTags: ['MyOrders'],
+    }),
+
+    createProductReview: builder.mutation<{ id: string }, CreateProductReviewRequest>({
+      query: ({ orderId, productId, rating, comment }) => ({
+        endpoint: endpoints.orderProductReview(orderId, productId),
+        method: 'post',
+        data: { rating, comment },
+      }),
+      transformResponse: (res: ApiEnvelope<{ id: string }>) => res.data,
+      invalidatesTags: ['MyOrders'],
+    }),
   }),
 });
 
-export const { useGetMyOrdersQuery, useCreateOrderMutation, useCancelOrderMutation } = orderApi;
+export const {
+  useGetMyOrdersQuery,
+  useCreateOrderMutation,
+  useCancelOrderMutation,
+  useCreateOrderReviewMutation,
+  useCreateProductReviewMutation,
+} = orderApi;
