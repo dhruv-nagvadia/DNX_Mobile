@@ -14,6 +14,8 @@ export const ROUTES = {
   CATEGORY: 'CategoryScreen',
   PROVIDER_LIST: 'ProviderListScreen',
   PROVIDER_DETAILS: 'ProviderDetailsScreen',
+  BOOKING_SUMMARY: 'BookingSummaryScreen',
+  COUPONS: 'CouponsScreen',
   GALLERY: 'GalleryScreen',
   SEARCH: 'SearchScreen',
   REVIEWS: 'ReviewsScreen',
@@ -52,6 +54,8 @@ export type RootStackParamList = {
     rescheduleBookingId?: string;
     rescheduleServiceId?: string;
   };
+  [ROUTES.BOOKING_SUMMARY]: { providerId: string; serviceId: string; startTime: string };
+  [ROUTES.COUPONS]: { providerId: string; subtotalMinor: number; currency: string };
   [ROUTES.GALLERY]: { images: string[]; index?: number };
   [ROUTES.SEARCH]: undefined;
   [ROUTES.REVIEWS]: { providerId: string; businessName?: string };

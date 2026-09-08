@@ -13,6 +13,8 @@ export interface Category {
   name: string;
   description?: string | null;
   iconUrl?: string | null;
+  // Whether this category is for service (appointment) or store (product) businesses.
+  type?: 'SERVICE' | 'STORE';
   sortOrder: number;
   subcategories: Subcategory[];
 }

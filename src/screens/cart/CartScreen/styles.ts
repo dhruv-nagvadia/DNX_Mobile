@@ -89,6 +89,12 @@ export const styles = StyleSheet.create({
   subtotalLabel: { fontSize: FontSize.sm, color: Color.textSecondary, fontWeight: FontWeight.semibold },
   subtotalValue: { fontSize: FontSize.md, fontWeight: FontWeight.extrabold, color: Color.textPrimary },
 
+  // Coupon (applied summary — managed from the payment sheet)
+  totalLine: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 },
+  discountLabel: { fontSize: FontSize.sm, color: Color.success, fontWeight: FontWeight.semibold },
+  discountValue: { fontSize: FontSize.sm, color: Color.success, fontWeight: FontWeight.bold },
+  totalLabel: { fontSize: FontSize.sm, color: Color.textPrimary, fontWeight: FontWeight.bold },
+
   // Payment
   sectionTitle: { fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Color.textPrimary, marginTop: Spacing.sm, marginBottom: Spacing.sm },
   payOption: {

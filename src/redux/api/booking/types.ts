@@ -10,6 +10,8 @@ export interface Booking {
   startTime: string; // ISO datetime
   endTime: string; // ISO datetime
   amountMinor: number | null;
+  discountMinor?: number;
+  couponCode?: string | null;
   amountPaidMinor: number;
   currency: string | null;
   paymentMethod: PaymentMethod;
@@ -46,4 +48,5 @@ export interface CreateBookingRequest {
   serviceId: string;
   startTime: string; // ISO datetime
   paymentMethod?: PaymentMethod;
+  couponCode?: string;
 }

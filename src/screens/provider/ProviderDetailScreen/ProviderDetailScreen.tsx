@@ -17,7 +17,6 @@ import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { AppButton } from '@/components/AppButton';
 import { BusinessContact } from '@/components/BusinessContact';
-import { PaymentMethodModal } from '@/components/PaymentMethodModal';
 import { ReviewItem } from '@/components/ReviewItem';
 import { Color } from '@/utils/Theme';
 import { useGetProviderByIdQuery } from '@/redux/api/provider/providerApi';
@@ -100,14 +99,6 @@ function ServiceDetail() {
     canBook,
     booking,
     onBook,
-    methodOpen,
-    closeMethod,
-    chooseMethod,
-    paymentBusy,
-    payTotal,
-    payCurrency,
-    depositPercent,
-    payServiceName,
   } = useProviderDetail();
 
   const [activeImage, setActiveImage] = useState(0);
@@ -355,17 +346,6 @@ function ServiceDetail() {
           disabled={!canBook}
         />
       </View>
-
-      <PaymentMethodModal
-        visible={methodOpen}
-        total={payTotal}
-        currency={payCurrency}
-        depositPercent={depositPercent}
-        serviceName={payServiceName}
-        loading={paymentBusy}
-        onSelect={chooseMethod}
-        onClose={closeMethod}
-      />
     </View>
   );
 }

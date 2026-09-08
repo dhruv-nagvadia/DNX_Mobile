@@ -1,16 +1,26 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Store, Plus, Minus, Trash2, ShoppingCart, ShoppingBag } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
+import { OffersSection } from '@/components/OffersSection';
 import { PaymentMethodModal } from '@/components/PaymentMethodModal';
 import { Color } from '@/utils/Theme';
 import { formatAmount, unitPriceLabel, amountPrice, formatMoney, baseIncrement } from '@/utils/units';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { removeFromCart, clearProviderItems, setCartQty } from '@/redux/slices/cartSlice';
 import type { CartItem } from '@/redux/slices/cartSlice';
+import { clearAppliedCoupon } from '@/redux/slices/couponSlice';
 import { useCreateOrderMutation } from '@/redux/api/order/orderApi';
 import { providerApi } from '@/redux/api/provider/providerApi';
 import { OrderPaymentMethod } from '@/redux/api/order/types';
@@ -30,10 +40,16 @@ export default function CartScreen() {
   const navigation = useNavigation<{ navigate: (r: string, p?: object) => void }>();
   const dispatch = useAppDispatch();
   const items = useAppSelector((s) => s.cart.items);
+  // Coupons applied per store — set from the dedicated Coupons screen (or a
+  // quick-apply chip), shared via redux so it survives navigating there and back.
+  const applied = useAppSelector((s) => s.coupons.applied);
   const [createOrder] = useCreateOrderMutation();
 
   const [payOpen, setPayOpen] = useState(false);
   const [placing, setPlacing] = useState(false);
+
+  // Changing a store's items invalidates any coupon preview for that store.
+  const clearCoupon = (providerId: string) => dispatch(clearAppliedCoupon(providerId));
 
   // Group the cart by shop — each shop is its own pickup order.
   const groups = useMemo<ShopGroup[]>(() => {
@@ -49,12 +65,15 @@ export default function CartScreen() {
     return Array.from(map.values());
   }, [items]);
 
-  const grandTotal = groups.reduce((s, g) => s + g.subtotal, 0);
+  const discountFor = (providerId: string) => applied[providerId]?.discountMinor ?? 0;
+  const totalDiscount = groups.reduce((s, g) => s + discountFor(g.providerId), 0);
+  const grandTotal = groups.reduce((s, g) => s + g.subtotal, 0) - totalDiscount;
   const hasBelowMin = items.some((i) => i.quantity < i.stepQty);
   const currency = items[0]?.currency ?? 'INR';
   const depositPercent = items[0]?.depositPercent || 20;
 
   const setQty = (it: CartItem, quantity: number) => {
+    clearCoupon(it.providerId); // discount preview may no longer be valid
     dispatch(
       setCartQty({
         item: {
@@ -86,6 +105,7 @@ export default function CartScreen() {
           providerId: g.providerId,
           paymentMethod: method,
           items: g.items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+          couponCode: applied[g.providerId]?.code,
         }).unwrap();
         dispatch(clearProviderItems(g.providerId));
         dispatch(
@@ -130,7 +150,9 @@ export default function CartScreen() {
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 130 }]} showsVerticalScrollIndicator={false}>
         <Text style={styles.note}>Each store is a separate pickup order.</Text>
 
-        {groups.map((g) => (
+        {groups.map((g) => {
+          const coupon = applied[g.providerId];
+          return (
           <View key={g.providerId} style={styles.shopCard}>
             <View style={styles.shopHead}>
               <View style={styles.shopIcon}>
@@ -139,7 +161,12 @@ export default function CartScreen() {
               <Text style={styles.shopName} numberOfLines={1}>
                 {g.providerName}
               </Text>
-              <TouchableOpacity onPress={() => dispatch(clearProviderItems(g.providerId))}>
+              <TouchableOpacity
+                onPress={() => {
+                  dispatch(clearProviderItems(g.providerId));
+                  clearCoupon(g.providerId);
+                }}
+              >
                 <Text style={styles.clearShop}>Clear</Text>
               </TouchableOpacity>
             </View>
@@ -164,7 +191,13 @@ export default function CartScreen() {
                       <Text style={styles.itemName} numberOfLines={2}>
                         {it.name}
                       </Text>
-                      <TouchableOpacity style={styles.removeBtn} onPress={() => dispatch(removeFromCart(it.productId))}>
+                      <TouchableOpacity
+                        style={styles.removeBtn}
+                        onPress={() => {
+                          dispatch(removeFromCart(it.productId));
+                          clearCoupon(it.providerId);
+                        }}
+                      >
                         <Trash2 size={15} color={Color.error} />
                       </TouchableOpacity>
                     </View>
@@ -201,15 +234,40 @@ export default function CartScreen() {
               );
             })}
 
+            {/* Offers — compact: no chip previews, just "View all coupons" until applied */}
+            <OffersSection
+              groups={[{ providerId: g.providerId, subtotalMinor: g.subtotal }]}
+              currency={currency}
+              compact
+            />
+
+            {/* Totals */}
             <View style={styles.subtotalRow}>
               <Text style={styles.subtotalLabel}>Subtotal</Text>
               <Text style={styles.subtotalValue}>{formatMoney(g.subtotal, currency)}</Text>
             </View>
+            {coupon && (
+              <>
+                <View style={styles.totalLine}>
+                  <Text style={styles.discountLabel}>Discount ({coupon.code})</Text>
+                  <Text style={styles.discountValue}>
+                    −{formatMoney(coupon.discountMinor, currency)}
+                  </Text>
+                </View>
+                <View style={styles.totalLine}>
+                  <Text style={styles.totalLabel}>Total</Text>
+                  <Text style={styles.subtotalValue}>
+                    {formatMoney(g.subtotal - coupon.discountMinor, currency)}
+                  </Text>
+                </View>
+              </>
+            )}
           </View>
-        ))}
+          );
+        })}
       </ScrollView>
 
-      {/* Checkout bar → opens the payment sheet */}
+      {/* Checkout bar → opens the payment sheet, where offers can be applied */}
       <View style={[styles.bar, { paddingBottom: insets.bottom + 12 }]}>
         <View>
           <Text style={styles.barLabel}>Total ({groups.length} shop{groups.length > 1 ? 's' : ''})</Text>

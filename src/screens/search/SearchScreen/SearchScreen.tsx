@@ -1,17 +1,56 @@
 import React from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  TextInput,
+} from 'react-native';
 import { Search, Star, BadgeCheck } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Color } from '@/utils/Theme';
+import { ProviderSort } from '@/redux/api/provider/types';
 
-import { useSearchScreen } from './useSearchScreen';
+import { useSearchScreen, TypeFilter } from './useSearchScreen';
 import { styles } from './styles';
 
-/** Full-text provider search. */
+const TYPES: { key: TypeFilter; label: string }[] = [
+  { key: 'ALL', label: 'All' },
+  { key: 'SERVICE', label: 'Services' },
+  { key: 'STORE', label: 'Stores' },
+];
+
+const SORTS: { key: ProviderSort; label: string }[] = [
+  { key: 'rating', label: 'Top rated' },
+  { key: 'reviews', label: 'Most reviewed' },
+  { key: 'newest', label: 'Newest' },
+];
+
+const RATINGS = [4, 4.5];
+
+/** Provider search + filters (type, category, rating, sort). */
 export default function SearchScreen() {
-  const { query, setQuery, providers, isFetching, hasQuery, onProviderPress } = useSearchScreen();
+  const {
+    query,
+    setQuery,
+    type,
+    selectType,
+    categories,
+    categorySlug,
+    toggleCategory,
+    clearCategory,
+    minRating,
+    toggleRating,
+    sort,
+    setSort,
+    providers,
+    isFetching,
+    onProviderPress,
+  } = useSearchScreen();
 
   return (
     <View style={styles.container}>
@@ -21,31 +60,94 @@ export default function SearchScreen() {
         <Search size={18} color={Color.placeholder} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search salons, doctors, plumbers…"
+          placeholder="Search salons, doctors, stores…"
           placeholderTextColor={Color.placeholder}
           value={query}
           onChangeText={setQuery}
-          autoFocus
           autoCorrect={false}
           returnKeyType="search"
         />
       </View>
 
-      {!hasQuery ? (
-        <View style={styles.center}>
-          <Search size={44} color={Color.placeholder} strokeWidth={1.4} />
-          <Text style={styles.hint}>Type at least 2 letters to search businesses.</Text>
+      {/* Filters */}
+      <View style={styles.filters}>
+        {/* Business kind */}
+        <View style={styles.typeRow}>
+          {TYPES.map((t) => {
+            const active = type === t.key;
+            return (
+              <TouchableOpacity
+                key={t.key}
+                style={[styles.typeChip, active && styles.typeChipActive]}
+                activeOpacity={0.85}
+                onPress={() => selectType(t.key)}
+              >
+                <Text style={[styles.typeChipText, active && styles.typeChipTextActive]}>
+                  {t.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
-      ) : isFetching ? (
+
+        {/* Categories */}
+        {categories.length > 0 && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chipsRow}
+            keyboardShouldPersistTaps="handled"
+          >
+            <Chip label="All categories" active={!categorySlug} onPress={clearCategory} />
+            {categories.map((c) => (
+              <Chip
+                key={c.id}
+                label={c.name}
+                active={categorySlug === c.slug}
+                onPress={() => toggleCategory(c.slug)}
+              />
+            ))}
+          </ScrollView>
+        )}
+
+        {/* Rating + sort */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chipsRow}
+          keyboardShouldPersistTaps="handled"
+        >
+          {RATINGS.map((r) => (
+            <Chip
+              key={r}
+              label={`${r}★+`}
+              active={minRating === r}
+              onPress={() => toggleRating(r)}
+            />
+          ))}
+          <View style={styles.sep} />
+          {SORTS.map((s) => (
+            <Chip key={s.key} label={s.label} active={sort === s.key} onPress={() => setSort(s.key)} />
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Results */}
+      {isFetching && providers.length === 0 ? (
         <View style={styles.center}>
           <ActivityIndicator color={Color.primary} />
         </View>
       ) : providers.length === 0 ? (
         <View style={styles.center}>
-          <Text style={styles.hint}>No businesses match “{query.trim()}”.</Text>
+          <Search size={44} color={Color.placeholder} strokeWidth={1.4} />
+          <Text style={styles.hint}>No businesses match your filters.</Text>
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
           {providers.map((p) => (
             <TouchableOpacity
               key={p.id}
@@ -83,5 +185,18 @@ export default function SearchScreen() {
         </ScrollView>
       )}
     </View>
+  );
+}
+
+/** A single pill filter chip. */
+function Chip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
+  return (
+    <TouchableOpacity
+      style={[styles.chip, active && styles.chipActive]}
+      activeOpacity={0.85}
+      onPress={onPress}
+    >
+      <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
+    </TouchableOpacity>
   );
 }

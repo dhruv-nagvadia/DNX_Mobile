@@ -146,6 +146,7 @@ export const styles = StyleSheet.create({
   },
 
   // Service rows
+
   serviceRow: {
     flexDirection: 'row',
     alignItems: 'center',

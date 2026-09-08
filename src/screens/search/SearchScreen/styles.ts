@@ -25,9 +25,53 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.md,
     color: Color.textPrimary,
   },
+  // Filter area
+  filters: {
+    paddingBottom: Spacing.sm,
+    gap: Spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: Color.border,
+  },
+  typeRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+  },
+  typeChip: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Color.border,
+    backgroundColor: Color.surface,
+    alignItems: 'center',
+  },
+  typeChipActive: { backgroundColor: Color.primary, borderColor: Color.primary },
+  typeChipText: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.textSecondary },
+  typeChipTextActive: { color: Color.white },
+
+  chipsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+  },
+  chip: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: Radius.pill,
+    borderWidth: 1,
+    borderColor: Color.border,
+    backgroundColor: Color.surface,
+  },
+  chipActive: { backgroundColor: Color.primarySoft, borderColor: Color.primary },
+  chipText: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.textSecondary },
+  chipTextActive: { color: Color.primary },
+  sep: { width: 1, height: 22, backgroundColor: Color.border, marginHorizontal: 2 },
+
   content: {
     padding: Spacing.lg,
-    paddingTop: Spacing.sm,
+    paddingTop: Spacing.md,
   },
   card: {
     flexDirection: 'row',

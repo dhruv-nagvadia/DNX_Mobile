@@ -25,6 +25,9 @@ export interface Order {
   note?: string | null;
   // Message the provider left when they cancelled the order.
   cancelReason?: string | null;
+  // Coupon applied at checkout (amountMinor is already the discounted total).
+  discountMinor?: number;
+  couponCode?: string | null;
   createdAt: string;
   items: OrderItem[];
   provider: {
@@ -63,6 +66,33 @@ export interface CreateOrderRequest {
   items: CreateOrderItem[];
   paymentMethod: OrderPaymentMethod;
   note?: string;
+  couponCode?: string;
+}
+
+export interface ValidateCouponRequest {
+  providerId: string;
+  code: string;
+  subtotalMinor: number;
+}
+
+export interface CouponPreview {
+  code: string;
+  description?: string | null;
+  discountType: 'PERCENT' | 'FLAT';
+  discountValue: number;
+  discountMinor: number;
+  finalMinor: number;
+}
+
+// A coupon as advertised to customers on a store (before applying).
+export interface StoreCoupon {
+  code: string;
+  description?: string | null;
+  discountType: 'PERCENT' | 'FLAT';
+  discountValue: number;
+  minOrderMinor: number;
+  maxDiscountMinor?: number | null;
+  expiresAt?: string | null;
 }
 
 export interface CreateOrderResponse {

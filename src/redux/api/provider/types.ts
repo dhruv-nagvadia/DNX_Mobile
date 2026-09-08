@@ -81,12 +81,16 @@ export interface Review {
   user: { fullName: string };
 }
 
+export type ProviderSort = 'rating' | 'reviews' | 'newest';
+
 export interface ListProvidersParams {
   categorySlug?: string;
   subcategorySlug?: string;
   city?: string;
   search?: string;
   type?: BusinessType;
+  minRating?: number;
+  sort?: ProviderSort;
   page?: number;
   limit?: number;
 }

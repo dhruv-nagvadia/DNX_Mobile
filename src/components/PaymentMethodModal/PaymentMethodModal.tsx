@@ -9,7 +9,7 @@ import { styles } from './styles';
 
 interface PaymentMethodModalProps {
   visible: boolean;
-  total: number; // minor units
+  total: number; // minor units (already reflects any applied discount)
   currency: string;
   depositPercent: number; // 0 = partial disabled
   serviceName?: string;

@@ -2,11 +2,14 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { axiosBaseQuery } from '@/api/apiConfigs';
 import { endpoints } from '@/api/APIUtils';
 import {
+  CouponPreview,
   CreateOrderRequest,
   CreateOrderResponse,
   CreateOrderReviewRequest,
   CreateProductReviewRequest,
   Order,
+  StoreCoupon,
+  ValidateCouponRequest,
 } from './types';
 import { ApiEnvelope } from '../types';
 
@@ -43,6 +46,16 @@ export const orderApi = createApi({
       invalidatesTags: ['MyOrders'],
     }),
 
+    validateCoupon: builder.mutation<CouponPreview, ValidateCouponRequest>({
+      query: (data) => ({ endpoint: endpoints.validateCoupon, method: 'post', data }),
+      transformResponse: (res: ApiEnvelope<CouponPreview>) => res.data,
+    }),
+
+    getStoreCoupons: builder.query<StoreCoupon[], string>({
+      query: (providerId) => ({ endpoint: endpoints.storeCoupons(providerId), method: 'get' }),
+      transformResponse: (res: ApiEnvelope<StoreCoupon[]>) => res.data,
+    }),
+
     createProductReview: builder.mutation<{ id: string }, CreateProductReviewRequest>({
       query: ({ orderId, productId, rating, comment }) => ({
         endpoint: endpoints.orderProductReview(orderId, productId),
@@ -61,4 +74,6 @@ export const {
   useCancelOrderMutation,
   useCreateOrderReviewMutation,
   useCreateProductReviewMutation,
+  useValidateCouponMutation,
+  useGetStoreCouponsQuery,
 } = orderApi;
