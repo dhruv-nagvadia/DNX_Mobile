@@ -8,9 +8,17 @@ import { StoreCoupon } from '@/redux/api/order/types';
 
 import { styles } from './styles';
 
-interface CouponListProps {
-  providerId: string;
+/** What's being purchased, for scope-aware eligibility (matches the backend). */
+export interface CouponContext {
   subtotalMinor: number;
+  /** The service being booked — needed for SERVICE-scoped coupons. */
+  serviceId?: string;
+  /** Cart line items — needed for PRODUCT-scoped coupons. */
+  items?: { productId: string; lineTotalMinor: number }[];
+}
+
+interface CouponListProps extends CouponContext {
+  providerId: string;
   currency: string;
   /** Apply a code (typed or tapped); parent validates against the backend. */
   onApply: (code: string) => void;
@@ -32,6 +40,27 @@ export function discountLabel(c: StoreCoupon): string {
   return `${money(c.discountValue, 'INR')} off`;
 }
 
+/** Whether a coupon applies here, and — if not — why (shown as a grey hint). */
+export function couponEligibility(
+  c: StoreCoupon,
+  ctx: CouponContext,
+  currency = 'INR',
+): { ok: boolean; hint?: string } {
+  if (c.scope === 'SERVICE') {
+    if (ctx.serviceId && ctx.serviceId === c.serviceId) return { ok: true };
+    return { ok: false, hint: `Only valid on ${c.serviceName ?? 'a specific service'}` };
+  }
+  if (c.scope === 'PRODUCT') {
+    if (ctx.items?.some((i) => i.productId === c.productId)) return { ok: true };
+    return { ok: false, hint: `Only valid on ${c.productName ?? 'a specific product'}` };
+  }
+  if (ctx.subtotalMinor >= c.minOrderMinor) return { ok: true };
+  return {
+    ok: false,
+    hint: `Add ${money(c.minOrderMinor - ctx.subtotalMinor, currency)} more to use this`,
+  };
+}
+
 /**
  * Manual code entry + a list of a business's available coupons, each with a
  * one-tap Apply. Content only (no Modal chrome) so it can be embedded inline
@@ -40,6 +69,8 @@ export function discountLabel(c: StoreCoupon): string {
 export function CouponList({
   providerId,
   subtotalMinor,
+  serviceId,
+  items,
   currency,
   onApply,
   applying,
@@ -50,8 +81,6 @@ export function CouponList({
     skip: !active,
   });
   const [manualCode, setManualCode] = useState('');
-
-  const eligible = (c: StoreCoupon) => subtotalMinor >= c.minOrderMinor;
 
   return (
     <View>
@@ -93,7 +122,7 @@ export function CouponList({
       ) : (
         <View style={styles.list}>
           {coupons.map((c) => {
-            const ok = eligible(c);
+            const { ok, hint } = couponEligibility(c, { subtotalMinor, serviceId, items }, currency);
             return (
               <View key={c.code} style={[styles.card, !ok && styles.cardDisabled]}>
                 <View style={styles.cardIcon}>
@@ -103,11 +132,7 @@ export function CouponList({
                   <Text style={styles.cardCode}>{c.code}</Text>
                   <Text style={styles.cardDiscount}>{discountLabel(c)}</Text>
                   {!!c.description && <Text style={styles.cardDesc}>{c.description}</Text>}
-                  {!ok && (
-                    <Text style={styles.cardHint}>
-                      Add {money(c.minOrderMinor - subtotalMinor, currency)} more to use this
-                    </Text>
-                  )}
+                  {!ok && <Text style={styles.cardHint}>{hint}</Text>}
                 </View>
                 <TouchableOpacity
                   style={[styles.tapApply, !ok && styles.tapApplyDisabled]}

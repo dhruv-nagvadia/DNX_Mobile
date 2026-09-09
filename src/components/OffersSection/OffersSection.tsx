@@ -7,7 +7,7 @@ import { Color } from '@/utils/Theme';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setAppliedCoupon, clearAppliedCoupon } from '@/redux/slices/couponSlice';
 import { useGetStoreCouponsQuery, useValidateCouponMutation } from '@/redux/api/order/orderApi';
-import { discountLabel } from '@/components/CouponSheet';
+import { discountLabel, couponEligibility } from '@/components/CouponSheet';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -23,6 +23,10 @@ export interface OfferGroup {
   /** Shown when there's more than one group (a multi-store cart). */
   label?: string;
   subtotalMinor: number;
+  /** The service being booked — needed for SERVICE-scoped coupons. */
+  serviceId?: string;
+  /** Cart line items — needed for PRODUCT-scoped coupons. */
+  items?: { productId: string; lineTotalMinor: number }[];
 }
 
 interface OfferGroupRowProps {
@@ -41,7 +45,8 @@ function OfferGroupRow({ group, currency, compact }: OfferGroupRowProps) {
   const [validateCoupon, { isLoading: applying }] = useValidateCouponMutation();
   const [error, setError] = useState<string | null>(null);
 
-  const eligible = coupons.filter((c) => group.subtotalMinor >= c.minOrderMinor);
+  const ctx = { subtotalMinor: group.subtotalMinor, serviceId: group.serviceId, items: group.items };
+  const eligible = coupons.filter((c) => couponEligibility(c, ctx, currency).ok);
   const quick = compact ? [] : eligible.slice(0, 2);
 
   const viewAll = () =>
@@ -49,6 +54,8 @@ function OfferGroupRow({ group, currency, compact }: OfferGroupRowProps) {
       providerId: group.providerId,
       subtotalMinor: group.subtotalMinor,
       currency,
+      serviceId: group.serviceId,
+      items: group.items,
     });
 
   const quickApply = async (code: string) => {
@@ -58,6 +65,8 @@ function OfferGroupRow({ group, currency, compact }: OfferGroupRowProps) {
         providerId: group.providerId,
         code,
         subtotalMinor: group.subtotalMinor,
+        serviceId: group.serviceId,
+        items: group.items,
       }).unwrap();
       dispatch(setAppliedCoupon({ providerId: group.providerId, coupon: preview }));
     } catch (err) {

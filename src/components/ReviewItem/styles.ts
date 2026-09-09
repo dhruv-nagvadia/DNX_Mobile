@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
 
 export const styles = StyleSheet.create({
   item: {
@@ -47,5 +47,37 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: Color.textPrimary,
     lineHeight: FontSize.sm * 1.5,
+  },
+
+  reply: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 6,
+    padding: 10,
+    borderRadius: Radius.md,
+    backgroundColor: Color.background,
+    borderLeftWidth: 3,
+    borderLeftColor: Color.primary,
+  },
+  replyIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: Color.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 1,
+  },
+  replyBody: { flex: 1, minWidth: 0 },
+  replyLabel: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.extrabold,
+    color: Color.primary,
+  },
+  replyText: {
+    marginTop: 2,
+    fontSize: FontSize.sm,
+    color: Color.textPrimary,
+    lineHeight: FontSize.sm * 1.4,
   },
 });

@@ -104,8 +104,11 @@ export default function BookingSummaryScreen() {
         {/* Offers */}
         <Text style={styles.sectionTitle}>Offers</Text>
         <OffersSection
-          groups={[{ providerId: provider.id, subtotalMinor: service.priceMinor }]}
+          groups={[
+            { providerId: provider.id, subtotalMinor: service.priceMinor, serviceId: service.id },
+          ]}
           currency={currency}
+          compact
         />
 
         {/* Cost breakdown */}

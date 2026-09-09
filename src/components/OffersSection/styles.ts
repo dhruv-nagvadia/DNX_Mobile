@@ -54,6 +54,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: Radius.md,
     backgroundColor: 'rgba(22,163,74,0.1)',
+    marginTop:Spacing.md,
   },
   appliedText: { flex: 1, fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.success },
   changeText: { fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Color.primary },

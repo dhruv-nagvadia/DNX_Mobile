@@ -38,13 +38,40 @@ export function useBookingSummary() {
 
   const total = (service?.priceMinor ?? 0) - (appliedCoupon?.discountMinor ?? 0);
 
-  const openPayment = useCallback(() => setMethodOpen(true), []);
+  // A slot picked a while ago (e.g. spent time browsing offers here) can go
+  // stale by the time the customer actually pays — check before relying on it.
+  const isSlotExpired = useCallback(
+    () => new Date(params.startTime).getTime() < Date.now(),
+    [params.startTime],
+  );
+
+  const onSlotGone = useCallback(
+    (message: string) => {
+      setMethodOpen(false);
+      Alert.alert('Time no longer available', message, [
+        { text: 'Pick another time', onPress: () => navigation.goBack() },
+      ]);
+    },
+    [navigation],
+  );
+
+  const openPayment = useCallback(() => {
+    if (isSlotExpired()) {
+      onSlotGone('This time has passed. Please pick another time.');
+      return;
+    }
+    setMethodOpen(true);
+  }, [isSlotExpired, onSlotGone]);
   const closePayment = useCallback(() => setMethodOpen(false), []);
 
   // Create the booking with the chosen method, then pay if online/partial.
   const chooseMethod = useCallback(
     async (method: PaymentMethod) => {
       if (!provider || !service) return;
+      if (isSlotExpired()) {
+        onSlotGone('This time has passed. Please pick another time.');
+        return;
+      }
       let created;
       try {
         created = await createBooking({
@@ -55,14 +82,16 @@ export function useBookingSummary() {
           couponCode: appliedCoupon?.code,
         }).unwrap();
       } catch (err) {
-        setMethodOpen(false);
         const status = (err as { status?: number })?.status;
-        Alert.alert(
-          'Could not book',
-          status === 409
-            ? 'That slot was just taken. Please pick another time.'
-            : 'Something went wrong. Please try again.',
-        );
+        const message = (err as { data?: { message?: string } })?.data?.message;
+        if (status === 409) {
+          onSlotGone('That slot was just taken. Please pick another time.');
+        } else if (status === 400 && message?.toLowerCase().includes('future')) {
+          onSlotGone('This time has passed. Please pick another time.');
+        } else {
+          setMethodOpen(false);
+          Alert.alert('Could not book', 'Something went wrong. Please try again.');
+        }
         return;
       }
 
@@ -106,6 +135,8 @@ export function useBookingSummary() {
       service,
       params.startTime,
       appliedCoupon,
+      isSlotExpired,
+      onSlotGone,
       createBooking,
       createPaymentLink,
       simulatePayment,

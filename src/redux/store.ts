@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './slices/userSlice';
 import cartReducer from './slices/cartSlice';
 import couponReducer from './slices/couponSlice';
+import locationReducer from './slices/locationSlice';
 import { authApi } from './api/auth/authApi';
 import { categoryApi } from './api/category/categoryApi';
 import { providerApi } from './api/provider/providerApi';
@@ -18,6 +19,7 @@ const store = configureStore({
     user: userReducer,
     cart: cartReducer,
     coupons: couponReducer,
+    location: locationReducer,
 
     // RTK Query reducers (one per createApi call)
     [authApi.reducerPath]: authApi.reducer,

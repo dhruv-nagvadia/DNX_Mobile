@@ -16,8 +16,18 @@ function money(minor: number, currency: string): string {
 
 /** Full list of a business's coupons, in its own screen (not a stretchy inline sheet). */
 export default function CouponsScreen() {
-  const { providerId, subtotalMinor, currency, applied, applying, error, applyCoupon, removeCoupon } =
-    useCouponsScreen();
+  const {
+    providerId,
+    subtotalMinor,
+    currency,
+    serviceId,
+    items,
+    applied,
+    applying,
+    error,
+    applyCoupon,
+    removeCoupon,
+  } = useCouponsScreen();
 
   return (
     <View style={styles.container}>
@@ -42,6 +52,8 @@ export default function CouponsScreen() {
         <CouponList
           providerId={providerId}
           subtotalMinor={subtotalMinor}
+          serviceId={serviceId}
+          items={items}
           currency={currency}
           onApply={applyCoupon}
           applying={applying}

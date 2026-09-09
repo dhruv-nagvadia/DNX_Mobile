@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Star } from 'lucide-react-native';
+import { Star, Store } from 'lucide-react-native';
 
 import { Color } from '@/utils/Theme';
 import { Review } from '@/redux/api/provider/types';
@@ -24,7 +24,7 @@ function relativeDate(iso: string): string {
   return `${Math.round(days / 30)}mo ago`;
 }
 
-/** One customer review: avatar, name, stars, date, comment. */
+/** One customer review: avatar, name, stars, date, comment, and the owner's reply (if any). */
 export function ReviewItem({ review }: { review: Review }) {
   return (
     <View style={styles.item}>
@@ -49,6 +49,18 @@ export function ReviewItem({ review }: { review: Review }) {
           ))}
         </View>
         {!!review.comment && <Text style={styles.comment}>{review.comment}</Text>}
+
+        {!!review.providerReply && (
+          <View style={styles.reply}>
+            <View style={styles.replyIcon}>
+              <Store size={11} color={Color.primary} />
+            </View>
+            <View style={styles.replyBody}>
+              <Text style={styles.replyLabel}>Reply from the owner</Text>
+              <Text style={styles.replyText}>{review.providerReply}</Text>
+            </View>
+          </View>
+        )}
       </View>
     </View>
   );

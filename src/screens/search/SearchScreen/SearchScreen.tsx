@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   TextInput,
 } from 'react-native';
-import { Search, Star, BadgeCheck } from 'lucide-react-native';
+import { Clock, MapPin, Search, Star, BadgeCheck } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
@@ -28,11 +28,12 @@ const SORTS: { key: ProviderSort; label: string }[] = [
   { key: 'rating', label: 'Top rated' },
   { key: 'reviews', label: 'Most reviewed' },
   { key: 'newest', label: 'Newest' },
+  { key: 'nearest', label: 'Nearest' },
 ];
 
 const RATINGS = [4, 4.5];
 
-/** Provider search + filters (type, category, rating, sort). */
+/** Provider search + filters (type, category, rating, sort, open-now, location). */
 export default function SearchScreen() {
   const {
     query,
@@ -45,12 +46,26 @@ export default function SearchScreen() {
     clearCategory,
     minRating,
     toggleRating,
+    openNow,
+    toggleOpenNow,
     sort,
     setSort,
+    nearestAvailable,
+    locationLabel,
+    goToLocationPicker,
     providers,
     isFetching,
     onProviderPress,
   } = useSearchScreen();
+
+  const onSortPress = (key: ProviderSort) => {
+    // "Nearest" needs GPS — send them to set a location first if it isn't on.
+    if (key === 'nearest' && !nearestAvailable) {
+      goToLocationPicker();
+      return;
+    }
+    setSort(key);
+  };
 
   return (
     <View style={styles.container}>
@@ -68,6 +83,15 @@ export default function SearchScreen() {
           returnKeyType="search"
         />
       </View>
+
+      {/* Location */}
+      <TouchableOpacity style={styles.locationRow} activeOpacity={0.7} onPress={goToLocationPicker}>
+        <MapPin size={14} color={Color.primary} />
+        <Text style={styles.locationText} numberOfLines={1}>
+          {locationLabel ? `Near ${locationLabel}` : 'Set your location'}
+        </Text>
+        <Text style={styles.locationChange}>Change</Text>
+      </TouchableOpacity>
 
       {/* Filters */}
       <View style={styles.filters}>
@@ -110,7 +134,7 @@ export default function SearchScreen() {
           </ScrollView>
         )}
 
-        {/* Rating + sort */}
+        {/* Rating + open now */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -126,8 +150,28 @@ export default function SearchScreen() {
             />
           ))}
           <View style={styles.sep} />
+          <Chip
+            label="Open now"
+            active={openNow}
+            onPress={toggleOpenNow}
+            icon={<Clock size={12} color={openNow ? Color.primary : Color.textSecondary} />}
+          />
+        </ScrollView>
+
+        {/* Sort */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chipsRow}
+          keyboardShouldPersistTaps="handled"
+        >
           {SORTS.map((s) => (
-            <Chip key={s.key} label={s.label} active={sort === s.key} onPress={() => setSort(s.key)} />
+            <Chip
+              key={s.key}
+              label={s.key === 'nearest' && !nearestAvailable ? 'Nearest (set location)' : s.label}
+              active={sort === s.key}
+              onPress={() => onSortPress(s.key)}
+            />
           ))}
         </ScrollView>
       </View>
@@ -172,6 +216,7 @@ export default function SearchScreen() {
                 <Text style={styles.meta} numberOfLines={1}>
                   {p.subcategory?.name ?? p.category.name}
                   {p.city ? ` · ${p.city}` : ''}
+                  {sort === 'nearest' && p.distanceKm != null ? ` · ${p.distanceKm} km` : ''}
                 </Text>
                 <View style={styles.ratingRow}>
                   <Star size={13} color={Color.warning} fill={Color.warning} />
@@ -189,13 +234,24 @@ export default function SearchScreen() {
 }
 
 /** A single pill filter chip. */
-function Chip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
+function Chip({
+  label,
+  active,
+  onPress,
+  icon,
+}: {
+  label: string;
+  active: boolean;
+  onPress: () => void;
+  icon?: React.ReactNode;
+}) {
   return (
     <TouchableOpacity
       style={[styles.chip, active && styles.chipActive]}
       activeOpacity={0.85}
       onPress={onPress}
     >
+      {icon}
       <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
     </TouchableOpacity>
   );

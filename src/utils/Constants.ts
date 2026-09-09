@@ -4,6 +4,7 @@ export const StorageKeys = {
   refreshToken: '@dnx/refreshToken',
   onboardingDone: '@dnx/onboardingDone',
   recentlyViewed: '@dnx/recentlyViewed',
+  location: '@dnx/location',
 } as const;
 
 export const AppConfig = {

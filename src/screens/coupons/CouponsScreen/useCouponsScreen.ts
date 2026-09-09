@@ -25,6 +25,8 @@ export function useCouponsScreen() {
           providerId: params.providerId,
           code,
           subtotalMinor: params.subtotalMinor,
+          serviceId: params.serviceId,
+          items: params.items,
         }).unwrap();
         dispatch(setAppliedCoupon({ providerId: params.providerId, coupon: preview }));
         navigation.goBack();
@@ -33,7 +35,15 @@ export function useCouponsScreen() {
         setError(msg || 'That code didn’t work.');
       }
     },
-    [dispatch, navigation, params.providerId, params.subtotalMinor, validateCoupon],
+    [
+      dispatch,
+      navigation,
+      params.providerId,
+      params.subtotalMinor,
+      params.serviceId,
+      params.items,
+      validateCoupon,
+    ],
   );
 
   const removeCoupon = useCallback(() => {
@@ -44,6 +54,8 @@ export function useCouponsScreen() {
     providerId: params.providerId,
     subtotalMinor: params.subtotalMinor,
     currency: params.currency,
+    serviceId: params.serviceId,
+    items: params.items,
     applied,
     applying,
     error,

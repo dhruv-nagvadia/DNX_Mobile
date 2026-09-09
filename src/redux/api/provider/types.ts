@@ -60,6 +60,10 @@ export interface Provider {
   city?: string | null;
   state?: string | null;
   postalCode?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  // Present when the list was fetched with sort=nearest and coordinates.
+  distanceKm?: number | null;
   images: string[];
   ratingAvg: number;
   ratingCount: number;
@@ -77,20 +81,26 @@ export interface Review {
   id: string;
   rating: number;
   comment?: string | null;
+  providerReply?: string | null;
+  repliedAt?: string | null;
   createdAt: string;
   user: { fullName: string };
 }
 
-export type ProviderSort = 'rating' | 'reviews' | 'newest';
+export type ProviderSort = 'rating' | 'reviews' | 'newest' | 'nearest';
 
 export interface ListProvidersParams {
   categorySlug?: string;
   subcategorySlug?: string;
   city?: string;
+  postalCode?: string;
   search?: string;
   type?: BusinessType;
   minRating?: number;
+  openNow?: boolean;
   sort?: ProviderSort;
+  lat?: number;
+  lng?: number;
   page?: number;
   limit?: number;
 }

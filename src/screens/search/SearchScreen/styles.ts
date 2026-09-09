@@ -25,6 +25,25 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.md,
     color: Color.textPrimary,
   },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.sm,
+  },
+  locationText: {
+    flex: 1,
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.semibold,
+    color: Color.textSecondary,
+  },
+  locationChange: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.bold,
+    color: Color.primary,
+  },
+
   // Filter area
   filters: {
     paddingBottom: Spacing.sm,
@@ -57,6 +76,9 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
   },
   chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: Radius.pill,

@@ -5,6 +5,7 @@ import { navigationRef } from './NavigationService';
 import { AuthStack, MainStack } from './Navigators';
 import { useAppSelector } from '@/redux/hooks';
 import { CartSync } from '@/components/CartSync';
+import { LocationSync } from '@/components/LocationSync';
 
 /**
  * Chooses the stack based on auth state. In a real app the Splash screen
@@ -16,6 +17,7 @@ export default function RootNavigator() {
   return (
     <>
       <CartSync />
+      <LocationSync />
       <NavigationContainer ref={navigationRef}>
         {isLoggedIn ? <MainStack /> : <AuthStack />}
       </NavigationContainer>

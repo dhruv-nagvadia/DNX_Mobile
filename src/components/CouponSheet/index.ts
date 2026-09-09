@@ -1,2 +1,3 @@
 export { CouponSheet } from './CouponSheet';
-export { CouponList, discountLabel } from './CouponList';
+export { CouponList, discountLabel, couponEligibility } from './CouponList';
+export type { CouponContext } from './CouponList';

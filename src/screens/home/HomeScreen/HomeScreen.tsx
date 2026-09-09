@@ -37,6 +37,7 @@ export default function HomeScreen() {
     goToProfile,
     goToSearch,
     goToCart,
+    goToLocationPicker,
     cartCount,
   } = useHomeScreen();
 
@@ -47,7 +48,11 @@ export default function HomeScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header: location + notifications + avatar */}
         <View style={styles.headerTop}>
-          <TouchableOpacity style={styles.locationPill} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.locationPill}
+            activeOpacity={0.7}
+            onPress={goToLocationPicker}
+          >
             <MapPin size={16} color={Color.primary} />
             <Text style={styles.locationLabel}>Location</Text>
             <Text style={styles.locationText}>{location}</Text>

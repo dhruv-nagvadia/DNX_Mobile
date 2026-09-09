@@ -16,6 +16,7 @@ export const ROUTES = {
   PROVIDER_DETAILS: 'ProviderDetailsScreen',
   BOOKING_SUMMARY: 'BookingSummaryScreen',
   COUPONS: 'CouponsScreen',
+  LOCATION_PICKER: 'LocationPickerScreen',
   GALLERY: 'GalleryScreen',
   SEARCH: 'SearchScreen',
   REVIEWS: 'ReviewsScreen',
@@ -55,7 +56,16 @@ export type RootStackParamList = {
     rescheduleServiceId?: string;
   };
   [ROUTES.BOOKING_SUMMARY]: { providerId: string; serviceId: string; startTime: string };
-  [ROUTES.COUPONS]: { providerId: string; subtotalMinor: number; currency: string };
+  [ROUTES.COUPONS]: {
+    providerId: string;
+    subtotalMinor: number;
+    currency: string;
+    // The service being booked — needed for SERVICE-scoped coupons.
+    serviceId?: string;
+    // Cart line items — needed for PRODUCT-scoped coupons.
+    items?: { productId: string; lineTotalMinor: number }[];
+  };
+  [ROUTES.LOCATION_PICKER]: undefined;
   [ROUTES.GALLERY]: { images: string[]; index?: number };
   [ROUTES.SEARCH]: undefined;
   [ROUTES.REVIEWS]: { providerId: string; businessName?: string };

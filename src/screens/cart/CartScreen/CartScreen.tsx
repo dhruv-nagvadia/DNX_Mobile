@@ -236,7 +236,16 @@ export default function CartScreen() {
 
             {/* Offers — compact: no chip previews, just "View all coupons" until applied */}
             <OffersSection
-              groups={[{ providerId: g.providerId, subtotalMinor: g.subtotal }]}
+              groups={[
+                {
+                  providerId: g.providerId,
+                  subtotalMinor: g.subtotal,
+                  items: g.items.map((it) => ({
+                    productId: it.productId,
+                    lineTotalMinor: amountPrice(it.quantity, it.priceQty, it.priceMinor),
+                  })),
+                },
+              ]}
               currency={currency}
               compact
             />

@@ -1,0 +1,1 @@
+export { LocationSync } from './LocationSync';

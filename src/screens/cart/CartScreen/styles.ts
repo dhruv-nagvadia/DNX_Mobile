@@ -81,7 +81,6 @@ export const styles = StyleSheet.create({
   subtotalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: Spacing.sm,
     paddingTop: Spacing.sm,
     borderTopWidth: 1,
     borderTopColor: Color.border,

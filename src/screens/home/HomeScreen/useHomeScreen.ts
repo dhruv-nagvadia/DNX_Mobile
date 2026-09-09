@@ -76,9 +76,14 @@ export function useHomeScreen() {
   const goToProfile = useCallback(() => navigation.navigate(ROUTES.PROFILE), [navigation]);
   const goToSearch = useCallback(() => navigation.navigate(ROUTES.SEARCH), [navigation]);
   const goToCart = useCallback(() => navigation.navigate(ROUTES.CART), [navigation]);
+  const goToLocationPicker = useCallback(
+    () => navigation.navigate(ROUTES.LOCATION_PICKER),
+    [navigation],
+  );
 
   // Number of distinct products in the cart (not the summed amounts).
   const cartCount = useAppSelector((s) => s.cart.items.filter((i) => i.quantity > 0).length);
+  const customerLocation = useAppSelector((s) => s.location.current);
 
   return {
     firstName,
@@ -94,9 +99,10 @@ export function useHomeScreen() {
     goToProfile,
     goToSearch,
     goToCart,
+    goToLocationPicker,
     cartCount,
-    // Static placeholder content (swap for real data later).
-    location: LOCATION,
+    // Falls back to a static default until the customer sets a real location.
+    location: customerLocation?.label ?? LOCATION,
     offers: OFFERS,
     trustStats: TRUST_STATS,
   };

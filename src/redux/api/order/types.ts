@@ -73,6 +73,10 @@ export interface ValidateCouponRequest {
   providerId: string;
   code: string;
   subtotalMinor: number;
+  // Send when booking, so a SERVICE-scoped coupon can be checked against it.
+  serviceId?: string;
+  // Send when ordering, so a PRODUCT-scoped coupon discounts just that line.
+  items?: { productId: string; lineTotalMinor: number }[];
 }
 
 export interface CouponPreview {
@@ -84,12 +88,19 @@ export interface CouponPreview {
   finalMinor: number;
 }
 
-// A coupon as advertised to customers on a store (before applying).
+export type CouponScope = 'ORDER' | 'SERVICE' | 'PRODUCT';
+
+// A coupon as advertised to customers on a business (before applying).
 export interface StoreCoupon {
   code: string;
   description?: string | null;
   discountType: 'PERCENT' | 'FLAT';
   discountValue: number;
+  scope: CouponScope;
+  serviceId?: string | null;
+  serviceName?: string | null;
+  productId?: string | null;
+  productName?: string | null;
   minOrderMinor: number;
   maxDiscountMinor?: number | null;
   expiresAt?: string | null;
