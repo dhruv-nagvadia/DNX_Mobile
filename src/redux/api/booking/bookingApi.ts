@@ -6,7 +6,8 @@ import {
   BookedSlot,
   CreateBookingRequest,
   CreateReviewRequest,
-  PaymentLinkResponse,
+  PaymentOrderResponse,
+  VerifyPaymentResult,
 } from './types';
 import { ApiEnvelope } from '../types';
 
@@ -75,10 +76,11 @@ export const bookingApi = createApi({
       invalidatesTags: ['MyBookings'],
     }),
 
-    // Payments
-    createPaymentLink: builder.mutation<PaymentLinkResponse, { bookingId: string }>({
+    // Payments — creates a Razorpay Order for the native in-app checkout SDK
+    // (or signals test mode, when no live keys are configured).
+    createPaymentOrder: builder.mutation<PaymentOrderResponse, { bookingId: string }>({
       query: (data) => ({ endpoint: endpoints.paymentLink, method: 'post', data }),
-      transformResponse: (res: ApiEnvelope<PaymentLinkResponse>) => res.data,
+      transformResponse: (res: ApiEnvelope<PaymentOrderResponse>) => res.data,
     }),
 
     simulatePayment: builder.mutation<{ bookingId: string }, { bookingId: string }>({
@@ -87,7 +89,18 @@ export const bookingApi = createApi({
       invalidatesTags: ['MyBookings'],
     }),
 
-    // Reconciles a payment's status with Razorpay (fallback when no webhook).
+    // Verifies the signature the native SDK returns right after a successful charge.
+    verifyPayment: builder.mutation<
+      VerifyPaymentResult,
+      { bookingId: string; razorpayOrderId: string; razorpayPaymentId: string; razorpaySignature: string }
+    >({
+      query: (data) => ({ endpoint: endpoints.paymentVerify, method: 'post', data }),
+      transformResponse: (res: ApiEnvelope<VerifyPaymentResult>) => res.data,
+      invalidatesTags: ['MyBookings'],
+    }),
+
+    // Reconciles a payment's status with Razorpay (fallback when the SDK's
+    // success callback never ran, e.g. the app was killed mid-payment).
     syncPayment: builder.mutation<{ paymentStatus: string }, { bookingId: string }>({
       query: (data) => ({ endpoint: endpoints.paymentSync, method: 'post', data }),
       transformResponse: (res: ApiEnvelope<{ paymentStatus: string }>) => res.data,
@@ -103,7 +116,8 @@ export const {
   useCancelBookingMutation,
   useRescheduleBookingMutation,
   useCreateReviewMutation,
-  useCreatePaymentLinkMutation,
+  useCreatePaymentOrderMutation,
   useSimulatePaymentMutation,
+  useVerifyPaymentMutation,
   useSyncPaymentMutation,
 } = bookingApi;

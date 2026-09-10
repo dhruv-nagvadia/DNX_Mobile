@@ -22,11 +22,27 @@ export interface Booking {
   review: { id: string; rating: number } | null;
 }
 
-export interface PaymentLinkResponse {
+/**
+ * Either a test-mode "already settled" signal, or the details the native
+ * Razorpay Checkout SDK needs to open in-app (no browser/payment-link involved).
+ */
+export interface PaymentOrderResponse {
   simulated: boolean;
-  url?: string;
+  // Set when `simulated` is true and the resource (order/booking) was already
+  // placed & marked paid server-side (test mode — no live keys configured).
+  orderId?: string;
+  razorpayOrderId?: string;
+  keyId?: string;
   amount: number;
   currency: string;
+  name?: string;
+  description?: string;
+  email?: string;
+  contact?: string;
+}
+
+export interface VerifyPaymentResult {
+  paymentStatus: PaymentStatus;
 }
 
 export type MyBookingsResponse = ApiEnvelope<Booking[]>;

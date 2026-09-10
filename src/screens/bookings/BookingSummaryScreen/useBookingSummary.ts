@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Alert, Linking } from 'react-native';
+import { Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
@@ -7,10 +7,12 @@ import { clearAppliedCoupon } from '@/redux/slices/couponSlice';
 import { useGetProviderByIdQuery } from '@/redux/api/provider/providerApi';
 import {
   useCreateBookingMutation,
-  useCreatePaymentLinkMutation,
+  useCreatePaymentOrderMutation,
   useSimulatePaymentMutation,
+  useVerifyPaymentMutation,
 } from '@/redux/api/booking/bookingApi';
 import { PaymentMethod } from '@/redux/api/booking/types';
+import { openRazorpayCheckout } from '@/utils/razorpayCheckout';
 import { ROUTES } from '@/navigation/routes';
 
 import { BookingSummaryRouteProp } from './types';
@@ -29,12 +31,13 @@ export function useBookingSummary() {
   const appliedCoupon = useAppSelector((s) => s.coupons.applied[params.providerId]) ?? null;
 
   const [createBooking, { isLoading: booking }] = useCreateBookingMutation();
-  const [createPaymentLink, { isLoading: linking }] = useCreatePaymentLinkMutation();
+  const [createPaymentOrder, { isLoading: linking }] = useCreatePaymentOrderMutation();
   const [simulatePayment, { isLoading: simulating }] = useSimulatePaymentMutation();
+  const [verifyPayment, { isLoading: verifying }] = useVerifyPaymentMutation();
 
   const [methodOpen, setMethodOpen] = useState(false);
 
-  const paymentBusy = booking || linking || simulating;
+  const paymentBusy = booking || linking || simulating || verifying;
 
   const total = (service?.priceMinor ?? 0) - (appliedCoupon?.discountMinor ?? 0);
 
@@ -64,7 +67,8 @@ export function useBookingSummary() {
   }, [isSlotExpired, onSlotGone]);
   const closePayment = useCallback(() => setMethodOpen(false), []);
 
-  // Create the booking with the chosen method, then pay if online/partial.
+  // Create the booking with the chosen method, then pay if online/partial —
+  // Razorpay's native checkout opens immediately, in-app (no browser).
   const chooseMethod = useCallback(
     async (method: PaymentMethod) => {
       if (!provider || !service) return;
@@ -96,11 +100,11 @@ export function useBookingSummary() {
       }
 
       dispatch(clearAppliedCoupon(provider.id));
+      setMethodOpen(false);
       const goToBookings = () =>
         navigation.navigate(ROUTES.TABS, { screen: ROUTES.BOOKINGS });
 
       if (method === 'CASH') {
-        setMethodOpen(false);
         Alert.alert('Booking confirmed', 'Pay cash at the venue. See it under “Your bookings”.', [
           { text: 'Done', onPress: goToBookings },
         ]);
@@ -108,23 +112,34 @@ export function useBookingSummary() {
       }
 
       try {
-        const link = await createPaymentLink({ bookingId: created.id }).unwrap();
-        setMethodOpen(false);
-        if (link.simulated) {
+        const order = await createPaymentOrder({ bookingId: created.id }).unwrap();
+        if (order.simulated) {
           await simulatePayment({ bookingId: created.id }).unwrap();
           Alert.alert('Payment successful', 'Your booking is paid and confirmed.', [
             { text: 'Done', onPress: goToBookings },
           ]);
-        } else if (link.url) {
-          await Linking.openURL(link.url);
-          Alert.alert('Complete your payment', 'Finish paying in your browser — see it under “Your bookings”.', [
-            { text: 'Done', onPress: goToBookings },
-          ]);
-        } else {
-          goToBookings();
+          return;
         }
+
+        const result = await openRazorpayCheckout(order);
+        if (!result) {
+          // User dismissed the checkout sheet — booking is saved, pay later.
+          Alert.alert('Booked — payment pending', 'Your booking is saved. You can pay it from “Your bookings”.', [
+            { text: 'OK', onPress: goToBookings },
+          ]);
+          return;
+        }
+
+        await verifyPayment({
+          bookingId: created.id,
+          razorpayOrderId: result.razorpay_order_id,
+          razorpayPaymentId: result.razorpay_payment_id,
+          razorpaySignature: result.razorpay_signature,
+        }).unwrap();
+        Alert.alert('Payment successful', 'Your booking is paid and confirmed.', [
+          { text: 'Done', onPress: goToBookings },
+        ]);
       } catch {
-        setMethodOpen(false);
         Alert.alert('Booked — payment pending', 'Your booking is saved. You can pay it from “Your bookings”.', [
           { text: 'OK', onPress: goToBookings },
         ]);
@@ -138,8 +153,9 @@ export function useBookingSummary() {
       isSlotExpired,
       onSlotGone,
       createBooking,
-      createPaymentLink,
+      createPaymentOrder,
       simulatePayment,
+      verifyPayment,
       navigation,
       dispatch,
     ],

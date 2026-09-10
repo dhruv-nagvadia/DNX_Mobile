@@ -21,9 +21,14 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { removeFromCart, clearProviderItems, setCartQty } from '@/redux/slices/cartSlice';
 import type { CartItem } from '@/redux/slices/cartSlice';
 import { clearAppliedCoupon } from '@/redux/slices/couponSlice';
-import { useCreateOrderMutation } from '@/redux/api/order/orderApi';
+import {
+  useCreateOrderMutation,
+  useStartOrderCheckoutMutation,
+  useConfirmOrderCheckoutMutation,
+} from '@/redux/api/order/orderApi';
 import { providerApi } from '@/redux/api/provider/providerApi';
 import { OrderPaymentMethod } from '@/redux/api/order/types';
+import { openRazorpayCheckout } from '@/utils/razorpayCheckout';
 import { ROUTES } from '@/navigation/routes';
 
 import { styles } from './styles';
@@ -44,6 +49,8 @@ export default function CartScreen() {
   // quick-apply chip), shared via redux so it survives navigating there and back.
   const applied = useAppSelector((s) => s.coupons.applied);
   const [createOrder] = useCreateOrderMutation();
+  const [startOrderCheckout] = useStartOrderCheckoutMutation();
+  const [confirmOrderCheckout] = useConfirmOrderCheckoutMutation();
 
   const [payOpen, setPayOpen] = useState(false);
   const [placing, setPlacing] = useState(false);
@@ -95,22 +102,62 @@ export default function CartScreen() {
     );
   };
 
+  // Marks a store's cart items placed and removes them locally.
+  const onPlaced = (providerId: string) => {
+    dispatch(clearProviderItems(providerId));
+    dispatch(providerApi.util.invalidateTags([{ type: 'Provider', id: providerId }, 'Providers']));
+  };
+
   const placeAll = async (method: OrderPaymentMethod) => {
     setPayOpen(false);
     setPlacing(true);
     const failed: string[] = [];
+    let placedCount = 0;
+
     for (const g of groups) {
+      const payload = {
+        providerId: g.providerId,
+        paymentMethod: method,
+        items: g.items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+        couponCode: applied[g.providerId]?.code,
+      };
+
+      if (method === 'CASH') {
+        try {
+          await createOrder(payload).unwrap();
+          onPlaced(g.providerId);
+          placedCount++;
+        } catch {
+          failed.push(g.providerName);
+        }
+        continue;
+      }
+
+      // ONLINE / PARTIAL: the payment is verified first — the order is only
+      // created once that's confirmed, so a failed or cancelled checkout
+      // never leaves a "placed" order (or reserved stock) behind.
       try {
-        await createOrder({
-          providerId: g.providerId,
-          paymentMethod: method,
-          items: g.items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
-          couponCode: applied[g.providerId]?.code,
+        const checkout = await startOrderCheckout(payload).unwrap();
+        if (checkout.simulated) {
+          // No live keys configured — already placed & marked paid server-side.
+          onPlaced(g.providerId);
+          placedCount++;
+          continue;
+        }
+
+        const result = await openRazorpayCheckout(checkout);
+        if (!result) {
+          failed.push(g.providerName); // user dismissed the checkout sheet
+          continue;
+        }
+
+        await confirmOrderCheckout({
+          razorpayOrderId: result.razorpay_order_id,
+          razorpayPaymentId: result.razorpay_payment_id,
+          razorpaySignature: result.razorpay_signature,
         }).unwrap();
-        dispatch(clearProviderItems(g.providerId));
-        dispatch(
-          providerApi.util.invalidateTags([{ type: 'Provider', id: g.providerId }, 'Providers']),
-        );
+        onPlaced(g.providerId);
+        placedCount++;
       } catch {
         failed.push(g.providerName);
       }
@@ -120,13 +167,19 @@ export default function CartScreen() {
     if (failed.length === 0) {
       Alert.alert(
         'Order placed',
-        `${groups.length} order${groups.length > 1 ? 's' : ''} placed. Track ${
-          groups.length > 1 ? 'them' : 'it'
+        `${placedCount} order${placedCount > 1 ? 's' : ''} placed. Track ${
+          placedCount > 1 ? 'them' : 'it'
         } under the Bookings & Orders tab.`,
         [{ text: 'Done', onPress: () => navigation.navigate(ROUTES.TABS, { screen: ROUTES.BOOKINGS }) }],
       );
+    } else if (placedCount > 0) {
+      Alert.alert(
+        'Some orders couldn’t be placed',
+        `${placedCount} order${placedCount > 1 ? 's' : ''} placed. Payment wasn't completed for: ${failed.join(', ')}.`,
+        [{ text: 'OK', onPress: () => navigation.navigate(ROUTES.TABS, { screen: ROUTES.BOOKINGS }) }],
+      );
     } else {
-      Alert.alert('Some orders couldn’t be placed', `Please review: ${failed.join(', ')}.`);
+      Alert.alert('Payment not completed', `Please review: ${failed.join(', ')}.`);
     }
   };
 

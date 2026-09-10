@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -9,10 +9,11 @@ import {
   Alert,
   Modal,
   TextInput,
+  AppState,
 } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Store, ShoppingBag, Star, ChevronRight } from 'lucide-react-native';
+import { Store, ShoppingBag, Star, ChevronRight, CreditCard } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
@@ -24,7 +25,12 @@ import {
   useCancelOrderMutation,
   useCreateOrderReviewMutation,
   useCreateProductReviewMutation,
+  useCreateOrderPaymentOrderMutation,
+  useSimulateOrderPaymentMutation,
+  useVerifyOrderPaymentMutation,
+  useSyncOrderPaymentMutation,
 } from '@/redux/api/order/orderApi';
+import { openRazorpayCheckout } from '@/utils/razorpayCheckout';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
 import { styles } from './styles';
@@ -51,12 +57,40 @@ export default function OrderDetailScreen() {
   const [createProductReview, { isLoading: submittingProduct }] = useCreateProductReviewMutation();
   const submittingReview = submittingOrder || submittingProduct;
 
+  const [createOrderPaymentOrder, { isLoading: linking }] = useCreateOrderPaymentOrderMutation();
+  const [simulateOrderPayment, { isLoading: simulatingPay }] = useSimulateOrderPaymentMutation();
+  const [verifyOrderPayment, { isLoading: verifyingPay }] = useVerifyOrderPaymentMutation();
+  const [syncOrderPayment] = useSyncOrderPaymentMutation();
+  const awaitingPayment = useRef(false);
+
   const [reviewTarget, setReviewTarget] = useState<ReviewTarget>(null);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const reviewOpen = reviewTarget !== null;
 
   const order = orders.find((o) => o.id === params.orderId);
+
+  // On returning to the app (e.g. from the Razorpay page), reconcile the payment.
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s !== 'active') return;
+      if (awaitingPayment.current) {
+        syncOrderPayment({ orderId: params.orderId }).catch(() => {});
+      }
+    });
+    return () => sub.remove();
+  }, [syncOrderPayment, params.orderId]);
+
+  // Stop reconciling once it's paid, and auto-check once if it was already
+  // pending when this screen opened (e.g. paid moments ago, no webhook set up).
+  useEffect(() => {
+    if (order?.paymentStatus === 'PAID') {
+      awaitingPayment.current = false;
+    } else if (order?.paymentStatus === 'PENDING' && order.paymentMethod !== 'CASH') {
+      syncOrderPayment({ orderId: order.id }).catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order?.id]);
 
   if (isLoading && !order) {
     return (
@@ -154,6 +188,38 @@ export default function OrderDetailScreen() {
         },
       },
     ]);
+
+  const canPay =
+    (order.status === 'PENDING' || order.status === 'CONFIRMED') &&
+    order.paymentMethod !== 'CASH' &&
+    order.paymentStatus !== 'PAID' &&
+    order.paymentStatus !== 'REFUNDED' &&
+    due > 0;
+
+  const onPay = async () => {
+    try {
+      const paymentOrder = await createOrderPaymentOrder({ orderId: order.id }).unwrap();
+      if (paymentOrder.simulated) {
+        await simulateOrderPayment({ orderId: order.id }).unwrap();
+        Alert.alert('Payment successful', 'This order has been marked as paid.');
+        return;
+      }
+
+      awaitingPayment.current = true;
+      const result = await openRazorpayCheckout(paymentOrder);
+      if (!result) return; // user dismissed the checkout sheet
+
+      await verifyOrderPayment({
+        orderId: order.id,
+        razorpayOrderId: result.razorpay_order_id,
+        razorpayPaymentId: result.razorpay_payment_id,
+        razorpaySignature: result.razorpay_signature,
+      }).unwrap();
+      Alert.alert('Payment successful', 'This order has been marked as paid.');
+    } catch {
+      Alert.alert('Could not start payment', 'Please try again.');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -309,6 +375,24 @@ export default function OrderDetailScreen() {
             <Text style={[styles.rowValue, { color: pay.color }]}>{pay.text}</Text>
           </View>
         </View>
+
+        {canPay && (
+          <TouchableOpacity
+            style={styles.reviewBtn}
+            activeOpacity={0.85}
+            onPress={onPay}
+            disabled={linking || simulatingPay || verifyingPay}
+          >
+            {linking || simulatingPay || verifyingPay ? (
+              <ActivityIndicator color={Color.white} />
+            ) : (
+              <>
+                <CreditCard size={16} color={Color.white} />
+                <Text style={styles.reviewText}>Pay {formatMoney(due, order.currency)}</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        )}
 
         {!!order.note && (
           <>

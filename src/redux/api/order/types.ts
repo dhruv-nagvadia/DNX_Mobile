@@ -110,3 +110,8 @@ export interface CreateOrderResponse {
   order: Order;
   simulated: boolean;
 }
+
+export interface CheckoutConfirmResult {
+  paymentStatus: OrderPaymentStatus;
+  orderId: string;
+}

@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, AppState, Linking } from 'react-native';
+import { Alert, AppState } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import {
   useCancelBookingMutation,
-  useCreatePaymentLinkMutation,
+  useCreatePaymentOrderMutation,
   useCreateReviewMutation,
   useGetMyBookingsQuery,
   useSimulatePaymentMutation,
   useSyncPaymentMutation,
+  useVerifyPaymentMutation,
 } from '@/redux/api/booking/bookingApi';
+import { openRazorpayCheckout } from '@/utils/razorpayCheckout';
 import { ROUTES } from '@/navigation/routes';
 
 import { BookingDetailNavigationProp, BookingDetailRouteProp } from './types';
@@ -26,8 +28,9 @@ export function useBookingDetail() {
 
   const [cancelBooking, { isLoading: cancelling }] = useCancelBookingMutation();
   const [createReview, { isLoading: submittingReview }] = useCreateReviewMutation();
-  const [createPaymentLink, { isLoading: linking }] = useCreatePaymentLinkMutation();
+  const [createPaymentOrder, { isLoading: linking }] = useCreatePaymentOrderMutation();
   const [simulatePayment, { isLoading: simulating }] = useSimulatePaymentMutation();
+  const [verifyPayment, { isLoading: verifying }] = useVerifyPaymentMutation();
   const [syncPayment] = useSyncPaymentMutation();
   const awaitingPayment = useRef(false);
 
@@ -51,19 +54,28 @@ export function useBookingDetail() {
   const onPay = useCallback(async () => {
     if (!booking) return;
     try {
-      const res = await createPaymentLink({ bookingId: booking.id }).unwrap();
-      if (res.simulated) {
+      const order = await createPaymentOrder({ bookingId: booking.id }).unwrap();
+      if (order.simulated) {
         await simulatePayment({ bookingId: booking.id }).unwrap();
         Alert.alert('Payment successful', 'Your booking is paid and confirmed.');
-      } else if (res.url) {
-        awaitingPayment.current = true;
-        await Linking.openURL(res.url);
-        Alert.alert('Complete your payment', 'Finish paying in your browser — it updates here once confirmed.');
+        return;
       }
+
+      awaitingPayment.current = true;
+      const result = await openRazorpayCheckout(order);
+      if (!result) return; // user dismissed the checkout sheet
+
+      await verifyPayment({
+        bookingId: booking.id,
+        razorpayOrderId: result.razorpay_order_id,
+        razorpayPaymentId: result.razorpay_payment_id,
+        razorpaySignature: result.razorpay_signature,
+      }).unwrap();
+      Alert.alert('Payment successful', 'Your booking is paid and confirmed.');
     } catch {
       Alert.alert('Payment failed', 'Please try again.');
     }
-  }, [booking, createPaymentLink, simulatePayment]);
+  }, [booking, createPaymentOrder, simulatePayment, verifyPayment]);
 
   const [reviewOpen, setReviewOpen] = useState(false);
   const [rating, setRating] = useState(5);
@@ -144,7 +156,7 @@ export function useBookingDetail() {
     onRemind,
     openProvider,
     onPay,
-    paying: linking || simulating,
+    paying: linking || simulating || verifying,
     reviewOpen,
     openReview,
     closeReview,
