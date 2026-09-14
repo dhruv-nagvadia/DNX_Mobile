@@ -24,7 +24,9 @@ export const Color = {
   error: '#EF4444',
   errorSoft: '#FEF0F0',
   success: '#16A34A',
+  successSoft: '#E9F9EF',
   warning: '#F59E0B',
+  warningSoft: '#FEF6E7',
   overlay: 'rgba(15, 23, 42, 0.5)',
 
   // ── Dark "ink" surfaces — the auth hero and any dark hero strip ──────

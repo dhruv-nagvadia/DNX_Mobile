@@ -62,6 +62,7 @@ export const endpoints = {
   // Pay-then-place cart checkout — the order is created only once payment is confirmed.
   orderCheckoutStart: '/customer/payments/orders/checkout',
   orderCheckoutConfirm: '/customer/payments/orders/checkout/confirm',
+  orderCheckoutSync: '/customer/payments/orders/checkout/sync',
 
   // Product orders (store businesses)
   orders: '/customer/orders',

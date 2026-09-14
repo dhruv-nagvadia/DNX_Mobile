@@ -15,6 +15,8 @@ export const ROUTES = {
   PROVIDER_LIST: 'ProviderListScreen',
   PROVIDER_DETAILS: 'ProviderDetailsScreen',
   BOOKING_SUMMARY: 'BookingSummaryScreen',
+  BOOKING_PROCESSING: 'BookingProcessingScreen',
+  BOOKING_SUCCESS: 'BookingSuccessScreen',
   COUPONS: 'CouponsScreen',
   LOCATION_PICKER: 'LocationPickerScreen',
   GALLERY: 'GalleryScreen',
@@ -24,6 +26,8 @@ export const ROUTES = {
   CART: 'CartScreen',
   PRODUCT_DETAILS: 'ProductDetailScreen',
   ORDER_DETAILS: 'OrderDetailScreen',
+  CHECKOUT_PROCESSING: 'CheckoutProcessingScreen',
+  ORDER_SUCCESS: 'OrderSuccessScreen',
   NOTIFICATIONS: 'NotificationsScreen',
   DEBUG_LOGS: 'DebugLogsScreen',
 } as const;
@@ -56,6 +60,29 @@ export type RootStackParamList = {
     rescheduleServiceId?: string;
   };
   [ROUTES.BOOKING_SUMMARY]: { providerId: string; serviceId: string; startTime: string };
+  [ROUTES.BOOKING_PROCESSING]: {
+    providerId: string;
+    providerName: string;
+    serviceId: string;
+    serviceName: string;
+    startTime: string;
+    method: 'ONLINE' | 'CASH' | 'PARTIAL';
+    couponCode?: string;
+    currency: string;
+  };
+  [ROUTES.BOOKING_SUCCESS]: {
+    bookingId: string;
+    providerName: string;
+    serviceName: string;
+    startTime: string;
+    amountMinor: number;
+    amountPaidMinor: number;
+    currency: string;
+    // 'pending' = booking stands, but the online/partial payment didn't go
+    // through — shown as a note, not a failure state (matches ORDER_SUCCESS's
+    // `failedNames`, just for the single-booking case).
+    outcome: 'paid' | 'partial' | 'cash' | 'pending';
+  };
   [ROUTES.COUPONS]: {
     providerId: string;
     subtotalMinor: number;
@@ -73,6 +100,26 @@ export type RootStackParamList = {
   [ROUTES.CART]: undefined;
   [ROUTES.PRODUCT_DETAILS]: { providerId: string; productId: string };
   [ROUTES.ORDER_DETAILS]: { orderId: string };
+  [ROUTES.CHECKOUT_PROCESSING]: {
+    method: 'ONLINE' | 'CASH' | 'PARTIAL';
+    currency: string;
+    // A snapshot of the cart at the moment "Checkout" was tapped — this
+    // screen runs the whole place-order/pay flow itself (including opening
+    // Razorpay), so it never has to hand control back to the Cart screen
+    // mid-payment.
+    groups: {
+      providerId: string;
+      providerName: string;
+      items: { productId: string; quantity: number }[];
+      couponCode?: string;
+    }[];
+  };
+  [ROUTES.ORDER_SUCCESS]: {
+    currency: string;
+    placed: { orderId: string; providerName: string; amountMinor: number }[];
+    // Stores whose payment didn't go through — shown as a note, not a failure state.
+    failedNames?: string[];
+  };
   [ROUTES.NOTIFICATIONS]: undefined;
   [ROUTES.DEBUG_LOGS]: undefined;
 };

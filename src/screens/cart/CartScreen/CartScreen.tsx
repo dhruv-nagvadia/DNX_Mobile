@@ -1,15 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Store, Plus, Minus, Trash2, ShoppingCart, ShoppingBag } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
@@ -21,15 +14,8 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { removeFromCart, clearProviderItems, setCartQty } from '@/redux/slices/cartSlice';
 import type { CartItem } from '@/redux/slices/cartSlice';
 import { clearAppliedCoupon } from '@/redux/slices/couponSlice';
-import {
-  useCreateOrderMutation,
-  useStartOrderCheckoutMutation,
-  useConfirmOrderCheckoutMutation,
-} from '@/redux/api/order/orderApi';
-import { providerApi } from '@/redux/api/provider/providerApi';
 import { OrderPaymentMethod } from '@/redux/api/order/types';
-import { openRazorpayCheckout } from '@/utils/razorpayCheckout';
-import { ROUTES } from '@/navigation/routes';
+import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
 import { styles } from './styles';
 
@@ -42,18 +28,14 @@ interface ShopGroup {
 
 export default function CartScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<{ navigate: (r: string, p?: object) => void }>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useAppDispatch();
   const items = useAppSelector((s) => s.cart.items);
   // Coupons applied per store — set from the dedicated Coupons screen (or a
   // quick-apply chip), shared via redux so it survives navigating there and back.
   const applied = useAppSelector((s) => s.coupons.applied);
-  const [createOrder] = useCreateOrderMutation();
-  const [startOrderCheckout] = useStartOrderCheckoutMutation();
-  const [confirmOrderCheckout] = useConfirmOrderCheckoutMutation();
 
   const [payOpen, setPayOpen] = useState(false);
-  const [placing, setPlacing] = useState(false);
 
   // Changing a store's items invalidates any coupon preview for that store.
   const clearCoupon = (providerId: string) => dispatch(clearAppliedCoupon(providerId));
@@ -102,85 +84,21 @@ export default function CartScreen() {
     );
   };
 
-  // Marks a store's cart items placed and removes them locally.
-  const onPlaced = (providerId: string) => {
-    dispatch(clearProviderItems(providerId));
-    dispatch(providerApi.util.invalidateTags([{ type: 'Provider', id: providerId }, 'Providers']));
-  };
-
-  const placeAll = async (method: OrderPaymentMethod) => {
+  // Hands off to a dedicated full-screen flow that places each store's order
+  // and (for online/partial) opens Razorpay itself — see CheckoutProcessingScreen
+  // for why this doesn't happen here in the modal anymore.
+  const placeAll = (method: OrderPaymentMethod) => {
     setPayOpen(false);
-    setPlacing(true);
-    const failed: string[] = [];
-    let placedCount = 0;
-
-    for (const g of groups) {
-      const payload = {
+    navigation.replace(ROUTES.CHECKOUT_PROCESSING, {
+      method,
+      currency,
+      groups: groups.map((g) => ({
         providerId: g.providerId,
-        paymentMethod: method,
+        providerName: g.providerName,
         items: g.items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
         couponCode: applied[g.providerId]?.code,
-      };
-
-      if (method === 'CASH') {
-        try {
-          await createOrder(payload).unwrap();
-          onPlaced(g.providerId);
-          placedCount++;
-        } catch {
-          failed.push(g.providerName);
-        }
-        continue;
-      }
-
-      // ONLINE / PARTIAL: the payment is verified first — the order is only
-      // created once that's confirmed, so a failed or cancelled checkout
-      // never leaves a "placed" order (or reserved stock) behind.
-      try {
-        const checkout = await startOrderCheckout(payload).unwrap();
-        if (checkout.simulated) {
-          // No live keys configured — already placed & marked paid server-side.
-          onPlaced(g.providerId);
-          placedCount++;
-          continue;
-        }
-
-        const result = await openRazorpayCheckout(checkout);
-        if (!result) {
-          failed.push(g.providerName); // user dismissed the checkout sheet
-          continue;
-        }
-
-        await confirmOrderCheckout({
-          razorpayOrderId: result.razorpay_order_id,
-          razorpayPaymentId: result.razorpay_payment_id,
-          razorpaySignature: result.razorpay_signature,
-        }).unwrap();
-        onPlaced(g.providerId);
-        placedCount++;
-      } catch {
-        failed.push(g.providerName);
-      }
-    }
-    setPlacing(false);
-
-    if (failed.length === 0) {
-      Alert.alert(
-        'Order placed',
-        `${placedCount} order${placedCount > 1 ? 's' : ''} placed. Track ${
-          placedCount > 1 ? 'them' : 'it'
-        } under the Bookings & Orders tab.`,
-        [{ text: 'Done', onPress: () => navigation.navigate(ROUTES.TABS, { screen: ROUTES.BOOKINGS }) }],
-      );
-    } else if (placedCount > 0) {
-      Alert.alert(
-        'Some orders couldn’t be placed',
-        `${placedCount} order${placedCount > 1 ? 's' : ''} placed. Payment wasn't completed for: ${failed.join(', ')}.`,
-        [{ text: 'OK', onPress: () => navigation.navigate(ROUTES.TABS, { screen: ROUTES.BOOKINGS }) }],
-      );
-    } else {
-      Alert.alert('Payment not completed', `Please review: ${failed.join(', ')}.`);
-    }
+      })),
+    });
   };
 
   if (items.length === 0) {
@@ -336,16 +254,12 @@ export default function CartScreen() {
           <Text style={styles.barTotal}>{formatMoney(grandTotal, currency)}</Text>
         </View>
         <TouchableOpacity
-          style={[styles.placeBtn, (placing || hasBelowMin) && styles.disabled]}
+          style={[styles.placeBtn, hasBelowMin && styles.disabled]}
           activeOpacity={0.9}
-          disabled={placing || hasBelowMin}
+          disabled={hasBelowMin}
           onPress={() => setPayOpen(true)}
         >
-          {placing ? (
-            <ActivityIndicator color={Color.white} />
-          ) : (
-            <Text style={styles.placeText}>{hasBelowMin ? 'Below minimum' : 'Checkout'}</Text>
-          )}
+          <Text style={styles.placeText}>{hasBelowMin ? 'Below minimum' : 'Checkout'}</Text>
         </TouchableOpacity>
       </View>
 
@@ -354,7 +268,6 @@ export default function CartScreen() {
         total={grandTotal}
         currency={currency}
         depositPercent={depositPercent}
-        loading={placing}
         onSelect={(m) => placeAll(m as OrderPaymentMethod)}
         onClose={() => setPayOpen(false)}
       />

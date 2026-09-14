@@ -115,3 +115,8 @@ export interface CheckoutConfirmResult {
   paymentStatus: OrderPaymentStatus;
   orderId: string;
 }
+
+export interface CheckoutSyncResult {
+  paymentStatus: OrderPaymentStatus;
+  orderId: string | null;
+}

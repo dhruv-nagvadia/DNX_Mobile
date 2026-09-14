@@ -4,6 +4,7 @@ import { endpoints } from '@/api/APIUtils';
 import { PaymentOrderResponse, VerifyPaymentResult } from '@/redux/api/booking/types';
 import {
   CheckoutConfirmResult,
+  CheckoutSyncResult,
   CouponPreview,
   CreateOrderRequest,
   CreateOrderResponse,
@@ -116,6 +117,16 @@ export const orderApi = createApi({
       transformResponse: (res: ApiEnvelope<CheckoutConfirmResult>) => res.data,
       invalidatesTags: ['MyOrders'],
     }),
+
+    // Reconciliation fallback: asks Razorpay directly whether a checkout's
+    // payment landed, for when the native SDK's own callback never reached
+    // the app (closed mid-payment, a slow bank redirect, a dropped confirm
+    // call after a successful charge).
+    syncOrderCheckout: builder.mutation<CheckoutSyncResult, { razorpayOrderId: string }>({
+      query: (data) => ({ endpoint: endpoints.orderCheckoutSync, method: 'post', data }),
+      transformResponse: (res: ApiEnvelope<CheckoutSyncResult>) => res.data,
+      invalidatesTags: ['MyOrders'],
+    }),
   }),
 });
 
@@ -133,4 +144,5 @@ export const {
   useSyncOrderPaymentMutation,
   useStartOrderCheckoutMutation,
   useConfirmOrderCheckoutMutation,
+  useSyncOrderCheckoutMutation,
 } = orderApi;

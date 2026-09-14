@@ -83,9 +83,12 @@ export const bookingApi = createApi({
       transformResponse: (res: ApiEnvelope<PaymentOrderResponse>) => res.data,
     }),
 
-    simulatePayment: builder.mutation<{ bookingId: string }, { bookingId: string }>({
+    simulatePayment: builder.mutation<
+      { bookingId: string; paymentStatus: 'PAID' | 'PARTIAL' },
+      { bookingId: string }
+    >({
       query: (data) => ({ endpoint: endpoints.paymentSimulate, method: 'post', data }),
-      transformResponse: (res: ApiEnvelope<{ bookingId: string }>) => res.data,
+      transformResponse: (res: ApiEnvelope<{ bookingId: string; paymentStatus: 'PAID' | 'PARTIAL' }>) => res.data,
       invalidatesTags: ['MyBookings'],
     }),
 

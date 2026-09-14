@@ -44,7 +44,6 @@ export default function BookingSummaryScreen() {
     openPayment,
     closePayment,
     chooseMethod,
-    paymentBusy,
   } = useBookingSummary();
 
   if (isLoading || !provider || !service) {
@@ -146,7 +145,6 @@ export default function BookingSummaryScreen() {
         currency={currency}
         depositPercent={depositPercent}
         serviceName={service.name}
-        loading={paymentBusy}
         onSelect={chooseMethod}
         onClose={closePayment}
       />

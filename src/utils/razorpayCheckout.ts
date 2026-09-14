@@ -2,10 +2,12 @@ import RazorpayCheckout, { RazorpaySuccessResult } from 'react-native-razorpay';
 import { Color } from '@/utils/Theme';
 import { PaymentOrderResponse } from '@/redux/api/booking/types';
 
-// If the native checkout sheet hasn't opened/closed by this point, something
-// is wrong at the native layer (bad build, SDK/simulator issue) — fail loudly
-// instead of leaving the caller's "placing order" spinner stuck forever.
-const CHECKOUT_TIMEOUT_MS = 25000;
+// A backstop only for a genuinely stuck native layer (bad build, SDK/simulator
+// issue) — NOT for slow user interaction. Card entry + bank OTP can easily run
+// past a minute, so this must stay far longer than that: a real payment that
+// completes after this fires is still recovered by the caller's server-side
+// sync (Razorpay's own record of the payment, not just this SDK callback).
+const CHECKOUT_TIMEOUT_MS = 10 * 60 * 1000;
 
 class CheckoutTimeoutError extends Error {}
 

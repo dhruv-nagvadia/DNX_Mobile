@@ -29,6 +29,10 @@ import AddReminderScreen from '@/screens/reminders/AddReminderScreen';
 import CartScreen from '@/screens/cart/CartScreen';
 import ProductDetailScreen from '@/screens/store/ProductDetailScreen';
 import OrderDetailScreen from '@/screens/store/OrderDetailScreen';
+import OrderSuccessScreen from '@/screens/orders/OrderSuccessScreen';
+import CheckoutProcessingScreen from '@/screens/cart/CheckoutProcessingScreen';
+import BookingProcessingScreen from '@/screens/bookings/BookingProcessingScreen';
+import BookingSuccessScreen from '@/screens/bookings/BookingSuccessScreen';
 import NotificationsScreen from '@/screens/notifications/NotificationsScreen';
 import DebugLogsScreen from '@/screens/debug/DebugLogsScreen';
 
@@ -128,6 +132,16 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.PROVIDER_LIST} component={ProviderListScreen} />
       <Stack.Screen name={ROUTES.PROVIDER_DETAILS} component={ProviderDetailScreen} />
       <Stack.Screen name={ROUTES.BOOKING_SUMMARY} component={BookingSummaryScreen} />
+      <Stack.Screen
+        name={ROUTES.BOOKING_PROCESSING}
+        component={BookingProcessingScreen}
+        options={{ gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name={ROUTES.BOOKING_SUCCESS}
+        component={BookingSuccessScreen}
+        options={{ gestureEnabled: false }}
+      />
       <Stack.Screen name={ROUTES.COUPONS} component={CouponsScreen} />
       <Stack.Screen name={ROUTES.LOCATION_PICKER} component={LocationPickerScreen} />
       <Stack.Screen name={ROUTES.GALLERY} component={GalleryScreen} />
@@ -138,6 +152,16 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.CART} component={CartScreen} />
       <Stack.Screen name={ROUTES.PRODUCT_DETAILS} component={ProductDetailScreen} />
       <Stack.Screen name={ROUTES.ORDER_DETAILS} component={OrderDetailScreen} />
+      <Stack.Screen
+        name={ROUTES.CHECKOUT_PROCESSING}
+        component={CheckoutProcessingScreen}
+        options={{ gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name={ROUTES.ORDER_SUCCESS}
+        component={OrderSuccessScreen}
+        options={{ gestureEnabled: false }}
+      />
       <Stack.Screen name={ROUTES.NOTIFICATIONS} component={NotificationsScreen} />
       <Stack.Screen name={ROUTES.DEBUG_LOGS} component={DebugLogsScreen} />
     </Stack.Navigator>
