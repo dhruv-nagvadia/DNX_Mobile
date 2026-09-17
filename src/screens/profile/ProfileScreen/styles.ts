@@ -213,6 +213,11 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: Color.error,
   },
+  inputHint: {
+    marginTop: 6,
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+  },
   modalActions: {
     flexDirection: 'row',
     gap: Spacing.sm,

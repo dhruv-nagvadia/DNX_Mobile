@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -9,16 +9,19 @@ import { setTokenCache } from '@/api/apiConfigs';
 import { StorageKeys } from '@/utils/Constants';
 import { ROUTES } from '@/navigation/routes';
 import DEBUG_LOGGER, { ERROR } from '@/utils/DebugLogger';
+import { lookupByPincode } from '@/utils/locationApi';
 
 import { RegisterErrors, RegisterForm, RegisterScreenNavigationProp } from './types';
 import { validateRegister } from './validation';
 
 const FILE = 'useRegisterScreen';
+const PIN_RE = /^\d{6}$/;
 
 const EMPTY: RegisterForm = {
   fullName: '',
   email: '',
   phone: '',
+  pincode: '',
   password: '',
   confirmPassword: '',
 };
@@ -35,13 +38,45 @@ export function useRegisterScreen() {
   // True when the email is already taken, so the UI can offer sign-in instead.
   const [accountExists, setAccountExists] = useState(false);
 
+  // City/state resolved from the typed PIN code (India Post lookup), sent
+  // alongside it at submit so Home-screen content has a fallback location
+  // before the customer grants GPS permission or sets one manually.
+  const [pincodeLocation, setPincodeLocation] = useState<{ city?: string; state?: string }>({});
+  const [resolvingPincode, setResolvingPincode] = useState(false);
+
   const onChange = useCallback((key: keyof RegisterForm, value: string) => {
-    // Phone is digits-only and capped at 10, so it can't drift out of shape.
-    const next = key === 'phone' ? value.replace(/\D/g, '').slice(0, 10) : value;
+    // Phone and PIN are digits-only and capped in length, so they can't drift out of shape.
+    let next = value;
+    if (key === 'phone') next = value.replace(/\D/g, '').slice(0, 10);
+    else if (key === 'pincode') next = value.replace(/\D/g, '').slice(0, 6);
     setForm((prev) => ({ ...prev, [key]: next }));
     // Clear a field's error the moment the user starts correcting it.
     setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev));
   }, []);
+
+  // Debounced PIN → city/state resolution, mirroring LocationPickerScreen's pattern.
+  useEffect(() => {
+    const pincode = form.pincode.trim();
+    if (!PIN_RE.test(pincode)) {
+      setPincodeLocation({});
+      setResolvingPincode(false);
+      return;
+    }
+    let cancelled = false;
+    setResolvingPincode(true);
+    const timer = setTimeout(async () => {
+      const matches = await lookupByPincode(pincode);
+      if (!cancelled) {
+        const best = matches[0];
+        setPincodeLocation(best ? { city: best.district, state: best.state } : {});
+        setResolvingPincode(false);
+      }
+    }, 350);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [form.pincode]);
 
   /** Validates just the field being left, so errors surface before submit. */
   const onBlur = useCallback(
@@ -65,6 +100,9 @@ export function useRegisterScreen() {
         fullName: form.fullName.trim(),
         email: form.email.trim(),
         phone: form.phone.trim(),
+        postalCode: form.pincode.trim(),
+        city: pincodeLocation.city,
+        state: pincodeLocation.state,
         password: form.password,
       }).unwrap();
 
@@ -80,6 +118,9 @@ export function useRegisterScreen() {
           email: result.email,
           fullName: result.fullName,
           role: result.role,
+          postalCode: result.postalCode,
+          city: result.city,
+          state: result.state,
         }),
       );
     } catch (err) {
@@ -97,7 +138,7 @@ export function useRegisterScreen() {
       }
       setServerError('Something went wrong while creating your account. Please try again.');
     }
-  }, [form, registerUser, dispatch]);
+  }, [form, pincodeLocation, registerUser, dispatch]);
 
   const goToLogin = useCallback(() => {
     navigation.navigate(ROUTES.LOGIN);
@@ -109,6 +150,8 @@ export function useRegisterScreen() {
     serverError,
     accountExists,
     isLoading,
+    pincodeLocation,
+    resolvingPincode,
     onChange,
     onBlur,
     onSubmit,

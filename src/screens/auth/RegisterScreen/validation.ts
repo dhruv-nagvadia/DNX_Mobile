@@ -3,6 +3,7 @@ import { RegisterErrors, RegisterForm } from './types';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 /** Indian mobile numbers: 10 digits starting 6-9. The +91 prefix is implicit. */
 const PHONE_RE = /^[6-9]\d{9}$/;
+const PIN_RE = /^\d{6}$/;
 
 /** Returns a map of field errors; empty object means the form is valid. */
 export function validateRegister(form: RegisterForm): RegisterErrors {
@@ -16,6 +17,9 @@ export function validateRegister(form: RegisterForm): RegisterErrors {
 
   if (!form.phone.trim()) errors.phone = 'Phone number is required';
   else if (!PHONE_RE.test(form.phone.trim())) errors.phone = 'Enter a valid 10-digit mobile number';
+
+  if (!form.pincode.trim()) errors.pincode = 'PIN code is required';
+  else if (!PIN_RE.test(form.pincode.trim())) errors.pincode = 'Enter a valid 6-digit PIN code';
 
   if (!form.password) errors.password = 'Password is required';
   else if (form.password.length < 8) errors.password = 'Use at least 8 characters';

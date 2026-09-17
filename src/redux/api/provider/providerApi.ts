@@ -1,21 +1,21 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { axiosBaseQuery } from '@/api/apiConfigs';
 import { endpoints } from '@/api/APIUtils';
-import { ListProvidersParams, Provider, Review } from './types';
-import { ApiEnvelope, Paginated } from '../types';
+import { ListProvidersParams, Provider, ProviderListResult, Review } from './types';
+import { ApiEnvelope } from '../types';
 
 export const providerApi = createApi({
   reducerPath: 'providerApi',
   baseQuery: axiosBaseQuery(),
   tagTypes: ['Providers', 'Provider', 'Reviews'],
   endpoints: (builder) => ({
-    getProviders: builder.query<Paginated<Provider>, ListProvidersParams | void>({
+    getProviders: builder.query<ProviderListResult, ListProvidersParams | void>({
       query: (params) => ({
         endpoint: endpoints.providers,
         method: 'get',
         params: params ?? undefined,
       }),
-      transformResponse: (res: ApiEnvelope<Paginated<Provider>>) => res.data,
+      transformResponse: (res: ApiEnvelope<ProviderListResult>) => res.data,
       providesTags: ['Providers'],
     }),
 

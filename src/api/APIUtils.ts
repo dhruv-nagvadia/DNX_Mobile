@@ -28,6 +28,7 @@ export const endpoints = {
   login: '/customer/auth/login',
   refresh: '/auth/refresh',
   me: '/auth/me',
+  changePassword: '/auth/change-password',
 
   // Categories (shared)
   categories: '/categories',

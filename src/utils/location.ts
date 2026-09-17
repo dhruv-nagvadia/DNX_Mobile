@@ -4,12 +4,13 @@ import { StorageKeys } from './Constants';
 
 /** Where the customer is searching from — either device GPS or a typed city/PIN. */
 export interface CustomerLocation {
-  mode: 'gps' | 'manual';
+  mode: 'gps' | 'manual' | 'profile';
   /** Shown on the Home location pill. */
   label: string;
   lat?: number;
   lng?: number;
   city?: string;
+  state?: string;
   postalCode?: string;
 }
 

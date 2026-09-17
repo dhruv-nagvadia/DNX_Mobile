@@ -12,6 +12,7 @@ export const ROUTES = {
   ADD_REMINDER: 'AddReminderScreen',
   PROFILE: 'ProfileScreen',
   CATEGORY: 'CategoryScreen',
+  ALL_CATEGORIES: 'AllCategoriesScreen',
   PROVIDER_LIST: 'ProviderListScreen',
   PROVIDER_DETAILS: 'ProviderDetailsScreen',
   BOOKING_SUMMARY: 'BookingSummaryScreen',
@@ -51,6 +52,7 @@ export type RootStackParamList = {
   };
   [ROUTES.PROFILE]: undefined;
   [ROUTES.CATEGORY]: { slug: string; name: string };
+  [ROUTES.ALL_CATEGORIES]: undefined;
   [ROUTES.PROVIDER_LIST]: { categorySlug?: string; subcategorySlug?: string; title: string };
   [ROUTES.PROVIDER_DETAILS]: {
     providerId: string;

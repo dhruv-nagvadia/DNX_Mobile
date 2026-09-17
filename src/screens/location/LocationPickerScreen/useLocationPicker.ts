@@ -1,34 +1,15 @@
-import { useCallback, useState } from 'react';
-import { Alert, PermissionsAndroid, Platform } from 'react-native';
-import Geolocation from '@react-native-community/geolocation';
+import { useCallback, useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { clearLocation, setLocation } from '@/redux/slices/locationSlice';
 import { saveLocation } from '@/utils/location';
+import { PostOffice, lookupByPincode, resolveGpsLocation, searchByName } from '@/utils/locationApi';
 
 import { LocationPickerNavigationProp } from './types';
 
 const PIN_RE = /^\d{6}$/; // Indian PIN codes are 6 digits.
-
-/** Request Android's runtime location permission (iOS prompts automatically). */
-async function requestAndroidPermission(): Promise<boolean> {
-  if (Platform.OS !== 'android') return true;
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: 'Location permission',
-        message: 'DNX uses your location to show nearby businesses and sort by distance.',
-        buttonPositive: 'Allow',
-        buttonNegative: 'Not now',
-      },
-    );
-    return granted === PermissionsAndroid.RESULTS.GRANTED;
-  } catch {
-    return false;
-  }
-}
 
 /** Lets the customer set where they're searching from — GPS, or a typed city/PIN. */
 export function useLocationPicker() {
@@ -38,48 +19,86 @@ export function useLocationPicker() {
 
   const [locating, setLocating] = useState(false);
   const [manualText, setManualText] = useState('');
+  const [suggestions, setSuggestions] = useState<PostOffice[]>([]);
+  const [searching, setSearching] = useState(false);
+
+  // Debounced live suggestions: a 6-digit PIN looks up its post offices
+  // (area names); anything else searches area/city names for matching PINs.
+  useEffect(() => {
+    const query = manualText.trim();
+    if (query.length < 3) {
+      setSuggestions([]);
+      setSearching(false);
+      return;
+    }
+    let cancelled = false;
+    setSearching(true);
+    const timer = setTimeout(async () => {
+      const results = PIN_RE.test(query) ? await lookupByPincode(query) : await searchByName(query);
+      if (!cancelled) {
+        setSuggestions(results);
+        setSearching(false);
+      }
+    }, 350);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [manualText]);
 
   const useCurrentLocation = useCallback(async () => {
-    const allowed = await requestAndroidPermission();
-    if (!allowed) {
+    setLocating(true);
+    const loc = await resolveGpsLocation();
+    setLocating(false);
+    if (!loc) {
       Alert.alert(
-        'Location access needed',
-        'Allow location access in your device settings to use this.',
+        'Could not get your location',
+        'Allow location access in your device settings, or enter your city/PIN code instead.',
       );
       return;
     }
-    setLocating(true);
-    Geolocation.getCurrentPosition(
-      async (pos) => {
-        const loc = {
-          mode: 'gps' as const,
-          label: 'Current location',
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        };
-        dispatch(setLocation(loc));
-        await saveLocation(loc);
-        setLocating(false);
-        navigation.goBack();
-      },
-      () => {
-        setLocating(false);
-        Alert.alert('Could not get your location', 'Please try again, or enter your city/PIN code instead.');
-      },
-      { enableHighAccuracy: true, timeout: 15_000, maximumAge: 10_000 },
-    );
+    dispatch(setLocation(loc));
+    await saveLocation(loc);
+    navigation.goBack();
   }, [dispatch, navigation]);
+
+  const selectSuggestion = useCallback(
+    async (item: PostOffice) => {
+      const loc = {
+        mode: 'manual' as const,
+        label: `${item.name}, ${item.district}, ${item.pincode}`,
+        city: item.district,
+        state: item.state,
+        postalCode: item.pincode,
+      };
+      dispatch(setLocation(loc));
+      await saveLocation(loc);
+      navigation.goBack();
+    },
+    [dispatch, navigation],
+  );
 
   const saveManual = useCallback(async () => {
     const value = manualText.trim();
-    if (!value) return;
+    if (!value) {
+      return;
+    }
+
+    // Prefer an exact match among the live suggestions (carries a resolved
+    // city + PIN code); otherwise fall back to the raw typed value.
+    const exact = suggestions.find((s) => s.name.toLowerCase() === value.toLowerCase());
+    if (exact) {
+      await selectSuggestion(exact);
+      return;
+    }
+
     const loc = PIN_RE.test(value)
       ? { mode: 'manual' as const, label: value, postalCode: value }
       : { mode: 'manual' as const, label: value, city: value };
     dispatch(setLocation(loc));
     await saveLocation(loc);
     navigation.goBack();
-  }, [manualText, dispatch, navigation]);
+  }, [manualText, suggestions, selectSuggestion, dispatch, navigation]);
 
   const clear = useCallback(async () => {
     dispatch(clearLocation());
@@ -91,6 +110,9 @@ export function useLocationPicker() {
     locating,
     manualText,
     setManualText,
+    suggestions,
+    searching,
+    selectSuggestion,
     useCurrentLocation,
     saveManual,
     clear,

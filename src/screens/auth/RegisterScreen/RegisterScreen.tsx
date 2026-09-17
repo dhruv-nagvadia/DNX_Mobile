@@ -29,6 +29,8 @@ export default function RegisterScreen() {
     serverError,
     accountExists,
     isLoading,
+    pincodeLocation,
+    resolvingPincode,
     onChange,
     onBlur,
     onSubmit,
@@ -38,8 +40,15 @@ export default function RegisterScreen() {
 
   const emailRef = useRef<TextInput>(null);
   const phoneRef = useRef<TextInput>(null);
+  const pincodeRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
   const confirmRef = useRef<TextInput>(null);
+
+  const pincodeHint = resolvingPincode
+    ? 'Looking up your city…'
+    : pincodeLocation.city
+      ? `${pincodeLocation.city}, ${pincodeLocation.state}`
+      : undefined;
 
   return (
     <View style={styles.root}>
@@ -125,11 +134,27 @@ export default function RegisterScreen() {
                 textContentType="telephoneNumber"
                 maxLength={10}
                 returnKeyType="next"
-                onSubmitEditing={() => passwordRef.current?.focus()}
+                onSubmitEditing={() => pincodeRef.current?.focus()}
                 value={form.phone}
                 onChangeText={(v) => onChange('phone', v)}
                 onBlur={() => onBlur('phone')}
                 error={errors.phone}
+                editable={!isLoading}
+              />
+
+              <AppInput
+                inputRef={pincodeRef}
+                label="PIN code"
+                placeholder="380001"
+                keyboardType="number-pad"
+                maxLength={6}
+                returnKeyType="next"
+                onSubmitEditing={() => passwordRef.current?.focus()}
+                value={form.pincode}
+                onChangeText={(v) => onChange('pincode', v)}
+                onBlur={() => onBlur('pincode')}
+                error={errors.pincode}
+                hint={errors.pincode ? undefined : pincodeHint}
                 editable={!isLoading}
               />
 

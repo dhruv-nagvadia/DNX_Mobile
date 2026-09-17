@@ -21,10 +21,12 @@ import {
   Pencil,
   ScrollText,
   UserRound,
+  KeyRound,
 } from 'lucide-react-native';
 
 import { Glow } from '@/components/AuthHero/Glow';
 import { GradientBackground } from '@/components/GradientBackground';
+import { PasswordStrength } from '@/components/PasswordStrength';
 import { Color } from '@/utils/Theme';
 
 import { useProfileScreen } from './useProfileScreen';
@@ -124,6 +126,17 @@ export default function ProfileScreen() {
             <Text style={styles.rowLabel}>Edit profile</Text>
             <ChevronRight size={20} color={Color.placeholder} />
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.row, styles.rowBorder]}
+            activeOpacity={0.8}
+            onPress={p.openPasswordChange}
+          >
+            <View style={styles.rowIcon}>
+              <KeyRound size={18} color={Color.primary} />
+            </View>
+            <Text style={styles.rowLabel}>Change password</Text>
+            <ChevronRight size={20} color={Color.placeholder} />
+          </TouchableOpacity>
         </View>
 
         {/* Support */}
@@ -193,6 +206,39 @@ export default function ProfileScreen() {
                 autoCapitalize="none"
               />
             </View>
+            <View>
+              <Text style={styles.inputLabel}>Phone</Text>
+              <TextInput
+                style={styles.input}
+                value={p.form.phone}
+                onChangeText={(v) => p.onField('phone', v)}
+                placeholder="9876543210"
+                placeholderTextColor={Color.placeholder}
+                keyboardType="number-pad"
+                maxLength={10}
+              />
+            </View>
+            <View>
+              <Text style={styles.inputLabel}>PIN code</Text>
+              <TextInput
+                style={styles.input}
+                value={p.form.pincode}
+                onChangeText={(v) => p.onField('pincode', v)}
+                placeholder="380001"
+                placeholderTextColor={Color.placeholder}
+                keyboardType="number-pad"
+                maxLength={6}
+              />
+              {p.resolvingPincode ? (
+                <Text style={styles.inputHint}>Looking up your city…</Text>
+              ) : (
+                !!p.pincodeLocation.city && (
+                  <Text style={styles.inputHint}>
+                    {p.pincodeLocation.city}, {p.pincodeLocation.state}
+                  </Text>
+                )
+              )}
+            </View>
 
             {!!p.error && <Text style={styles.errorText}>{p.error}</Text>}
 
@@ -212,6 +258,75 @@ export default function ProfileScreen() {
                 disabled={p.saving}
               >
                 {p.saving ? (
+                  <ActivityIndicator color={Color.white} />
+                ) : (
+                  <Text style={styles.modalBtnPrimaryText}>Save</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Change password modal */}
+      <Modal visible={p.pwOpen} transparent animationType="fade" onRequestClose={p.closePasswordChange}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Change password</Text>
+
+            <View>
+              <Text style={styles.inputLabel}>Current password</Text>
+              <TextInput
+                style={styles.input}
+                value={p.pwForm.currentPassword}
+                onChangeText={(v) => p.onPwField('currentPassword', v)}
+                placeholder="Current password"
+                placeholderTextColor={Color.placeholder}
+                secureTextEntry
+              />
+            </View>
+            <View>
+              <Text style={styles.inputLabel}>New password</Text>
+              <TextInput
+                style={styles.input}
+                value={p.pwForm.newPassword}
+                onChangeText={(v) => p.onPwField('newPassword', v)}
+                placeholder="At least 8 characters"
+                placeholderTextColor={Color.placeholder}
+                secureTextEntry
+              />
+              <PasswordStrength value={p.pwForm.newPassword} />
+            </View>
+            <View>
+              <Text style={styles.inputLabel}>Confirm new password</Text>
+              <TextInput
+                style={styles.input}
+                value={p.pwForm.confirmPassword}
+                onChangeText={(v) => p.onPwField('confirmPassword', v)}
+                placeholder="Re-enter new password"
+                placeholderTextColor={Color.placeholder}
+                secureTextEntry
+              />
+            </View>
+
+            {!!p.pwError && <Text style={styles.errorText}>{p.pwError}</Text>}
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalBtnGhost]}
+                activeOpacity={0.85}
+                onPress={p.closePasswordChange}
+                disabled={p.changingPassword}
+              >
+                <Text style={styles.modalBtnGhostText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalBtnPrimary]}
+                activeOpacity={0.85}
+                onPress={p.savePasswordChange}
+                disabled={p.changingPassword}
+              >
+                {p.changingPassword ? (
                   <ActivityIndicator color={Color.white} />
                 ) : (
                   <Text style={styles.modalBtnPrimaryText}>Save</Text>

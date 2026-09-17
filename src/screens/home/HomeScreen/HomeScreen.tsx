@@ -13,10 +13,14 @@ import { Search, MapPin, ChevronDown, Star, Users, ShoppingBag } from 'lucide-re
 
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { NotificationBellButton } from '@/components/NotificationBellButton';
-import { Color } from '@/utils/Theme';
+import { Color, Spacing } from '@/utils/Theme';
+import { useGridItemWidth } from '@/utils/useGridItemWidth';
 
 import { useHomeScreen } from './useHomeScreen';
 import { styles } from './styles';
+
+const CAT_COLUMNS = 4;
+const CAT_GAP = Spacing.sm;
 
 /** JSX only — logic comes from useHomeScreen. */
 export default function HomeScreen() {
@@ -27,9 +31,12 @@ export default function HomeScreen() {
     offers,
     mostBooked,
     stores,
+    mostBookedBanner,
+    storesBanner,
     recentlyViewed,
     trustStats,
     categories,
+    hasMoreCategories,
     categoriesLoading,
     onCategoryPress,
     onProviderPress,
@@ -38,8 +45,13 @@ export default function HomeScreen() {
     goToSearch,
     goToCart,
     goToLocationPicker,
+    goToAllCategories,
     cartCount,
   } = useHomeScreen();
+
+  // Exact width so 4 columns + gaps fill the row edge-to-edge on any device,
+  // instead of a percentage width that leaves a gap or overflows.
+  const catCardWidth = useGridItemWidth(CAT_COLUMNS, CAT_GAP, Spacing.lg);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -55,8 +67,10 @@ export default function HomeScreen() {
           >
             <MapPin size={16} color={Color.primary} />
             <Text style={styles.locationLabel}>Location</Text>
-            <Text style={styles.locationText}>{location}</Text>
-            <ChevronDown size={16} color={Color.textSecondary} />
+            <Text style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">
+              {location}
+            </Text>
+            <ChevronDown size={16} color={Color.textSecondary} style={styles.locationChevron} />
           </TouchableOpacity>
 
           <View style={styles.headerRight}>
@@ -126,6 +140,11 @@ export default function HomeScreen() {
         {/* Categories (most-booked first) */}
         <View style={styles.sectionHead}>
           <Text style={styles.sectionTitle}>What do you need?</Text>
+          {hasMoreCategories && (
+            <TouchableOpacity onPress={goToAllCategories} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Text style={styles.sectionLink}>View all</Text>
+            </TouchableOpacity>
+          )}
         </View>
         {categoriesLoading ? (
           <ActivityIndicator color={Color.primary} />
@@ -134,7 +153,7 @@ export default function HomeScreen() {
             {categories.map((c) => (
               <TouchableOpacity
                 key={c.id}
-                style={styles.catCard}
+                style={[styles.catCard, { width: catCardWidth }]}
                 activeOpacity={0.8}
                 onPress={() => onCategoryPress(c)}
               >
@@ -159,6 +178,11 @@ export default function HomeScreen() {
                 <Text style={styles.sectionTagText}>Shop groceries & more</Text>
               </View>
             </View>
+            {!!storesBanner && (
+              <View style={styles.scopeBanner}>
+                <Text style={styles.scopeBannerText}>{storesBanner}</Text>
+              </View>
+            )}
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -205,6 +229,11 @@ export default function HomeScreen() {
             <View style={styles.sectionHead}>
               <Text style={styles.sectionTitle}>Popular services to book</Text>
             </View>
+            {!!mostBookedBanner && (
+              <View style={styles.scopeBanner}>
+                <Text style={styles.scopeBannerText}>{mostBookedBanner}</Text>
+              </View>
+            )}
             {mostBooked.map((p) => (
               <TouchableOpacity
                 key={p.id}

@@ -10,6 +10,7 @@ export interface RegisterForm {
   fullName: string;
   email: string;
   phone: string;
+  pincode: string;
   password: string;
   confirmPassword: string;
 }

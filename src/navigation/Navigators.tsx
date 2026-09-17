@@ -16,6 +16,7 @@ import BookingsScreen from '@/screens/bookings/BookingsScreen';
 import RemindersScreen from '@/screens/reminders/RemindersScreen';
 import ProfileScreen from '@/screens/profile/ProfileScreen';
 import CategoryScreen from '@/screens/category/CategoryScreen';
+import AllCategoriesScreen from '@/screens/category/AllCategoriesScreen';
 import ProviderListScreen from '@/screens/provider/ProviderListScreen';
 import ProviderDetailScreen from '@/screens/provider/ProviderDetailScreen';
 import BookingSummaryScreen from '@/screens/bookings/BookingSummaryScreen';
@@ -129,6 +130,7 @@ export function MainStack() {
     >
       <Stack.Screen name={ROUTES.TABS} component={TabNavigator} />
       <Stack.Screen name={ROUTES.CATEGORY} component={CategoryScreen} />
+      <Stack.Screen name={ROUTES.ALL_CATEGORIES} component={AllCategoriesScreen} />
       <Stack.Screen name={ROUTES.PROVIDER_LIST} component={ProviderListScreen} />
       <Stack.Screen name={ROUTES.PROVIDER_DETAILS} component={ProviderDetailScreen} />
       <Stack.Screen name={ROUTES.BOOKING_SUMMARY} component={BookingSummaryScreen} />

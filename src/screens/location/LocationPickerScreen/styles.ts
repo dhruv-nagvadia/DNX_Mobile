@@ -55,4 +55,26 @@ export const styles = StyleSheet.create({
   saveBtnText: { color: Color.white, fontSize: FontSize.md, fontWeight: FontWeight.bold },
 
   hint: { fontSize: FontSize.xs, color: Color.textSecondary, lineHeight: FontSize.xs * 1.5 },
+
+  suggestLoading: { alignItems: 'center', paddingVertical: Spacing.sm },
+  suggestList: {
+    maxHeight: 280,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Color.border,
+    backgroundColor: Color.surface,
+    overflow: 'hidden',
+  },
+  suggestRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: Color.border,
+  },
+  suggestRowLast: { borderBottomWidth: 0 },
+  suggestText: { flex: 1, fontSize: FontSize.sm, color: Color.textPrimary },
+  suggestPin: { fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Color.textSecondary },
 });

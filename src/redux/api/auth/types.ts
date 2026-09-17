@@ -5,6 +5,26 @@ export interface AuthUser {
   email: string;
   fullName: string;
   role: Role;
+  phone?: string | null;
+  // Captured once at signup (typed PIN, or GPS at the time) — a fallback
+  // location for Home-screen content before GPS/manual location is set.
+  postalCode?: string | null;
+  city?: string | null;
+  state?: string | null;
+}
+
+export interface UpdateMeRequest {
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  postalCode?: string;
+  city?: string;
+  state?: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
 }
 
 export interface LoginRequest {
@@ -17,6 +37,9 @@ export interface RegisterRequest {
   password: string;
   fullName: string;
   phone?: string;
+  postalCode?: string;
+  city?: string;
+  state?: string;
   role?: Exclude<Role, 'ADMIN'>;
 }
 

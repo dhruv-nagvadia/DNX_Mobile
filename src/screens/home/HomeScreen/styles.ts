@@ -19,19 +19,28 @@ export const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   locationPill: {
+    flex: 1,
+    flexShrink: 1,
+    minWidth: 0,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    marginRight: Spacing.sm,
   },
   locationLabel: {
+    flexShrink: 0,
     fontSize: FontSize.xs,
     color: Color.textSecondary,
     marginRight: 2,
   },
   locationText: {
+    flexShrink: 1,
     fontSize: FontSize.sm,
     fontWeight: FontWeight.bold,
     color: Color.textPrimary,
+  },
+  locationChevron: {
+    flexShrink: 0,
   },
   greetingLabel: {
     fontSize: FontSize.sm,
@@ -46,6 +55,7 @@ export const styles = StyleSheet.create({
     color: Color.textPrimary,
   },
   headerRight: {
+    flexShrink: 0,
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
@@ -140,6 +150,15 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.xs,
     fontWeight: FontWeight.semibold,
     color: Color.primaryDark,
+  },
+  scopeBanner: {
+    marginTop: -Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  scopeBannerText: {
+    fontSize: FontSize.xs,
+    color: Color.textSecondary,
+    fontStyle: 'italic',
   },
 
   // ── Store cards (horizontal) ─────────────────────────────────────────
@@ -332,10 +351,11 @@ export const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     rowGap: Spacing.lg,
+    columnGap: Spacing.sm,
   },
-  catCard: { width: '22%', alignItems: 'center' },
+  catCard: { alignItems: 'center' },
   catTile: {
     width: 60,
     height: 60,

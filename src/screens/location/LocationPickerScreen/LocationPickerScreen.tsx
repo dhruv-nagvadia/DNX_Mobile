@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { LocateFixed, MapPin, X } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
@@ -10,8 +10,18 @@ import { styles } from './styles';
 
 /** Sets where the customer is searching from — device GPS, or a typed city/PIN code. */
 export default function LocationPickerScreen() {
-  const { current, locating, manualText, setManualText, useCurrentLocation, saveManual, clear } =
-    useLocationPicker();
+  const {
+    current,
+    locating,
+    manualText,
+    setManualText,
+    suggestions,
+    searching,
+    selectSuggestion,
+    useCurrentLocation,
+    saveManual,
+    clear,
+  } = useLocationPicker();
 
   return (
     <View style={styles.container}>
@@ -52,11 +62,11 @@ export default function LocationPickerScreen() {
           <View style={styles.dividerLine} />
         </View>
 
-        <Text style={styles.label}>Enter your city or PIN code</Text>
+        <Text style={styles.label}>Enter your city, area, or PIN code</Text>
         <View style={styles.manualRow}>
           <TextInput
             style={styles.input}
-            placeholder="e.g. Ahmedabad or 380015"
+            placeholder="e.g. Thaltej, Ahmedabad, or 380059"
             placeholderTextColor={Color.placeholder}
             value={manualText}
             onChangeText={setManualText}
@@ -73,6 +83,37 @@ export default function LocationPickerScreen() {
             <Text style={styles.saveBtnText}>Save</Text>
           </TouchableOpacity>
         </View>
+
+        {searching && (
+          <View style={styles.suggestLoading}>
+            <ActivityIndicator size="small" color={Color.primary} />
+          </View>
+        )}
+
+        {suggestions.length > 0 && (
+          <ScrollView
+            style={styles.suggestList}
+            nestedScrollEnabled
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator
+          >
+            {suggestions.map((s, i) => (
+              <TouchableOpacity
+                key={`${s.pincode}-${s.name}-${i}`}
+                style={[styles.suggestRow, i === suggestions.length - 1 && styles.suggestRowLast]}
+                activeOpacity={0.7}
+                onPress={() => selectSuggestion(s)}
+              >
+                <MapPin size={14} color={Color.textSecondary} />
+                <Text style={styles.suggestText} numberOfLines={1}>
+                  {s.name}, {s.district}
+                </Text>
+                <Text style={styles.suggestPin}>{s.pincode}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
+
         <Text style={styles.hint}>
           Used to show nearby businesses first and to filter search by area.
         </Text>

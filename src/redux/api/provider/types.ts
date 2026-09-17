@@ -1,4 +1,7 @@
 import { ApiEnvelope, Paginated } from '../types';
+
+/** Which tier of the postal-code → city → state fallback actually matched. */
+export type LocationScope = 'postalCode' | 'city' | 'state' | null;
 import { Category, Subcategory } from '../category/types';
 
 export interface Service {
@@ -93,6 +96,7 @@ export interface ListProvidersParams {
   categorySlug?: string;
   subcategorySlug?: string;
   city?: string;
+  state?: string;
   postalCode?: string;
   search?: string;
   type?: BusinessType;
@@ -105,5 +109,11 @@ export interface ListProvidersParams {
   limit?: number;
 }
 
-export type ProvidersResponse = ApiEnvelope<Paginated<Provider>>;
+export interface ProviderListResult extends Paginated<Provider> {
+  // null when no location filter was given at all (e.g. never fetched with
+  // a postal/city/state param).
+  locationScope: LocationScope;
+}
+
+export type ProvidersResponse = ApiEnvelope<ProviderListResult>;
 export type ProviderResponse = ApiEnvelope<Provider>;

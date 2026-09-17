@@ -62,6 +62,9 @@ export function useLoginScreen() {
           email: result.email,
           fullName: result.fullName,
           role: result.role,
+          postalCode: result.postalCode,
+          city: result.city,
+          state: result.state,
         }),
       );
     } catch (err) {

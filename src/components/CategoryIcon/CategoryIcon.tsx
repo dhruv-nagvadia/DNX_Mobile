@@ -13,6 +13,16 @@ import {
   Landmark,
   Boxes,
   Building2,
+  ShoppingBasket,
+  Pill,
+  Shirt,
+  Smartphone,
+  Sofa,
+  BookOpen,
+  Sparkles,
+  Cake,
+  PawPrint,
+  CarFront,
   type LucideIcon,
 } from 'lucide-react-native';
 
@@ -32,6 +42,16 @@ const ICONS: Record<string, LucideIcon> = {
   food: UtensilsCrossed,
   government: Landmark,
   other: Boxes,
+  grocery: ShoppingBasket,
+  'pharmacy-store': Pill,
+  fashion: Shirt,
+  electronics: Smartphone,
+  furniture: Sofa,
+  'books-gifts': BookOpen,
+  cosmetics: Sparkles,
+  bakery: Cake,
+  'pet-garden': PawPrint,
+  'auto-parts': CarFront,
 };
 
 /** Professional (Lucide) icon for a category slug — mirrors the web app. */
