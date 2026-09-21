@@ -124,6 +124,28 @@ export const styles = StyleSheet.create({
     fontWeight: FontWeight.extrabold,
   },
 
+  // On-location service address
+  addressCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+  },
+  addressIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: Radius.md,
+    backgroundColor: Color.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addressText: {
+    flex: 1,
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: Color.textPrimary,
+  },
+
   // Section title
   sectionTitle: {
     fontSize: FontSize.sm,

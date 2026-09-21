@@ -86,4 +86,12 @@ export const endpoints = {
   reminders: '/customer/reminders',
   reminder: (id: string) => `/customer/reminders/${id}`,
   reminderDone: (id: string) => `/customer/reminders/${id}/done`,
+
+  // Saved addresses (on-location service bookings)
+  addresses: '/customer/addresses',
+  address: (id: string) => `/customer/addresses/${id}`,
+
+  // Reverse geocoding proxy — Nominatim (reliably returns real Indian postal
+  // codes, unlike calling BigDataCloud directly from the device).
+  geoReverse: '/geo/reverse',
 };

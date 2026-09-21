@@ -7,6 +7,8 @@ export interface CustomerLocation {
   mode: 'gps' | 'manual' | 'profile';
   /** Shown on the Home location pill. */
   label: string;
+  /** Locality/city only, no postal code — usable as an area/street suggestion. */
+  address?: string;
   lat?: number;
   lng?: number;
   city?: string;

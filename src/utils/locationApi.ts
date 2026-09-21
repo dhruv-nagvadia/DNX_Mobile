@@ -1,6 +1,8 @@
 import { PermissionsAndroid, Platform } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 
+import { networkCall } from '@/api/apiConfigs';
+import { endpoints } from '@/api/APIUtils';
 import { CustomerLocation } from './location';
 
 /** One post office entry from India Post's free, keyless PIN-code directory. */
@@ -77,37 +79,34 @@ export async function searchByName(query: string): Promise<PostOffice[]> {
   }
 }
 
-/** Best-effort human-readable place (locality, city, state, PIN) for a GPS coordinate. */
+interface ReverseGeocodeResult {
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  postalCode: string | null;
+}
+
+/**
+ * Best-effort human-readable place (locality/city, state, PIN) for a GPS
+ * coordinate. Goes through our own backend (which calls Nominatim) rather
+ * than a geocoding API directly — BigDataCloud almost never returns a real
+ * postal code for Indian addresses, while Nominatim reliably does.
+ */
 export async function reverseGeocode(
   lat: number,
   lng: number,
-): Promise<{ locality?: string; city?: string; state?: string; postalCode?: string }> {
+): Promise<{ address?: string; city?: string; state?: string; postalCode?: string }> {
   try {
-    const res = await fetch(
-      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`,
-    );
-    if (!res.ok) {
-      return {};
-    }
-    const data = await res.json();
-    const city: string | undefined = data.city || undefined;
-    const state: string | undefined = data.principalSubdivision || undefined;
-    const locality: string | undefined = data.locality || undefined;
-    let postalCode: string | undefined = data.postcode || undefined;
-
-    // This API frequently comes back with no PIN code for Indian addresses —
-    // best-effort fill it in via the postal directory's name search.
-    if (!postalCode && (locality || city)) {
-      const matches = await searchByName(locality || city || '');
-      const best =
-        matches.find((m) => !!city && m.district.toLowerCase().includes(city.toLowerCase())) ??
-        matches[0];
-      if (best) {
-        postalCode = best.pincode;
-      }
-    }
-
-    return { locality, city, state, postalCode };
+    const res = await networkCall.get<{ data: ReverseGeocodeResult }>(endpoints.geoReverse, {
+      params: { lat, lng },
+    });
+    const { address, city, state, postalCode } = res.data.data;
+    return {
+      address: address ?? undefined,
+      city: city ?? undefined,
+      state: state ?? undefined,
+      postalCode: postalCode ?? undefined,
+    };
   } catch {
     return {};
   }
@@ -160,7 +159,7 @@ export async function resolveGpsLocation(): Promise<CustomerLocation | null> {
     return null;
   }
 
-  const { locality, city, state, postalCode } = await reverseGeocode(coords.lat, coords.lng);
-  const label = [locality, city, postalCode].filter(Boolean).join(', ') || 'Current location';
-  return { mode: 'gps', label, lat: coords.lat, lng: coords.lng, city, state, postalCode };
+  const { address, city, state, postalCode } = await reverseGeocode(coords.lat, coords.lng);
+  const label = [address, postalCode].filter(Boolean).join(', ') || 'Current location';
+  return { mode: 'gps', label, address, lat: coords.lat, lng: coords.lng, city, state, postalCode };
 }

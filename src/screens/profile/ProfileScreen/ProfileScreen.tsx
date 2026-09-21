@@ -22,6 +22,7 @@ import {
   ScrollText,
   UserRound,
   KeyRound,
+  MapPin,
 } from 'lucide-react-native';
 
 import { Glow } from '@/components/AuthHero/Glow';
@@ -135,6 +136,17 @@ export default function ProfileScreen() {
               <KeyRound size={18} color={Color.primary} />
             </View>
             <Text style={styles.rowLabel}>Change password</Text>
+            <ChevronRight size={20} color={Color.placeholder} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.row, styles.rowBorder]}
+            activeOpacity={0.8}
+            onPress={p.goToAddresses}
+          >
+            <View style={styles.rowIcon}>
+              <MapPin size={18} color={Color.primary} />
+            </View>
+            <Text style={styles.rowLabel}>Addresses</Text>
             <ChevronRight size={20} color={Color.placeholder} />
           </TouchableOpacity>
         </View>

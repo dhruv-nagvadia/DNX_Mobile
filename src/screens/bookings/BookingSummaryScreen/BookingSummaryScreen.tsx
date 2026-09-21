@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Image, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Image, ScrollView, ActivityIndicator, Modal, TouchableOpacity } from 'react-native';
+import { MapPin, Plus } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { AppButton } from '@/components/AppButton';
@@ -8,6 +9,7 @@ import { PaymentMethodModal } from '@/components/PaymentMethodModal';
 import { OffersSection } from '@/components/OffersSection';
 import { Color } from '@/utils/Theme';
 import { formatMoney } from '@/utils/units';
+import { formatAddress } from '@/utils/formatAddress';
 
 import { useBookingSummary } from './useBookingSummary';
 import { styles } from './styles';
@@ -40,6 +42,15 @@ export default function BookingSummaryScreen() {
     currency,
     depositPercent,
     appliedCoupon,
+    needsAddress,
+    travelFeeMinor,
+    addresses,
+    selectedAddress,
+    addressModalOpen,
+    openAddressModal,
+    closeAddressModal,
+    selectAddress,
+    goToAddAddress,
     methodOpen,
     openPayment,
     closePayment,
@@ -94,10 +105,30 @@ export default function BookingSummaryScreen() {
             <Text style={styles.rowLabel}>Duration</Text>
             <Text style={styles.rowValue}>{formatDuration(service.durationMin)}</Text>
           </View>
-          <View style={[styles.row, styles.rowLast]}>
+          <View style={needsAddress ? styles.row : [styles.row, styles.rowLast]}>
             <Text style={styles.rowLabel}>When</Text>
             <Text style={styles.rowValue}>{formatWhen(startTime)}</Text>
           </View>
+
+          {needsAddress && (
+            <TouchableOpacity
+              style={[styles.addressRow, styles.rowLast]}
+              activeOpacity={0.8}
+              onPress={openAddressModal}
+            >
+              <View style={styles.addressIcon}>
+                <MapPin size={18} color={Color.primary} />
+              </View>
+              <View style={styles.addressInfo}>
+                {selectedAddress ? (
+                  <Text style={styles.addressLine}>{formatAddress(selectedAddress)}</Text>
+                ) : (
+                  <Text style={styles.addressPlaceholder}>Choose an address</Text>
+                )}
+              </View>
+              <Text style={styles.addressChange}>{selectedAddress ? 'Change' : 'Select'}</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Offers */}
@@ -121,6 +152,12 @@ export default function BookingSummaryScreen() {
             <View style={styles.row}>
               <Text style={styles.discountLabel}>Discount ({appliedCoupon?.code})</Text>
               <Text style={styles.discountValue}>−{formatMoney(discount, currency)}</Text>
+            </View>
+          )}
+          {needsAddress && (
+            <View style={styles.row}>
+              <Text style={styles.rowLabel}>Travel fee</Text>
+              <Text style={styles.rowValue}>{formatMoney(travelFeeMinor, currency)}</Text>
             </View>
           )}
           <View style={[styles.row, styles.rowLast]}>
@@ -148,6 +185,43 @@ export default function BookingSummaryScreen() {
         onSelect={chooseMethod}
         onClose={closePayment}
       />
+
+      {needsAddress && (
+        <Modal visible={addressModalOpen} transparent animationType="slide" onRequestClose={closeAddressModal}>
+          <TouchableOpacity style={styles.sheetOverlay} activeOpacity={1} onPress={closeAddressModal}>
+            <TouchableOpacity activeOpacity={1} style={styles.sheet}>
+              <Text style={styles.sheetTitle}>Choose an address</Text>
+              <ScrollView style={styles.addressScrollArea} showsVerticalScrollIndicator nestedScrollEnabled>
+                {addresses.map((a) => (
+                  <TouchableOpacity
+                    key={a.id}
+                    style={styles.addressOption}
+                    activeOpacity={0.7}
+                    onPress={() => selectAddress(a)}
+                  >
+                    <View
+                      style={[
+                        styles.addressRadio,
+                        selectedAddress?.id === a.id && styles.addressRadioSelected,
+                      ]}
+                    >
+                      {selectedAddress?.id === a.id && <View style={styles.addressRadioDot} />}
+                    </View>
+                    <View style={styles.addressInfo}>
+                      {!!a.label && <Text style={styles.addressLabel}>{a.label}</Text>}
+                      <Text style={styles.addressLine}>{formatAddress(a)}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <TouchableOpacity style={styles.addNewAddressBtn} activeOpacity={0.85} onPress={goToAddAddress}>
+                <Plus size={16} color={Color.primary} />
+                <Text style={styles.addNewAddressBtnText}>Add new address</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </Modal>
+      )}
     </View>
   );
 }

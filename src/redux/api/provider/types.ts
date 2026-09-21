@@ -11,6 +11,11 @@ export interface Service {
   priceMinor: number;
   currency: string;
   durationMin: number;
+  // On-location service — the provider travels to the customer, so booking
+  // it requires an address and adds a distance-based travel fee.
+  travelRequired?: boolean;
+  travelBaseFeeMinor?: number;
+  travelPerKmMinor?: number;
 }
 
 export type BusinessType = 'SERVICE' | 'STORE';

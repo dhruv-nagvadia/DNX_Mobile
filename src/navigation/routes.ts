@@ -31,6 +31,8 @@ export const ROUTES = {
   ORDER_SUCCESS: 'OrderSuccessScreen',
   NOTIFICATIONS: 'NotificationsScreen',
   DEBUG_LOGS: 'DebugLogsScreen',
+  ADDRESSES: 'AddressesScreen',
+  ADD_ADDRESS: 'AddAddressScreen',
 } as const;
 
 /** Type-safe params for every route. `undefined` = no params. */
@@ -71,6 +73,8 @@ export type RootStackParamList = {
     method: 'ONLINE' | 'CASH' | 'PARTIAL';
     couponCode?: string;
     currency: string;
+    // Required when the service is on-location (Service.travelRequired).
+    serviceAddress?: { line: string; latitude?: number; longitude?: number };
   };
   [ROUTES.BOOKING_SUCCESS]: {
     bookingId: string;
@@ -124,4 +128,6 @@ export type RootStackParamList = {
   };
   [ROUTES.NOTIFICATIONS]: undefined;
   [ROUTES.DEBUG_LOGS]: undefined;
+  [ROUTES.ADDRESSES]: undefined;
+  [ROUTES.ADD_ADDRESS]: { id?: string };
 };

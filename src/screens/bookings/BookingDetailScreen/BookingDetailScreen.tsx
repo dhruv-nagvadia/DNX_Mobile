@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity, Modal, TextInput } from 'react-native';
-import { Star, BadgeCheck, ChevronRight } from 'lucide-react-native';
+import { Star, BadgeCheck, ChevronRight, MapPin } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
@@ -143,6 +143,19 @@ export default function BookingDetailScreen() {
           </View>
         </View>
 
+        {/* On-location service — where the provider is coming to */}
+        {!!booking.serviceAddressLine && (
+          <View>
+            <Text style={styles.sectionTitle}>Address</Text>
+            <View style={[styles.card, styles.addressCard]}>
+              <View style={styles.addressIcon}>
+                <MapPin size={18} color={Color.primary} />
+              </View>
+              <Text style={styles.addressText}>{booking.serviceAddressLine}</Text>
+            </View>
+          </View>
+        )}
+
         {/* Payment receipt */}
         <View>
           <Text style={styles.sectionTitle}>Payment</Text>
@@ -151,6 +164,14 @@ export default function BookingDetailScreen() {
               <Text style={styles.rowLabel}>Method</Text>
               <Text style={styles.rowValue}>{pay.methodLabel}</Text>
             </View>
+            {!!booking.travelFeeMinor && (
+              <View style={styles.row}>
+                <Text style={styles.rowLabel}>Travel fee</Text>
+                <Text style={styles.rowValue}>
+                  {formatPrice(booking.travelFeeMinor, booking.currency)}
+                </Text>
+              </View>
+            )}
             <View style={styles.row}>
               <Text style={styles.rowLabel}>Total</Text>
               <Text style={styles.priceValue}>

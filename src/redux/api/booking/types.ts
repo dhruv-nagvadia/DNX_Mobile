@@ -17,8 +17,10 @@ export interface Booking {
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
   cancelReason: string | null;
+  serviceAddressLine?: string | null;
+  travelFeeMinor?: number;
   provider: { id: string; businessName: string; images?: string[]; category: { slug: string; name: string } };
-  service: { id: string; name: string; durationMin: number };
+  service: { id: string; name: string; durationMin: number; travelRequired?: boolean };
   review: { id: string; rating: number } | null;
 }
 
@@ -65,4 +67,6 @@ export interface CreateBookingRequest {
   startTime: string; // ISO datetime
   paymentMethod?: PaymentMethod;
   couponCode?: string;
+  // Required when the selected service is on-location (Service.travelRequired).
+  serviceAddress?: { line: string; latitude?: number; longitude?: number };
 }

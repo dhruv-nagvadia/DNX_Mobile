@@ -33,7 +33,17 @@ type BookingSuccessOutcome = RootStackParamList[typeof ROUTES.BOOKING_SUCCESS]['
 export default function BookingProcessingScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { params } = useRoute<RouteProp<RootStackParamList, typeof ROUTES.BOOKING_PROCESSING>>();
-  const { providerId, providerName, serviceId, serviceName, startTime, method, couponCode, currency } = params;
+  const {
+    providerId,
+    providerName,
+    serviceId,
+    serviceName,
+    startTime,
+    method,
+    couponCode,
+    currency,
+    serviceAddress,
+  } = params;
   const dispatch = useAppDispatch();
 
   const [createBooking] = useCreateBookingMutation();
@@ -122,6 +132,7 @@ export default function BookingProcessingScreen() {
           startTime,
           paymentMethod: method,
           couponCode,
+          serviceAddress,
         }).unwrap();
       } catch (err) {
         if (cancelled) {

@@ -36,6 +36,8 @@ import BookingProcessingScreen from '@/screens/bookings/BookingProcessingScreen'
 import BookingSuccessScreen from '@/screens/bookings/BookingSuccessScreen';
 import NotificationsScreen from '@/screens/notifications/NotificationsScreen';
 import DebugLogsScreen from '@/screens/debug/DebugLogsScreen';
+import AddressesScreen from '@/screens/addresses/AddressesScreen';
+import AddAddressScreen from '@/screens/addresses/AddAddressScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -166,6 +168,8 @@ export function MainStack() {
       />
       <Stack.Screen name={ROUTES.NOTIFICATIONS} component={NotificationsScreen} />
       <Stack.Screen name={ROUTES.DEBUG_LOGS} component={DebugLogsScreen} />
+      <Stack.Screen name={ROUTES.ADDRESSES} component={AddressesScreen} />
+      <Stack.Screen name={ROUTES.ADD_ADDRESS} component={AddAddressScreen} />
     </Stack.Navigator>
   );
 }

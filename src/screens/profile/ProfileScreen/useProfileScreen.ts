@@ -186,5 +186,6 @@ export function useProfileScreen() {
     goToBookings: useCallback(() => navigation.navigate(ROUTES.BOOKINGS), [navigation]),
     goToReminders: useCallback(() => navigation.navigate(ROUTES.REMINDERS), [navigation]),
     goToDebugLogs: useCallback(() => navigation.navigate(ROUTES.DEBUG_LOGS), [navigation]),
+    goToAddresses: useCallback(() => navigation.navigate(ROUTES.ADDRESSES), [navigation]),
   };
 }
