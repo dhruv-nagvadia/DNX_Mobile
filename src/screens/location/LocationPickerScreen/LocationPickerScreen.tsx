@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
-import { LocateFixed, MapPin, X } from 'lucide-react-native';
+import { LocateFixed, MapPin, Search, X } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { Color } from '@/utils/Theme';
@@ -19,9 +19,11 @@ export default function LocationPickerScreen() {
     searching,
     selectSuggestion,
     useCurrentLocation,
-    saveManual,
+    search,
     clear,
   } = useLocationPicker();
+
+  const canSearch = manualText.trim().length >= 3;
 
   return (
     <View style={styles.container}>
@@ -71,16 +73,17 @@ export default function LocationPickerScreen() {
             value={manualText}
             onChangeText={setManualText}
             autoCapitalize="words"
-            returnKeyType="done"
-            onSubmitEditing={saveManual}
+            returnKeyType="search"
+            onSubmitEditing={search}
           />
           <TouchableOpacity
-            style={[styles.saveBtn, !manualText.trim() && styles.saveBtnDisabled]}
+            style={[styles.saveBtn, !canSearch && styles.saveBtnDisabled]}
             activeOpacity={0.85}
-            disabled={!manualText.trim()}
-            onPress={saveManual}
+            disabled={!canSearch}
+            onPress={search}
           >
-            <Text style={styles.saveBtnText}>Save</Text>
+            <Search size={16} color={Color.white} />
+            <Text style={styles.saveBtnText}>Search</Text>
           </TouchableOpacity>
         </View>
 
@@ -112,6 +115,10 @@ export default function LocationPickerScreen() {
               </TouchableOpacity>
             ))}
           </ScrollView>
+        )}
+
+        {!searching && canSearch && suggestions.length === 0 && (
+          <Text style={styles.noResults}>No matches found. Try a different city or PIN code.</Text>
         )}
 
         <Text style={styles.hint}>

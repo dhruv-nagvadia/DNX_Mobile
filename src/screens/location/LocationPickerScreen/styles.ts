@@ -44,17 +44,25 @@ export const styles = StyleSheet.create({
     color: Color.textPrimary,
   },
   saveBtn: {
-    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingHorizontal: 18,
     height: 48,
     borderRadius: Radius.md,
     backgroundColor: Color.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   saveBtnDisabled: { opacity: 0.4 },
   saveBtnText: { color: Color.white, fontSize: FontSize.md, fontWeight: FontWeight.bold },
 
   hint: { fontSize: FontSize.xs, color: Color.textSecondary, lineHeight: FontSize.xs * 1.5 },
+  noResults: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+    textAlign: 'center',
+    paddingVertical: Spacing.sm,
+  },
 
   suggestLoading: { alignItems: 'center', paddingVertical: Spacing.sm },
   suggestList: {

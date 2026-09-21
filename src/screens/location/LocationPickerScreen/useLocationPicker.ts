@@ -22,8 +22,19 @@ export function useLocationPicker() {
   const [suggestions, setSuggestions] = useState<PostOffice[]>([]);
   const [searching, setSearching] = useState(false);
 
-  // Debounced live suggestions: a 6-digit PIN looks up its post offices
-  // (area names); anything else searches area/city names for matching PINs.
+  // Shared by both the debounced auto-search and the explicit Search button —
+  // a 6-digit PIN looks up its post offices (area names); anything else
+  // searches area/city names for matching PINs.
+  const runSearch = useCallback(async (query: string, cancelledRef: { current: boolean }) => {
+    setSearching(true);
+    const results = PIN_RE.test(query) ? await lookupByPincode(query) : await searchByName(query);
+    if (!cancelledRef.current) {
+      setSuggestions(results);
+      setSearching(false);
+    }
+  }, []);
+
+  // Debounced live suggestions while typing.
   useEffect(() => {
     const query = manualText.trim();
     if (query.length < 3) {
@@ -31,20 +42,23 @@ export function useLocationPicker() {
       setSearching(false);
       return;
     }
-    let cancelled = false;
-    setSearching(true);
-    const timer = setTimeout(async () => {
-      const results = PIN_RE.test(query) ? await lookupByPincode(query) : await searchByName(query);
-      if (!cancelled) {
-        setSuggestions(results);
-        setSearching(false);
-      }
-    }, 350);
+    const cancelledRef = { current: false };
+    const timer = setTimeout(() => runSearch(query, cancelledRef), 350);
     return () => {
-      cancelled = true;
+      cancelledRef.current = true;
       clearTimeout(timer);
     };
-  }, [manualText]);
+  }, [manualText, runSearch]);
+
+  // Explicit "Search" button / keyboard submit — searches immediately
+  // instead of waiting out the debounce.
+  const search = useCallback(() => {
+    const query = manualText.trim();
+    if (query.length < 3) {
+      return;
+    }
+    runSearch(query, { current: false });
+  }, [manualText, runSearch]);
 
   const useCurrentLocation = useCallback(async () => {
     setLocating(true);
@@ -78,28 +92,6 @@ export function useLocationPicker() {
     [dispatch, navigation],
   );
 
-  const saveManual = useCallback(async () => {
-    const value = manualText.trim();
-    if (!value) {
-      return;
-    }
-
-    // Prefer an exact match among the live suggestions (carries a resolved
-    // city + PIN code); otherwise fall back to the raw typed value.
-    const exact = suggestions.find((s) => s.name.toLowerCase() === value.toLowerCase());
-    if (exact) {
-      await selectSuggestion(exact);
-      return;
-    }
-
-    const loc = PIN_RE.test(value)
-      ? { mode: 'manual' as const, label: value, postalCode: value }
-      : { mode: 'manual' as const, label: value, city: value };
-    dispatch(setLocation(loc));
-    await saveLocation(loc);
-    navigation.goBack();
-  }, [manualText, suggestions, selectSuggestion, dispatch, navigation]);
-
   const clear = useCallback(async () => {
     dispatch(clearLocation());
     await saveLocation(null);
@@ -114,7 +106,7 @@ export function useLocationPicker() {
     searching,
     selectSuggestion,
     useCurrentLocation,
-    saveManual,
+    search,
     clear,
   };
 }
