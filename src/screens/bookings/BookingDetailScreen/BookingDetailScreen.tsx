@@ -43,6 +43,7 @@ export default function BookingDetailScreen() {
     isLoading,
     onCancel,
     onReschedule,
+    onBookAgain,
     onRemind,
     openProvider,
     onPay,
@@ -277,11 +278,21 @@ export default function BookingDetailScreen() {
 
         {booking.status === 'COMPLETED' && (
           <TouchableOpacity
-            style={[styles.actionBtn, styles.actionGhost]}
+            style={[styles.actionBtn, styles.actionOutline]}
+            activeOpacity={0.85}
+            onPress={onBookAgain}
+          >
+            <Text style={styles.actionOutlineText}>Book again</Text>
+          </TouchableOpacity>
+        )}
+
+        {booking.status === 'COMPLETED' && (
+          <TouchableOpacity
+            style={[styles.actionBtn, styles.actionPrimary]}
             activeOpacity={0.85}
             onPress={onRemind}
           >
-            <Text style={styles.actionGhostText}>Remind me to book again</Text>
+            <Text style={styles.actionPrimaryText}>Remind me to book again later</Text>
           </TouchableOpacity>
         )}
       </ScrollView>

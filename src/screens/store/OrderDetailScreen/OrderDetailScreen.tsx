@@ -30,6 +30,9 @@ import {
   useVerifyOrderPaymentMutation,
   useSyncOrderPaymentMutation,
 } from '@/redux/api/order/orderApi';
+import { useGetProviderByIdQuery } from '@/redux/api/provider/providerApi';
+import { useAppDispatch } from '@/redux/hooks';
+import { setCartQty } from '@/redux/slices/cartSlice';
 import { openRazorpayCheckout } from '@/utils/razorpayCheckout';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
@@ -51,7 +54,15 @@ function formatWhen(iso: string): string {
 export default function OrderDetailScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { params } = useRoute<RouteProp<RootStackParamList, typeof ROUTES.ORDER_DETAILS>>();
+  const dispatch = useAppDispatch();
   const { data: orders = [], isLoading } = useGetMyOrdersQuery();
+  const order = orders.find((o) => o.id === params.orderId);
+  // Live catalog (current stock/price), not the order's stale snapshot — only
+  // fetched once the order is actually reorderable.
+  const { data: liveProvider } = useGetProviderByIdQuery(
+    { id: order?.provider.id ?? '' },
+    { skip: !order || order.status !== 'COMPLETED' },
+  );
   const [cancelOrder, { isLoading: cancelling }] = useCancelOrderMutation();
   const [createOrderReview, { isLoading: submittingOrder }] = useCreateOrderReviewMutation();
   const [createProductReview, { isLoading: submittingProduct }] = useCreateProductReviewMutation();
@@ -67,8 +78,6 @@ export default function OrderDetailScreen() {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const reviewOpen = reviewTarget !== null;
-
-  const order = orders.find((o) => o.id === params.orderId);
 
   // On returning to the app (e.g. from the Razorpay page), reconcile the payment.
   useEffect(() => {
@@ -130,6 +139,62 @@ export default function OrderDetailScreen() {
     if (productId) {
       navigation.navigate(ROUTES.PRODUCT_DETAILS, { providerId: order.provider.id, productId });
     }
+  };
+
+  // Re-adds this order's items to the cart at today's price/stock — skips
+  // anything discontinued or now out of stock rather than failing outright.
+  const onReorder = () => {
+    if (!liveProvider) {
+      Alert.alert('Just a moment', "Still loading this store's current catalog — try again.");
+      return;
+    }
+    const skipped: string[] = [];
+    let addedCount = 0;
+    for (const it of order.items) {
+      const product = it.productId
+        ? liveProvider.products?.find((p) => p.id === it.productId)
+        : undefined;
+      if (!product || product.stockQty <= 0) {
+        skipped.push(it.name);
+        continue;
+      }
+      const quantity = Math.min(it.quantity, product.stockQty);
+      if (quantity < product.stepQty) {
+        skipped.push(it.name);
+        continue;
+      }
+      dispatch(
+        setCartQty({
+          item: {
+            productId: product.id,
+            providerId: liveProvider.id,
+            providerName: liveProvider.businessName,
+            name: product.name,
+            measure: product.measure,
+            priceMinor: product.priceMinor,
+            priceQty: product.priceQty,
+            currency: product.currency,
+            stockQty: product.stockQty,
+            stepQty: product.stepQty,
+            imageUrl: product.imageUrl,
+            depositPercent: liveProvider.depositPercent,
+          },
+          quantity,
+        }),
+      );
+      addedCount += 1;
+    }
+    if (addedCount === 0) {
+      Alert.alert('Nothing to reorder', 'These items are no longer available at this store.');
+      return;
+    }
+    if (skipped.length > 0) {
+      Alert.alert(
+        'Some items unavailable',
+        `${skipped.join(', ')} could not be added — out of stock or no longer sold.`,
+      );
+    }
+    navigation.navigate(ROUTES.CART);
   };
 
   // Which products in this order the customer has already rated.
@@ -419,6 +484,13 @@ export default function OrderDetailScreen() {
               <Text style={styles.ratingText}>{order.review.rating}.0</Text>
             </View>
           </>
+        )}
+
+        {order.status === 'COMPLETED' && (
+          <TouchableOpacity style={styles.reviewBtn} activeOpacity={0.85} onPress={onReorder}>
+            <ShoppingBag size={16} color={Color.white} />
+            <Text style={styles.reviewText}>Reorder these items</Text>
+          </TouchableOpacity>
         )}
 
         {canReview && (

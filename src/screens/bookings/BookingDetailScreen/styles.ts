@@ -209,6 +209,15 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.md,
     fontWeight: FontWeight.semibold,
   },
+  actionOutline: {
+    backgroundColor: Color.white,
+    borderColor: Color.primary,
+  },
+  actionOutlineText: {
+    color: Color.primary,
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+  },
   actionDanger: {
     backgroundColor: Color.errorSoft,
     borderColor: Color.error,

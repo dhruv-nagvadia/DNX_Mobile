@@ -21,7 +21,7 @@ import { styles } from './styles';
 /** Full product detail: image, price, an amount picker (add to cart), then details. */
 export default function ProductDetailScreen() {
   const { params } = useRoute<RouteProp<RootStackParamList, typeof ROUTES.PRODUCT_DETAILS>>();
-  const { data: provider, isLoading } = useGetProviderByIdQuery(params.providerId);
+  const { data: provider, isLoading } = useGetProviderByIdQuery({ id: params.providerId });
   const { data: reviews = [], isLoading: reviewsLoading } = useGetProductReviewsQuery(
     params.productId,
   );

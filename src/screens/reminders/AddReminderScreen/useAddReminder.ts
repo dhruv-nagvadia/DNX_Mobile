@@ -9,6 +9,7 @@ import {
   useUpdateReminderMutation,
 } from '@/redux/api/reminder/reminderApi';
 import { ReminderRepeat, ReminderType } from '@/redux/api/reminder/types';
+import { ROUTES } from '@/navigation/routes';
 
 import { AddReminderNavigationProp, AddReminderRouteProp } from './types';
 
@@ -53,13 +54,22 @@ export function useAddReminder() {
 
   const clearEnd = () => setEndDate(null);
 
+  // Switching repeat type invalidates any previously-picked end date — it was
+  // only valid for the old cycle (e.g. "every 14 days" for weekly means
+  // nothing once switched to monthly), so start clean rather than keep a
+  // date that no longer lines up with the new occurrence pattern.
+  const changeRepeat = (next: ReminderRepeat) => {
+    setRepeat(next);
+    setEndDate(null);
+  };
+
   const save = async () => {
     if (!title.trim()) {
       Alert.alert('Add a title', 'Give your reminder a name.');
       return;
     }
     const hasEnd = repeat !== 'NONE' && !!endDate;
-    if (hasEnd && endDate && endDate < startDate) {
+    if (hasEnd && endDate && endDate <= startDate) {
       Alert.alert('Check the end date', 'The end date must be after the start date.');
       return;
     }
@@ -78,7 +88,17 @@ export function useAddReminder() {
       } else {
         await createReminder(payload).unwrap();
       }
-      navigation.goBack();
+      // Came from a booking's "remind me to book again" flow — land on the
+      // Reminders tab so the new reminder is visible, instead of returning
+      // to the booking screen it was opened from.
+      if (!isEdit && params.providerId) {
+        (navigation as unknown as { replace: (r: string, p?: object) => void }).replace(
+          ROUTES.TABS,
+          { screen: ROUTES.REMINDERS },
+        );
+      } else {
+        navigation.goBack();
+      }
     } catch {
       Alert.alert('Could not save', 'Please try again.');
     }
@@ -115,7 +135,7 @@ export function useAddReminder() {
     setEndDate,
     clearEnd,
     repeat,
-    setRepeat,
+    setRepeat: changeRepeat,
     note,
     setNote,
     saving: creating || updating,

@@ -117,6 +117,17 @@ export function useBookingDetail() {
     });
   }, [booking, navigation]);
 
+  // Straight to booking the same service again — no reschedule of the old
+  // booking involved, just pre-selects the service on a fresh visit.
+  const onBookAgain = useCallback(() => {
+    if (!booking) return;
+    navigation.navigate(ROUTES.PROVIDER_DETAILS, {
+      providerId: booking.provider.id,
+      name: booking.provider.businessName,
+      rescheduleServiceId: booking.service.id,
+    });
+  }, [booking, navigation]);
+
   const onRemind = useCallback(() => {
     if (!booking) return;
     navigation.navigate(ROUTES.ADD_REMINDER, {
@@ -153,6 +164,7 @@ export function useBookingDetail() {
     cancelling,
     onCancel,
     onReschedule,
+    onBookAgain,
     onRemind,
     openProvider,
     onPay,

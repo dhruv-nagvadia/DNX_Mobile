@@ -15,6 +15,8 @@ interface CalendarModalProps {
   minDate?: Date | null;
   /** Shows a "No date" button that calls onClear. */
   onClear?: () => void;
+  /** Extra per-day rule — e.g. only the dates a recurring reminder actually falls on. */
+  isDateDisabled?: (date: Date) => boolean;
 }
 
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -38,7 +40,15 @@ function sameDay(a: Date | null, b: Date): boolean {
 }
 
 /** Pure-JS month calendar with a year picker — no native date-picker dependency. */
-export function CalendarModal({ visible, value, onSelect, onClose, minDate, onClear }: CalendarModalProps) {
+export function CalendarModal({
+  visible,
+  value,
+  onSelect,
+  onClose,
+  minDate,
+  onClear,
+  isDateDisabled,
+}: CalendarModalProps) {
   const [cursor, setCursor] = useState(() => value ?? new Date());
   const [view, setView] = useState<'days' | 'years'>('days');
   const [yearBase, setYearBase] = useState(() => (value ?? new Date()).getFullYear() - 5);
@@ -150,7 +160,8 @@ export function CalendarModal({ visible, value, onSelect, onClose, minDate, onCl
                   const inMonth = d.getMonth() === cursor.getMonth();
                   const selected = sameDay(value, d);
                   const isToday = sameDay(today, d);
-                  const disabled = min ? startOfDay(d) < min : false;
+                  const disabled =
+                    (min ? startOfDay(d) < min : false) || (isDateDisabled ? isDateDisabled(d) : false);
                   return (
                     <View key={i} style={styles.cell}>
                       <TouchableOpacity

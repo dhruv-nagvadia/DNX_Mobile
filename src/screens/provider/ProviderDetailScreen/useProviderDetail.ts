@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
+import { useAppSelector } from '@/redux/hooks';
 import {
   useGetProviderByIdQuery,
   useGetProviderReviewsQuery,
@@ -100,7 +101,9 @@ export function useProviderDetail() {
 
   const isReschedule = !!params.rescheduleBookingId;
 
-  const { data: provider, isLoading } = useGetProviderByIdQuery(params.providerId);
+  // For the "N people from your area used this provider" badge.
+  const postalCode = useAppSelector((s) => s.location.current?.postalCode);
+  const { data: provider, isLoading } = useGetProviderByIdQuery({ id: params.providerId, postalCode });
   const { data: bookedSlots } = useGetBookedSlotsQuery(params.providerId);
   const { data: reviews = [] } = useGetProviderReviewsQuery(params.providerId);
   const [reschedule, { isLoading: rescheduling }] = useRescheduleBookingMutation();

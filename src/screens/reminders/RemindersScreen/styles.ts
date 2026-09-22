@@ -100,6 +100,10 @@ export const styles = StyleSheet.create({
     borderRadius: Radius.pill,
     overflow: 'hidden',
   },
+  actionsRow: {
+    flexDirection: 'row',
+    gap: Spacing.xs,
+  },
   doneBtn: {
     width: 30,
     height: 30,
@@ -109,9 +113,35 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  doneBtnFilled: {
+  // Pending & actionable — outline in the action's own color, not neutral
+  // grey, so Done/Missed read as green/red before a decision is even made.
+  doneBtnOutline: {
     borderColor: Color.success,
+    backgroundColor: Color.white,
+  },
+  missedBtnOutline: {
+    borderColor: Color.error,
+    backgroundColor: Color.white,
+  },
+  // Decision already made — a single filled badge replaces the button pair.
+  decisionBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    height: 28,
+    borderRadius: Radius.pill,
+  },
+  decisionBadgeDone: {
     backgroundColor: Color.success,
+  },
+  decisionBadgeMissed: {
+    backgroundColor: Color.error,
+  },
+  decisionBadgeText: {
+    color: Color.white,
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.bold,
   },
 
   center: {

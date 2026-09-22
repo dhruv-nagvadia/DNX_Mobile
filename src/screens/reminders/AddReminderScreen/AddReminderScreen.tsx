@@ -12,7 +12,7 @@ import { CalendarDays } from 'lucide-react-native';
 import { AppHeader } from '@/components/AppHeader';
 import { CalendarModal } from '@/components/CalendarModal';
 import { Color } from '@/utils/Theme';
-import { TYPE_ICON, TYPE_LABEL, TYPE_OPTIONS } from '@/utils/reminderMeta';
+import { TYPE_ICON, TYPE_LABEL, TYPE_OPTIONS, isReminderOccurrence } from '@/utils/reminderMeta';
 import { ReminderRepeat } from '@/redux/api/reminder/types';
 
 import { useAddReminder } from './useAddReminder';
@@ -38,6 +38,12 @@ export default function AddReminderScreen() {
   const r = useAddReminder();
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
+
+  // The end date must be strictly after the start date — the start date
+  // itself isn't a valid "stop after" point, so it's excluded here rather
+  // than just discouraged.
+  const minEndDate = new Date(r.startDate);
+  minEndDate.setDate(minEndDate.getDate() + 1);
 
   return (
     <View style={styles.container}>
@@ -178,7 +184,8 @@ export default function AddReminderScreen() {
       <CalendarModal
         visible={endOpen}
         value={r.endDate}
-        minDate={r.startDate}
+        minDate={minEndDate}
+        isDateDisabled={(d) => !isReminderOccurrence(d, r.startDate, r.repeat)}
         onSelect={(d) => {
           r.setEndDate(d);
           setEndOpen(false);

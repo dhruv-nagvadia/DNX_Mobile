@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { axiosBaseQuery } from '@/api/apiConfigs';
 import { endpoints } from '@/api/APIUtils';
-import { Reminder, ReminderInput } from './types';
+import { Reminder, ReminderInput, ReminderStatus } from './types';
 import { ApiEnvelope } from '../types';
 
 export const reminderApi = createApi({
@@ -27,8 +27,12 @@ export const reminderApi = createApi({
       invalidatesTags: ['Reminders'],
     }),
 
-    markReminderDone: builder.mutation<Reminder, string>({
-      query: (id) => ({ endpoint: endpoints.reminderDone(id), method: 'patch' }),
+    respondReminder: builder.mutation<Reminder, { id: string; status: Extract<ReminderStatus, 'DONE' | 'MISSED'> }>({
+      query: ({ id, status }) => ({
+        endpoint: endpoints.reminderRespond(id),
+        method: 'patch',
+        data: { status },
+      }),
       transformResponse: (res: ApiEnvelope<Reminder>) => res.data,
       invalidatesTags: ['Reminders'],
     }),
@@ -45,6 +49,6 @@ export const {
   useGetRemindersQuery,
   useCreateReminderMutation,
   useUpdateReminderMutation,
-  useMarkReminderDoneMutation,
+  useRespondReminderMutation,
   useDeleteReminderMutation,
 } = reminderApi;

@@ -85,7 +85,7 @@ export const endpoints = {
   // Reminders
   reminders: '/customer/reminders',
   reminder: (id: string) => `/customer/reminders/${id}`,
-  reminderDone: (id: string) => `/customer/reminders/${id}/done`,
+  reminderRespond: (id: string) => `/customer/reminders/${id}/respond`,
 
   // Saved addresses (on-location service bookings)
   addresses: '/customer/addresses',

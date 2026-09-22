@@ -19,10 +19,14 @@ export const providerApi = createApi({
       providesTags: ['Providers'],
     }),
 
-    getProviderById: builder.query<Provider, string>({
-      query: (id) => ({ endpoint: endpoints.providerById(id), method: 'get' }),
+    getProviderById: builder.query<Provider, { id: string; postalCode?: string }>({
+      query: ({ id, postalCode }) => ({
+        endpoint: endpoints.providerById(id),
+        method: 'get',
+        params: postalCode ? { postalCode } : undefined,
+      }),
       transformResponse: (res: ApiEnvelope<Provider>) => res.data,
-      providesTags: (_result, _error, id) => [{ type: 'Provider', id }],
+      providesTags: (_result, _error, { id }) => [{ type: 'Provider', id }],
     }),
 
     getProviderReviews: builder.query<Review[], string>({

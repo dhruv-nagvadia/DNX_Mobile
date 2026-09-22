@@ -72,6 +72,10 @@ export interface Provider {
   longitude?: number | null;
   // Present when the list was fetched with sort=nearest and coordinates.
   distanceKm?: number | null;
+  // Distinct customers from the viewer's postal code who completed a
+  // booking/order here — "N people from your area used this provider".
+  // null when no postal code was sent with the request.
+  areaCount?: number | null;
   images: string[];
   ratingAvg: number;
   ratingCount: number;

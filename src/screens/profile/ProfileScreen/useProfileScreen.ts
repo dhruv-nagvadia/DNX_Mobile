@@ -31,7 +31,7 @@ export function useProfileScreen() {
     () => ({
       bookings: bookings.length,
       reviews: bookings.filter((b) => b.review).length,
-      reminders: reminders.filter((r) => !r.completedAt).length,
+      reminders: reminders.filter((r) => r.status === 'PENDING').length,
     }),
     [bookings, reminders],
   );

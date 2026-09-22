@@ -10,7 +10,7 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
-import { Star, BadgeCheck, MapPin, Clock } from 'lucide-react-native';
+import { Star, BadgeCheck, MapPin, Clock, Users } from 'lucide-react-native';
 import { useRoute } from '@react-navigation/native';
 
 import { AppHeader } from '@/components/AppHeader';
@@ -19,6 +19,7 @@ import { AppButton } from '@/components/AppButton';
 import { BusinessContact } from '@/components/BusinessContact';
 import { ReviewItem } from '@/components/ReviewItem';
 import { Color } from '@/utils/Theme';
+import { useAppSelector } from '@/redux/hooks';
 import { useGetProviderByIdQuery } from '@/redux/api/provider/providerApi';
 
 import { StoreDetail } from '../StoreDetailScreen/StoreDetailScreen';
@@ -55,7 +56,8 @@ function timeLabel(d: Date): string {
  */
 export default function ProviderDetailScreen() {
   const { params } = useRoute<ProviderDetailRouteProp>();
-  const { data: provider, isLoading } = useGetProviderByIdQuery(params.providerId);
+  const postalCode = useAppSelector((s) => s.location.current?.postalCode);
+  const { data: provider, isLoading } = useGetProviderByIdQuery({ id: params.providerId, postalCode });
 
   if (isLoading && !provider) {
     return (
@@ -186,6 +188,16 @@ function ServiceDetail() {
             <View style={styles.metaRow}>
               <MapPin size={14} color={Color.textSecondary} />
               <Text style={styles.metaText}>{provider.city}</Text>
+            </View>
+          )}
+          {!!provider.areaCount && provider.areaCount > 0 && (
+            <View style={styles.metaRow}>
+              <Users size={14} color={Color.success} />
+              <Text style={[styles.metaText, { color: Color.success }]}>
+                {provider.areaCount === 1
+                  ? '1 person from your area used this'
+                  : `${provider.areaCount} people from your area used this`}
+              </Text>
             </View>
           )}
 

@@ -18,7 +18,7 @@ export function useBookingSummary() {
   const navigation = useNavigation<{ navigate: (r: string, p?: object) => void; goBack: () => void }>();
   const { params } = useRoute<BookingSummaryRouteProp>();
 
-  const { data: provider, isLoading } = useGetProviderByIdQuery(params.providerId);
+  const { data: provider, isLoading } = useGetProviderByIdQuery({ id: params.providerId });
   const service = provider?.services.find((s) => s.id === params.serviceId) ?? null;
 
   // Coupon applied via the dedicated Coupons screen (or a quick-apply chip).

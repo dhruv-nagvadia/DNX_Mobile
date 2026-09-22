@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Bell, Check, Plus } from 'lucide-react-native';
+import { Bell, Check, Plus, X } from 'lucide-react-native';
 
 import { Color } from '@/utils/Theme';
-import { TYPE_ICON, REPEAT_LABEL, dueLabel } from '@/utils/reminderMeta';
+import { TYPE_ICON, REPEAT_LABEL, dueLabel, formatReminderDate } from '@/utils/reminderMeta';
 import { Reminder } from '@/redux/api/reminder/types';
 
 import { useRemindersScreen } from './useRemindersScreen';
@@ -12,37 +12,70 @@ import { styles } from './styles';
 
 /** Reminders tab — renewals, services and follow-ups. */
 export default function RemindersScreen() {
-  const { isLoading, total, overdue, upcoming, done, onAdd, onOpen, onDone } = useRemindersScreen();
+  const { isLoading, total, overdue, upcoming, history, onAdd, onOpen, onRespond } =
+    useRemindersScreen();
 
-  const renderCard = (r: Reminder, isDone: boolean) => {
+  const renderCard = (r: Reminder, isHistory: boolean) => {
     const Icon = TYPE_ICON[r.type] ?? Bell;
     const due = dueLabel(r.dueDate);
+    const isOverdueLook = due.overdue && r.status !== 'DONE';
+    const dateText = isHistory ? formatReminderDate(r.dueDate) : due.text;
+
     return (
       <TouchableOpacity key={r.id} style={styles.card} activeOpacity={0.85} onPress={() => onOpen(r)}>
-        <View style={[styles.avatar, due.overdue && !isDone && styles.avatarOverdue]}>
-          <Icon size={20} color={due.overdue && !isDone ? Color.error : Color.primary} />
+        <View style={[styles.avatar, isOverdueLook && styles.avatarOverdue]}>
+          <Icon size={20} color={isOverdueLook ? Color.error : Color.primary} />
         </View>
         <View style={styles.info}>
           <Text style={styles.cardTitle} numberOfLines={1}>
             {r.title}
           </Text>
           <View style={styles.metaRow}>
-            <Text style={[styles.due, due.overdue && !isDone && styles.dueOverdue]}>{due.text}</Text>
+            <Text style={[styles.due, !isHistory && isOverdueLook && styles.dueOverdue]}>
+              {dateText}
+            </Text>
             {r.repeat !== 'NONE' && <Text style={styles.repeatBadge}>{REPEAT_LABEL[r.repeat]}</Text>}
           </View>
         </View>
-        {isDone ? (
-          <View style={[styles.doneBtn, styles.doneBtnFilled]}>
-            <Check size={16} color={Color.white} />
+
+        {r.status === 'PENDING' && due.actionable && (
+          <View style={styles.actionsRow}>
+            <TouchableOpacity
+              style={[styles.doneBtn, styles.doneBtnOutline]}
+              activeOpacity={0.7}
+              onPress={() => onRespond(r, 'DONE')}
+              hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
+              accessibilityLabel="Mark done"
+            >
+              <Check size={15} color={Color.success} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.doneBtn, styles.missedBtnOutline]}
+              activeOpacity={0.7}
+              onPress={() => onRespond(r, 'MISSED')}
+              hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
+              accessibilityLabel="Mark missed"
+            >
+              <X size={15} color={Color.error} />
+            </TouchableOpacity>
           </View>
-        ) : (
+        )}
+
+        {r.status !== 'PENDING' && (
           <TouchableOpacity
-            style={styles.doneBtn}
+            style={[
+              styles.decisionBadge,
+              r.status === 'DONE' ? styles.decisionBadgeDone : styles.decisionBadgeMissed,
+            ]}
             activeOpacity={0.7}
-            onPress={() => onDone(r.id)}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            onPress={() => onRespond(r, r.status === 'DONE' ? 'MISSED' : 'DONE')}
           >
-            <Check size={16} color={Color.textSecondary} />
+            {r.status === 'DONE' ? (
+              <Check size={13} color={Color.white} />
+            ) : (
+              <X size={13} color={Color.white} />
+            )}
+            <Text style={styles.decisionBadgeText}>{r.status === 'DONE' ? 'Done' : 'Missed'}</Text>
           </TouchableOpacity>
         )}
       </TouchableOpacity>
@@ -92,10 +125,10 @@ export default function RemindersScreen() {
               {upcoming.map((r) => renderCard(r, false))}
             </>
           )}
-          {done.length > 0 && (
+          {history.length > 0 && (
             <>
-              <Text style={styles.sectionTitle}>Done</Text>
-              {done.map((r) => renderCard(r, true))}
+              <Text style={styles.sectionTitle}>History</Text>
+              {history.map((r) => renderCard(r, true))}
             </>
           )}
         </ScrollView>
