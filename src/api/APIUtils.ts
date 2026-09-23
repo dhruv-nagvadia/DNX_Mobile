@@ -43,6 +43,8 @@ export const endpoints = {
   providers: '/customer/providers',
   providerById: (id: string) => `/customer/providers/${id}`,
   providerBookedSlots: (id: string) => `/customer/providers/${id}/booked-slots`,
+  productSearch: '/customer/products',
+  serviceSearch: '/customer/services',
 
   // Bookings
   bookings: '/customer/bookings',

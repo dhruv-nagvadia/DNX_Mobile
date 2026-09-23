@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, AppState } from 'react-native';
+import { Alert, AppState, Linking } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import {
@@ -109,6 +109,13 @@ export function useBookingDetail() {
     });
   }, [booking, navigation]);
 
+  const onCallProvider = useCallback(() => {
+    if (!booking?.provider.phone) return;
+    Linking.openURL(`tel:${booking.provider.phone}`).catch(() => {
+      Alert.alert('Could not call', 'Please dial the number manually.');
+    });
+  }, [booking]);
+
   const openProvider = useCallback(() => {
     if (!booking) return;
     navigation.navigate(ROUTES.PROVIDER_DETAILS, {
@@ -166,6 +173,7 @@ export function useBookingDetail() {
     onReschedule,
     onBookAgain,
     onRemind,
+    onCallProvider,
     openProvider,
     onPay,
     paying: linking || simulating || verifying,

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, BackHandler, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { CheckCircle2, ShoppingBag, TriangleAlert } from 'lucide-react-native';
 
@@ -50,6 +50,16 @@ export default function OrderSuccessScreen() {
   const primaryAction = single
     ? () => navigation.replace(ROUTES.ORDER_DETAILS, { orderId: single.orderId })
     : goToOrders;
+
+  // Hardware/gesture back from here should exit to Home, not pop back into
+  // the checkout flow that led up to this success state.
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      navigation.replace(ROUTES.TABS, { screen: ROUTES.HOME });
+      return true;
+    });
+    return () => sub.remove();
+  }, [navigation]);
 
   return (
     <View style={styles.container}>

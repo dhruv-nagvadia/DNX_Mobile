@@ -44,17 +44,16 @@ export const styles = StyleSheet.create({
     color: Color.primary,
   },
 
-  // Filter area
-  filters: {
-    paddingBottom: Spacing.sm,
-    gap: Spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: Color.border,
-  },
+  // What to search for — the one always-visible filter
   typeRow: {
     flexDirection: 'row',
     gap: Spacing.sm,
     paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
+    marginBottom: Spacing.xs,
+    borderBottomWidth: 1,
+    borderBottomColor: Color.border,
   },
   typeChip: {
     flex: 1,
@@ -69,12 +68,6 @@ export const styles = StyleSheet.create({
   typeChipText: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.textSecondary },
   typeChipTextActive: { color: Color.white },
 
-  chipsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    paddingHorizontal: Spacing.lg,
-  },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -89,11 +82,28 @@ export const styles = StyleSheet.create({
   chipActive: { backgroundColor: Color.primarySoft, borderColor: Color.primary },
   chipText: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.textSecondary },
   chipTextActive: { color: Color.primary },
-  sep: { width: 1, height: 22, backgroundColor: Color.border, marginHorizontal: 2 },
 
   content: {
     padding: Spacing.lg,
     paddingTop: Spacing.md,
+  },
+
+  // Recent searches / recently viewed (shown before a search is typed)
+  historyHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.sm,
+  },
+  sectionTitle: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
+    color: Color.textPrimary,
+  },
+  clearLink: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.bold,
+    color: Color.primary,
   },
   card: {
     flexDirection: 'row',
@@ -129,6 +139,30 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: Color.textSecondary,
   },
+  price: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
+    color: Color.primary,
+  },
+  // Used where `price` isn't already inside a marginTop'd row (e.g. metaRow).
+  standalonePrice: {
+    marginTop: 4,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginTop: 4,
+  },
+  durationChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  durationText: {
+    fontSize: FontSize.xs,
+    color: Color.textSecondary,
+  },
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
   ratingText: { fontSize: FontSize.xs, color: Color.textSecondary },
   center: {
@@ -142,5 +176,13 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: Color.textSecondary,
     textAlign: 'center',
+  },
+
+  // Recent-search chip row
+  wrapRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
   },
 });

@@ -101,6 +101,76 @@ export interface Review {
 
 export type ProviderSort = 'rating' | 'reviews' | 'newest' | 'nearest';
 
+/** A product search hit — the product plus which store sells it. */
+export interface ProductSearchResult extends Product {
+  providerId: string;
+  provider: {
+    id: string;
+    businessName: string;
+    city?: string | null;
+    isVerified: boolean;
+    latitude?: number | null;
+    longitude?: number | null;
+  };
+  // Present when the search was made with sort=nearest and coordinates.
+  distanceKm?: number | null;
+}
+
+export interface SearchProductsParams {
+  search?: string;
+  // Products have no category of their own — filters by the selling store's category.
+  categorySlug?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  minRating?: number;
+  openNow?: boolean;
+  sort?: ProviderSort;
+  lat?: number;
+  lng?: number;
+  page?: number;
+  limit?: number;
+}
+
+export type ProductSearchListResult = Paginated<ProductSearchResult>;
+export type ProductSearchResponse = ApiEnvelope<ProductSearchListResult>;
+
+/** A service search hit — the service plus the business offering it. */
+export interface ServiceSearchResult extends Service {
+  providerId: string;
+  category: Category;
+  provider: {
+    id: string;
+    businessName: string;
+    city?: string | null;
+    isVerified: boolean;
+    ratingAvg: number;
+    ratingCount: number;
+    latitude?: number | null;
+    longitude?: number | null;
+  };
+  // Present when the search was made with sort=nearest and coordinates.
+  distanceKm?: number | null;
+}
+
+export interface SearchServicesParams {
+  search?: string;
+  categorySlug?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  minRating?: number;
+  openNow?: boolean;
+  sort?: ProviderSort;
+  lat?: number;
+  lng?: number;
+  page?: number;
+  limit?: number;
+}
+
+export type ServiceSearchListResult = Paginated<ServiceSearchResult>;
+export type ServiceSearchResponse = ApiEnvelope<ServiceSearchListResult>;
+
 export interface ListProvidersParams {
   categorySlug?: string;
   subcategorySlug?: string;

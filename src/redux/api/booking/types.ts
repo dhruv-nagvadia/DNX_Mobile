@@ -19,7 +19,13 @@ export interface Booking {
   cancelReason: string | null;
   serviceAddressLine?: string | null;
   travelFeeMinor?: number;
-  provider: { id: string; businessName: string; images?: string[]; category: { slug: string; name: string } };
+  provider: {
+    id: string;
+    businessName: string;
+    images?: string[];
+    phone: string;
+    category: { slug: string; name: string };
+  };
   service: { id: string; name: string; durationMin: number; travelRequired?: boolean };
   review: { id: string; rating: number } | null;
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, BackHandler, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { CheckCircle2, TriangleAlert } from 'lucide-react-native';
 
@@ -81,6 +81,16 @@ export default function BookingSuccessScreen() {
 
   const goToBooking = () => navigation.replace(ROUTES.BOOKING_DETAILS, { bookingId });
   const goHome = () => navigation.replace(ROUTES.TABS, { screen: ROUTES.HOME });
+
+  // Hardware/gesture back from here should exit to Home, not pop back into
+  // the now-stale booking summary screen that led up to this success state.
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      navigation.replace(ROUTES.TABS, { screen: ROUTES.HOME });
+      return true;
+    });
+    return () => sub.remove();
+  }, [navigation]);
 
   return (
     <View style={styles.container}>

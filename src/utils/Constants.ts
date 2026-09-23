@@ -5,6 +5,8 @@ export const StorageKeys = {
   onboardingDone: '@dnx/onboardingDone',
   recentlyViewed: '@dnx/recentlyViewed',
   location: '@dnx/location',
+  recentSearches: '@dnx/recentSearches',
+  recentSearchViews: '@dnx/recentSearchViews',
 } as const;
 
 export const AppConfig = {

@@ -15,7 +15,11 @@ import { BookingSummaryRouteProp } from './types';
 
 /** Review-and-pay step between picking a slot and choosing a payment method. */
 export function useBookingSummary() {
-  const navigation = useNavigation<{ navigate: (r: string, p?: object) => void; goBack: () => void }>();
+  const navigation = useNavigation<{
+    navigate: (r: string, p?: object) => void;
+    replace: (r: string, p?: object) => void;
+    goBack: () => void;
+  }>();
   const { params } = useRoute<BookingSummaryRouteProp>();
 
   const { data: provider, isLoading } = useGetProviderByIdQuery({ id: params.providerId });
@@ -103,7 +107,7 @@ export function useBookingSummary() {
         return;
       }
       setMethodOpen(false);
-      navigation.navigate(ROUTES.BOOKING_PROCESSING, {
+      navigation.replace(ROUTES.BOOKING_PROCESSING, {
         providerId: provider.id,
         providerName: provider.businessName,
         serviceId: service.id,

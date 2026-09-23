@@ -218,6 +218,11 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
   },
+  callBtn: {
+    flexDirection: 'row',
+    gap: 6,
+    justifyContent: 'center',
+  },
   actionDanger: {
     backgroundColor: Color.errorSoft,
     borderColor: Color.error,
