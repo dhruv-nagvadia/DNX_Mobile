@@ -12,6 +12,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { clearCurrentUser, setCurrentUser } from '@/redux/slices/userSlice';
 import { clearCart } from '@/redux/slices/cartSlice';
+import { resetAllApiCaches } from '@/redux/resetApiCaches';
 import { clearTokenCache } from '@/api/apiConfigs';
 import { StorageKeys } from '@/utils/Constants';
 import { ROUTES } from '@/navigation/routes';
@@ -163,6 +164,9 @@ export function useProfileScreen() {
     clearTokenCache();
     dispatch(clearCart()); // drop the local copy; it's saved on the server per user
     dispatch(clearCurrentUser());
+    // Otherwise the next account signed into on this device would see this
+    // account's cached data (e.g. bookings, reminders) until the app restarts.
+    resetAllApiCaches(dispatch);
   }, [dispatch]);
 
   const logout = useCallback(async () => {

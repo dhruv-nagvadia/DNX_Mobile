@@ -81,8 +81,12 @@ async function endSession() {
     const store = require('../redux/store').default;
     const { clearCurrentUser } = require('../redux/slices/userSlice');
     const { clearCart } = require('../redux/slices/cartSlice');
+    const { resetAllApiCaches } = require('../redux/resetApiCaches');
     store.dispatch(clearCart());
     store.dispatch(clearCurrentUser());
+    // Otherwise the next account signed into on this device would see this
+    // account's cached data until the app restarts.
+    resetAllApiCaches(store.dispatch);
   } catch {
     // If the store isn't ready, the next launch starts unauthenticated anyway.
   }

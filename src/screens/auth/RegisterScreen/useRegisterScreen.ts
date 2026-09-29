@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRegisterMutation } from '@/redux/api/auth/authApi';
 import { useAppDispatch } from '@/redux/hooks';
 import { setCurrentUser } from '@/redux/slices/userSlice';
+import { resetAllApiCaches } from '@/redux/resetApiCaches';
 import { setTokenCache } from '@/api/apiConfigs';
 import { StorageKeys } from '@/utils/Constants';
 import { ROUTES } from '@/navigation/routes';
@@ -111,6 +112,7 @@ export function useRegisterScreen() {
         [StorageKeys.refreshToken, result.refreshToken],
       ]);
       setTokenCache(result.accessToken);
+      resetAllApiCaches(dispatch);
 
       dispatch(
         setCurrentUser({
