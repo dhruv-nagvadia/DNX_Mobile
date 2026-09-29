@@ -4,6 +4,7 @@ export const ROUTES = {
   ONBOARDING: 'OnboardingScreen',
   LOGIN: 'LoginScreen',
   REGISTER: 'RegisterScreen',
+  FORGOT_PASSWORD: 'ForgotPasswordScreen',
   TABS: 'Tabs',
   HOME: 'HomeScreen',
   BOOKINGS: 'BookingsScreen',
@@ -33,6 +34,10 @@ export const ROUTES = {
   DEBUG_LOGS: 'DebugLogsScreen',
   ADDRESSES: 'AddressesScreen',
   ADD_ADDRESS: 'AddAddressScreen',
+  PRIVACY_POLICY: 'PrivacyPolicyScreen',
+  TERMS: 'TermsScreen',
+  HELP_SUPPORT: 'HelpSupportScreen',
+  ABOUT: 'AboutScreen',
 } as const;
 
 /** Type-safe params for every route. `undefined` = no params. */
@@ -41,6 +46,7 @@ export type RootStackParamList = {
   [ROUTES.ONBOARDING]: undefined;
   [ROUTES.LOGIN]: undefined;
   [ROUTES.REGISTER]: undefined;
+  [ROUTES.FORGOT_PASSWORD]: undefined;
   [ROUTES.TABS]: undefined;
   [ROUTES.HOME]: undefined;
   [ROUTES.BOOKINGS]: undefined;
@@ -130,4 +136,8 @@ export type RootStackParamList = {
   [ROUTES.DEBUG_LOGS]: undefined;
   [ROUTES.ADDRESSES]: undefined;
   [ROUTES.ADD_ADDRESS]: { id?: string };
+  [ROUTES.PRIVACY_POLICY]: undefined;
+  [ROUTES.TERMS]: undefined;
+  [ROUTES.HELP_SUPPORT]: undefined;
+  [ROUTES.ABOUT]: undefined;
 };

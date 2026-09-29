@@ -26,9 +26,12 @@ export const endpoints = {
   // Auth — customer accounts (USER); refresh/me are shared/token-based
   register: '/customer/auth/register',
   login: '/customer/auth/login',
+  forgotPassword: '/customer/auth/forgot-password',
+  resetPassword: '/customer/auth/reset-password',
   refresh: '/auth/refresh',
   me: '/auth/me',
   changePassword: '/auth/change-password',
+  deleteAccount: '/auth/me',
 
   // Categories (shared)
   categories: '/categories',

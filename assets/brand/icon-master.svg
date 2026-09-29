@@ -1,0 +1,26 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#24479C"/>
+      <stop offset="55%" stop-color="#1E3A8A"/>
+      <stop offset="100%" stop-color="#172554"/>
+    </linearGradient>
+    <clipPath id="bowlClip">
+      <rect x="432" y="0" width="592" height="1024"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- "D" monogram -->
+  <g fill="#FFFFFF">
+    <rect x="312" y="232" width="170" height="560" rx="24"/>
+    <path
+      clip-path="url(#bowlClip)"
+      fill-rule="evenodd"
+      d="M432,232 a280,280 0 0 1 0,560 a280,280 0 0 1 0,-560 Z
+         M432,362 a150,150 0 0 0 0,300 a150,150 0 0 0 0,-300 Z"
+    />
+  </g>
+</svg>

@@ -35,6 +35,8 @@ export default function RegisterScreen() {
     onBlur,
     onSubmit,
     goToLogin,
+    goToTerms,
+    goToPrivacy,
   } = useRegisterScreen();
   const insets = useSafeAreaInsets();
 
@@ -198,6 +200,18 @@ export default function RegisterScreen() {
                 onPress={onSubmit}
                 loading={isLoading}
               />
+
+              <Text style={styles.consentText}>
+                By creating an account, you agree to our{' '}
+                <Text style={styles.consentLink} onPress={goToTerms}>
+                  Terms of Service
+                </Text>{' '}
+                and{' '}
+                <Text style={styles.consentLink} onPress={goToPrivacy}>
+                  Privacy Policy
+                </Text>
+                .
+              </Text>
 
               <View style={styles.switchRow}>
                 <Text style={styles.switchText}>Already have an account? </Text>

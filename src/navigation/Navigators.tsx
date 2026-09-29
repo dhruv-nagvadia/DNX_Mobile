@@ -10,6 +10,11 @@ import { styles } from './styles';
 import { Color, FontWeight } from '@/utils/Theme';
 import LoginScreen from '@/screens/auth/LoginScreen';
 import RegisterScreen from '@/screens/auth/RegisterScreen';
+import ForgotPasswordScreen from '@/screens/auth/ForgotPasswordScreen';
+import PrivacyPolicyScreen from '@/screens/legal/PrivacyPolicyScreen';
+import TermsScreen from '@/screens/legal/TermsScreen';
+import HelpSupportScreen from '@/screens/profile/HelpSupportScreen';
+import AboutScreen from '@/screens/profile/AboutScreen';
 import OnboardingScreen from '@/screens/onboarding/OnboardingScreen';
 import HomeScreen from '@/screens/home/HomeScreen';
 import BookingsScreen from '@/screens/bookings/BookingsScreen';
@@ -112,6 +117,9 @@ export function AuthStack() {
       <Stack.Screen name={ROUTES.ONBOARDING} component={OnboardingScreen} />
       <Stack.Screen name={ROUTES.LOGIN} component={LoginScreen} />
       <Stack.Screen name={ROUTES.REGISTER} component={RegisterScreen} />
+      <Stack.Screen name={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordScreen} />
+      <Stack.Screen name={ROUTES.PRIVACY_POLICY} component={PrivacyPolicyScreen} />
+      <Stack.Screen name={ROUTES.TERMS} component={TermsScreen} />
     </Stack.Navigator>
   );
 }
@@ -170,6 +178,10 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.DEBUG_LOGS} component={DebugLogsScreen} />
       <Stack.Screen name={ROUTES.ADDRESSES} component={AddressesScreen} />
       <Stack.Screen name={ROUTES.ADD_ADDRESS} component={AddAddressScreen} />
+      <Stack.Screen name={ROUTES.PRIVACY_POLICY} component={PrivacyPolicyScreen} />
+      <Stack.Screen name={ROUTES.TERMS} component={TermsScreen} />
+      <Stack.Screen name={ROUTES.HELP_SUPPORT} component={HelpSupportScreen} />
+      <Stack.Screen name={ROUTES.ABOUT} component={AboutScreen} />
     </Stack.Navigator>
   );
 }

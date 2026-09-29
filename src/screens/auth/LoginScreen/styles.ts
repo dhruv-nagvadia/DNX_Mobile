@@ -47,6 +47,10 @@ export const styles = StyleSheet.create({
   submit: {
     marginTop: Spacing.sm,
   },
+  forgotLink: {
+    alignSelf: 'flex-end',
+    marginTop: Spacing.xs,
+  },
   switchRow: {
     flexDirection: 'row',
     justifyContent: 'center',

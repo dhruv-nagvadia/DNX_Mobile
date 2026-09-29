@@ -22,8 +22,17 @@ import { styles } from './styles';
 
 /** JSX only — all logic comes from useLoginScreen. */
 export default function LoginScreen() {
-  const { form, errors, serverError, isLoading, onChange, onBlur, onSubmit, goToRegister } =
-    useLoginScreen();
+  const {
+    form,
+    errors,
+    serverError,
+    isLoading,
+    onChange,
+    onBlur,
+    onSubmit,
+    goToRegister,
+    goToForgotPassword,
+  } = useLoginScreen();
   const insets = useSafeAreaInsets();
   const passwordRef = useRef<TextInput>(null);
 
@@ -89,6 +98,16 @@ export default function LoginScreen() {
                 error={errors.password}
                 editable={!isLoading}
               />
+
+              <TouchableOpacity
+                onPress={goToForgotPassword}
+                disabled={isLoading}
+                style={styles.forgotLink}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                accessibilityRole="link"
+              >
+                <Text style={styles.switchLink}>Forgot password?</Text>
+              </TouchableOpacity>
 
               <AppButton
                 style={styles.submit}

@@ -29,6 +29,7 @@ import { Glow } from '@/components/AuthHero/Glow';
 import { GradientBackground } from '@/components/GradientBackground';
 import { PasswordStrength } from '@/components/PasswordStrength';
 import { Color } from '@/utils/Theme';
+import { AppConfig } from '@/utils/Constants';
 
 import { useProfileScreen } from './useProfileScreen';
 import { styles } from './styles';
@@ -154,14 +155,14 @@ export default function ProfileScreen() {
         {/* Support */}
         <Text style={styles.sectionLabel}>Support</Text>
         <View style={styles.section}>
-          <TouchableOpacity style={styles.row} activeOpacity={0.8} onPress={() => {}}>
+          <TouchableOpacity style={styles.row} activeOpacity={0.8} onPress={p.goToHelpSupport}>
             <View style={styles.rowIcon}>
               <HelpCircle size={19} color={Color.primary} />
             </View>
             <Text style={styles.rowLabel}>Help & support</Text>
             <ChevronRight size={20} color={Color.placeholder} />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.row, styles.rowBorder]} activeOpacity={0.8} onPress={() => {}}>
+          <TouchableOpacity style={[styles.row, styles.rowBorder]} activeOpacity={0.8} onPress={p.goToAbout}>
             <View style={styles.rowIcon}>
               <Info size={19} color={Color.primary} />
             </View>
@@ -187,7 +188,11 @@ export default function ProfileScreen() {
           <Text style={styles.logoutText}>Log out</Text>
         </TouchableOpacity>
 
-        <Text style={styles.version}>DNX · v0.1.0</Text>
+        <TouchableOpacity style={styles.deleteAccount} activeOpacity={0.7} onPress={p.openDelete}>
+          <Text style={styles.deleteAccountText}>Delete account</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.version}>DNX · v{AppConfig.version}</Text>
       </ScrollView>
 
       {/* Edit profile modal */}
@@ -342,6 +347,56 @@ export default function ProfileScreen() {
                   <ActivityIndicator color={Color.white} />
                 ) : (
                   <Text style={styles.modalBtnPrimaryText}>Save</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Delete account modal */}
+      <Modal visible={p.deleteOpen} transparent animationType="fade" onRequestClose={p.closeDelete}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Delete account?</Text>
+            <Text style={styles.modalWarning}>
+              This can't be undone. Your profile details will be removed and you'll be signed out —
+              enter your password to confirm.
+            </Text>
+
+            <View>
+              <Text style={styles.inputLabel}>Password</Text>
+              <TextInput
+                style={styles.input}
+                value={p.deleteForm.password}
+                onChangeText={p.onDeleteField}
+                placeholder="Your password"
+                placeholderTextColor={Color.placeholder}
+                secureTextEntry
+              />
+            </View>
+
+            {!!p.deleteError && <Text style={styles.errorText}>{p.deleteError}</Text>}
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalBtnGhost]}
+                activeOpacity={0.85}
+                onPress={p.closeDelete}
+                disabled={p.deleting}
+              >
+                <Text style={styles.modalBtnGhostText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalBtnDanger]}
+                activeOpacity={0.85}
+                onPress={p.confirmDelete}
+                disabled={p.deleting}
+              >
+                {p.deleting ? (
+                  <ActivityIndicator color={Color.white} />
+                ) : (
+                  <Text style={styles.modalBtnDangerText}>Delete</Text>
                 )}
               </TouchableOpacity>
             </View>

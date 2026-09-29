@@ -248,4 +248,27 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
   },
+  modalBtnDanger: {
+    backgroundColor: Color.error,
+    borderColor: Color.error,
+  },
+  modalBtnDangerText: {
+    color: Color.white,
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+  },
+  modalWarning: {
+    fontSize: FontSize.sm,
+    lineHeight: FontSize.sm * 1.5,
+    color: Color.textSecondary,
+  },
+  deleteAccount: {
+    alignItems: 'center',
+    marginTop: Spacing.md,
+  },
+  deleteAccountText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: Color.error,
+  },
 });

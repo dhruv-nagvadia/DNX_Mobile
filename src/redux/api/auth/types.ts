@@ -27,6 +27,20 @@ export interface ChangePasswordRequest {
   newPassword: string;
 }
 
+export interface RequestPasswordResetRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  otp: string;
+  newPassword: string;
+}
+
+export interface DeleteAccountRequest {
+  password: string;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;

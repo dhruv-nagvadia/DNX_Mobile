@@ -4,7 +4,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useGetMyBookingsQuery } from '@/redux/api/booking/bookingApi';
 import { useGetRemindersQuery } from '@/redux/api/reminder/reminderApi';
-import { useChangePasswordMutation, useUpdateMeMutation } from '@/redux/api/auth/authApi';
+import {
+  useChangePasswordMutation,
+  useDeleteAccountMutation,
+  useUpdateMeMutation,
+} from '@/redux/api/auth/authApi';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { clearCurrentUser, setCurrentUser } from '@/redux/slices/userSlice';
 import { clearCart } from '@/redux/slices/cartSlice';
@@ -26,6 +30,7 @@ export function useProfileScreen() {
   const { data: reminders = [] } = useGetRemindersQuery();
   const [updateMe, { isLoading: saving }] = useUpdateMeMutation();
   const [changePassword, { isLoading: changingPassword }] = useChangePasswordMutation();
+  const [deleteAccount, { isLoading: deleting }] = useDeleteAccountMutation();
 
   const stats = useMemo(
     () => ({
@@ -153,12 +158,51 @@ export function useProfileScreen() {
     }
   }, [pwForm, changePassword]);
 
-  const logout = useCallback(async () => {
+  const endSession = useCallback(async () => {
     await AsyncStorage.multiRemove([StorageKeys.accessToken, StorageKeys.refreshToken]);
     clearTokenCache();
     dispatch(clearCart()); // drop the local copy; it's saved on the server per user
     dispatch(clearCurrentUser());
   }, [dispatch]);
+
+  const logout = useCallback(async () => {
+    await endSession();
+  }, [endSession]);
+
+  // Delete-account modal — requires re-entering the password, same as
+  // changing it, since this is irreversible.
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteForm, setDeleteForm] = useState({ password: '' });
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const openDelete = useCallback(() => {
+    setDeleteForm({ password: '' });
+    setDeleteError(null);
+    setDeleteOpen(true);
+  }, []);
+  const closeDelete = useCallback(() => setDeleteOpen(false), []);
+  const onDeleteField = useCallback(
+    (value: string) => setDeleteForm({ password: value }),
+    [],
+  );
+
+  const confirmDelete = useCallback(async () => {
+    setDeleteError(null);
+    if (!deleteForm.password) {
+      setDeleteError('Enter your password to confirm');
+      return;
+    }
+    try {
+      await deleteAccount({ password: deleteForm.password }).unwrap();
+      setDeleteOpen(false);
+      // Setting the user to null flips RootNavigator to the auth stack —
+      // same cleanup as a normal logout.
+      await endSession();
+    } catch (err) {
+      const message = (err as { data?: { message?: string } })?.data?.message;
+      setDeleteError(message ?? 'Could not delete your account. Please try again.');
+    }
+  }, [deleteForm, deleteAccount, endSession]);
 
   return {
     fullName: user?.fullName ?? '',
@@ -183,9 +227,19 @@ export function useProfileScreen() {
     onPwField,
     savePasswordChange,
     logout,
+    deleteOpen,
+    deleteForm,
+    deleteError,
+    deleting,
+    openDelete,
+    closeDelete,
+    onDeleteField,
+    confirmDelete,
     goToBookings: useCallback(() => navigation.navigate(ROUTES.BOOKINGS), [navigation]),
     goToReminders: useCallback(() => navigation.navigate(ROUTES.REMINDERS), [navigation]),
     goToDebugLogs: useCallback(() => navigation.navigate(ROUTES.DEBUG_LOGS), [navigation]),
     goToAddresses: useCallback(() => navigation.navigate(ROUTES.ADDRESSES), [navigation]),
+    goToHelpSupport: useCallback(() => navigation.navigate(ROUTES.HELP_SUPPORT), [navigation]),
+    goToAbout: useCallback(() => navigation.navigate(ROUTES.ABOUT), [navigation]),
   };
 }

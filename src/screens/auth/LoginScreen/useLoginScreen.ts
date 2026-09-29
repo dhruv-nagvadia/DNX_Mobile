@@ -77,5 +77,19 @@ export function useLoginScreen() {
     navigation.navigate(ROUTES.REGISTER);
   }, [navigation]);
 
-  return { form, errors, serverError, isLoading, onChange, onBlur, onSubmit, goToRegister };
+  const goToForgotPassword = useCallback(() => {
+    navigation.navigate(ROUTES.FORGOT_PASSWORD);
+  }, [navigation]);
+
+  return {
+    form,
+    errors,
+    serverError,
+    isLoading,
+    onChange,
+    onBlur,
+    onSubmit,
+    goToRegister,
+    goToForgotPassword,
+  };
 }

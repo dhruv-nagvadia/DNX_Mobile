@@ -11,4 +11,6 @@ export const StorageKeys = {
 
 export const AppConfig = {
   defaultPageLimit: 20,
+  // Keep in sync with package.json's "version" — shown on Profile → About.
+  version: '0.1.0',
 } as const;

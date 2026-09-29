@@ -5,8 +5,11 @@ import {
   AuthData,
   AuthUser,
   ChangePasswordRequest,
+  DeleteAccountRequest,
   LoginRequest,
   RegisterRequest,
+  RequestPasswordResetRequest,
+  ResetPasswordRequest,
   UpdateMeRequest,
 } from './types';
 import { ApiEnvelope } from '../types';
@@ -44,6 +47,21 @@ export const authApi = createApi({
       query: (data) => ({ endpoint: endpoints.changePassword, method: 'post', data }),
       transformResponse: () => undefined,
     }),
+
+    requestPasswordReset: builder.mutation<void, RequestPasswordResetRequest>({
+      query: (data) => ({ endpoint: endpoints.forgotPassword, method: 'post', data }),
+      transformResponse: () => undefined,
+    }),
+
+    resetPassword: builder.mutation<void, ResetPasswordRequest>({
+      query: (data) => ({ endpoint: endpoints.resetPassword, method: 'post', data }),
+      transformResponse: () => undefined,
+    }),
+
+    deleteAccount: builder.mutation<void, DeleteAccountRequest>({
+      query: (data) => ({ endpoint: endpoints.deleteAccount, method: 'delete', data }),
+      transformResponse: () => undefined,
+    }),
   }),
 });
 
@@ -53,4 +71,7 @@ export const {
   useGetMeQuery,
   useUpdateMeMutation,
   useChangePasswordMutation,
+  useRequestPasswordResetMutation,
+  useResetPasswordMutation,
+  useDeleteAccountMutation,
 } = authApi;

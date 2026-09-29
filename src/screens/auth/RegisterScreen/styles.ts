@@ -64,6 +64,17 @@ export const styles = StyleSheet.create({
   submit: {
     marginTop: Spacing.sm,
   },
+  consentText: {
+    marginTop: Spacing.md,
+    fontSize: FontSize.xs,
+    lineHeight: FontSize.xs * 1.5,
+    color: Color.textSecondary,
+    textAlign: 'center',
+  },
+  consentLink: {
+    fontWeight: FontWeight.semibold,
+    color: Color.primary,
+  },
   switchRow: {
     flexDirection: 'row',
     justifyContent: 'center',
