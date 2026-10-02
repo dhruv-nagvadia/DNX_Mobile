@@ -1,17 +1,43 @@
 import { useCallback, useMemo, useState } from 'react';
+import { Alert } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { useGetCategoriesQuery } from '@/redux/api/category/categoryApi';
 import { useGetProvidersQuery } from '@/redux/api/provider/providerApi';
+import { useGetPlatformCouponsQuery } from '@/redux/api/order/orderApi';
+import { PlatformCoupon } from '@/redux/api/order/types';
 import { useAppSelector } from '@/redux/hooks';
 import { getRecentlyViewed, RecentProvider } from '@/utils/recentlyViewed';
 import { ROUTES } from '@/navigation/routes';
 import { Category } from '@/redux/api/category/types';
 import { Provider } from '@/redux/api/provider/types';
-import { HomeScreenNavigationProp } from './types';
-import { LOCATION, OFFERS, TRUST_STATS, POPULAR_CATEGORY_ORDER } from './mock';
+import { Color } from '@/utils/Theme';
+import { HomeScreenNavigationProp, Offer } from './types';
+import { LOCATION, TRUST_STATS, POPULAR_CATEGORY_ORDER } from './mock';
 
 const RANK = new Map(POPULAR_CATEGORY_ORDER.map((slug, i) => [slug, i]));
+
+// Cycled across cards — same palette the old hardcoded offers used.
+const OFFER_COLORS = [Color.primary, Color.primaryDark, Color.ink2];
+
+function discountLabel(c: PlatformCoupon): string {
+  return c.discountType === 'PERCENT'
+    ? `Flat ${c.discountValue}% OFF`
+    : `₹${Math.round(c.discountValue / 100)} OFF`;
+}
+
+/** Maps a real, redeemable platform coupon to the Home "Offers for you" card shape. */
+function toOffer(c: PlatformCoupon, i: number): Offer {
+  return {
+    id: c.code,
+    title: discountLabel(c),
+    subtitle: c.description || 'Apply this code at checkout',
+    tag: c.code,
+    bg: OFFER_COLORS[i % OFFER_COLORS.length],
+    categorySlug: c.categorySlug,
+    categoryName: c.categoryName,
+  };
+}
 
 // The Home grid only teases the top categories — "View all" opens the full list.
 const HOME_CATEGORY_LIMIT = 12;
@@ -22,6 +48,7 @@ export function useHomeScreen() {
   const currentUser = useAppSelector((state) => state.user.currentUser);
 
   const { data: categories = [], isLoading: categoriesLoading } = useGetCategoriesQuery();
+  const { data: platformCoupons = [] } = useGetPlatformCouponsQuery();
   const customerLocation = useAppSelector((s) => s.location.current);
   // Send everything we know — the backend tries postal code first, then
   // widens to city, then state, only as far as each tier comes up empty.
@@ -82,6 +109,36 @@ export function useHomeScreen() {
     [navigation],
   );
 
+  // Tapping an offer should always tell the customer how/where to use it —
+  // and take them straight there when the coupon is tied to one category.
+  const onOfferPress = useCallback(
+    (offer: Offer) => {
+      if (offer.categorySlug) {
+        Alert.alert(
+          offer.title,
+          `Use code ${offer.tag} at checkout on any ${offer.categoryName ?? 'eligible'} booking.`,
+          [
+            {
+              text: `Browse ${offer.categoryName ?? 'businesses'}`,
+              onPress: () =>
+                navigation.navigate(ROUTES.CATEGORY, {
+                  slug: offer.categorySlug as string,
+                  name: offer.categoryName ?? '',
+                }),
+            },
+            { text: 'OK', style: 'cancel' },
+          ],
+        );
+        return;
+      }
+      Alert.alert(offer.title, `Use code ${offer.tag} at checkout on your next booking or order.`, [
+        { text: 'Explore', onPress: () => navigation.navigate(ROUTES.SEARCH) },
+        { text: 'OK', style: 'cancel' },
+      ]);
+    },
+    [navigation],
+  );
+
   const onProviderPress = useCallback(
     (provider: Provider) => {
       navigation.navigate(ROUTES.PROVIDER_DETAILS, {
@@ -126,6 +183,7 @@ export function useHomeScreen() {
     storesBanner,
     recentlyViewed,
     onCategoryPress,
+    onOfferPress,
     onProviderPress,
     onRecentPress,
     goToProfile,
@@ -136,7 +194,7 @@ export function useHomeScreen() {
     cartCount,
     // Falls back to a static default until the customer sets a real location.
     location: customerLocation?.label ?? LOCATION,
-    offers: OFFERS,
+    offers: platformCoupons.map(toOffer),
     trustStats: TRUST_STATS,
   };
 }

@@ -1,18 +1,14 @@
-import { Color } from '@/utils/Theme';
-import { Offer, TrustStat } from './types';
+import { TrustStat } from './types';
 
 /**
  * Static placeholder content for the home screen. Replace each of these with a
  * real API query when the corresponding feature is built.
+ *
+ * (Offers for you is no longer here — it's now real platform coupons, fetched
+ * in useHomeScreen.ts via useGetPlatformCouponsQuery.)
  */
 
 export const LOCATION = 'Ahmedabad';
-
-export const OFFERS: Offer[] = [
-  { id: 'o1', title: 'Flat 50% OFF', subtitle: 'On your first salon visit', tag: 'NEW50', bg: Color.primary },
-  { id: 'o2', title: 'Free health checkup', subtitle: 'With any doctor booking', tag: 'HEALTH', bg: Color.primaryDark },
-  { id: 'o3', title: '₹200 OFF cleaning', subtitle: 'Use code CLEAN200', tag: 'CLEAN200', bg: Color.ink2 },
-];
 
 /**
  * Static "most booked" popularity order for categories (swap for a real

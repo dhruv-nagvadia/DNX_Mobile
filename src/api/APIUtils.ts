@@ -76,6 +76,8 @@ export const endpoints = {
   cancelOrder: (id: string) => `/customer/orders/${id}/cancel`,
   validateCoupon: '/customer/coupons/validate',
   storeCoupons: (id: string) => `/customer/providers/${id}/coupons`,
+  platformCoupons: '/customer/platform-coupons',
+  applicablePlatformCoupons: (providerId: string) => `/customer/providers/${providerId}/platform-coupons`,
   orderReview: (id: string) => `/customer/orders/${id}/review`,
   orderProductReview: (orderId: string, productId: string) =>
     `/customer/orders/${orderId}/products/${productId}/review`,

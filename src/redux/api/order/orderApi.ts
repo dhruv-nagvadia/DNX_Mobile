@@ -11,6 +11,7 @@ import {
   CreateOrderReviewRequest,
   CreateProductReviewRequest,
   Order,
+  PlatformCoupon,
   StoreCoupon,
   ValidateCouponRequest,
 } from './types';
@@ -57,6 +58,25 @@ export const orderApi = createApi({
     getStoreCoupons: builder.query<StoreCoupon[], string>({
       query: (providerId) => ({ endpoint: endpoints.storeCoupons(providerId), method: 'get' }),
       transformResponse: (res: ApiEnvelope<StoreCoupon[]>) => res.data,
+    }),
+
+    getPlatformCoupons: builder.query<PlatformCoupon[], void>({
+      query: () => ({ endpoint: endpoints.platformCoupons, method: 'get' }),
+      transformResponse: (res: ApiEnvelope<PlatformCoupon[]>) => res.data,
+    }),
+
+    // Platform-wide coupons that could actually apply to this one business's
+    // checkout (filtered server-side by category + bookings-vs-orders).
+    getApplicablePlatformCoupons: builder.query<
+      PlatformCoupon[],
+      { providerId: string; usage: 'BOOKING' | 'ORDER' }
+    >({
+      query: ({ providerId, usage }) => ({
+        endpoint: endpoints.applicablePlatformCoupons(providerId),
+        method: 'get',
+        params: { usage },
+      }),
+      transformResponse: (res: ApiEnvelope<PlatformCoupon[]>) => res.data,
     }),
 
     createProductReview: builder.mutation<{ id: string }, CreateProductReviewRequest>({
@@ -138,6 +158,8 @@ export const {
   useCreateProductReviewMutation,
   useValidateCouponMutation,
   useGetStoreCouponsQuery,
+  useGetPlatformCouponsQuery,
+  useGetApplicablePlatformCouponsQuery,
   useCreateOrderPaymentOrderMutation,
   useSimulateOrderPaymentMutation,
   useVerifyOrderPaymentMutation,

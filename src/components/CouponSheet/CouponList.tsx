@@ -3,8 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'reac
 import { Tag, Check } from 'lucide-react-native';
 
 import { Color } from '@/utils/Theme';
-import { useGetStoreCouponsQuery } from '@/redux/api/order/orderApi';
-import { StoreCoupon } from '@/redux/api/order/types';
+import { useGetStoreCouponsQuery, useGetApplicablePlatformCouponsQuery } from '@/redux/api/order/orderApi';
+import { PlatformCoupon, StoreCoupon } from '@/redux/api/order/types';
 
 import { styles } from './styles';
 
@@ -38,6 +38,23 @@ export function discountLabel(c: StoreCoupon): string {
     return `${c.discountValue}% off${c.maxDiscountMinor ? ` up to ${money(c.maxDiscountMinor, 'INR')}` : ''}`;
   }
   return `${money(c.discountValue, 'INR')} off`;
+}
+
+/** Normalizes a platform-wide coupon to the same shape, so the row UI and
+ * eligibility check below don't need to know the difference — a platform
+ * coupon has already been filtered (by category / bookings-vs-orders) on the
+ * server, so here it's just a plain ORDER-scoped (minimum-subtotal-only) code. */
+function platformToRowShape(c: PlatformCoupon): StoreCoupon {
+  return {
+    code: c.code,
+    description: c.description,
+    discountType: c.discountType,
+    discountValue: c.discountValue,
+    scope: 'ORDER',
+    minOrderMinor: c.minOrderMinor,
+    maxDiscountMinor: c.maxDiscountMinor,
+    expiresAt: c.expiresAt,
+  };
 }
 
 /** Whether a coupon applies here, and — if not — why (shown as a grey hint). */
@@ -77,9 +94,15 @@ export function CouponList({
   error,
   active = true,
 }: CouponListProps) {
-  const { data: coupons = [], isFetching } = useGetStoreCouponsQuery(providerId, {
+  const { data: storeCoupons = [], isFetching: fetchingStore } = useGetStoreCouponsQuery(providerId, {
     skip: !active,
   });
+  const { data: platformCoupons = [], isFetching: fetchingPlatform } = useGetApplicablePlatformCouponsQuery(
+    { providerId, usage: serviceId ? 'BOOKING' : 'ORDER' },
+    { skip: !active },
+  );
+  const isFetching = fetchingStore || fetchingPlatform;
+  const coupons = [...storeCoupons, ...platformCoupons.map(platformToRowShape)];
   const [manualCode, setManualCode] = useState('');
 
   return (

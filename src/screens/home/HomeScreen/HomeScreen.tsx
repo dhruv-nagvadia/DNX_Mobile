@@ -39,6 +39,7 @@ export default function HomeScreen() {
     hasMoreCategories,
     categoriesLoading,
     onCategoryPress,
+    onOfferPress,
     onProviderPress,
     onRecentPress,
     goToProfile,
@@ -121,21 +122,30 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Offers */}
-        <View style={styles.sectionHead}>
-          <Text style={styles.sectionTitle}>Offers for you</Text>
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hRow}>
-          {offers.map((o) => (
-            <View key={o.id} style={[styles.offerCard, { backgroundColor: o.bg }]}>
-              <Text style={styles.offerTitle}>{o.title}</Text>
-              <Text style={styles.offerSub}>{o.subtitle}</Text>
-              <View style={styles.offerTag}>
-                <Text style={styles.offerTagText}>{o.tag}</Text>
-              </View>
+        {/* Offers — only shown once there's a real, redeemable platform coupon */}
+        {offers.length > 0 && (
+          <>
+            <View style={styles.sectionHead}>
+              <Text style={styles.sectionTitle}>Offers for you</Text>
             </View>
-          ))}
-        </ScrollView>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hRow}>
+              {offers.map((o) => (
+                <TouchableOpacity
+                  key={o.id}
+                  activeOpacity={0.85}
+                  style={[styles.offerCard, { backgroundColor: o.bg }]}
+                  onPress={() => onOfferPress(o)}
+                >
+                  <Text style={styles.offerTitle}>{o.title}</Text>
+                  <Text style={styles.offerSub}>{o.subtitle}</Text>
+                  <View style={styles.offerTag}>
+                    <Text style={styles.offerTagText}>{o.tag}</Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </>
+        )}
 
         {/* Categories (most-booked first) */}
         <View style={styles.sectionHead}>

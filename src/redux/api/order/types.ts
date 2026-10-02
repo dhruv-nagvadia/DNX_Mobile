@@ -106,6 +106,23 @@ export interface StoreCoupon {
   expiresAt?: string | null;
 }
 
+// An admin-created coupon usable across any business (shown on Home as "Offers for you",
+// and — filtered to one business via getApplicablePlatformCoupons — during checkout).
+export interface PlatformCoupon {
+  code: string;
+  description?: string | null;
+  // Only present on the general (Home) listing — omitted from the per-business one.
+  appliesTo?: 'ANY' | 'BOOKING' | 'ORDER';
+  discountType: 'PERCENT' | 'FLAT';
+  discountValue: number;
+  minOrderMinor: number;
+  maxDiscountMinor?: number | null;
+  // Only present on the general (Home) listing, when the coupon is category-restricted.
+  categoryName?: string | null;
+  categorySlug?: string | null;
+  expiresAt?: string | null;
+}
+
 export interface CreateOrderResponse {
   order: Order;
   simulated: boolean;

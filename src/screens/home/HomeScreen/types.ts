@@ -10,6 +10,10 @@ export interface Offer {
   subtitle: string;
   tag: string;
   bg: string;
+  // Set when the coupon is restricted to one category — tapping the card
+  // takes the customer straight there. Null/undefined means it works anywhere.
+  categorySlug?: string | null;
+  categoryName?: string | null;
 }
 
 export interface TrustStat {
