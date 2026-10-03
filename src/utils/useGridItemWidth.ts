@@ -10,5 +10,9 @@ import { useWindowDimensions } from 'react-native';
 export function useGridItemWidth(columns: number, gap: number, horizontalPadding: number): number {
   const { width } = useWindowDimensions();
   const available = width - horizontalPadding * 2;
-  return (available - gap * (columns - 1)) / columns;
+  // Floored: RN rounds each child's fractional width up independently when
+  // laying out, so an un-floored width (e.g. 108.667) can have its row sum
+  // to a pixel or two more than `available` — enough for Yoga to wrap the
+  // last column onto a new line, silently dropping a column.
+  return Math.floor((available - gap * (columns - 1)) / columns);
 }

@@ -29,6 +29,13 @@ export const Color = {
   warningSoft: '#FEF6E7',
   overlay: 'rgba(15, 23, 42, 0.5)',
 
+  // Extra hues for decorative variety only (e.g. cycling category-tile
+  // backgrounds) — never semantic/status colors, so they carry no meaning.
+  teal: '#0D9488',
+  tealSoft: '#E6F6F4',
+  rose: '#E11D8F',
+  roseSoft: '#FDEAF4',
+
   // ── Dark "ink" surfaces — the auth hero and any dark hero strip ──────
   ink: '#060B18',
   ink2: '#0D1730',
@@ -92,11 +99,13 @@ export const Spacing = {
   xl: 32,
 };
 
+// Sharper, more minimal corner scale — `pill` stays 999 since it's a shape
+// (perfect capsule/circle), not a roundedness level, so it's unaffected.
 export const Radius = {
-  sm: 8,
-  md: 12,
-  lg: 20,
-  xl: 28,
+  sm: 6,
+  md: 10,
+  lg: 14,
+  xl: 18,
   pill: 999,
 };
 
