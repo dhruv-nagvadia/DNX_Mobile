@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
+import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Theme';
 
 export const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Color.background },
@@ -15,13 +15,14 @@ export const styles = StyleSheet.create({
   },
   catCard: { alignItems: 'center' },
   catTile: {
-    width: 60,
-    height: 60,
-    borderRadius: Radius.lg,
+    width: 64,
+    height: 64,
+    borderRadius: Radius.md,
     backgroundColor: Color.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
+    ...Shadow.card,
   },
   catName: {
     fontSize: FontSize.xs,

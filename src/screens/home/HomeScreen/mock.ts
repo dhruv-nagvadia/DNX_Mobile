@@ -10,26 +10,6 @@ import { TrustStat } from './types';
 
 export const LOCATION = 'Ahmedabad';
 
-/**
- * Static "most booked" popularity order for categories (swap for a real
- * booking-count sort later). Categories not listed here fall back to the
- * server's sortOrder.
- */
-export const POPULAR_CATEGORY_ORDER: string[] = [
-  'healthcare',
-  'beauty',
-  'home',
-  'fitness',
-  'food',
-  'automotive',
-  'education',
-  'professional',
-  'retail',
-  'events',
-  'government',
-  'other',
-];
-
 export const TRUST_STATS: TrustStat[] = [
   { id: 't1', value: '50k+', label: 'Happy users' },
   { id: 't2', value: '1L+', label: 'Bookings' },

@@ -1,0 +1,1 @@
+export { ProductResultCard } from './ProductResultCard';

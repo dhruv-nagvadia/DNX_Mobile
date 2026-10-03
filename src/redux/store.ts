@@ -6,6 +6,7 @@ import couponReducer from './slices/couponSlice';
 import locationReducer from './slices/locationSlice';
 import { authApi } from './api/auth/authApi';
 import { categoryApi } from './api/category/categoryApi';
+import { productTypeApi } from './api/productType/productTypeApi';
 import { providerApi } from './api/provider/providerApi';
 import { bookingApi } from './api/booking/bookingApi';
 import { orderApi } from './api/order/orderApi';
@@ -25,6 +26,7 @@ const store = configureStore({
     // RTK Query reducers (one per createApi call)
     [authApi.reducerPath]: authApi.reducer,
     [categoryApi.reducerPath]: categoryApi.reducer,
+    [productTypeApi.reducerPath]: productTypeApi.reducer,
     [providerApi.reducerPath]: providerApi.reducer,
     [bookingApi.reducerPath]: bookingApi.reducer,
     [orderApi.reducerPath]: orderApi.reducer,
@@ -37,6 +39,7 @@ const store = configureStore({
     getDefaultMiddleware().concat(
       authApi.middleware,
       categoryApi.middleware,
+      productTypeApi.middleware,
       providerApi.middleware,
       bookingApi.middleware,
       orderApi.middleware,

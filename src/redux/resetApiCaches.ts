@@ -1,6 +1,7 @@
 import { AppDispatch } from './store';
 import { authApi } from './api/auth/authApi';
 import { categoryApi } from './api/category/categoryApi';
+import { productTypeApi } from './api/productType/productTypeApi';
 import { providerApi } from './api/provider/providerApi';
 import { bookingApi } from './api/booking/bookingApi';
 import { orderApi } from './api/order/orderApi';
@@ -21,6 +22,7 @@ import { addressApi } from './api/address/addressApi';
 export function resetAllApiCaches(dispatch: AppDispatch): void {
   dispatch(authApi.util.resetApiState());
   dispatch(categoryApi.util.resetApiState());
+  dispatch(productTypeApi.util.resetApiState());
   dispatch(providerApi.util.resetApiState());
   dispatch(bookingApi.util.resetApiState());
   dispatch(orderApi.util.resetApiState());

@@ -114,12 +114,17 @@ export interface ProductSearchResult extends Product {
   };
   // Present when the search was made with sort=nearest and coordinates.
   distanceKm?: number | null;
+  // What kind of product this is (e.g. "Bath & Body"), if tagged.
+  productType?: { slug: string; name: string } | null;
 }
 
 export interface SearchProductsParams {
   search?: string;
-  // Products have no category of their own — filters by the selling store's category.
+  // Filters by the selling store's business category.
   categorySlug?: string;
+  // Filters by the product's own type (e.g. "bath-body") — pools matching
+  // products across every store that sells them, regardless of category.
+  productTypeSlug?: string;
   city?: string;
   state?: string;
   postalCode?: string;

@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { useGetCategoriesQuery } from '@/redux/api/category/categoryApi';
+import { useGetProductTypesQuery } from '@/redux/api/productType/productTypeApi';
 import { useGetProvidersQuery } from '@/redux/api/provider/providerApi';
 import { useGetPlatformCouponsQuery } from '@/redux/api/order/orderApi';
 import { PlatformCoupon } from '@/redux/api/order/types';
@@ -10,12 +11,11 @@ import { useAppSelector } from '@/redux/hooks';
 import { getRecentlyViewed, RecentProvider } from '@/utils/recentlyViewed';
 import { ROUTES } from '@/navigation/routes';
 import { Category } from '@/redux/api/category/types';
+import { ProductType } from '@/redux/api/productType/types';
 import { Provider } from '@/redux/api/provider/types';
 import { Color } from '@/utils/Theme';
 import { HomeScreenNavigationProp, Offer } from './types';
-import { LOCATION, TRUST_STATS, POPULAR_CATEGORY_ORDER } from './mock';
-
-const RANK = new Map(POPULAR_CATEGORY_ORDER.map((slug, i) => [slug, i]));
+import { LOCATION, TRUST_STATS } from './mock';
 
 // Cycled across cards — same palette the old hardcoded offers used.
 const OFFER_COLORS = [Color.primary, Color.primaryDark, Color.ink2];
@@ -39,8 +39,9 @@ function toOffer(c: PlatformCoupon, i: number): Offer {
   };
 }
 
-// The Home grid only teases the top categories — "View all" opens the full list.
-const HOME_CATEGORY_LIMIT = 12;
+// Each category grid (services, stores) only teases two rows — "View all"
+// opens the complete, type-specific list.
+const HOME_CATEGORY_LIMIT = 8;
 
 /** All state, data-fetching, and handlers for the customer HomeScreen. */
 export function useHomeScreen() {
@@ -48,6 +49,7 @@ export function useHomeScreen() {
   const currentUser = useAppSelector((state) => state.user.currentUser);
 
   const { data: categories = [], isLoading: categoriesLoading } = useGetCategoriesQuery();
+  const { data: productTypes = [] } = useGetProductTypesQuery();
   const { data: platformCoupons = [] } = useGetPlatformCouponsQuery();
   const customerLocation = useAppSelector((s) => s.location.current);
   // Send everything we know — the backend tries postal code first, then
@@ -93,18 +95,35 @@ export function useHomeScreen() {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
-  // Order categories by popularity (most booked first); Home only teases the
-  // first page of them, with "View all" opening the complete list.
-  const orderedCategories = useMemo(
-    () => [...categories].sort((a, b) => (RANK.get(a.slug) ?? 99) - (RANK.get(b.slug) ?? 99)),
-    [categories],
-  );
-  const visibleCategories = orderedCategories.slice(0, HOME_CATEGORY_LIMIT);
-  const hasMoreCategories = orderedCategories.length > HOME_CATEGORY_LIMIT;
+  // Services (appointments) and stores (products) are different categories
+  // entirely — shown as two separate sections so a customer always knows
+  // which mode they're browsing in. The API already returns categories
+  // ordered by everyday-use popularity (Category.sortOrder), so this just
+  // splits by type without re-sorting. Home only teases the first two rows,
+  // with "View all" opening the complete, type-specific list.
+  const serviceCategories = useMemo(() => categories.filter((c) => c.type !== 'STORE'), [categories]);
+  const storeCategories = useMemo(() => categories.filter((c) => c.type === 'STORE'), [categories]);
+  const visibleServiceCategories = serviceCategories.slice(0, HOME_CATEGORY_LIMIT);
+  const visibleStoreCategories = storeCategories.slice(0, HOME_CATEGORY_LIMIT);
+  const hasMoreServiceCategories = serviceCategories.length > HOME_CATEGORY_LIMIT;
+  const hasMoreStoreCategories = storeCategories.length > HOME_CATEGORY_LIMIT;
+
+  // "Shop by product" — a third, distinct browsing mode: pooled products of
+  // one kind (e.g. "Bath & Body") across every store that sells them, not a
+  // list of stores. Already sorted by sortOrder from the backend.
+  const visibleProductTypes = productTypes.slice(0, HOME_CATEGORY_LIMIT);
+  const hasMoreProductTypes = productTypes.length > HOME_CATEGORY_LIMIT;
 
   const onCategoryPress = useCallback(
     (category: Category) => {
       navigation.navigate(ROUTES.CATEGORY, { slug: category.slug, name: category.name });
+    },
+    [navigation],
+  );
+
+  const onProductTypePress = useCallback(
+    (type: ProductType) => {
+      navigation.navigate(ROUTES.PRODUCT_TYPE, { slug: type.slug, name: type.name });
     },
     [navigation],
   );
@@ -163,8 +182,16 @@ export function useHomeScreen() {
     () => navigation.navigate(ROUTES.LOCATION_PICKER),
     [navigation],
   );
-  const goToAllCategories = useCallback(
-    () => navigation.navigate(ROUTES.ALL_CATEGORIES),
+  const goToAllServiceCategories = useCallback(
+    () => navigation.navigate(ROUTES.ALL_CATEGORIES, { type: 'SERVICE' }),
+    [navigation],
+  );
+  const goToAllStoreCategories = useCallback(
+    () => navigation.navigate(ROUTES.ALL_CATEGORIES, { type: 'STORE' }),
+    [navigation],
+  );
+  const goToAllProductTypes = useCallback(
+    () => navigation.navigate(ROUTES.ALL_PRODUCT_TYPES),
     [navigation],
   );
 
@@ -174,8 +201,12 @@ export function useHomeScreen() {
   return {
     firstName,
     greeting,
-    categories: visibleCategories,
-    hasMoreCategories,
+    serviceCategories: visibleServiceCategories,
+    storeCategories: visibleStoreCategories,
+    productTypes: visibleProductTypes,
+    hasMoreServiceCategories,
+    hasMoreStoreCategories,
+    hasMoreProductTypes,
     categoriesLoading,
     mostBooked: providersPage?.items ?? [],
     stores: storesPage?.items ?? [],
@@ -183,6 +214,7 @@ export function useHomeScreen() {
     storesBanner,
     recentlyViewed,
     onCategoryPress,
+    onProductTypePress,
     onOfferPress,
     onProviderPress,
     onRecentPress,
@@ -190,7 +222,9 @@ export function useHomeScreen() {
     goToSearch,
     goToCart,
     goToLocationPicker,
-    goToAllCategories,
+    goToAllServiceCategories,
+    goToAllStoreCategories,
+    goToAllProductTypes,
     cartCount,
     // Falls back to a static default until the customer sets a real location.
     location: customerLocation?.label ?? LOCATION,

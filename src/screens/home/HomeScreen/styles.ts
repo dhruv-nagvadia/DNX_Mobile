@@ -132,6 +132,15 @@ export const styles = StyleSheet.create({
     fontWeight: FontWeight.bold,
     color: Color.textPrimary,
   },
+  // Groups a title with an inline tag (e.g. "Shop by category" + "Products")
+  // as one flex-shrinkable unit, so a sibling "View all" link stays pinned
+  // right instead of a 3-way space-between squeezing awkwardly.
+  sectionTitleGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexShrink: 1,
+  },
   sectionLink: {
     fontSize: FontSize.sm,
     fontWeight: FontWeight.semibold,
@@ -357,17 +366,47 @@ export const styles = StyleSheet.create({
   },
   catCard: { alignItems: 'center' },
   catTile: {
-    width: 60,
-    height: 60,
-    borderRadius: Radius.lg,
+    width: 64,
+    height: 64,
+    borderRadius: Radius.md,
     backgroundColor: Color.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
+    ...Shadow.card,
   },
   catName: {
     fontSize: FontSize.xs,
     fontWeight: FontWeight.semibold,
+    color: Color.textPrimary,
+    textAlign: 'center',
+  },
+
+  // ── "Shop by product" — real-photo cards in a horizontal row (the "Shop
+  // by Business" reference pattern), each a different pastel tone, so it
+  // reads as a richer, more visual browsing mode than the plain icon grid. ──
+  productCard: {
+    width: 124,
+    borderRadius: Radius.lg,
+    padding: Spacing.sm,
+    alignItems: 'center',
+    ...Shadow.card,
+  },
+  productCardImage: {
+    width: '100%',
+    height: 82,
+    marginBottom: 6,
+  },
+  productCardIconFallback: {
+    width: 82,
+    height: 82,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  productCardName: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.bold,
     color: Color.textPrimary,
     textAlign: 'center',
   },

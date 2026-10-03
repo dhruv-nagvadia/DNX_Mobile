@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
@@ -17,18 +17,28 @@ type Nav = { navigate: <T extends keyof RootStackParamList>(r: T, p?: RootStackP
 const CAT_COLUMNS = 4;
 const CAT_GAP = Spacing.sm;
 
-/** Every category the customer can browse — SERVICE and STORE both, in one grid. */
+const TITLES = { SERVICE: 'All services', STORE: 'All stores' } as const;
+
+/** Every category of ONE type — whichever you tapped "View all" from. No
+ * toggle here: this screen shows exactly what it was opened for. */
 export default function AllCategoriesScreen() {
   const navigation = useNavigation<Nav>();
+  const { params } = useRoute<RouteProp<RootStackParamList, 'AllCategoriesScreen'>>();
+  const type = params?.type ?? 'SERVICE';
+
   const { data: categories = [], isLoading } = useGetCategoriesQuery();
-  // Exact width so 4 columns + gaps fill the row edge-to-edge on any device.
+  const filtered = useMemo(
+    () => categories.filter((c) => (type === 'STORE' ? c.type === 'STORE' : c.type !== 'STORE')),
+    [categories, type],
+  );
+  // Exact width so columns + gaps fill the row edge-to-edge on any device.
   const catCardWidth = useGridItemWidth(CAT_COLUMNS, CAT_GAP, Spacing.lg);
 
   const onPress = (c: Category) => navigation.navigate(ROUTES.CATEGORY, { slug: c.slug, name: c.name });
 
   return (
     <View style={styles.container}>
-      <AppHeader title="All categories" />
+      <AppHeader title={TITLES[type]} />
 
       {isLoading ? (
         <View style={styles.center}>
@@ -37,7 +47,7 @@ export default function AllCategoriesScreen() {
       ) : (
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.grid}>
-            {categories.map((c) => (
+            {filtered.map((c) => (
               <TouchableOpacity
                 key={c.id}
                 style={[styles.catCard, { width: catCardWidth }]}

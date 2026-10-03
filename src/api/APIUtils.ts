@@ -35,6 +35,7 @@ export const endpoints = {
 
   // Categories (shared)
   categories: '/categories',
+  productTypes: '/customer/product-types',
 
   // In-app notifications (shared/token-based; any role)
   notifications: '/notifications',

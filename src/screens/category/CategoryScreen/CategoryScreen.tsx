@@ -10,13 +10,13 @@ import { styles } from './styles';
 
 /** JSX only — logic comes from useCategoryScreen. */
 export default function CategoryScreen() {
-  const { title, subcategories, isLoading, onSubcategoryPress } = useCategoryScreen();
+  const { title, subcategories, isLoading, lead, emptyText, onSubcategoryPress } = useCategoryScreen();
 
   return (
     <View style={styles.container}>
       <AppHeader title={title} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.lead}>Choose the service you need</Text>
+        <Text style={styles.lead}>{lead}</Text>
 
         {isLoading ? (
           <View style={styles.center}>
@@ -24,7 +24,7 @@ export default function CategoryScreen() {
           </View>
         ) : subcategories.length === 0 ? (
           <View style={styles.center}>
-            <Text style={styles.stateText}>No service types here yet.</Text>
+            <Text style={styles.stateText}>{emptyText}</Text>
           </View>
         ) : (
           subcategories.map((sub) => (

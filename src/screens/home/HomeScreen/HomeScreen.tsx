@@ -12,8 +12,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Search, MapPin, ChevronDown, Star, Users, ShoppingBag } from 'lucide-react-native';
 
 import { CategoryIcon } from '@/components/CategoryIcon';
+import { ProductTypeIcon } from '@/components/ProductTypeIcon';
 import { NotificationBellButton } from '@/components/NotificationBellButton';
 import { Color, Spacing } from '@/utils/Theme';
+import { PRODUCT_TYPE_TONES } from '@/utils/productTypeTones';
 import { useGridItemWidth } from '@/utils/useGridItemWidth';
 
 import { useHomeScreen } from './useHomeScreen';
@@ -35,10 +37,15 @@ export default function HomeScreen() {
     storesBanner,
     recentlyViewed,
     trustStats,
-    categories,
-    hasMoreCategories,
+    serviceCategories,
+    storeCategories,
+    productTypes,
+    hasMoreServiceCategories,
+    hasMoreStoreCategories,
+    hasMoreProductTypes,
     categoriesLoading,
     onCategoryPress,
+    onProductTypePress,
     onOfferPress,
     onProviderPress,
     onRecentPress,
@@ -46,7 +53,9 @@ export default function HomeScreen() {
     goToSearch,
     goToCart,
     goToLocationPicker,
-    goToAllCategories,
+    goToAllServiceCategories,
+    goToAllStoreCategories,
+    goToAllProductTypes,
     cartCount,
   } = useHomeScreen();
 
@@ -147,11 +156,14 @@ export default function HomeScreen() {
           </>
         )}
 
-        {/* Categories (most-booked first) */}
+        {/* Service categories (most-booked first) */}
         <View style={styles.sectionHead}>
-          <Text style={styles.sectionTitle}>What do you need?</Text>
-          {hasMoreCategories && (
-            <TouchableOpacity onPress={goToAllCategories} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <Text style={styles.sectionTitle}>What service do you need?</Text>
+          {hasMoreServiceCategories && (
+            <TouchableOpacity
+              onPress={goToAllServiceCategories}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
               <Text style={styles.sectionLink}>View all</Text>
             </TouchableOpacity>
           )}
@@ -160,7 +172,7 @@ export default function HomeScreen() {
           <ActivityIndicator color={Color.primary} />
         ) : (
           <View style={styles.grid}>
-            {categories.map((c) => (
+            {serviceCategories.map((c) => (
               <TouchableOpacity
                 key={c.id}
                 style={[styles.catCard, { width: catCardWidth }]}
@@ -176,6 +188,96 @@ export default function HomeScreen() {
               </TouchableOpacity>
             ))}
           </View>
+        )}
+
+        {/* Product types — real-photo cards (the "Shop by Business" reference
+            pattern) pooling actual products across every store that sells
+            them, not a list of businesses. Shown before "Shop by business"
+            since it's the richer, image-led browsing mode. */}
+        {productTypes.length > 0 && (
+          <>
+            <View style={styles.sectionHead}>
+              <Text style={styles.sectionTitle}>Shop by product</Text>
+              {hasMoreProductTypes && (
+                <TouchableOpacity
+                  onPress={goToAllProductTypes}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Text style={styles.sectionLink}>View all</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hRow}>
+              {productTypes.map((t, i) => {
+                const tone = PRODUCT_TYPE_TONES[i % PRODUCT_TYPE_TONES.length];
+                return (
+                  <TouchableOpacity
+                    key={t.id}
+                    style={[styles.productCard, { backgroundColor: tone.bg }]}
+                    activeOpacity={0.85}
+                    onPress={() => onProductTypePress(t)}
+                  >
+                    {t.iconUrl ? (
+                      <Image
+                        source={{ uri: t.iconUrl }}
+                        style={styles.productCardImage}
+                        resizeMode="contain"
+                      />
+                    ) : (
+                      <View style={styles.productCardIconFallback}>
+                        <ProductTypeIcon slug={t.slug} size={28} color={tone.fg} />
+                      </View>
+                    )}
+                    <Text style={styles.productCardName} numberOfLines={2}>
+                      {t.name}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </>
+        )}
+
+        {/* Store categories — "Shop by Business" image cards, each a real
+            photo of what that store sells, so it reads as a richer, more
+            visual browsing mode than the plain icon grid above it. */}
+        {!categoriesLoading && storeCategories.length > 0 && (
+          <>
+            <View style={styles.sectionHead}>
+              <View style={styles.sectionTitleGroup}>
+                <Text style={styles.sectionTitle}>Shop by business</Text>
+                <View style={styles.sectionTag}>
+                  <ShoppingBag size={12} color={Color.primaryDark} />
+                  <Text style={styles.sectionTagText}>Businesses</Text>
+                </View>
+              </View>
+              {hasMoreStoreCategories && (
+                <TouchableOpacity
+                  onPress={goToAllStoreCategories}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Text style={styles.sectionLink}>View all</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <View style={styles.grid}>
+              {storeCategories.map((c) => (
+                <TouchableOpacity
+                  key={c.id}
+                  style={[styles.catCard, { width: catCardWidth }]}
+                  activeOpacity={0.8}
+                  onPress={() => onCategoryPress(c)}
+                >
+                  <View style={styles.catTile}>
+                    <CategoryIcon slug={c.slug} size={26} />
+                  </View>
+                  <Text style={styles.catName} numberOfLines={2}>
+                    {c.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
         )}
 
         {/* Stores you can order from */}

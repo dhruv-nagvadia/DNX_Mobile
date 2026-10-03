@@ -8,13 +8,14 @@ import {
   ActivityIndicator,
   TextInput,
 } from 'react-native';
-import { Clock, MapPin, Search, ShoppingBag, Star, BadgeCheck } from 'lucide-react-native';
+import { Clock, MapPin, Search, Star, BadgeCheck } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
+import { ProductResultCard } from '@/components/ProductResultCard';
 import { Color } from '@/utils/Theme';
-import { formatMoney, unitPriceLabel } from '@/utils/units';
-import { ProductSearchResult, Provider, ServiceSearchResult } from '@/redux/api/provider/types';
+import { formatMoney } from '@/utils/units';
+import { Provider, ServiceSearchResult } from '@/redux/api/provider/types';
 
 import { useSearchScreen, TypeFilter } from './useSearchScreen';
 import { styles } from './styles';
@@ -66,43 +67,6 @@ function ProviderCard({ provider: p, onPress }: { provider: Provider; onPress: (
   );
 }
 
-/** A product result — name, selling business, price and rating. */
-function ProductCard({ product: p, onPress }: { product: ProductSearchResult; onPress: () => void }) {
-  return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={onPress}>
-      <View style={styles.avatar}>
-        {p.imageUrl ? (
-          <Image source={{ uri: p.imageUrl }} style={styles.avatarImg} />
-        ) : (
-          <ShoppingBag size={22} color={Color.primary} />
-        )}
-      </View>
-      <View style={styles.info}>
-        <View style={styles.nameRow}>
-          <Text style={styles.name} numberOfLines={1}>
-            {p.name}
-          </Text>
-          {p.provider.isVerified && <BadgeCheck size={15} color={Color.success} />}
-        </View>
-        <Text style={styles.meta} numberOfLines={1}>
-          {p.provider.businessName}
-          {p.provider.city ? ` · ${p.provider.city}` : ''}
-        </Text>
-        <Text style={[styles.price, styles.standalonePrice]}>
-          {unitPriceLabel(p.priceMinor, p.priceQty, p.measure, p.currency)}
-        </Text>
-        {!!p.ratingCount && (
-          <View style={styles.ratingRow}>
-            <Star size={13} color={Color.warning} fill={Color.warning} />
-            <Text style={styles.ratingText}>
-              {(p.ratingAvg ?? 0).toFixed(1)} ({p.ratingCount})
-            </Text>
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-}
 
 /** A service result — name, offering business, price/duration and the business's rating. */
 function ServiceCard({ service: s, onPress }: { service: ServiceSearchResult; onPress: () => void }) {
@@ -264,7 +228,7 @@ export default function SearchScreen() {
                     const key = `${entry.kind}-${entry.item.id}`;
                     if (entry.kind === 'product') {
                       return (
-                        <ProductCard
+                        <ProductResultCard
                           key={key}
                           product={entry.item}
                           onPress={() => onRecentViewPress(entry)}
@@ -343,7 +307,7 @@ export default function SearchScreen() {
                 <View>
                   <Text style={styles.sectionTitle}>Products</Text>
                   {products.map((p) => (
-                    <ProductCard key={p.id} product={p} onPress={() => onProductPress(p)} />
+                    <ProductResultCard key={p.id} product={p} onPress={() => onProductPress(p)} />
                   ))}
                 </View>
               )}
@@ -351,7 +315,7 @@ export default function SearchScreen() {
           ) : isServiceSearch ? (
             services.map((s) => <ServiceCard key={s.id} service={s} onPress={() => onServicePress(s)} />)
           ) : isProductSearch ? (
-            products.map((p) => <ProductCard key={p.id} product={p} onPress={() => onProductPress(p)} />)
+            products.map((p) => <ProductResultCard key={p.id} product={p} onPress={() => onProductPress(p)} />)
           ) : (
             providers.map((p) => <ProviderCard key={p.id} provider={p} onPress={() => onProviderPress(p)} />)
           )}
