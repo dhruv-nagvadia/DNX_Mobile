@@ -1,4 +1,5 @@
-import { TrustStat } from './types';
+import { Images } from '@/assets/images';
+import { HeroBanner } from './types';
 
 /**
  * Static placeholder content for the home screen. Replace each of these with a
@@ -10,8 +11,28 @@ import { TrustStat } from './types';
 
 export const LOCATION = 'Ahmedabad';
 
-export const TRUST_STATS: TrustStat[] = [
-  { id: 't1', value: '50k+', label: 'Happy users' },
-  { id: 't2', value: '1L+', label: 'Bookings' },
-  { id: 't3', value: '10k+', label: 'Verified pros' },
+// The top hero carousel — value-prop banners, swapped in for the old
+// "Trusted by thousands" stat banner until we have real numbers worth showing.
+export const HERO_BANNERS: HeroBanner[] = [
+  {
+    id: 'h1',
+    image: Images.bannerServicesShopping,
+    headline: 'Services & shopping,\none app',
+    subtitle: 'Book a pro or order from local stores — all in DNX.',
+    textPosition: 'left',
+  },
+  {
+    id: 'h2',
+    image: Images.bannerFreshGroceries,
+    headline: 'Daily essentials,\ndelivered fast',
+    subtitle: 'Groceries, pharmacy & more from stores near you.',
+    textPosition: 'left',
+  },
+  {
+    id: 'h3',
+    image: Images.bannerVerifiedLocal,
+    headline: 'Verified local businesses you can trust',
+    subtitle: 'Every provider on DNX is reviewed & verified.',
+    textPosition: 'bottom',
+  },
 ];

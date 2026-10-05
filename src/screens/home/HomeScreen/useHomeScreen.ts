@@ -15,7 +15,7 @@ import { ProductType } from '@/redux/api/productType/types';
 import { Provider } from '@/redux/api/provider/types';
 import { Color } from '@/utils/Theme';
 import { HomeScreenNavigationProp, Offer } from './types';
-import { LOCATION, TRUST_STATS } from './mock';
+import { LOCATION, HERO_BANNERS } from './mock';
 
 // Cycled across cards — same palette the old hardcoded offers used.
 const OFFER_COLORS = [Color.primary, Color.primaryDark, Color.ink2];
@@ -91,9 +91,6 @@ export function useHomeScreen() {
   );
 
   const firstName = (currentUser?.fullName ?? 'there').split(' ')[0];
-
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
   // Services (appointments) and stores (products) are different categories
   // entirely — shown as two separate sections so a customer always knows
@@ -200,7 +197,6 @@ export function useHomeScreen() {
 
   return {
     firstName,
-    greeting,
     serviceCategories: visibleServiceCategories,
     storeCategories: visibleStoreCategories,
     productTypes: visibleProductTypes,
@@ -229,6 +225,6 @@ export function useHomeScreen() {
     // Falls back to a static default until the customer sets a real location.
     location: customerLocation?.label ?? LOCATION,
     offers: platformCoupons.map(toOffer),
-    trustStats: TRUST_STATS,
+    heroBanners: HERO_BANNERS,
   };
 }

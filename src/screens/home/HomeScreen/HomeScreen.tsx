@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,15 +7,17 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StatusBar,
+  Dimensions,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, MapPin, ChevronDown, Star, Users, ShoppingBag } from 'lucide-react-native';
+import { Search, MapPin, ChevronDown, Star, ShoppingCart, ShoppingBag } from 'lucide-react-native';
 
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { ProductTypeIcon } from '@/components/ProductTypeIcon';
 import { NotificationBellButton } from '@/components/NotificationBellButton';
 import { Color, Spacing } from '@/utils/Theme';
-import { PRODUCT_TYPE_TONES } from '@/utils/productTypeTones';
 import { useGridItemWidth } from '@/utils/useGridItemWidth';
 
 import { useHomeScreen } from './useHomeScreen';
@@ -23,12 +25,13 @@ import { styles } from './styles';
 
 const CAT_COLUMNS = 4;
 const CAT_GAP = Spacing.sm;
+// The hero carousel sits inside the screen's side padding, not edge-to-edge.
+const HERO_WIDTH = Dimensions.get('window').width - Spacing.lg * 2;
 
 /** JSX only — logic comes from useHomeScreen. */
 export default function HomeScreen() {
   const {
     firstName,
-    greeting,
     location,
     offers,
     mostBooked,
@@ -36,7 +39,7 @@ export default function HomeScreen() {
     mostBookedBanner,
     storesBanner,
     recentlyViewed,
-    trustStats,
+    heroBanners,
     serviceCategories,
     storeCategories,
     productTypes,
@@ -62,6 +65,10 @@ export default function HomeScreen() {
   // Exact width so 4 columns + gaps fill the row edge-to-edge on any device,
   // instead of a percentage width that leaves a gap or overflows.
   const catCardWidth = useGridItemWidth(CAT_COLUMNS, CAT_GAP, Spacing.lg);
+
+  const [heroIndex, setHeroIndex] = useState(0);
+  const onHeroScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) =>
+    setHeroIndex(Math.round(e.nativeEvent.contentOffset.x / HERO_WIDTH));
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -90,7 +97,7 @@ export default function HomeScreen() {
               onPress={goToCart}
               accessibilityLabel="Cart"
             >
-              <ShoppingBag size={20} color={Color.textPrimary} />
+              <ShoppingCart size={20} color={Color.textPrimary} />
               {cartCount > 0 && (
                 <View style={styles.bellBadge}>
                   <Text style={styles.bellBadgeText}>{cartCount}</Text>
@@ -104,32 +111,47 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        <Text style={styles.greetingLabel}>{greeting} 👋</Text>
-        <Text style={styles.name}>{firstName}</Text>
-
         {/* Search */}
         <TouchableOpacity style={styles.search} activeOpacity={0.85} onPress={goToSearch}>
           <Search size={18} color={Color.placeholder} />
           <Text style={styles.searchText}>Search stores, salons, doctors…</Text>
         </TouchableOpacity>
 
-        {/* Trust banner (top) */}
-        <View style={styles.trustBanner}>
-          <View style={styles.trustBannerBody}>
-            <Text style={styles.trustBannerTitle}>Trusted by thousands across India</Text>
-            <View style={styles.trustStatsRow}>
-              {trustStats.map((t) => (
-                <View key={t.id} style={styles.trustStat}>
-                  <Text style={styles.trustStatValue}>{t.value}</Text>
-                  <Text style={styles.trustStatLabel}>{t.label}</Text>
-                </View>
-              ))}
+        {/* Hero carousel — value-prop banners (swapped in for the old
+            "Trusted by thousands" stat banner until real numbers are worth showing) */}
+        <ScrollView
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={onHeroScroll}
+          style={styles.heroScroll}
+        >
+          {heroBanners.map((b) => (
+            <View key={b.id} style={[styles.heroCard, { width: HERO_WIDTH }]}>
+              <Image source={b.image} style={styles.heroImage} resizeMode="cover" />
+              <View style={b.textPosition === 'bottom' ? styles.heroTextBottom : styles.heroTextLeft}>
+                <Text style={[styles.heroHeadline, b.textPosition === 'bottom' && styles.heroHeadlineDark]}>
+                  {b.headline}
+                </Text>
+                <Text
+                  style={[
+                    styles.heroSubtitle,
+                    b.textPosition === 'bottom' ? styles.heroSubtitleDark : styles.heroSubtitleBold,
+                  ]}
+                >
+                  {b.subtitle}
+                </Text>
+              </View>
             </View>
+          ))}
+        </ScrollView>
+        {heroBanners.length > 1 && (
+          <View style={styles.heroDots}>
+            {heroBanners.map((b, i) => (
+              <View key={b.id} style={[styles.heroDot, i === heroIndex && styles.heroDotActive]} />
+            ))}
           </View>
-          <View style={styles.trustBannerIcon}>
-            <Users size={26} color={Color.white} />
-          </View>
-        </View>
+        )}
 
         {/* Offers — only shown once there's a real, redeemable platform coupon */}
         {offers.length > 0 && (
@@ -208,32 +230,25 @@ export default function HomeScreen() {
               )}
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hRow}>
-              {productTypes.map((t, i) => {
-                const tone = PRODUCT_TYPE_TONES[i % PRODUCT_TYPE_TONES.length];
-                return (
-                  <TouchableOpacity
-                    key={t.id}
-                    style={[styles.productCard, { backgroundColor: tone.bg }]}
-                    activeOpacity={0.85}
-                    onPress={() => onProductTypePress(t)}
-                  >
+              {productTypes.map((t) => (
+                <TouchableOpacity
+                  key={t.id}
+                  style={styles.productCard}
+                  activeOpacity={0.85}
+                  onPress={() => onProductTypePress(t)}
+                >
+                  <View style={styles.productCardImageWrap}>
                     {t.iconUrl ? (
-                      <Image
-                        source={{ uri: t.iconUrl }}
-                        style={styles.productCardImage}
-                        resizeMode="contain"
-                      />
+                      <Image source={{ uri: t.iconUrl }} style={styles.productCardImage} resizeMode="contain" />
                     ) : (
-                      <View style={styles.productCardIconFallback}>
-                        <ProductTypeIcon slug={t.slug} size={28} color={tone.fg} />
-                      </View>
+                      <ProductTypeIcon slug={t.slug} size={28} color={Color.primary} />
                     )}
-                    <Text style={styles.productCardName} numberOfLines={2}>
-                      {t.name}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
+                  </View>
+                  <Text style={styles.productCardName} numberOfLines={2}>
+                    {t.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </ScrollView>
           </>
         )}

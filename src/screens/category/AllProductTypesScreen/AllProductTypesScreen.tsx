@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 import { AppHeader } from '@/components/AppHeader';
 import { ProductTypeIcon } from '@/components/ProductTypeIcon';
 import { Color, Spacing } from '@/utils/Theme';
-import { PRODUCT_TYPE_TONES } from '@/utils/productTypeTones';
 import { useGridItemWidth } from '@/utils/useGridItemWidth';
 import { useGetProductTypesQuery } from '@/redux/api/productType/productTypeApi';
 import { ProductType } from '@/redux/api/productType/types';
@@ -41,28 +40,25 @@ export default function AllProductTypesScreen() {
       ) : (
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.grid}>
-            {productTypes.map((t, i) => {
-              const tone = PRODUCT_TYPE_TONES[i % PRODUCT_TYPE_TONES.length];
-              return (
-                <TouchableOpacity
-                  key={t.id}
-                  style={[styles.productCard, { width: productCardWidth, backgroundColor: tone.bg }]}
-                  activeOpacity={0.85}
-                  onPress={() => onPress(t)}
-                >
+            {productTypes.map((t) => (
+              <TouchableOpacity
+                key={t.id}
+                style={[styles.productCard, { width: productCardWidth }]}
+                activeOpacity={0.85}
+                onPress={() => onPress(t)}
+              >
+                <View style={styles.productCardImageWrap}>
                   {t.iconUrl ? (
                     <Image source={{ uri: t.iconUrl }} style={styles.productCardImage} resizeMode="contain" />
                   ) : (
-                    <View style={styles.productCardIconFallback}>
-                      <ProductTypeIcon slug={t.slug} size={28} color={tone.fg} />
-                    </View>
+                    <ProductTypeIcon slug={t.slug} size={28} color={Color.primary} />
                   )}
-                  <Text style={styles.productCardName} numberOfLines={2}>
-                    {t.name}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+                </View>
+                <Text style={styles.productCardName} numberOfLines={2}>
+                  {t.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </ScrollView>
       )}

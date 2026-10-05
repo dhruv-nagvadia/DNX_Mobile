@@ -29,13 +29,6 @@ export const Color = {
   warningSoft: '#FEF6E7',
   overlay: 'rgba(15, 23, 42, 0.5)',
 
-  // Extra hues for decorative variety only (e.g. cycling category-tile
-  // backgrounds) — never semantic/status colors, so they carry no meaning.
-  teal: '#0D9488',
-  tealSoft: '#E6F6F4',
-  rose: '#E11D8F',
-  roseSoft: '#FDEAF4',
-
   // ── Dark "ink" surfaces — the auth hero and any dark hero strip ──────
   ink: '#060B18',
   ink2: '#0D1730',

@@ -22,19 +22,19 @@ export const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     padding: Spacing.sm,
     alignItems: 'center',
+    backgroundColor: Color.surface,
     ...Shadow.card,
   },
-  productCardImage: {
-    width: '100%',
-    height: 82,
-    marginBottom: 6,
-  },
-  productCardIconFallback: {
+  productCardImageWrap: {
     width: 82,
     height: 82,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 6,
+  },
+  productCardImage: {
+    width: '100%',
+    height: '100%',
   },
   productCardName: {
     fontSize: FontSize.xs,

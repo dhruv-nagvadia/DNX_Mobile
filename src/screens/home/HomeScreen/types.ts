@@ -1,3 +1,4 @@
+import { ImageSourcePropType } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/routes';
 
@@ -16,8 +17,11 @@ export interface Offer {
   categoryName?: string | null;
 }
 
-export interface TrustStat {
+export interface HeroBanner {
   id: string;
-  value: string;
-  label: string;
+  image: ImageSourcePropType;
+  headline: string;
+  subtitle: string;
+  // Which third of the artwork is left quiet for this text overlay to sit over.
+  textPosition: 'left' | 'bottom';
 }

@@ -42,18 +42,6 @@ export const styles = StyleSheet.create({
   locationChevron: {
     flexShrink: 0,
   },
-  greetingLabel: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-    fontWeight: FontWeight.medium,
-  },
-  name: {
-    marginTop: 2,
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
-    letterSpacing: -0.5,
-    color: Color.textPrimary,
-  },
   headerRight: {
     flexShrink: 0,
     flexDirection: 'row',
@@ -72,12 +60,12 @@ export const styles = StyleSheet.create({
   },
   bellBadge: {
     position: 'absolute',
-    top: 9,
-    right: 9,
-    minWidth: 16,
-    height: 16,
-    paddingHorizontal: 3,
-    borderRadius: 8,
+    top: -7,
+    right: -9,
+    minWidth: 22,
+    height: 22,
+    paddingHorizontal: 4,
+    borderRadius: 11,
     backgroundColor: Color.error,
     alignItems: 'center',
     justifyContent: 'center',
@@ -86,7 +74,7 @@ export const styles = StyleSheet.create({
   },
   bellBadgeText: {
     color: Color.white,
-    fontSize: 9,
+    fontSize: 14,
     fontWeight: FontWeight.bold,
   },
   avatar: {
@@ -109,7 +97,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.sm,
     height: 54,
-    marginTop: Spacing.md,
     paddingHorizontal: Spacing.md,
     borderRadius: Radius.md,
     backgroundColor: Color.surface,
@@ -266,49 +253,79 @@ export const styles = StyleSheet.create({
     color: Color.textPrimary,
   },
 
-  // ── Top trust banner ─────────────────────────────────────────────────
-  trustBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  // ── Top hero carousel ────────────────────────────────────────────────
+  heroScroll: {
     marginTop: Spacing.lg,
-    padding: Spacing.lg,
     borderRadius: Radius.lg,
-    backgroundColor: Color.primary,
+  },
+  heroCard: {
+    height: 170,
+    borderRadius: Radius.lg,
     overflow: 'hidden',
+    backgroundColor: Color.primary,
+    ...Shadow.card,
   },
-  trustBannerBody: {
-    flex: 1,
+  heroImage: {
+    width: '100%',
+    height: '100%',
   },
-  trustBannerTitle: {
+  // Text over the quiet left third of a dark-background banner. Less padding
+  // on the left (card edge) than the right (where the art starts), so the
+  // text sits close to the edge instead of leaving a visible gap.
+  heroTextLeft: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: '48%',
+    justifyContent: 'center',
+    paddingLeft: Spacing.sm,
+    paddingRight: Spacing.xl,
+  },
+  // Text over the quiet bottom strip of a light-background banner — a fixed
+  // height band (not just bottom-anchored) so it stays put, and no side
+  // padding so the one-line headline has the full card width to fit in.
+  heroTextBottom: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 60,
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.sm,
+  },
+  heroHeadline: {
     color: Color.white,
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    marginBottom: Spacing.md,
-  },
-  trustStatsRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Spacing.xl,
-  },
-  trustStat: {},
-  trustStatValue: {
-    color: Color.white,
-    fontSize: FontSize.xl,
+    fontSize: FontSize.lg,
     fontWeight: FontWeight.extrabold,
+    lineHeight: 24,
   },
-  trustStatLabel: {
-    marginTop: 2,
+  heroHeadlineDark: { color: Color.textPrimary },
+  heroSubtitle: {
+    marginTop: 6,
     color: Color.onDarkMuted,
     fontSize: FontSize.xs,
+    lineHeight: 16,
   },
-  trustBannerIcon: {
-    width: 54,
-    height: 54,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.glassStrong,
-    alignItems: 'center',
+  // First/second banners — "lightly bold" details text, per feedback.
+  heroSubtitleBold: { fontWeight: FontWeight.semibold },
+  // Third banner — tighter gap under the headline, centered under it.
+  heroSubtitleDark: { color: Color.textSecondary, marginTop: 2, textAlign: 'center' },
+  heroDots: {
+    flexDirection: 'row',
     justifyContent: 'center',
-    marginLeft: Spacing.md,
+    gap: 6,
+    marginTop: Spacing.sm,
+  },
+  heroDot: {
+    width: 6,
+    height: 6,
+    borderRadius: Radius.pill,
+    backgroundColor: Color.border,
+  },
+  heroDotActive: {
+    width: 16,
+    backgroundColor: Color.primary,
   },
 
   // ── Most booked (business rows) ──────────────────────────────────────
@@ -382,27 +399,27 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // ── "Shop by product" — real-photo cards in a horizontal row (the "Shop
-  // by Business" reference pattern), each a different pastel tone, so it
-  // reads as a richer, more visual browsing mode than the plain icon grid. ──
+  // ── "Shop by product" — real-photo cards in a horizontal row. Same white
+  // card + soft icon-tile look as every other card in the app (catTile,
+  // StoreProductCard), just sized up for a bigger, richer photo. ──
   productCard: {
     width: 124,
     borderRadius: Radius.lg,
     padding: Spacing.sm,
     alignItems: 'center',
+    backgroundColor: Color.surface,
     ...Shadow.card,
   },
-  productCardImage: {
-    width: '100%',
-    height: 82,
-    marginBottom: 6,
-  },
-  productCardIconFallback: {
+  productCardImageWrap: {
     width: 82,
     height: 82,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 6,
+  },
+  productCardImage: {
+    width: '100%',
+    height: '100%',
   },
   productCardName: {
     fontSize: FontSize.xs,
