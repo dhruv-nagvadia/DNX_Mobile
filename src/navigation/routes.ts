@@ -34,7 +34,6 @@ export const ROUTES = {
   CHECKOUT_PROCESSING: 'CheckoutProcessingScreen',
   ORDER_SUCCESS: 'OrderSuccessScreen',
   NOTIFICATIONS: 'NotificationsScreen',
-  DEBUG_LOGS: 'DebugLogsScreen',
   ADDRESSES: 'AddressesScreen',
   ADD_ADDRESS: 'AddAddressScreen',
   PRIVACY_POLICY: 'PrivacyPolicyScreen',
@@ -146,7 +145,6 @@ export type RootStackParamList = {
     failedNames?: string[];
   };
   [ROUTES.NOTIFICATIONS]: undefined;
-  [ROUTES.DEBUG_LOGS]: undefined;
   [ROUTES.ADDRESSES]: undefined;
   [ROUTES.ADD_ADDRESS]: { id?: string };
   [ROUTES.PRIVACY_POLICY]: undefined;

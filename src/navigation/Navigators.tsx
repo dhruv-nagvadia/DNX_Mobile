@@ -43,7 +43,6 @@ import CheckoutProcessingScreen from '@/screens/cart/CheckoutProcessingScreen';
 import BookingProcessingScreen from '@/screens/bookings/BookingProcessingScreen';
 import BookingSuccessScreen from '@/screens/bookings/BookingSuccessScreen';
 import NotificationsScreen from '@/screens/notifications/NotificationsScreen';
-import DebugLogsScreen from '@/screens/debug/DebugLogsScreen';
 import AddressesScreen from '@/screens/addresses/AddressesScreen';
 import AddAddressScreen from '@/screens/addresses/AddAddressScreen';
 
@@ -181,7 +180,6 @@ export function MainStack() {
         options={{ gestureEnabled: false }}
       />
       <Stack.Screen name={ROUTES.NOTIFICATIONS} component={NotificationsScreen} />
-      <Stack.Screen name={ROUTES.DEBUG_LOGS} component={DebugLogsScreen} />
       <Stack.Screen name={ROUTES.ADDRESSES} component={AddressesScreen} />
       <Stack.Screen name={ROUTES.ADD_ADDRESS} component={AddAddressScreen} />
       <Stack.Screen name={ROUTES.PRIVACY_POLICY} component={PrivacyPolicyScreen} />

@@ -1,35 +1,13 @@
 /**
- * Centralized in-app logger. Every API call and important event flows through
- * here so they can be read in one place — both in the Metro console and in the
- * in-app Debug Logs screen. Keeps a rolling buffer of the most recent entries.
+ * Centralized dev-console logger. Every API call and important event flows
+ * through here so they're readable in one place in the Metro console.
+ * Non-error logs never print outside __DEV__, so none of this ever reaches
+ * a real user — there's no in-app log viewer.
  */
 export type LogLevel = 'API' | 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR';
 
-export interface LogEntry {
-  id: number;
-  ts: number; // epoch ms
-  level: LogLevel;
-  tag: string;
-  message: string;
-  meta?: unknown;
-}
-
-const MAX = 300;
-let seq = 0;
-let entries: LogEntry[] = [];
-const listeners = new Set<() => void>();
-
-function emit() {
-  listeners.forEach((l) => l());
-}
-
-/** Record a log entry (buffer + console). */
+/** Print a log line to the console (errors always; everything else dev-only). */
 export function addLog(level: LogLevel, message: string, meta?: unknown, tag = ''): void {
-  // In production only keep errors out of the noisy console; still buffer them.
-  const entry: LogEntry = { id: ++seq, ts: Date.now(), level, tag, message, meta };
-  entries = [entry, ...entries].slice(0, MAX); // newest first
-  emit();
-
   if (!__DEV__ && level !== 'ERROR') return;
   const line = `[${level}]${tag ? ` ${tag}` : ''} — ${message}`;
   // eslint-disable-next-line no-console
@@ -78,21 +56,4 @@ export function logApi(p: {
   else meta.error = redact(p.error);
 
   addLog(p.ok ? 'API' : 'ERROR', message, meta, 'API');
-}
-
-export function getLogs(): LogEntry[] {
-  return entries;
-}
-
-export function clearLogs(): void {
-  entries = [];
-  emit();
-}
-
-/** Subscribe to log changes; returns an unsubscribe fn. */
-export function subscribeLogs(fn: () => void): () => void {
-  listeners.add(fn);
-  return () => {
-    listeners.delete(fn);
-  };
 }

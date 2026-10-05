@@ -241,7 +241,6 @@ export function useProfileScreen() {
     confirmDelete,
     goToBookings: useCallback(() => navigation.navigate(ROUTES.BOOKINGS), [navigation]),
     goToReminders: useCallback(() => navigation.navigate(ROUTES.REMINDERS), [navigation]),
-    goToDebugLogs: useCallback(() => navigation.navigate(ROUTES.DEBUG_LOGS), [navigation]),
     goToAddresses: useCallback(() => navigation.navigate(ROUTES.ADDRESSES), [navigation]),
     goToHelpSupport: useCallback(() => navigation.navigate(ROUTES.HELP_SUPPORT), [navigation]),
     goToAbout: useCallback(() => navigation.navigate(ROUTES.ABOUT), [navigation]),
