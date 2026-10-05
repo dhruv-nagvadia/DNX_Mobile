@@ -38,6 +38,9 @@ export interface Product {
   imageUrl?: string | null;
   ratingAvg?: number;
   ratingCount?: number;
+  // The sitewide product-type taxonomy (e.g. "bath-body"), if tagged — drives
+  // the "shop by category" tiles on a store's detail page.
+  productType?: { slug: string; name: string; iconUrl?: string | null } | null;
 }
 
 export interface BusinessHour {

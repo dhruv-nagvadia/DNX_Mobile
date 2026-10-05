@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 
 import { AppHeader } from '@/components/AppHeader';
-import { ProductResultCard } from '@/components/ProductResultCard';
+import { StoreProductCard } from '@/components/StoreProductCard';
 import { Color } from '@/utils/Theme';
 
 import { useProductTypeScreen } from './useProductTypeScreen';
@@ -25,7 +25,18 @@ export default function ProductTypeScreen() {
             <Text style={styles.stateText}>No products of this type yet — check back soon.</Text>
           </View>
         ) : (
-          products.map((p) => <ProductResultCard key={p.id} product={p} onPress={() => onProductPress(p)} />)
+          <View style={styles.grid}>
+            {products.map((p) => (
+              <StoreProductCard
+                key={p.id}
+                product={p}
+                providerId={p.provider.id}
+                providerName={p.provider.businessName}
+                storeLabel={p.provider.city ? `${p.provider.businessName} · ${p.provider.city}` : p.provider.businessName}
+                onPress={() => onProductPress(p)}
+              />
+            ))}
+          </View>
         )}
       </ScrollView>
     </View>

@@ -26,6 +26,7 @@ export const ROUTES = {
   GALLERY: 'GalleryScreen',
   SEARCH: 'SearchScreen',
   REVIEWS: 'ReviewsScreen',
+  PROVIDER_PRODUCTS: 'ProviderProductsScreen',
   ACCOUNT: 'AccountScreen',
   CART: 'CartScreen',
   PRODUCT_DETAILS: 'ProductDetailScreen',
@@ -112,6 +113,14 @@ export type RootStackParamList = {
   [ROUTES.GALLERY]: { images: string[]; index?: number };
   [ROUTES.SEARCH]: undefined;
   [ROUTES.REVIEWS]: { providerId: string; businessName?: string };
+  [ROUTES.PROVIDER_PRODUCTS]: {
+    providerId: string;
+    businessName?: string;
+    // Scopes the catalog to one tile from the store's "shop by category" row.
+    // `null` = the untagged bucket; omitted = the full catalog, grouped by section.
+    productTypeSlug?: string | null;
+    categoryName?: string;
+  };
   [ROUTES.ACCOUNT]: undefined;
   [ROUTES.CART]: undefined;
   [ROUTES.PRODUCT_DETAILS]: { providerId: string; productId: string };

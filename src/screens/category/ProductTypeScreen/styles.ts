@@ -12,4 +12,9 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: Color.textSecondary,
   },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.md,
+  },
 });

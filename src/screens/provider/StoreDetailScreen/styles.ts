@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
+import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Theme';
 
 export const styles = StyleSheet.create({
   container: {
@@ -104,149 +104,31 @@ export const styles = StyleSheet.create({
     color: Color.primary,
   },
 
-  // ── Section group + e-commerce cards ─────────────────────────────────
-  group: { marginTop: Spacing.lg },
-  groupHead: {
-    flexDirection: 'row',
+  // ── "Shop by category" — this store's own product-type tiles (same look
+  // as the home screen's "Shop by product" row) ─────────────────────────
+  hRow: { gap: Spacing.md, paddingRight: Spacing.lg, paddingVertical: 2 },
+  productCard: {
+    width: 124,
+    borderRadius: Radius.lg,
+    padding: Spacing.sm,
     alignItems: 'center',
-    gap: Spacing.sm,
-    marginBottom: Spacing.sm,
+    backgroundColor: Color.surface,
+    ...Shadow.card,
   },
-  groupTitle: { fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Color.textPrimary },
-  groupCount: {
+  productCardImageWrap: {
+    width: 82,
+    height: 82,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  productCardImage: { width: '100%', height: '100%' },
+  productCardName: {
     fontSize: FontSize.xs,
     fontWeight: FontWeight.bold,
-    color: Color.textSecondary,
-    backgroundColor: Color.primarySoft,
-    paddingHorizontal: 8,
-    paddingVertical: 1,
-    borderRadius: Radius.pill,
-  },
-  eRow: { gap: Spacing.md, paddingRight: Spacing.lg, paddingVertical: 2 },
-
-  eCard: {
-    width: 152,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-    overflow: 'hidden',
-  },
-  eImageWrap: {
-    height: 120,
-    backgroundColor: Color.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  eImage: { width: '100%', height: '100%' },
-  eOutBadge: {
-    position: 'absolute',
-    top: Spacing.sm,
-    left: Spacing.sm,
-    backgroundColor: 'rgba(6,11,24,0.78)',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: Radius.pill,
-  },
-  eOutText: { fontSize: 10, fontWeight: FontWeight.bold, color: Color.white },
-
-  eBody: { padding: Spacing.sm, gap: 3 },
-  eInfo: { paddingHorizontal: Spacing.sm, paddingTop: Spacing.sm, gap: 3 },
-  eControl: { paddingHorizontal: Spacing.sm, paddingBottom: Spacing.sm, paddingTop: 2 },
-  eName: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary, minHeight: 34 },
-  ePrice: { fontSize: FontSize.md, fontWeight: FontWeight.extrabold, color: Color.textPrimary },
-  eUnit: { fontSize: FontSize.xs, fontWeight: FontWeight.semibold, color: Color.textSecondary },
-  eStock: { fontSize: FontSize.xs, fontWeight: FontWeight.semibold, color: Color.success },
-  eStockOut: { color: Color.error },
-
-  eAddBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    marginTop: 6,
-    paddingVertical: 8,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primary,
-  },
-  eAddText: { color: Color.white, fontSize: FontSize.sm, fontWeight: FontWeight.bold },
-  eStepper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 6,
-    borderWidth: 1,
-    borderColor: Color.primary,
-    borderRadius: Radius.md,
-    overflow: 'hidden',
-  },
-  eStepBtn: {
-    width: 40,
-    height: 34,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Color.primarySoft,
-  },
-  eQty: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
-  eLinePrice: {
-    marginTop: 4,
-    textAlign: 'center',
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.extrabold,
-    color: Color.primary,
-  },
-
-  // Product card
-  pCard: {
-    flexDirection: 'row',
-    gap: Spacing.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-  },
-  pMain: { flex: 1, minWidth: 0 },
-  pName: { fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Color.textPrimary },
-  pDesc: { marginTop: 2, fontSize: FontSize.sm, color: Color.textSecondary },
-  pPrice: { marginTop: 6, fontSize: FontSize.md, fontWeight: FontWeight.extrabold, color: Color.textPrimary },
-  perUnit: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.textSecondary },
-  pStock: { marginTop: 2, fontSize: FontSize.xs, fontWeight: FontWeight.semibold, color: Color.success },
-  pOut: { color: Color.error },
-
-  pAction: { alignItems: 'center', justifyContent: 'center', gap: 4 },
-  addBtn: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: 8,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primary,
-  },
-  addText: { color: Color.white, fontSize: FontSize.sm, fontWeight: FontWeight.bold },
-  disabled: { opacity: 0.4 },
-  stepper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Color.primary,
-    borderRadius: Radius.md,
-    overflow: 'hidden',
-  },
-  stepBtn: {
-    width: 34,
-    height: 34,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Color.primarySoft,
-  },
-  qty: {
-    minWidth: 30,
-    textAlign: 'center',
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.bold,
     color: Color.textPrimary,
+    textAlign: 'center',
   },
-  perUnitSmall: { fontSize: 10, color: Color.textSecondary },
 
   // Cart bar
   cartBar: {

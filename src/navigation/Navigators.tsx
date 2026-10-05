@@ -33,6 +33,7 @@ import GalleryScreen from '@/screens/gallery/GalleryScreen';
 import SearchScreen from '@/screens/search/SearchScreen';
 import BookingDetailScreen from '@/screens/bookings/BookingDetailScreen';
 import ReviewsScreen from '@/screens/reviews/ReviewsScreen';
+import ProviderProductsScreen from '@/screens/provider/ProviderProductsScreen';
 import AddReminderScreen from '@/screens/reminders/AddReminderScreen';
 import CartScreen from '@/screens/cart/CartScreen';
 import ProductDetailScreen from '@/screens/store/ProductDetailScreen';
@@ -164,6 +165,7 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.SEARCH} component={SearchScreen} />
       <Stack.Screen name={ROUTES.BOOKING_DETAILS} component={BookingDetailScreen} />
       <Stack.Screen name={ROUTES.REVIEWS} component={ReviewsScreen} />
+      <Stack.Screen name={ROUTES.PROVIDER_PRODUCTS} component={ProviderProductsScreen} />
       <Stack.Screen name={ROUTES.ADD_REMINDER} component={AddReminderScreen} />
       <Stack.Screen name={ROUTES.CART} component={CartScreen} />
       <Stack.Screen name={ROUTES.PRODUCT_DETAILS} component={ProductDetailScreen} />
