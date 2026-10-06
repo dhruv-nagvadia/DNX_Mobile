@@ -1,24 +1,25 @@
 import { Platform } from 'react-native';
+import { API_BASE_URL } from '@env';
 
 /**
- * Base URL for the backend API (development).
+ * Base URL for the backend API.
  *
- * Host cheatsheet:
+ * Normally this comes straight from `API_BASE_URL` in whichever `.env.<APP_ENV>`
+ * file is active — APP_ENV is set by the npm script you ran (android:dev/
+ * staging/production, ios:*, start:*; see package.json and babel.config.js).
+ * dev/staging/production each point at their own backend. Swapping to a real
+ * domain later is a one-line edit in the matching `.env.*` file.
+ *
+ * If that's missing for some reason, fall back to the same local-dev
+ * defaults this always used:
  *   • iOS simulator          → localhost
- *   • Android emulator       → 10.0.2.2 (host alias) OR the LAN IP below
- *   • Physical device (iOS/Android) → your Mac's LAN IP, on the same Wi-Fi
- *
- * LAN_IP is currently this machine's IP. If your Wi-Fi/network changes,
- * update it (find it with `ipconfig getifaddr en0`).
- * For production, swap this for your deployed API URL.
+ *   • Android emulator/device → the LAN IP below (update via `ipconfig getifaddr en0`)
  */
-const LAN_IP = '192.168.1.2';
-
-// Android runs on a physical device here, so use the LAN IP (also works on the
-// emulator). iOS uses localhost for the simulator.
+const LAN_IP = '10.95.254.187';
 const DEV_HOST = Platform.OS === 'android' ? LAN_IP : 'localhost';
+const DEV_FALLBACK = `http://${DEV_HOST}:4000/api/v1`;
 
-const BASE_URL = `http://${DEV_HOST}:4000/api/v1`;
+const BASE_URL = API_BASE_URL || DEV_FALLBACK;
 
 export default BASE_URL;
 

@@ -58,10 +58,13 @@ ios/Pods/
 # Ruby
 /vendor/
 
-# Environment (secrets — never commit)
+# Environment — the active `.env` is a derived/local file (copied from one of
+# the per-env files below by the android:*/ios:*/start:* scripts), never commit
+# it. The per-env files themselves only hold a non-secret API URL, so they ARE
+# committed (same as frontend).
 .env
-.env.*
-!.env.example
+.env.local
+.env.*.local
 
 # Logs
 *.log

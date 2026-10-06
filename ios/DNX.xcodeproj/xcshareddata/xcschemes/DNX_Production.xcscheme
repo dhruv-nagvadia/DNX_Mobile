@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "1210"
+   version = "1.3">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
+               BuildableName = "DNX.app"
+               BlueprintName = "DNX"
+               ReferencedContainer = "container:DNX.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "00E356ED1AD99517003FC87E"
+               BuildableName = "DNXTests.xctest"
+               BlueprintName = "DNXTests"
+               ReferencedContainer = "container:DNX.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "YES">
+      <PreActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Start Metro (production)"
+               scriptText = "set -e&#10;TARGET_ENV=&quot;production&quot;&#10;PORT=8081&#10;MARKER=/tmp/dnx-metro-env&#10;&#10;if lsof -ti:$PORT &gt;/dev/null 2&gt;&amp;1 &amp;&amp; [ &quot;$(cat &quot;$MARKER&quot; 2&gt;/dev/null)&quot; = &quot;$TARGET_ENV&quot; ]; then&#10;  echo &quot;Metro already running for $TARGET_ENV — reusing.&quot;&#10;  exit 0&#10;fi&#10;&#10;echo &quot;Switching Metro to $TARGET_ENV...&quot;&#10;lsof -ti:$PORT | xargs -r kill -9 || true&#10;cd &quot;$SRCROOT/..&quot;&#10;echo &quot;$TARGET_ENV&quot; &gt; &quot;$MARKER&quot;&#10;(APP_ENV=$TARGET_ENV npx react-native start --reset-cache &gt; /tmp/dnx-metro-$TARGET_ENV.log 2&gt;&amp;1 &amp;)&#10;&#10;for i in $(seq 1 30); do&#10;  if curl -s -o /dev/null &quot;http://localhost:$PORT/status&quot;; then&#10;    echo &quot;Metro ($TARGET_ENV) is ready.&quot;&#10;    exit 0&#10;  fi&#10;  sleep 1&#10;done&#10;echo &quot;warning: Metro did not become ready within 30s — check /tmp/dnx-metro-$TARGET_ENV.log&quot; &gt;&amp;2&#10;">
+               <EnvironmentBuildable>
+                  <BuildableReference
+                     BuildableIdentifier = "primary"
+                     BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
+                     BuildableName = "DNX.app"
+                     BlueprintName = "DNX"
+                     ReferencedContainer = "container:DNX.xcodeproj">
+                  </BuildableReference>
+               </EnvironmentBuildable>
+            </ActionContent>
+         </ExecutionAction>
+      </PreActions>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
+            BuildableName = "DNX.app"
+            BlueprintName = "DNX"
+            ReferencedContainer = "container:DNX.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Release"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
+            BuildableName = "DNX.app"
+            BlueprintName = "DNX"
+            ReferencedContainer = "container:DNX.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>
