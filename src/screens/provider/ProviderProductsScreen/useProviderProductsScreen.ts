@@ -29,10 +29,11 @@ function groupBySection(products: Product[]): ProductGroup[] {
 }
 
 /**
- * Loads a store's product catalog. When opened from one of its "shop by
- * category" tiles, `productTypeSlug` scopes this to a flat grid for that one
- * category (`null` = the untagged bucket). Opened without it, falls back to
- * the full catalog grouped by section.
+ * Loads a store's product catalog. Opened from one of its "shop by category"
+ * tiles, `productTypeSlug` scopes this to a flat grid for that one category
+ * (`null` = the untagged bucket). Opened from one of its own section teasers,
+ * `section` scopes it to that section instead. Opened without either, falls
+ * back to the full catalog grouped by section.
  */
 export function useProviderProductsScreen() {
   const { params } = useRoute<ProviderProductsRouteProp>();
@@ -40,24 +41,31 @@ export function useProviderProductsScreen() {
   const { data: provider, isLoading } = useGetProviderByIdQuery({ id: params.providerId, postalCode });
 
   const hasCategoryFilter = params.productTypeSlug !== undefined;
+  const hasSectionFilter = params.section !== undefined;
 
   const products = useMemo(() => {
     const all = provider?.products ?? [];
-    if (!hasCategoryFilter) {
-      return all;
+    if (hasCategoryFilter) {
+      return all.filter((p) =>
+        params.productTypeSlug === null ? !p.productType : p.productType?.slug === params.productTypeSlug,
+      );
     }
-    return all.filter((p) =>
-      params.productTypeSlug === null ? !p.productType : p.productType?.slug === params.productTypeSlug,
-    );
-  }, [provider?.products, hasCategoryFilter, params.productTypeSlug]);
+    if (hasSectionFilter) {
+      return all.filter((p) => p.section?.trim() === params.section);
+    }
+    return all;
+  }, [provider?.products, hasCategoryFilter, hasSectionFilter, params.productTypeSlug, params.section]);
 
   const groups = useMemo(
-    () => (hasCategoryFilter ? null : groupBySection(products)),
-    [hasCategoryFilter, products],
+    () => (hasCategoryFilter || hasSectionFilter ? null : groupBySection(products)),
+    [hasCategoryFilter, hasSectionFilter, products],
   );
 
   return {
-    title: params.categoryName ?? (params.businessName ? `${params.businessName} · Products` : 'Products'),
+    title:
+      params.categoryName ??
+      params.section ??
+      (params.businessName ? `${params.businessName} · Products` : 'Products'),
     provider,
     isLoading,
     groups,

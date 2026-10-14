@@ -104,6 +104,64 @@ export const styles = StyleSheet.create({
     color: Color.primary,
   },
 
+  // ── Section teasers — up to 3 of this store's own named sections, 2
+  // products each, with a "View all" link top-right of each one ──────────
+  sectionPreviews: { marginTop: Spacing.lg },
+  sectionGroup: { marginBottom: Spacing.lg },
+  sectionHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.sm,
+  },
+  sectionGroupTitle: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+    color: Color.textPrimary,
+  },
+  // Groups the title with an optional "Deal" tag as one flex-shrinkable
+  // unit, so the sibling "View all" link stays pinned right.
+  sectionTitleGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexShrink: 1,
+  },
+  dealTag: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: Radius.pill,
+    backgroundColor: Color.successSoft,
+  },
+  dealTagText: { fontSize: 10, fontWeight: FontWeight.bold, color: Color.success },
+  sectionRow: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+  },
+  sectionLink: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: Color.primary,
+  },
+  // A real tappable button (not just a text link) — the previous plain-text
+  // "View all" under the section teasers was too easy to miss.
+  viewAllTypesBtn: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: Spacing.sm,
+    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    borderRadius: Radius.pill,
+    backgroundColor: Color.primarySoft,
+  },
+  viewAllTypesText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
+    color: Color.primary,
+  },
+
   // ── "Shop by category" — this store's own product-type tiles (same look
   // as the home screen's "Shop by product" row) ─────────────────────────
   hRow: { gap: Spacing.md, paddingRight: Spacing.lg, paddingVertical: 2 },

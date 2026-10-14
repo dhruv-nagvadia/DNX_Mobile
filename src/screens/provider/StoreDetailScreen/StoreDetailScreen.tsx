@@ -12,11 +12,12 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ShoppingBag, Star, BadgeCheck } from 'lucide-react-native';
+import { ShoppingBag, Star, BadgeCheck, ChevronRight } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { ProductTypeIcon } from '@/components/ProductTypeIcon';
+import { StoreProductCard } from '@/components/StoreProductCard';
 import { BusinessContact } from '@/components/BusinessContact';
 import { CartHeaderButton } from '@/components/CartHeaderButton';
 import { ReviewItem } from '@/components/ReviewItem';
@@ -25,7 +26,7 @@ import { amountPrice, formatMoney } from '@/utils/units';
 import { useAppSelector } from '@/redux/hooks';
 import { useGetProviderReviewsQuery } from '@/redux/api/provider/providerApi';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
-import { Provider } from '@/redux/api/provider/types';
+import { Product, Provider } from '@/redux/api/provider/types';
 
 // Shared look with the service detail page.
 import { styles as ds } from '../ProviderDetailScreen/styles';
@@ -33,11 +34,22 @@ import { styles } from './styles';
 
 const SCREEN_W = Dimensions.get('window').width;
 const UNTAGGED_NAME = 'Other items';
+// A quick taste of each named section — "View all" opens the full section.
+const SECTION_PREVIEW_LIMIT = 3;
+const SECTION_TEASER_ITEMS = 2;
 
 interface CategoryTile {
   slug: string | null; // null = products with no product type tagged
   name: string;
   iconUrl?: string | null;
+}
+
+interface SectionPreview {
+  section: string;
+  items: Product[];
+  total: number;
+  // At least one item in the FULL section (not just the teaser) has a coupon.
+  hasCoupon: boolean;
 }
 
 /** Store detail — service-style header/gallery + "shop by category" tiles. */
@@ -73,11 +85,54 @@ export function StoreDetail({ provider }: { provider: Provider }) {
     return tiles;
   }, [provider.products]);
 
+  // Up to 3 of this store's own named sections, teasing 2 products each —
+  // only sections the provider actually set (blank/untagged ones are skipped
+  // here; they're still reachable via the category tiles below).
+  const { sectionPreviews, hasMoreSections } = useMemo(() => {
+    const map = new Map<string, Product[]>();
+    for (const p of provider.products ?? []) {
+      const key = p.section?.trim();
+      if (!key) {
+        continue;
+      }
+      if (!map.has(key)) {
+        map.set(key, []);
+      }
+      map.get(key)!.push(p);
+    }
+    const previews: SectionPreview[] = [...map.entries()]
+      .slice(0, SECTION_PREVIEW_LIMIT)
+      .map(([section, items]) => ({
+        section,
+        items: items.slice(0, SECTION_TEASER_ITEMS),
+        total: items.length,
+        hasCoupon: items.some((p) => !!p.coupon),
+      }));
+    return { sectionPreviews: previews, hasMoreSections: map.size > SECTION_PREVIEW_LIMIT };
+  }, [provider.products]);
+
   const cartCount = cartItems.filter((i) => i.quantity > 0).length;
   const cartTotal = cartItems.reduce((s, i) => s + amountPrice(i.quantity, i.priceQty, i.priceMinor), 0);
 
   const onGalleryScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) =>
     setActiveImage(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W));
+
+  const openProduct = (productId: string) =>
+    navigation.navigate(ROUTES.PRODUCT_DETAILS, { providerId: provider.id, productId });
+
+  const openSection = (section: string) =>
+    navigation.navigate(ROUTES.PROVIDER_PRODUCTS, {
+      providerId: provider.id,
+      businessName: provider.businessName,
+      section,
+    });
+
+  // No section filter — opens the full catalog, grouped by every section.
+  const openAllSections = () =>
+    navigation.navigate(ROUTES.PROVIDER_PRODUCTS, {
+      providerId: provider.id,
+      businessName: provider.businessName,
+    });
 
   const openCategory = (c: CategoryTile) =>
     navigation.navigate(ROUTES.PROVIDER_PRODUCTS, {
@@ -162,6 +217,52 @@ export function StoreDetail({ provider }: { provider: Provider }) {
               <Text style={ds.sectionTitle}>About</Text>
               <Text style={ds.about}>{provider.description}</Text>
             </>
+          )}
+
+          {/* This store's own named sections — a 2-product taste of each,
+              "View all" opens the full section. */}
+          {sectionPreviews.length > 0 && (
+            <View style={styles.sectionPreviews}>
+              {sectionPreviews.map((sp) => (
+                <View key={sp.section} style={styles.sectionGroup}>
+                  <View style={styles.sectionHead}>
+                    <View style={styles.sectionTitleGroup}>
+                      <Text style={styles.sectionGroupTitle}>{sp.section}</Text>
+                      {sp.hasCoupon && (
+                        <View style={styles.dealTag}>
+                          <Text style={styles.dealTagText}>Deal</Text>
+                        </View>
+                      )}
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => openSection(sp.section)}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <Text style={styles.sectionLink}>View all</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.sectionRow}>
+                    {sp.items.map((p) => (
+                      <StoreProductCard
+                        key={p.id}
+                        product={p}
+                        providerId={provider.id}
+                        providerName={provider.businessName}
+                        categorySlug={provider.category.slug}
+                        depositPercent={provider.depositPercent}
+                        onPress={() => openProduct(p.id)}
+                      />
+                    ))}
+                  </View>
+                </View>
+              ))}
+              {hasMoreSections && (
+                <TouchableOpacity style={styles.viewAllTypesBtn} activeOpacity={0.85} onPress={openAllSections}>
+                  <Text style={styles.viewAllTypesText}>View all types</Text>
+                  <ChevronRight size={16} color={Color.primary} />
+                </TouchableOpacity>
+              )}
+            </View>
           )}
 
           {/* Products — shop by the categories this store actually sells */}

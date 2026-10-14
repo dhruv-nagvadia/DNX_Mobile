@@ -116,9 +116,12 @@ export type RootStackParamList = {
     providerId: string;
     businessName?: string;
     // Scopes the catalog to one tile from the store's "shop by category" row.
-    // `null` = the untagged bucket; omitted = the full catalog, grouped by section.
+    // `null` = the untagged bucket; omitted (with no `section` either) = the
+    // full catalog, grouped by section.
     productTypeSlug?: string | null;
     categoryName?: string;
+    // Scopes the catalog to one of the store's own section teaser blocks.
+    section?: string;
   };
   [ROUTES.ACCOUNT]: undefined;
   [ROUTES.CART]: undefined;

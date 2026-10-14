@@ -5,7 +5,7 @@ import { ShoppingBag } from 'lucide-react-native';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { ProductAmountControl } from '@/components/ProductAmountControl';
 import { Color } from '@/utils/Theme';
-import { stockLabel, unitPriceLabel } from '@/utils/units';
+import { formatMoney, stockLabel, unitPriceLabel } from '@/utils/units';
 import { Product } from '@/redux/api/provider/types';
 
 import { styles } from './styles';
@@ -54,6 +54,11 @@ export function StoreProductCard({
               <Text style={styles.outText}>Out of stock</Text>
             </View>
           )}
+          {!out && !!p.coupon && (
+            <View style={styles.saveBadge}>
+              <Text style={styles.saveBadgeText}>SAVE {formatMoney(p.coupon.discountMinor, p.currency)}</Text>
+            </View>
+          )}
         </View>
         <View style={styles.info}>
           <Text style={styles.name} numberOfLines={2}>
@@ -66,6 +71,19 @@ export function StoreProductCard({
           )}
           <Text style={styles.price}>{unitPriceLabel(p.priceMinor, p.priceQty, p.measure, p.currency)}</Text>
           <Text style={[styles.stock, out && styles.stockOut]}>{stockLabel(p.stockQty, p.measure)}</Text>
+
+          {/* Coupon — a preview; the code still has to be entered at checkout */}
+          {p.coupon && (
+            <View style={styles.couponBox}>
+              <Text style={styles.priceStrike}>
+                {unitPriceLabel(p.priceMinor, p.priceQty, p.measure, p.currency)}
+              </Text>
+              <Text style={styles.priceDiscounted}>
+                {unitPriceLabel(p.coupon.finalPriceMinor, p.priceQty, p.measure, p.currency)}
+              </Text>
+              <Text style={styles.couponPillText}>{p.coupon.code}</Text>
+            </View>
+          )}
         </View>
       </TouchableOpacity>
 

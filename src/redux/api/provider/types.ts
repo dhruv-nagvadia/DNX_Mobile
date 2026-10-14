@@ -41,6 +41,16 @@ export interface Product {
   // The sitewide product-type taxonomy (e.g. "bath-body"), if tagged — drives
   // the "shop by category" tiles on a store's detail page.
   productType?: { slug: string; name: string; iconUrl?: string | null } | null;
+  // The best coupon that already applies to this product bought on its own
+  // (a provider PRODUCT-scope coupon targeting it, or an ORDER-scope/platform
+  // coupon whose minimum this item's own price already clears) — informational
+  // only, the customer still enters the code manually at checkout.
+  coupon?: {
+    source: 'PROVIDER' | 'PLATFORM';
+    code: string;
+    discountMinor: number;
+    finalPriceMinor: number;
+  } | null;
 }
 
 export interface BusinessHour {

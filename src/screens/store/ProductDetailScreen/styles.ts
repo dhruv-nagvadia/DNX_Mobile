@@ -27,12 +27,19 @@ export const styles = StyleSheet.create({
 
   body: { padding: Spacing.lg },
   name: { fontSize: FontSize.xl, fontWeight: FontWeight.extrabold, color: Color.textPrimary },
+  byLine: { marginTop: 2, fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.textSecondary },
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
   ratingText: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
   ratingCount: { fontSize: FontSize.sm, color: Color.textSecondary },
 
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, flexWrap: 'wrap', marginTop: 4 },
   price: { fontSize: FontSize.lg, fontWeight: FontWeight.extrabold, color: Color.textPrimary },
+  priceStrike: {
+    fontSize: FontSize.md,
+    color: Color.textSecondary,
+    textDecorationLine: 'line-through',
+  },
+  priceDiscounted: { fontSize: FontSize.lg, fontWeight: FontWeight.extrabold, color: Color.success },
   sectionChip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -46,6 +53,37 @@ export const styles = StyleSheet.create({
   stock: { marginTop: 4, fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.success },
   stockOut: { color: Color.error },
 
+  // Coupon card — a preview of what you'd pay if you apply this code at
+  // checkout; sits just above the add-to-cart card it's discounting.
+  couponCard: {
+    marginTop: Spacing.lg,
+    padding: Spacing.md,
+    borderRadius: Radius.lg,
+    backgroundColor: Color.successSoft,
+  },
+  couponCardHead: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  couponCardTitle: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.success },
+  couponPriceRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: Spacing.sm,
+    marginTop: Spacing.sm,
+  },
+  couponCodeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: Spacing.sm,
+  },
+  couponCode: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.extrabold,
+    color: Color.textPrimary,
+    letterSpacing: 0.5,
+  },
+  couponSavings: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.success },
+  couponHint: { marginTop: 4, fontSize: FontSize.xs, color: Color.textSecondary },
+
   // Add-to-cart card — prominent, above the details.
   amountCard: {
     marginTop: Spacing.lg,
@@ -57,9 +95,6 @@ export const styles = StyleSheet.create({
   },
   amountTitle: { fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Color.textPrimary },
   amountHint: { marginTop: 2, marginBottom: Spacing.xs, fontSize: FontSize.xs, color: Color.textSecondary },
-
-  storeRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: Spacing.lg },
-  storeLine: { fontSize: FontSize.sm, color: Color.textSecondary },
 
   sectionTitle: {
     marginTop: Spacing.lg,

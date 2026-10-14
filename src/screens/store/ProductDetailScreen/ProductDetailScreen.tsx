@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, ActivityIndicator } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
-import { Layers, Store, Star } from 'lucide-react-native';
+import { Layers, Star, Tag } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
@@ -9,7 +9,8 @@ import { CartHeaderButton } from '@/components/CartHeaderButton';
 import { ProductAmountControl } from '@/components/ProductAmountControl';
 import { ReviewItem } from '@/components/ReviewItem';
 import { Color } from '@/utils/Theme';
-import { unitPriceLabel, stockLabel } from '@/utils/units';
+import { unitPriceLabel, stockLabel, formatMoney } from '@/utils/units';
+import { useAppSelector } from '@/redux/hooks';
 import {
   useGetProviderByIdQuery,
   useGetProductReviewsQuery,
@@ -21,7 +22,11 @@ import { styles } from './styles';
 /** Full product detail: image, price, an amount picker (add to cart), then details. */
 export default function ProductDetailScreen() {
   const { params } = useRoute<RouteProp<RootStackParamList, typeof ROUTES.PRODUCT_DETAILS>>();
-  const { data: provider, isLoading } = useGetProviderByIdQuery({ id: params.providerId });
+  // Must match the exact query args used elsewhere (StoreDetailScreen,
+  // ProviderProductsScreen) so they all share ONE RTK Query cache entry —
+  // otherwise this screen can drift out of sync with a stale/separate fetch.
+  const postalCode = useAppSelector((s) => s.location.current?.postalCode);
+  const { data: provider, isLoading } = useGetProviderByIdQuery({ id: params.providerId, postalCode });
   const { data: reviews = [], isLoading: reviewsLoading } = useGetProductReviewsQuery(
     params.productId,
   );
@@ -73,6 +78,7 @@ export default function ProductDetailScreen() {
         <View style={styles.body}>
           {/* Identity */}
           <Text style={styles.name}>{product.name}</Text>
+          <Text style={styles.byLine}>by {provider.businessName}</Text>
           {(product.ratingCount ?? 0) > 0 && (
             <View style={styles.ratingRow}>
               <Star size={14} color={Color.warning} fill={Color.warning} />
@@ -95,6 +101,31 @@ export default function ProductDetailScreen() {
           </View>
           <Text style={[styles.stock, out && styles.stockOut]}>{stockLabel(product.stockQty, product.measure)}</Text>
 
+          {/* Coupon — a preview; the code still has to be entered at checkout */}
+          {product.coupon && (
+            <View style={styles.couponCard}>
+              <View style={styles.couponCardHead}>
+                <Tag size={16} color={Color.success} />
+                <Text style={styles.couponCardTitle}>Coupon available</Text>
+              </View>
+              <View style={styles.couponPriceRow}>
+                <Text style={styles.priceStrike}>
+                  {unitPriceLabel(product.priceMinor, product.priceQty, product.measure, product.currency)}
+                </Text>
+                <Text style={styles.priceDiscounted}>
+                  {unitPriceLabel(product.coupon.finalPriceMinor, product.priceQty, product.measure, product.currency)}
+                </Text>
+              </View>
+              <View style={styles.couponCodeRow}>
+                <Text style={styles.couponCode}>{product.coupon.code}</Text>
+                <Text style={styles.couponSavings}>
+                  You save {formatMoney(product.coupon.discountMinor, product.currency)}
+                </Text>
+              </View>
+              <Text style={styles.couponHint}>Enter this code at checkout to get this price.</Text>
+            </View>
+          )}
+
           {/* Add to cart — right up top, above the details */}
           <View style={styles.amountCard}>
             <Text style={styles.amountTitle}>Add to cart</Text>
@@ -105,12 +136,6 @@ export default function ProductDetailScreen() {
               providerName={provider.businessName}
               depositPercent={provider.depositPercent ?? 20}
             />
-          </View>
-
-          {/* Store */}
-          <View style={styles.storeRow}>
-            <Store size={15} color={Color.textSecondary} />
-            <Text style={styles.storeLine}>Sold by {provider.businessName}</Text>
           </View>
 
           {/* Description */}
