@@ -20,6 +20,8 @@ interface Props {
   providerId: string;
   providerName: string;
   depositPercent?: number;
+  codEnabled?: boolean;
+  partialPayEnabled?: boolean;
 }
 
 /**
@@ -27,7 +29,14 @@ interface Props {
  * Amounts are kept in base units; the toggle only changes how the buyer
  * enters and reads the amount. Shared by the store card and product detail.
  */
-export function ProductAmountControl({ product: p, providerId, providerName, depositPercent }: Props) {
+export function ProductAmountControl({
+  product: p,
+  providerId,
+  providerName,
+  depositPercent,
+  codEnabled,
+  partialPayEnabled,
+}: Props) {
   const dispatch = useAppDispatch();
   const qty = useAppSelector((s) => s.cart.items.find((i) => i.productId === p.id)?.quantity ?? 0);
 
@@ -52,11 +61,14 @@ export function ProductAmountControl({ product: p, providerId, providerName, dep
           priceQty: p.priceQty,
           currency: p.currency,
           stockQty: p.stockQty,
+          unlimitedStock: p.unlimitedStock,
           stepQty: p.stepQty,
           imageUrl: p.imageUrl,
           depositPercent,
+          codEnabled,
+          partialPayEnabled,
         },
-        quantity: Math.max(0, Math.min(amount, p.stockQty)),
+        quantity: p.unlimitedStock ? Math.max(0, amount) : Math.max(0, Math.min(amount, p.stockQty)),
       }),
     );
 
@@ -95,9 +107,9 @@ export function ProductAmountControl({ product: p, providerId, providerName, dep
             </TouchableOpacity>
             <Text style={styles.qtyText}>{formatAmountIn(qty, unit)}</Text>
             <TouchableOpacity
-              style={[styles.stepBtn, qty + step > p.stockQty && styles.disabled]}
+              style={[styles.stepBtn, !p.unlimitedStock && qty + step > p.stockQty && styles.disabled]}
               activeOpacity={0.8}
-              disabled={qty + step > p.stockQty}
+              disabled={!p.unlimitedStock && qty + step > p.stockQty}
               onPress={() => set(qty + step)}
             >
               <Plus size={16} color={Color.primary} />

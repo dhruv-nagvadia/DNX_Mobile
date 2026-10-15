@@ -70,7 +70,9 @@ export function StoreProductCard({
             </Text>
           )}
           <Text style={styles.price}>{unitPriceLabel(p.priceMinor, p.priceQty, p.measure, p.currency)}</Text>
-          <Text style={[styles.stock, out && styles.stockOut]}>{stockLabel(p.stockQty, p.measure)}</Text>
+          <Text style={[styles.stock, out && styles.stockOut]}>
+            {stockLabel(p.stockQty, p.measure, p.unlimitedStock)}
+          </Text>
 
           {/* Coupon — a preview; the code still has to be entered at checkout */}
           {p.coupon && (
@@ -93,6 +95,8 @@ export function StoreProductCard({
           providerId={providerId}
           providerName={providerName}
           depositPercent={depositPercent ?? 20}
+          codEnabled={p.codEnabled}
+          partialPayEnabled={p.partialPayEnabled}
         />
       </View>
     </View>

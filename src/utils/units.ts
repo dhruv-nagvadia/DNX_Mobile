@@ -31,8 +31,10 @@ export function unitPriceLabel(
   return priceLabel(priceMinor, priceQty, measure, currency);
 }
 
-/** "10 kg in stock" / "Out of stock". */
-export function stockLabel(base: number, measure: Measure): string {
+/** "10 kg in stock" / "Out of stock", or a plain "In stock" / "Out of stock"
+ * for made-to-order (unlimitedStock) items, which have no real count. */
+export function stockLabel(base: number, measure: Measure, unlimited?: boolean): string {
+  if (unlimited) return base > 0 ? 'In stock' : 'Out of stock';
   return base <= 0 ? 'Out of stock' : `${formatAmount(base, measure)} in stock`;
 }
 

@@ -16,6 +16,10 @@ export interface Service {
   travelRequired?: boolean;
   travelBaseFeeMinor?: number;
   travelPerKmMinor?: number;
+  // Effective Partial Pay eligibility for this service — the business's own
+  // partialPayEnabled AND this service's. Missing/undefined is treated as
+  // available.
+  partialPayEnabled?: boolean;
 }
 
 export type BusinessType = 'SERVICE' | 'STORE';
@@ -34,6 +38,9 @@ export interface Product {
   unit: string; // base unit label (g / ml / piece)
   section?: string | null;
   stockQty: number; // base units
+  // Made-to-order / no fixed quantity (e.g. a restaurant dish) — stockQty is
+  // ignored and this item never shows as out of stock.
+  unlimitedStock?: boolean;
   stepQty: number; // minimum + increment, base units
   imageUrl?: string | null;
   ratingAvg?: number;
@@ -51,6 +58,12 @@ export interface Product {
     discountMinor: number;
     finalPriceMinor: number;
   } | null;
+  // Effective Cash on Delivery eligibility — the store's own codEnabled AND
+  // this product's (a product can only narrow it, never re-enable it for a
+  // store that's opted out). Missing/undefined is treated as available.
+  codEnabled?: boolean;
+  // Same idea for Partial Pay.
+  partialPayEnabled?: boolean;
 }
 
 export interface BusinessHour {
@@ -94,6 +107,11 @@ export interface Provider {
   ratingCount: number;
   isVerified: boolean;
   depositPercent?: number;
+  // Whether this business accepts Partial Pay at all — combine with a
+  // specific service's own partialPayEnabled for the effective availability
+  // (a service can only narrow it, never re-enable it). Missing/undefined is
+  // treated as available.
+  partialPayEnabled?: boolean;
   category: Category;
   subcategory?: Subcategory | null;
   services: Service[];

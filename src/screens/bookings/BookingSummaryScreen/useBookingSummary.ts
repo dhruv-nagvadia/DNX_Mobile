@@ -144,7 +144,10 @@ export function useBookingSummary() {
     startTime: params.startTime,
     total,
     currency: service?.currency ?? 'INR',
-    depositPercent: provider?.depositPercent || 20,
+    depositPercent:
+      (provider?.partialPayEnabled ?? true) && (service?.partialPayEnabled ?? true)
+        ? provider?.depositPercent || 20
+        : 0,
     appliedCoupon,
     // On-location address
     needsAddress,

@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl, gap: Spacing.sm },
   emptyTitle: { fontSize: FontSize.lg, fontWeight: FontWeight.bold, color: Color.textPrimary },
   emptyText: { fontSize: FontSize.sm, color: Color.textSecondary, textAlign: 'center' },
+  codBanner: { marginTop: Spacing.sm },
 
   note: { fontSize: FontSize.sm, color: Color.textSecondary, marginBottom: Spacing.md },
 

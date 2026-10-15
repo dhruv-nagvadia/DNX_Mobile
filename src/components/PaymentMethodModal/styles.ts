@@ -46,6 +46,7 @@ export const styles = StyleSheet.create({
     borderColor: Color.border,
     backgroundColor: Color.surface,
   },
+  optionDisabled: { opacity: 0.5 },
   optionIcon: {
     width: 44,
     height: 44,
@@ -60,6 +61,7 @@ export const styles = StyleSheet.create({
     fontWeight: FontWeight.bold,
     color: Color.textPrimary,
   },
+  optionTitleDisabled: { color: Color.placeholder },
   optionSub: {
     marginTop: 2,
     fontSize: FontSize.sm,

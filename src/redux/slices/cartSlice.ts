@@ -11,10 +11,13 @@ export interface CartItem {
   priceQty: number;
   currency: string;
   stockQty: number; // base units
+  unlimitedStock?: boolean; // ignore stockQty entirely — never out/low stock
   stepQty: number; // minimum + increment, base units
   quantity: number; // chosen amount, base units
   imageUrl?: string | null;
   depositPercent?: number; // provider's partial-pay deposit %
+  codEnabled?: boolean; // effective Cash on Delivery eligibility for this item
+  partialPayEnabled?: boolean; // effective Partial Pay eligibility for this item
 }
 
 interface CartState {

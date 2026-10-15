@@ -99,7 +99,9 @@ export default function ProductDetailScreen() {
               </View>
             )}
           </View>
-          <Text style={[styles.stock, out && styles.stockOut]}>{stockLabel(product.stockQty, product.measure)}</Text>
+          <Text style={[styles.stock, out && styles.stockOut]}>
+            {stockLabel(product.stockQty, product.measure, product.unlimitedStock)}
+          </Text>
 
           {/* Coupon — a preview; the code still has to be entered at checkout */}
           {product.coupon && (
@@ -135,6 +137,8 @@ export default function ProductDetailScreen() {
               providerId={provider.id}
               providerName={provider.businessName}
               depositPercent={provider.depositPercent ?? 20}
+              codEnabled={product.codEnabled}
+              partialPayEnabled={product.partialPayEnabled}
             />
           </View>
 

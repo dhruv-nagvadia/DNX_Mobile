@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Store, Plus, Minus, Trash2, ShoppingCart, ShoppingBag } from 'lucide-react-native';
 
+import { AlertBanner } from '@/components/AlertBanner';
 import { AppHeader } from '@/components/AppHeader';
 import { OffersSection } from '@/components/OffersSection';
 import { PaymentMethodModal } from '@/components/PaymentMethodModal';
@@ -61,6 +62,27 @@ export default function CartScreen() {
   const currency = items[0]?.currency ?? 'INR';
   const depositPercent = items[0]?.depositPercent || 20;
 
+  // Items that don't accept Cash on Delivery — greys out the Cash option in
+  // the payment sheet instead of hiding it, with a reason the customer can
+  // act on (pay online, or remove these items).
+  const codBlockedItems = items.filter((i) => i.codEnabled === false);
+  const codDisabled = codBlockedItems.length > 0;
+  const codDisabledReason = codDisabled
+    ? `Cash on Delivery isn't available for ${codBlockedItems.map((i) => i.name).join(', ')} — pay online, or remove ${
+        codBlockedItems.length > 1 ? 'them' : 'it'
+      } from your cart.`
+    : undefined;
+
+  // Same treatment for Partial Pay — greyed out with a reason instead of
+  // just silently disappearing from the payment sheet.
+  const partialBlockedItems = items.filter((i) => i.partialPayEnabled === false);
+  const partialDisabled = partialBlockedItems.length > 0;
+  const partialDisabledReason = partialDisabled
+    ? `Partial payment isn't available for ${partialBlockedItems.map((i) => i.name).join(', ')} — pay online, or remove ${
+        partialBlockedItems.length > 1 ? 'them' : 'it'
+      } from your cart.`
+    : undefined;
+
   const setQty = (it: CartItem, quantity: number) => {
     clearCoupon(it.providerId); // discount preview may no longer be valid
     dispatch(
@@ -75,11 +97,16 @@ export default function CartScreen() {
           priceQty: it.priceQty,
           currency: it.currency,
           stockQty: it.stockQty,
+          unlimitedStock: it.unlimitedStock,
           stepQty: it.stepQty,
           imageUrl: it.imageUrl,
           depositPercent: it.depositPercent,
+          codEnabled: it.codEnabled,
+          partialPayEnabled: it.partialPayEnabled,
         },
-        quantity: Math.max(0, Math.min(quantity, it.stockQty)),
+        quantity: it.unlimitedStock
+          ? Math.max(0, quantity)
+          : Math.max(0, Math.min(quantity, it.stockQty)),
       }),
     );
   };
@@ -183,8 +210,11 @@ export default function CartScreen() {
                         </TouchableOpacity>
                         <Text style={styles.qty}>{formatAmount(it.quantity, it.measure)}</Text>
                         <TouchableOpacity
-                          style={[styles.stepBtn, it.quantity + inc > it.stockQty && styles.disabled]}
-                          disabled={it.quantity + inc > it.stockQty}
+                          style={[
+                            styles.stepBtn,
+                            !it.unlimitedStock && it.quantity + inc > it.stockQty && styles.disabled,
+                          ]}
+                          disabled={!it.unlimitedStock && it.quantity + inc > it.stockQty}
                           onPress={() => setQty(it, it.quantity + inc)}
                         >
                           <Plus size={15} color={Color.primary} />
@@ -245,6 +275,17 @@ export default function CartScreen() {
           </View>
           );
         })}
+
+        {codDisabled && (
+          <View style={styles.codBanner}>
+            <AlertBanner tone="error" message={codDisabledReason!} />
+          </View>
+        )}
+        {partialDisabled && (
+          <View style={styles.codBanner}>
+            <AlertBanner tone="error" message={partialDisabledReason!} />
+          </View>
+        )}
       </ScrollView>
 
       {/* Checkout bar → opens the payment sheet, where offers can be applied */}
@@ -268,6 +309,10 @@ export default function CartScreen() {
         total={grandTotal}
         currency={currency}
         depositPercent={depositPercent}
+        codDisabled={codDisabled}
+        codDisabledReason={codDisabledReason}
+        partialDisabled={partialDisabled}
+        partialDisabledReason={partialDisabledReason}
         onSelect={(m) => placeAll(m as OrderPaymentMethod)}
         onClose={() => setPayOpen(false)}
       />

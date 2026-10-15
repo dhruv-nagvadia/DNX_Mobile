@@ -20,10 +20,13 @@ function toCartItem(s: ServerCartItem): CartItem {
     priceQty: s.priceQty,
     currency: s.currency,
     stockQty: s.stockQty,
+    unlimitedStock: s.unlimitedStock,
     stepQty: s.stepQty,
     quantity: s.quantity,
     imageUrl: s.imageUrl,
     depositPercent: s.depositPercent,
+    codEnabled: s.codEnabled,
+    partialPayEnabled: s.partialPayEnabled,
   };
 }
 

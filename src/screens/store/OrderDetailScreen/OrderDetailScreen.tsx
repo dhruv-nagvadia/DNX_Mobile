@@ -158,7 +158,7 @@ export default function OrderDetailScreen() {
         skipped.push(it.name);
         continue;
       }
-      const quantity = Math.min(it.quantity, product.stockQty);
+      const quantity = product.unlimitedStock ? it.quantity : Math.min(it.quantity, product.stockQty);
       if (quantity < product.stepQty) {
         skipped.push(it.name);
         continue;
@@ -175,9 +175,12 @@ export default function OrderDetailScreen() {
             priceQty: product.priceQty,
             currency: product.currency,
             stockQty: product.stockQty,
+            unlimitedStock: product.unlimitedStock,
             stepQty: product.stepQty,
             imageUrl: product.imageUrl,
             depositPercent: liveProvider.depositPercent,
+            codEnabled: product.codEnabled,
+            partialPayEnabled: product.partialPayEnabled,
           },
           quantity,
         }),
