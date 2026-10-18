@@ -15,7 +15,7 @@ import { API_BASE_URL } from '@env';
  *   • iOS simulator          → localhost
  *   • Android emulator/device → the LAN IP below (update via `ipconfig getifaddr en0`)
  */
-const LAN_IP = '192.168.1.5';
+const LAN_IP = '192.168.1.2';
 const DEV_HOST = Platform.OS === 'android' ? LAN_IP : 'localhost';
 const DEV_FALLBACK = `http://${DEV_HOST}:4000/api/v1`;
 
