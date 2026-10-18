@@ -10,7 +10,7 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
-import { Star, BadgeCheck, MapPin, Clock, Users } from 'lucide-react-native';
+import { Star, BadgeCheck, MapPin, Clock, Users, ChevronDown, ChevronUp } from 'lucide-react-native';
 import { useRoute } from '@react-navigation/native';
 
 import { AppHeader } from '@/components/AppHeader';
@@ -95,6 +95,9 @@ function ServiceDetail() {
     dayIndex,
     selectDay,
     slots,
+    slotGroups,
+    expandedPeriod,
+    togglePeriod,
     dayOpen,
     selectedSlot,
     selectSlot,
@@ -294,36 +297,64 @@ function ServiceDetail() {
               </Text>
             </View>
           ) : (
-            <View style={styles.slotWrap}>
-              {slots.map(({ time, booked }) => {
-                const iso = time.toISOString();
-
-                if (booked) {
-                  return (
-                    <View key={iso} style={[styles.slot, styles.slotBooked]}>
-                      <Text numberOfLines={1} style={[styles.slotText, styles.slotTextBooked]}>
-                        {timeLabel(time)}
-                      </Text>
-                      <Text style={styles.slotBookedTag}>Booked</Text>
-                    </View>
-                  );
-                }
-
-                const active = iso === selectedSlot;
-                return (
+            slotGroups.map((group) => {
+              const open = expandedPeriod === group.period;
+              const availableCount = group.slots.filter((s) => !s.booked).length;
+              return (
+                <View key={group.period}>
                   <TouchableOpacity
-                    key={iso}
-                    style={[styles.slot, active && styles.slotActive]}
+                    style={[styles.periodHeader, open && styles.periodHeaderActive]}
                     activeOpacity={0.85}
-                    onPress={() => selectSlot(iso)}
+                    onPress={() => togglePeriod(group.period)}
                   >
-                    <Text numberOfLines={1} style={[styles.slotText, active && styles.slotTextActive]}>
-                      {timeLabel(time)}
-                    </Text>
+                    <View style={styles.periodHeaderLeft}>
+                      <Text style={styles.periodHeaderText}>{group.period}</Text>
+                      <Text style={styles.periodHeaderCount}>
+                        {availableCount > 0 ? `${availableCount} available` : 'Fully booked'}
+                      </Text>
+                    </View>
+                    {open ? (
+                      <ChevronUp size={18} color={Color.textSecondary} />
+                    ) : (
+                      <ChevronDown size={18} color={Color.textSecondary} />
+                    )}
                   </TouchableOpacity>
-                );
-              })}
-            </View>
+
+                  {open && (
+                    <View style={styles.slotWrap}>
+                      {group.slots.map(({ time, booked }) => {
+                        const iso = time.toISOString();
+
+                        if (booked) {
+                          return (
+                            <View key={iso} style={[styles.slot, styles.slotBooked]}>
+                              <Text numberOfLines={1} style={[styles.slotText, styles.slotTextBooked]}>
+                                {timeLabel(time)}
+                              </Text>
+                              <Text style={styles.slotBookedTag}>Booked</Text>
+                            </View>
+                          );
+                        }
+
+                        const active = iso === selectedSlot;
+                        return (
+                          <TouchableOpacity
+                            key={iso}
+                            style={[styles.slot, active && styles.slotActive]}
+                            activeOpacity={0.85}
+                            onPress={() => selectSlot(iso)}
+                          >
+                            <Text numberOfLines={1} style={[styles.slotText, active && styles.slotTextActive]}>
+                              {timeLabel(time)}
+                            </Text>
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </View>
+                  )}
+                </View>
+              );
+            })
           )}
 
           {/* Reviews (preview) */}

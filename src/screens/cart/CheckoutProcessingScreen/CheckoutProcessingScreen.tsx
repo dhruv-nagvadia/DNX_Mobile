@@ -14,6 +14,7 @@ import {
   useConfirmOrderCheckoutMutation,
   useSyncOrderCheckoutMutation,
 } from '@/redux/api/order/orderApi';
+import type { CheckoutConfirmResult, PlacedCheckoutOrder } from '@/redux/api/order/types';
 import { openRazorpayCheckout } from '@/utils/razorpayCheckout';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
@@ -44,7 +45,7 @@ export default function CheckoutProcessingScreen() {
 
   const [stepIndex, setStepIndex] = useState(0);
   const [stage, setStage] = useState<Stage>('placing');
-  const [failure, setFailure] = useState<{ failedNames: string[] } | null>(null);
+  const [failure, setFailure] = useState<{ failedNames: string[]; message?: string } | null>(null);
 
   const spin = useRef(new Animated.Value(0)).current;
   const pulse = useRef(new Animated.Value(1)).current;
@@ -75,100 +76,12 @@ export default function CheckoutProcessingScreen() {
       dispatch(providerApi.util.invalidateTags([{ type: 'Provider', id: providerId }, 'Providers']));
     };
 
-    const run = async () => {
-      const failed: string[] = [];
-      const placed: { orderId: string; providerName: string; amountMinor: number }[] = [];
+    type Placed = { orderId: string; providerName: string; amountMinor: number };
 
-      for (let i = 0; i < groups.length; i++) {
-        if (cancelled) {
-          return;
-        }
-        const g = groups[i];
-        setStepIndex(i);
-        setStage('placing');
-
-        const payload = {
-          providerId: g.providerId,
-          paymentMethod: method,
-          items: g.items,
-          couponCode: g.couponCode,
-        };
-
-        if (method === 'CASH') {
-          try {
-            const res = await createOrder(payload).unwrap();
-            onPlaced(g.providerId);
-            placed.push({ orderId: res.order.id, providerName: g.providerName, amountMinor: res.order.amountMinor });
-          } catch {
-            failed.push(g.providerName);
-          }
-          continue;
-        }
-
-        // ONLINE / PARTIAL: the payment is verified first — the order is only
-        // created once that's confirmed, so a failed or cancelled checkout
-        // never leaves a "placed" order (or reserved stock) behind.
-        let checkout;
-        try {
-          checkout = await startOrderCheckout(payload).unwrap();
-        } catch {
-          failed.push(g.providerName);
-          continue;
-        }
-
-        if (checkout.simulated) {
-          // No live keys configured — already placed & marked paid server-side.
-          onPlaced(g.providerId);
-          placed.push({ orderId: checkout.orderId as string, providerName: g.providerName, amountMinor: checkout.amount });
-          continue;
-        }
-        if (!checkout.razorpayOrderId) {
-          failed.push(g.providerName);
-          continue;
-        }
-
-        setStage('awaiting-payment');
-        let orderId: string | null = null;
-        try {
-          const result = await openRazorpayCheckout(checkout);
-          if (result) {
-            setStage('confirming');
-            const confirm = await confirmOrderCheckout({
-              razorpayOrderId: result.razorpay_order_id,
-              razorpayPaymentId: result.razorpay_payment_id,
-              razorpaySignature: result.razorpay_signature,
-            }).unwrap();
-            orderId = confirm.orderId;
-          }
-        } catch {
-          // Fall through to the server-side sync check below — the checkout
-          // sheet closing with an error, or this confirm call failing,
-          // doesn't necessarily mean Razorpay didn't actually capture the
-          // payment.
-        }
-
-        if (!orderId) {
-          setStage('confirming');
-          try {
-            const sync = await syncOrderCheckout({ razorpayOrderId: checkout.razorpayOrderId }).unwrap();
-            orderId = sync.orderId;
-          } catch {
-            // Treated as not placed below.
-          }
-        }
-
-        if (orderId) {
-          onPlaced(g.providerId);
-          placed.push({ orderId, providerName: g.providerName, amountMinor: checkout.amount });
-        } else {
-          failed.push(g.providerName);
-        }
-      }
-
+    const finish = (placed: Placed[], failed: string[], message?: string) => {
       if (cancelled) {
         return;
       }
-
       if (placed.length > 0) {
         navigation.replace(ROUTES.ORDER_SUCCESS, {
           currency,
@@ -176,9 +89,119 @@ export default function CheckoutProcessingScreen() {
           failedNames: failed.length > 0 ? failed : undefined,
         });
       } else {
-        setFailure({ failedNames: failed });
+        setFailure({ failedNames: failed, message });
       }
     };
+
+    // Cash on Delivery: nothing to pay now, so each store's order is just placed.
+    const runCash = async () => {
+      const failed: string[] = [];
+      const placed: Placed[] = [];
+      for (let i = 0; i < groups.length; i++) {
+        if (cancelled) {
+          return;
+        }
+        const g = groups[i];
+        setStepIndex(i);
+        setStage('placing');
+        try {
+          const res = await createOrder({
+            providerId: g.providerId,
+            paymentMethod: method,
+            items: g.items,
+            couponCode: g.couponCode,
+          }).unwrap();
+          onPlaced(g.providerId);
+          placed.push({ orderId: res.order.id, providerName: g.providerName, amountMinor: res.order.amountMinor });
+        } catch {
+          failed.push(g.providerName);
+        }
+      }
+      finish(placed, failed);
+    };
+
+    // Online / partial: the WHOLE cart — every store — is paid for in one
+    // Razorpay payment. The server validates all the stores first (so nothing is
+    // charged if any item is unavailable), then splits the one payment into a
+    // separate order per store, each recording only its own share. The orders
+    // are only created once the payment is confirmed, so a failed or cancelled
+    // checkout never leaves a "placed" order (or reserved stock) behind.
+    const runOnline = async () => {
+      setStage('placing');
+
+      let checkout;
+      try {
+        checkout = await startOrderCheckout({
+          paymentMethod: method as 'ONLINE' | 'PARTIAL',
+          groups: groups.map((g) => ({ providerId: g.providerId, items: g.items, couponCode: g.couponCode })),
+        }).unwrap();
+      } catch (err) {
+        const message = (err as { data?: { message?: string } })?.data?.message;
+        finish([], groups.map((g) => g.providerName), message);
+        return;
+      }
+
+      const toPlaced = (orders: PlacedCheckoutOrder[]): Placed[] =>
+        orders.map((o) => ({ orderId: o.id, providerName: o.businessName, amountMinor: o.amountMinor }));
+
+      const settle = (result: { orders: PlacedCheckoutOrder[]; failedStores: string[] }) => {
+        result.orders.forEach((o) => onPlaced(o.providerId));
+        finish(
+          toPlaced(result.orders),
+          result.failedStores,
+          result.orders.length === 0 ? 'Your payment is being refunded — nothing was ordered.' : undefined,
+        );
+      };
+
+      if (checkout.simulated) {
+        // No live keys configured — already placed & marked paid server-side.
+        settle({ orders: checkout.orders ?? [], failedStores: [] });
+        return;
+      }
+      if (!checkout.razorpayOrderId) {
+        finish([], groups.map((g) => g.providerName));
+        return;
+      }
+
+      setStage('awaiting-payment');
+      let result: CheckoutConfirmResult | null = null;
+      try {
+        const paid = await openRazorpayCheckout(checkout);
+        if (paid) {
+          setStage('confirming');
+          result = await confirmOrderCheckout({
+            razorpayOrderId: paid.razorpay_order_id,
+            razorpayPaymentId: paid.razorpay_payment_id,
+            razorpaySignature: paid.razorpay_signature,
+          }).unwrap();
+        }
+      } catch {
+        // Fall through to the server-side sync check below — the checkout
+        // sheet closing with an error, or this confirm call failing,
+        // doesn't necessarily mean Razorpay didn't actually capture the
+        // payment.
+      }
+
+      if (!result) {
+        setStage('confirming');
+        try {
+          result = await syncOrderCheckout({ razorpayOrderId: checkout.razorpayOrderId }).unwrap();
+        } catch {
+          // Treated as not placed below.
+        }
+      }
+
+      if (cancelled) {
+        return;
+      }
+      if (result && (result.orders.length > 0 || result.failedStores.length > 0)) {
+        settle(result);
+      } else {
+        finish([], groups.map((g) => g.providerName));
+      }
+    };
+
+    const run = () => (method === 'CASH' ? runCash() : runOnline());
 
     // Don't open Razorpay until this screen's own enter transition has fully
     // settled — presenting a native modal mid-transition can fail to appear
@@ -220,7 +243,8 @@ export default function CheckoutProcessingScreen() {
           </View>
           <Text style={styles.title}>Payment not completed</Text>
           <Text style={styles.subtitle}>
-            {failure.failedNames.join(', ')} — please try again. Your cart items are still saved.
+            {failure.message ?? `${failure.failedNames.join(', ')} — please try again.`} Your cart items are still
+            saved.
           </Text>
           <View style={styles.actions}>
             <TouchableOpacity
@@ -257,10 +281,14 @@ export default function CheckoutProcessingScreen() {
 
         <Text style={styles.title}>{label}</Text>
         <Text style={styles.subtitle}>
-          {groups.length > 1 ? `${current.providerName} (${stepIndex + 1} of ${groups.length})` : current.providerName}
+          {method !== 'CASH' && groups.length > 1
+            ? `${groups.length} stores · one payment`
+            : groups.length > 1
+              ? `${current.providerName} (${stepIndex + 1} of ${groups.length})`
+              : current.providerName}
         </Text>
 
-        {groups.length > 1 && (
+        {method === 'CASH' && groups.length > 1 && (
           <View style={styles.stepsRow}>
             {groups.map((_, i) => (
               <View key={i} style={[styles.stepDot, i === stepIndex && styles.stepDotActive]} />

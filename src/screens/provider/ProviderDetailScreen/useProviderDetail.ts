@@ -16,7 +16,9 @@ import { addRecentlyViewed } from '@/utils/recentlyViewed';
 import { ROUTES } from '@/navigation/routes';
 import { ProviderDetailNavigationProp, ProviderDetailRouteProp } from './types';
 
-const SLOT_STEP_MIN = 30;
+// Fallback only, used before a service is selected — once one is, slots step
+// by that service's own duration (see buildSlots).
+const DEFAULT_SLOT_DURATION_MIN = 30;
 
 /** A busy interval, in epoch milliseconds. */
 type Interval = { start: number; end: number };
@@ -28,6 +30,27 @@ type DayConfig = { openTime: string; closeTime: string } | null;
 export interface SlotInfo {
   time: Date;
   booked: boolean;
+}
+
+/** Groups a long slot list into manageable chunks — a short service can
+ * otherwise produce 100+ back-to-back slots in one flat grid. */
+export type SlotPeriod = 'Morning' | 'Afternoon' | 'Evening';
+export interface SlotGroup {
+  period: SlotPeriod;
+  slots: SlotInfo[];
+}
+
+function periodOf(hour: number): SlotPeriod {
+  if (hour < 12) return 'Morning';
+  if (hour < 17) return 'Afternoon';
+  return 'Evening';
+}
+
+function groupSlots(slots: SlotInfo[]): SlotGroup[] {
+  const order: SlotPeriod[] = ['Morning', 'Afternoon', 'Evening'];
+  return order
+    .map((period) => ({ period, slots: slots.filter((s) => periodOf(s.time.getHours()) === period) }))
+    .filter((g) => g.slots.length > 0);
 }
 
 /** Local YYYY-MM-DD (matches how the provider set date overrides). */
@@ -62,7 +85,9 @@ function effectiveConfig(
 }
 
 /**
- * Generates 30-min start times within a day's open hours where the chosen
+ * Generates back-to-back start times — stepped by the service's own
+ * duration, so a 5-min service offers a slot every 5 min instead of the same
+ * spacing as a 60-min one — within a day's open hours where the chosen
  * service fits before closing. Each slot is flagged `booked` when its full
  * interval [start, start + duration) overlaps an existing booking.
  */
@@ -90,7 +115,7 @@ function buildSlots(config: DayConfig, day: Date, booked: Interval[], durationMi
       slots.push({ time: new Date(cursor), booked: isBooked });
     }
 
-    cursor.setMinutes(cursor.getMinutes() + SLOT_STEP_MIN);
+    cursor.setMinutes(cursor.getMinutes() + durationMin);
   }
   return slots;
 }
@@ -119,7 +144,7 @@ export function useProviderDetail() {
 
   const services = provider?.services ?? [];
   const selectedService = services.find((s) => s.id === selectedServiceId) ?? null;
-  const durationMin = selectedService?.durationMin ?? SLOT_STEP_MIN;
+  const durationMin = selectedService?.durationMin ?? DEFAULT_SLOT_DURATION_MIN;
 
   const bookedIntervals = useMemo<Interval[]>(
     () =>
@@ -139,6 +164,21 @@ export function useProviderDetail() {
     () => buildSlots(dayConfig, days[dayIndex], bookedIntervals, durationMin),
     [dayConfig, days, dayIndex, bookedIntervals, durationMin],
   );
+
+  const slotGroups = useMemo(() => groupSlots(slots), [slots]);
+
+  // Only one period's grid is shown at a time — defaults to whichever one
+  // has the soonest available slot, so there's always something useful open
+  // without dumping every slot on screen at once.
+  const [expandedPeriod, setExpandedPeriod] = useState<SlotPeriod | null>(null);
+  useEffect(() => {
+    const withOpening = slotGroups.find((g) => g.slots.some((s) => !s.booked));
+    setExpandedPeriod((withOpening ?? slotGroups[0])?.period ?? null);
+  }, [slotGroups]);
+
+  const togglePeriod = useCallback((period: SlotPeriod) => {
+    setExpandedPeriod((prev) => (prev === period ? null : period));
+  }, []);
 
   const dayOpen = dayConfig !== null;
 
@@ -249,6 +289,9 @@ export function useProviderDetail() {
     dayIndex,
     selectDay,
     slots,
+    slotGroups,
+    expandedPeriod,
+    togglePeriod,
     dayOpen,
     selectedSlot,
     selectSlot,

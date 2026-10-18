@@ -226,11 +226,41 @@ export const styles = StyleSheet.create({
   },
 
   // Slots
+  periodHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginTop: Spacing.sm,
+    borderRadius: Radius.md,
+    backgroundColor: Color.surface,
+    borderWidth: 1,
+    borderColor: Color.border,
+  },
+  periodHeaderActive: {
+    borderColor: Color.primary,
+  },
+  periodHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: Spacing.sm,
+  },
+  periodHeaderText: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+    color: Color.textPrimary,
+  },
+  periodHeaderCount: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+  },
   slotWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Spacing.sm,
     marginTop: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   slot: {
     // ~3 even columns; every slot the same size so rows line up.

@@ -57,7 +57,7 @@ export function useBookingDetail() {
       const order = await createPaymentOrder({ bookingId: booking.id }).unwrap();
       if (order.simulated) {
         await simulatePayment({ bookingId: booking.id }).unwrap();
-        Alert.alert('Payment successful', 'Your booking is paid and confirmed.');
+        Alert.alert('Payment successful', 'Your booking is paid. The provider will confirm it shortly.');
         return;
       }
 
@@ -71,7 +71,7 @@ export function useBookingDetail() {
         razorpayPaymentId: result.razorpay_payment_id,
         razorpaySignature: result.razorpay_signature,
       }).unwrap();
-      Alert.alert('Payment successful', 'Your booking is paid and confirmed.');
+      Alert.alert('Payment successful', 'Your booking is paid. The provider will confirm it shortly.');
     } catch {
       Alert.alert('Payment failed', 'Please try again.');
     }
@@ -83,7 +83,14 @@ export function useBookingDetail() {
 
   const onCancel = useCallback(() => {
     if (!booking) return;
-    Alert.alert('Cancel booking?', `Cancel your appointment at ${booking.provider.businessName}?`, [
+    // Cancelling after the appointment's own start time forfeits the
+    // payment, same as a no-show — warn before they confirm, not after.
+    const isPastStart = new Date(booking.startTime).getTime() <= Date.now();
+    const message =
+      isPastStart && booking.amountPaidMinor > 0
+        ? `Your appointment at ${booking.provider.businessName} has already started. Cancelling now won't be refunded — are you sure?`
+        : `Cancel your appointment at ${booking.provider.businessName}?`;
+    Alert.alert('Cancel booking?', message, [
       { text: 'Keep it', style: 'cancel' },
       {
         text: 'Cancel booking',

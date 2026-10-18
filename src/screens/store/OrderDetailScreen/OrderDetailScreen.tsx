@@ -240,8 +240,28 @@ export default function OrderDetailScreen() {
     }
   };
 
-  const onCancel = () =>
-    Alert.alert('Cancel this order?', 'This will release the items back to the store.', [
+  const onCancel = () => {
+    // Once the store has accepted (CONFIRMED) the order, a made-to-order item
+    // (e.g. a cooked dish) has likely already started being prepared and
+    // forfeits its share of the payment — but an ordinary tracked-stock item
+    // (powder, face wash, etc.) just goes back on the shelf and still fully
+    // refunds, so only warn when the order actually has something to forfeit.
+    const lineTotal = (i: { quantity: number; priceQty: number; priceMinor: number }) =>
+      Math.round((i.quantity / i.priceQty) * i.priceMinor);
+    const madeToOrderTotal = order.items
+      .filter((i) => i.unlimitedStock)
+      .reduce((s, i) => s + lineTotal(i), 0);
+    const orderTotal = order.items.reduce((s, i) => s + lineTotal(i), 0);
+    const alreadyStarted = order.status === 'CONFIRMED' && order.amountPaidMinor > 0 && madeToOrderTotal > 0;
+    const fullyForfeits = alreadyStarted && madeToOrderTotal >= orderTotal;
+
+    const message = !alreadyStarted
+      ? 'This will release the items back to the store.'
+      : fullyForfeits
+        ? "The store has likely already started preparing your order. Cancelling now won't be refunded — are you sure?"
+        : "The store has likely already started preparing some items. Cancelling now won't refund those — only the other items will be. Are you sure?";
+
+    Alert.alert('Cancel this order?', message, [
       { text: 'Keep order', style: 'cancel' },
       {
         text: 'Cancel order',
@@ -256,12 +276,15 @@ export default function OrderDetailScreen() {
         },
       },
     ]);
+  };
 
+  // Only an order with nothing paid yet can be paid online here. A part-paid
+  // order's remaining balance is settled in person at pickup, so offering a
+  // "Pay" button for it would just be rejected by the server.
   const canPay =
     (order.status === 'PENDING' || order.status === 'CONFIRMED') &&
     order.paymentMethod !== 'CASH' &&
-    order.paymentStatus !== 'PAID' &&
-    order.paymentStatus !== 'REFUNDED' &&
+    order.paymentStatus === 'PENDING' &&
     due > 0;
 
   const onPay = async () => {
@@ -322,10 +345,30 @@ export default function OrderDetailScreen() {
           </View>
         </TouchableOpacity>
 
-        {/* Cancellation note from the store */}
-        {order.status === 'CANCELLED' && order.cancelReason ? (
+        {/* No-show — no refund if paid, just a warning if it was cash */}
+        {order.status === 'NO_SHOW' && (
           <View style={styles.cancelNote}>
-            <Text style={styles.cancelNoteLabel}>Cancelled by the store</Text>
+            <Text style={styles.cancelNoteLabel}>You didn't collect this order</Text>
+            <Text style={styles.cancelNoteText}>
+              {order.paymentMethod === 'CASH'
+                ? 'Repeated no-shows may lead to charges or your account being blocked.'
+                : order.paymentStatus === 'REFUNDED'
+                  ? `${formatMoney(order.amountPaidMinor, order.currency)} has been refunded since nothing had been prepared.`
+                  : (order.refundedMinor ?? 0) > 0
+                    ? `${formatMoney(order.refundedMinor ?? 0, order.currency)} will be refunded, but ${formatMoney(order.amountPaidMinor - (order.refundedMinor ?? 0), order.currency)} isn't since those items were already being prepared.`
+                    : order.amountPaidMinor > 0
+                      ? "Your payment isn't refundable since you didn't collect it."
+                      : "You didn't come to collect this order."}
+            </Text>
+          </View>
+        )}
+
+        {/* Cancellation / no-show note from the store */}
+        {(order.status === 'CANCELLED' || order.status === 'NO_SHOW') && order.cancelReason ? (
+          <View style={styles.cancelNote}>
+            <Text style={styles.cancelNoteLabel}>
+              {order.status === 'NO_SHOW' ? "Store's note" : 'Cancelled by the store'}
+            </Text>
             <Text style={styles.cancelNoteText}>{order.cancelReason}</Text>
           </View>
         ) : null}
@@ -420,6 +463,21 @@ export default function OrderDetailScreen() {
                 {formatMoney(order.amountPaidMinor, order.currency)}
               </Text>
             </View>
+          ) : (order.refundedMinor ?? 0) > 0 ? (
+            <>
+              <View style={styles.row}>
+                <Text style={styles.rowLabel}>Refunded</Text>
+                <Text style={[styles.rowValue, { color: pay.color }]}>
+                  {formatMoney(order.refundedMinor ?? 0, order.currency)}
+                </Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.rowLabel}>Not refunded</Text>
+                <Text style={styles.rowValue}>
+                  {formatMoney(order.amountPaidMinor - (order.refundedMinor ?? 0), order.currency)}
+                </Text>
+              </View>
+            </>
           ) : (
             <>
               <View style={styles.row}>

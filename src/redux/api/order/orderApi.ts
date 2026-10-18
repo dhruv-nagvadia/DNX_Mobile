@@ -3,10 +3,12 @@ import { axiosBaseQuery } from '@/api/apiConfigs';
 import { endpoints } from '@/api/APIUtils';
 import { PaymentOrderResponse, VerifyPaymentResult } from '@/redux/api/booking/types';
 import {
+  CartCheckoutRequest,
   CheckoutConfirmResult,
   CheckoutSyncResult,
   CouponPreview,
   CreateOrderRequest,
+  PlacedCheckoutOrder,
   CreateOrderResponse,
   CreateOrderReviewRequest,
   CreateProductReviewRequest,
@@ -123,9 +125,15 @@ export const orderApi = createApi({
     // Pay-then-place cart checkout — validates the cart and opens a Razorpay
     // Order, but does NOT place the order yet (or, in test mode, places it
     // immediately since there's no real payment to wait on).
-    startOrderCheckout: builder.mutation<PaymentOrderResponse, CreateOrderRequest>({
+    // The whole cart (every store) is validated up front and paid for in ONE
+    // Razorpay payment; the per-store orders are created once it's confirmed.
+    startOrderCheckout: builder.mutation<
+      PaymentOrderResponse & { orders?: PlacedCheckoutOrder[] },
+      CartCheckoutRequest
+    >({
       query: (data) => ({ endpoint: endpoints.orderCheckoutStart, method: 'post', data }),
-      transformResponse: (res: ApiEnvelope<PaymentOrderResponse>) => res.data,
+      transformResponse: (res: ApiEnvelope<PaymentOrderResponse & { orders?: PlacedCheckoutOrder[] }>) =>
+        res.data,
     }),
 
     // Verifies the checkout signature and only now actually places the order.

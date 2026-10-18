@@ -146,7 +146,11 @@ export default function CartScreen() {
       <AppHeader title="Your cart" />
 
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 130 }]} showsVerticalScrollIndicator={false}>
-        <Text style={styles.note}>Each store is a separate pickup order.</Text>
+        <Text style={styles.note}>
+          {groups.length > 1
+            ? 'Each store gets its own pickup order, but you pay once for everything.'
+            : 'Your pickup order.'}
+        </Text>
 
         {groups.map((g) => {
           const coupon = applied[g.providerId];

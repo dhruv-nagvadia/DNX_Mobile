@@ -231,8 +231,24 @@ export default function BookingDetailScreen() {
           </TouchableOpacity>
         )}
 
-        {/* Provider's cancel note */}
-        {booking.status === 'CANCELLED' && !!booking.cancelReason && (
+        {/* No-show — no refund if paid, just a warning if it was cash */}
+        {booking.status === 'NO_SHOW' && (
+          <View>
+            <Text style={styles.sectionTitle}>No-show</Text>
+            <View style={styles.reasonBox}>
+              <Text style={styles.reasonText}>
+                {booking.paymentMethod === 'CASH'
+                  ? 'You were marked as a no-show. Repeated no-shows may lead to charges or your account being blocked.'
+                  : booking.amountPaidMinor > 0
+                    ? "You were marked as a no-show. Your payment isn't refundable — reschedule next time instead of risking a no-show."
+                    : 'You were marked as a no-show.'}
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {/* Provider's cancel/no-show note */}
+        {(booking.status === 'CANCELLED' || booking.status === 'NO_SHOW') && !!booking.cancelReason && (
           <View>
             <Text style={styles.sectionTitle}>Provider’s note</Text>
             <View style={styles.reasonBox}>

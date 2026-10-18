@@ -1,4 +1,4 @@
-export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'READY' | 'COMPLETED' | 'CANCELLED';
+export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'READY' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
 export type OrderPaymentStatus = 'PENDING' | 'PARTIAL' | 'PAID' | 'FAILED' | 'REFUNDED';
 export type OrderPaymentMethod = 'ONLINE' | 'CASH' | 'PARTIAL';
 
@@ -11,6 +11,10 @@ export interface OrderItem {
   priceQty: number;
   unit: string;
   quantity: number; // base units
+  // Snapshotted at order time — made-to-order (e.g. a restaurant dish), as
+  // opposed to a regular tracked-stock item. Drives whether cancelling after
+  // the store confirms forfeits this item's share of the payment.
+  unlimitedStock?: boolean;
   product?: { imageUrl?: string | null } | null;
 }
 
@@ -19,6 +23,10 @@ export interface Order {
   status: OrderStatus;
   amountMinor: number;
   amountPaidMinor: number;
+  // How much of amountPaidMinor was actually refunded — can be less than the
+  // full amount for a cancelled/no-show order with a mix of made-to-order
+  // and static items (only the made-to-order portion is forfeited).
+  refundedMinor?: number;
   currency: string;
   paymentMethod: OrderPaymentMethod;
   paymentStatus: OrderPaymentStatus;
@@ -128,12 +136,31 @@ export interface CreateOrderResponse {
   simulated: boolean;
 }
 
-export interface CheckoutConfirmResult {
-  paymentStatus: OrderPaymentStatus;
-  orderId: string;
+// A cart can hold items from several stores and is paid for ONCE — each store
+// still gets its own order, recording only its share of that one payment.
+export interface CartCheckoutRequest {
+  paymentMethod: 'ONLINE' | 'PARTIAL';
+  groups: { providerId: string; items: CreateOrderItem[]; couponCode?: string }[];
 }
 
-export interface CheckoutSyncResult {
+// One store's order from a checkout — enough for the "order placed" screen.
+export interface PlacedCheckoutOrder {
+  id: string;
+  providerId: string;
+  businessName: string;
+  // The order's total (not just what was paid up front).
+  amountMinor: number;
+  paymentStatus: OrderPaymentStatus;
+}
+
+export interface CheckoutConfirmResult {
   paymentStatus: OrderPaymentStatus;
   orderId: string | null;
+  // Every order the one payment produced. A store whose order couldn't be
+  // placed after payment (e.g. its stock ran out) is listed in `failedStores`
+  // and has its share refunded.
+  orders: PlacedCheckoutOrder[];
+  failedStores: string[];
 }
+
+export type CheckoutSyncResult = CheckoutConfirmResult;
