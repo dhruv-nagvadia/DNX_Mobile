@@ -58,13 +58,16 @@ ios/Pods/
 # Ruby
 /vendor/
 
-# Environment — the active `.env` is a derived/local file (copied from one of
-# the per-env files below by the android:*/ios:*/start:* scripts), never commit
-# it. The per-env files themselves only hold a non-secret API URL, so they ARE
-# committed (same as frontend).
+# Environment — all env files are local to your machine and never committed
+# (the dev API URL is usually your own LAN IP, which changes per network). Create
+# `.env.development`, `.env.staging` and `.env.production` by copying
+# `.env.example`; the android:*/ios:*/start:* scripts pick one via APP_ENV.
 .env
 .env.local
 .env.*.local
+.env.development
+.env.staging
+.env.production
 
 # Logs
 *.log
