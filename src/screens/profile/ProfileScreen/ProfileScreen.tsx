@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   CalendarDays,
+  ShoppingBag,
   Bell,
   HelpCircle,
   Info,
@@ -78,18 +79,36 @@ export default function ProfileScreen() {
 
         {/* Stats */}
         <View style={styles.stats}>
-          <View style={styles.stat}>
+          <TouchableOpacity
+            style={styles.stat}
+            activeOpacity={0.7}
+            onPress={p.goToBookings}
+            accessibilityRole="button"
+            accessibilityLabel={`${p.stats.bookings} bookings, open my bookings`}
+          >
             <Text style={styles.statValue}>{p.stats.bookings}</Text>
             <Text style={styles.statLabel}>Bookings</Text>
-          </View>
-          <View style={[styles.stat, styles.statDivider]}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.stat, styles.statDivider]}
+            activeOpacity={0.7}
+            onPress={p.goToOrders}
+            accessibilityRole="button"
+            accessibilityLabel={`${p.stats.orders} orders, open my orders`}
+          >
+            <Text style={styles.statValue}>{p.stats.orders}</Text>
+            <Text style={styles.statLabel}>Orders</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.stat, styles.statDivider]}
+            activeOpacity={0.7}
+            onPress={p.goToReminders}
+            accessibilityRole="button"
+            accessibilityLabel={`${p.stats.reminders} reminders, open my reminders`}
+          >
             <Text style={styles.statValue}>{p.stats.reminders}</Text>
             <Text style={styles.statLabel}>Reminders</Text>
-          </View>
-          <View style={[styles.stat, styles.statDivider]}>
-            <Text style={styles.statValue}>{p.stats.reviews}</Text>
-            <Text style={styles.statLabel}>Reviews</Text>
-          </View>
+          </TouchableOpacity>
         </View>
 
         {/* Activity */}
@@ -101,6 +120,18 @@ export default function ProfileScreen() {
             </View>
             <Text style={styles.rowLabel}>My bookings</Text>
             <Text style={styles.rowValue}>{p.stats.bookings}</Text>
+            <ChevronRight size={20} color={Color.placeholder} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.row, styles.rowBorder]}
+            activeOpacity={0.8}
+            onPress={p.goToOrders}
+          >
+            <View style={styles.rowIcon}>
+              <ShoppingBag size={19} color={Color.primary} />
+            </View>
+            <Text style={styles.rowLabel}>My orders</Text>
+            <Text style={styles.rowValue}>{p.stats.orders}</Text>
             <ChevronRight size={20} color={Color.placeholder} />
           </TouchableOpacity>
           <TouchableOpacity

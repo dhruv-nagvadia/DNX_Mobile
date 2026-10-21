@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity, Modal, TextInput } from 'react-native';
-import { Star, BadgeCheck, ChevronRight, MapPin, Phone } from 'lucide-react-native';
+import { Star, BadgeCheck, ChevronRight, MapPin, Phone, RotateCcw } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
@@ -305,13 +305,17 @@ export default function BookingDetailScreen() {
           </TouchableOpacity>
         )}
 
-        {booking.status === 'COMPLETED' && (
+        {/* Rebook any booking that's finished — completed, cancelled, no-show or past. */}
+        {!upcoming && (
           <TouchableOpacity
-            style={[styles.actionBtn, styles.actionOutline]}
+            style={[styles.actionBtn, styles.actionOutline, styles.actionInline]}
             activeOpacity={0.85}
             onPress={onBookAgain}
+            accessibilityRole="button"
+            accessibilityLabel={`Rebook ${booking.service.name}`}
           >
-            <Text style={styles.actionOutlineText}>Book again</Text>
+            <RotateCcw size={16} color={Color.primary} />
+            <Text style={styles.actionOutlineText}>Rebook this service</Text>
           </TouchableOpacity>
         )}
 

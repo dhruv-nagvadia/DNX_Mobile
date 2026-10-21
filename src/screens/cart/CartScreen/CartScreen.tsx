@@ -83,6 +83,12 @@ export default function CartScreen() {
       } from your cart.`
     : undefined;
 
+  // Tap a business to see it, or a product to see its page.
+  const openStore = (providerId: string, name: string) =>
+    navigation.navigate(ROUTES.PROVIDER_DETAILS, { providerId, name });
+  const openProduct = (it: CartItem) =>
+    navigation.navigate(ROUTES.PRODUCT_DETAILS, { providerId: it.providerId, productId: it.productId });
+
   const setQty = (it: CartItem, quantity: number) => {
     clearCoupon(it.providerId); // discount preview may no longer be valid
     dispatch(
@@ -157,12 +163,20 @@ export default function CartScreen() {
           return (
           <View key={g.providerId} style={styles.shopCard}>
             <View style={styles.shopHead}>
-              <View style={styles.shopIcon}>
-                <Store size={16} color={Color.primaryDark} />
-              </View>
-              <Text style={styles.shopName} numberOfLines={1}>
-                {g.providerName}
-              </Text>
+              <TouchableOpacity
+                style={styles.shopTap}
+                activeOpacity={0.7}
+                onPress={() => openStore(g.providerId, g.providerName)}
+                accessibilityRole="button"
+                accessibilityLabel={`Open ${g.providerName}`}
+              >
+                <View style={styles.shopIcon}>
+                  <Store size={16} color={Color.primaryDark} />
+                </View>
+                <Text style={styles.shopName} numberOfLines={1}>
+                  {g.providerName}
+                </Text>
+              </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
                   dispatch(clearProviderItems(g.providerId));
@@ -179,20 +193,34 @@ export default function CartScreen() {
               return (
                 <View key={it.productId} style={styles.itemRow}>
                   {/* Left: product image */}
-                  <View style={styles.thumb}>
+                  <TouchableOpacity
+                    style={styles.thumb}
+                    activeOpacity={0.8}
+                    onPress={() => openProduct(it)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Open ${it.name}`}
+                  >
                     {it.imageUrl ? (
                       <Image source={{ uri: it.imageUrl }} style={styles.thumbImg} />
                     ) : (
                       <ShoppingBag size={22} color={Color.primary} />
                     )}
-                  </View>
+                  </TouchableOpacity>
 
                   {/* Right: details */}
                   <View style={styles.itemMain}>
                     <View style={styles.itemTop}>
-                      <Text style={styles.itemName} numberOfLines={2}>
-                        {it.name}
-                      </Text>
+                      <TouchableOpacity
+                        style={styles.itemNameTap}
+                        activeOpacity={0.7}
+                        onPress={() => openProduct(it)}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Open ${it.name}`}
+                      >
+                        <Text style={styles.itemName} numberOfLines={2}>
+                          {it.name}
+                        </Text>
+                      </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.removeBtn}
                         onPress={() => {

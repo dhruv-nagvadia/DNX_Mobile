@@ -47,7 +47,14 @@ export default function ForgotPasswordScreen() {
       <StatusBar barStyle="light-content" backgroundColor={Color.ink} />
 
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <AuthHero promise="Forgot your password?" accentTail="Let's get you back in." compact />
+        {/* On the second step the arrow returns to the email step, not out of the flow. */}
+        <AuthHero
+          promise="Forgot your password?"
+          accentTail="Let's get you back in."
+          compact
+          showBack
+          onBack={step === 'reset' ? backToEmail : undefined}
+        />
 
         <View style={styles.sheet}>
           <ScrollView

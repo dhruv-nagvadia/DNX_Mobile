@@ -61,7 +61,7 @@ export default function RegisterScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         {/* Fixed: the hero never scrolls. */}
-        <AuthHero compact promise="Join DNX and book" accentTail="anything, faster." />
+        <AuthHero compact showBack promise="Join DNX and book" accentTail="anything, faster." />
 
         {/* The sheet owns the only scroll view on this screen. */}
         <View style={styles.sheet}>

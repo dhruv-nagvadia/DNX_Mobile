@@ -36,6 +36,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  // The icon + name, tappable together to open the business.
+  shopTap: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   shopName: { flex: 1, fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Color.textPrimary },
   clearShop: { fontSize: FontSize.xs, fontWeight: FontWeight.semibold, color: Color.error },
 
@@ -59,7 +61,9 @@ export const styles = StyleSheet.create({
   thumbImg: { width: '100%', height: '100%' },
   itemMain: { flex: 1, minWidth: 0, gap: 5 },
   itemTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: Spacing.sm },
-  itemName: { flex: 1, minWidth: 0, fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
+  // Wraps the product name so it opens the product (the remove button beside it stays separate).
+  itemNameTap: { flex: 1, minWidth: 0 },
+  itemName: { minWidth: 0, fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
   itemBottom: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Spacing.sm },
 
   stepper: {

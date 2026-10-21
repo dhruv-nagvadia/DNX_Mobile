@@ -38,6 +38,7 @@ export const ROUTES = {
   ADD_ADDRESS: 'AddAddressScreen',
   PRIVACY_POLICY: 'PrivacyPolicyScreen',
   TERMS: 'TermsScreen',
+  REFUND_POLICY: 'RefundPolicyScreen',
   HELP_SUPPORT: 'HelpSupportScreen',
   ABOUT: 'AboutScreen',
 } as const;
@@ -51,7 +52,8 @@ export type RootStackParamList = {
   [ROUTES.FORGOT_PASSWORD]: undefined;
   [ROUTES.TABS]: undefined;
   [ROUTES.HOME]: undefined;
-  [ROUTES.BOOKINGS]: undefined;
+  // `tab` opens the Bookings & Orders screen on that list (e.g. from Profile).
+  [ROUTES.BOOKINGS]: { tab?: 'bookings' | 'orders' } | undefined;
   [ROUTES.BOOKING_DETAILS]: { bookingId: string };
   [ROUTES.REMINDERS]: undefined;
   [ROUTES.ADD_REMINDER]: {
@@ -152,6 +154,7 @@ export type RootStackParamList = {
   [ROUTES.ADD_ADDRESS]: { id?: string };
   [ROUTES.PRIVACY_POLICY]: undefined;
   [ROUTES.TERMS]: undefined;
+  [ROUTES.REFUND_POLICY]: undefined;
   [ROUTES.HELP_SUPPORT]: undefined;
   [ROUTES.ABOUT]: undefined;
 };

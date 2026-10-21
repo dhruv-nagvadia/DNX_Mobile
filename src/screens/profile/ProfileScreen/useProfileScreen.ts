@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useGetMyBookingsQuery } from '@/redux/api/booking/bookingApi';
+import { useGetMyOrdersQuery } from '@/redux/api/order/orderApi';
 import { useGetRemindersQuery } from '@/redux/api/reminder/reminderApi';
 import {
   useChangePasswordMutation,
@@ -28,6 +29,7 @@ export function useProfileScreen() {
   const user = useAppSelector((s) => s.user.currentUser);
 
   const { data: bookings = [] } = useGetMyBookingsQuery();
+  const { data: orders = [] } = useGetMyOrdersQuery();
   const { data: reminders = [] } = useGetRemindersQuery();
   const [updateMe, { isLoading: saving }] = useUpdateMeMutation();
   const [changePassword, { isLoading: changingPassword }] = useChangePasswordMutation();
@@ -36,10 +38,10 @@ export function useProfileScreen() {
   const stats = useMemo(
     () => ({
       bookings: bookings.length,
-      reviews: bookings.filter((b) => b.review).length,
+      orders: orders.length,
       reminders: reminders.filter((r) => r.status === 'PENDING').length,
     }),
-    [bookings, reminders],
+    [bookings, orders, reminders],
   );
 
   // Edit-profile modal.
@@ -239,7 +241,11 @@ export function useProfileScreen() {
     closeDelete,
     onDeleteField,
     confirmDelete,
-    goToBookings: useCallback(() => navigation.navigate(ROUTES.BOOKINGS), [navigation]),
+    goToBookings: useCallback(
+      () => navigation.navigate(ROUTES.BOOKINGS, { tab: 'bookings' }),
+      [navigation],
+    ),
+    goToOrders: useCallback(() => navigation.navigate(ROUTES.BOOKINGS, { tab: 'orders' }), [navigation]),
     goToReminders: useCallback(() => navigation.navigate(ROUTES.REMINDERS), [navigation]),
     goToAddresses: useCallback(() => navigation.navigate(ROUTES.ADDRESSES), [navigation]),
     goToHelpSupport: useCallback(() => navigation.navigate(ROUTES.HELP_SUPPORT), [navigation]),

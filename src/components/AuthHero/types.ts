@@ -5,6 +5,10 @@ export interface AuthHeroProps {
   accentTail: string;
   /** Drop the category chips to save vertical space on longer forms. */
   compact?: boolean;
+  /** Show a back arrow above the logo (for screens pushed on top of another). */
+  showBack?: boolean;
+  /** What the arrow does. Defaults to going back one screen. */
+  onBack?: () => void;
 }
 
 export interface GlowProps {

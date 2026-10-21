@@ -13,6 +13,7 @@ import RegisterScreen from '@/screens/auth/RegisterScreen';
 import ForgotPasswordScreen from '@/screens/auth/ForgotPasswordScreen';
 import PrivacyPolicyScreen from '@/screens/legal/PrivacyPolicyScreen';
 import TermsScreen from '@/screens/legal/TermsScreen';
+import RefundPolicyScreen from '@/screens/legal/RefundPolicyScreen';
 import HelpSupportScreen from '@/screens/profile/HelpSupportScreen';
 import AboutScreen from '@/screens/profile/AboutScreen';
 import OnboardingScreen from '@/screens/onboarding/OnboardingScreen';
@@ -122,6 +123,7 @@ export function AuthStack() {
       <Stack.Screen name={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordScreen} />
       <Stack.Screen name={ROUTES.PRIVACY_POLICY} component={PrivacyPolicyScreen} />
       <Stack.Screen name={ROUTES.TERMS} component={TermsScreen} />
+      <Stack.Screen name={ROUTES.REFUND_POLICY} component={RefundPolicyScreen} />
     </Stack.Navigator>
   );
 }
@@ -184,6 +186,7 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.ADD_ADDRESS} component={AddAddressScreen} />
       <Stack.Screen name={ROUTES.PRIVACY_POLICY} component={PrivacyPolicyScreen} />
       <Stack.Screen name={ROUTES.TERMS} component={TermsScreen} />
+      <Stack.Screen name={ROUTES.REFUND_POLICY} component={RefundPolicyScreen} />
       <Stack.Screen name={ROUTES.HELP_SUPPORT} component={HelpSupportScreen} />
       <Stack.Screen name={ROUTES.ABOUT} component={AboutScreen} />
     </Stack.Navigator>

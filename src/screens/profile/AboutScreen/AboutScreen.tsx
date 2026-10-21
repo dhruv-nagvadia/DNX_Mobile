@@ -56,6 +56,14 @@ export default function AboutScreen() {
             <Text style={styles.rowLabel}>Terms of Service</Text>
             <ChevronRight size={20} color={Color.placeholder} />
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.row, styles.rowBorder]}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate(ROUTES.REFUND_POLICY)}
+          >
+            <Text style={styles.rowLabel}>Refund & Cancellation Policy</Text>
+            <ChevronRight size={20} color={Color.placeholder} />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>

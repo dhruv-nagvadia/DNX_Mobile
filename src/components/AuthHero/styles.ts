@@ -22,6 +22,21 @@ export const styles = StyleSheet.create({
     position: 'absolute',
   },
 
+  // Back arrow row, above the logo.
+  backRow: {
+    flexDirection: 'row',
+    marginLeft: -Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+
   logoRow: {
     flexDirection: 'row',
     alignItems: 'center',

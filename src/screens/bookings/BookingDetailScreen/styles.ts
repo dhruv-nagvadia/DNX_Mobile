@@ -209,6 +209,8 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.md,
     fontWeight: FontWeight.semibold,
   },
+  // Icon + label side by side inside an action button.
+  actionInline: { flexDirection: 'row', justifyContent: 'center', gap: 8 },
   actionOutline: {
     backgroundColor: Color.white,
     borderColor: Color.primary,

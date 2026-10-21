@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { CalendarDays, ChevronRight, ShoppingBag } from 'lucide-react-native';
 
 import { ROUTES } from '@/navigation/routes';
@@ -38,8 +38,22 @@ export default function BookingsScreen() {
   const { data: orders = [], isLoading: ordersLoading } = useGetMyOrdersQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
-  const navigation = useNavigation<{ navigate: (r: string, p?: object) => void }>();
+  const navigation = useNavigation<{
+    navigate: (r: string, p?: object) => void;
+    setParams: (p: object) => void;
+  }>();
+  const route = useRoute();
   const [tab, setTab] = useState<Tab>('bookings');
+
+  // Opened from elsewhere (e.g. Profile → Orders) asking for a specific list.
+  // The request is cleared once applied, so asking for the same list again later works.
+  const requestedTab = (route.params as { tab?: Tab } | undefined)?.tab;
+  useEffect(() => {
+    if (requestedTab === 'bookings' || requestedTab === 'orders') {
+      setTab(requestedTab);
+      navigation.setParams({ tab: undefined });
+    }
+  }, [requestedTab, navigation]);
 
   const isLoading = tab === 'bookings' ? bookingsLoading : ordersLoading;
 

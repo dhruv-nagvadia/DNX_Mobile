@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useCallback, useMemo, useRef } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { useGetRemindersQuery, useRespondReminderMutation } from '@/redux/api/reminder/reminderApi';
 import { Reminder, ReminderStatus } from '@/redux/api/reminder/types';
@@ -10,8 +10,27 @@ import { RemindersNavigationProp } from './types';
 /** Groups reminders into overdue / upcoming (PENDING) / history (Done or Missed). */
 export function useRemindersScreen() {
   const navigation = useNavigation<RemindersNavigationProp>();
-  const { data: reminders = [], isLoading } = useGetRemindersQuery();
+  // Missed days of a repeating reminder are added by the server whenever the
+  // list is loaded, so always load a fresh list instead of reusing a cached one.
+  const {
+    data: reminders = [],
+    isLoading,
+    refetch,
+  } = useGetRemindersQuery(undefined, { refetchOnMountOrArgChange: true });
   const [respond] = useRespondReminderMutation();
+
+  // This is a tab, so it stays mounted — reload each time it comes back into
+  // view (the first focus is covered by the initial load above).
+  const seenFirstFocus = useRef(false);
+  useFocusEffect(
+    useCallback(() => {
+      if (!seenFirstFocus.current) {
+        seenFirstFocus.current = true;
+        return;
+      }
+      refetch();
+    }, [refetch]),
+  );
 
   const groups = useMemo(() => {
     const today = new Date();

@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { AccessibilityInfo, Animated, Text, View } from 'react-native';
+import { AccessibilityInfo, Animated, Text, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { ChevronLeft } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Color, Duration } from '@/utils/Theme';
@@ -16,8 +18,17 @@ import { styles } from './styles';
  * the only scroll view, so the brand stays put while the form moves. This also
  * owns the top safe-area inset.
  */
-export function AuthHero({ promise, accentTail, compact = false }: AuthHeroProps) {
+export function AuthHero({
+  promise,
+  accentTail,
+  compact = false,
+  showBack = false,
+  onBack,
+}: AuthHeroProps) {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+  // Nothing to go back to (e.g. this is the first screen) → no arrow.
+  const canGoBack = showBack && (!!onBack || navigation.canGoBack());
   const entrance = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -64,6 +75,19 @@ export function AuthHero({ promise, accentTail, compact = false }: AuthHeroProps
       <Glow size={320} color={Color.heroBlue2} top={-90} right={-110} opacity={0.44} />
 
       <Animated.View style={animatedStyle}>
+        {canGoBack && (
+          <View style={styles.backRow}>
+            <TouchableOpacity
+              style={styles.backBtn}
+              onPress={onBack ?? (() => navigation.goBack())}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+            >
+              <ChevronLeft size={24} color={Color.onDark} />
+            </TouchableOpacity>
+          </View>
+        )}
         <View style={styles.logoRow}>
           <View style={styles.mark}>
             <Text style={styles.markText}>D</Text>
