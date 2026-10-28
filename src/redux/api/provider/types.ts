@@ -72,6 +72,10 @@ export interface BusinessHour {
   isOpen: boolean;
   openTime: string; // "HH:MM"
   closeTime: string;
+  // Optional midday break — both set together or neither. No slots are
+  // offered to customers during this window.
+  breakStart?: string | null;
+  breakEnd?: string | null;
 }
 
 /** A date-specific override of the weekly hours (future dates only). */

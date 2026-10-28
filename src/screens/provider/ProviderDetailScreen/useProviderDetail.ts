@@ -23,8 +23,14 @@ const DEFAULT_SLOT_DURATION_MIN = 30;
 /** A busy interval, in epoch milliseconds. */
 type Interval = { start: number; end: number };
 
-/** Resolved open hours for a specific day (null = closed). */
-type DayConfig = { openTime: string; closeTime: string } | null;
+/** Resolved open hours for a specific day (null = closed). A break (e.g.
+ * lunch) carves out a window inside the open hours with no bookable slots. */
+type DayConfig = {
+  openTime: string;
+  closeTime: string;
+  breakStart?: string | null;
+  breakEnd?: string | null;
+} | null;
 
 /** A selectable time slot and whether it's already taken. */
 export interface SlotInfo {
@@ -81,7 +87,9 @@ function effectiveConfig(
     return override.isOpen ? { openTime: override.openTime, closeTime: override.closeTime } : null;
   }
   const w = weekly.find((h) => h.dayOfWeek === day.getDay() && h.isOpen);
-  return w ? { openTime: w.openTime, closeTime: w.closeTime } : null;
+  return w
+    ? { openTime: w.openTime, closeTime: w.closeTime, breakStart: w.breakStart, breakEnd: w.breakEnd }
+    : null;
 }
 
 /**
@@ -89,7 +97,9 @@ function effectiveConfig(
  * duration, so a 5-min service offers a slot every 5 min instead of the same
  * spacing as a 60-min one — within a day's open hours where the chosen
  * service fits before closing. Each slot is flagged `booked` when its full
- * interval [start, start + duration) overlaps an existing booking.
+ * interval [start, start + duration) overlaps an existing booking. A slot
+ * that overlaps the day's break window (if any) is dropped entirely —
+ * unlike an already-booked slot, it was never offered in the first place.
  */
 function buildSlots(config: DayConfig, day: Date, booked: Interval[], durationMin: number): SlotInfo[] {
   if (!config) return [];
@@ -102,6 +112,19 @@ function buildSlots(config: DayConfig, day: Date, booked: Interval[], durationMi
   const close = new Date(day);
   close.setHours(ch, cm, 0, 0);
 
+  let breakStart: number | null = null;
+  let breakEnd: number | null = null;
+  if (config.breakStart && config.breakEnd) {
+    const [bsh, bsm] = config.breakStart.split(':').map(Number);
+    const [beh, bem] = config.breakEnd.split(':').map(Number);
+    const bs = new Date(day);
+    bs.setHours(bsh, bsm, 0, 0);
+    const be = new Date(day);
+    be.setHours(beh, bem, 0, 0);
+    breakStart = bs.getTime();
+    breakEnd = be.getTime();
+  }
+
   const now = Date.now();
   const durationMs = durationMin * 60_000;
   const slots: SlotInfo[] = [];
@@ -109,8 +132,9 @@ function buildSlots(config: DayConfig, day: Date, booked: Interval[], durationMi
   while (cursor < close) {
     const start = cursor.getTime();
     const end = start + durationMs;
+    const onBreak = breakStart !== null && breakEnd !== null && start < breakEnd && end > breakStart;
 
-    if (start > now && end <= close.getTime()) {
+    if (start > now && end <= close.getTime() && !onBreak) {
       const isBooked = booked.some((b) => start < b.end && end > b.start);
       slots.push({ time: new Date(cursor), booked: isBooked });
     }
