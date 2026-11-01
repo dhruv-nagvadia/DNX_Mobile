@@ -1,7 +1,9 @@
 import React from 'react';
-import { Alert, RefreshControl, SafeAreaView, ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
-import { Plus } from 'lucide-react-native';
+import { Alert, RefreshControl, ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { Plus, Wrench } from 'lucide-react-native';
 
+import { AppHeader } from '@/components/AppHeader';
+import { EmptyState } from '@/components/EmptyState';
 import { Color } from '@/utils/Theme';
 import { formatMoney } from '@/utils/money';
 
@@ -28,22 +30,27 @@ export default function ServicesScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Services</Text>
-        <TouchableOpacity style={styles.addBtn} onPress={addService} accessibilityRole="button">
-          <Plus size={18} color={Color.white} />
-        </TouchableOpacity>
-      </View>
+    <View style={styles.root}>
+      <AppHeader
+        title="Services"
+        right={
+          <TouchableOpacity style={styles.addBtn} onPress={addService} accessibilityRole="button">
+            <Plus size={18} color={Color.primary} />
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         refreshControl={<RefreshControl refreshing={refreshing || isLoading} onRefresh={refresh} />}
       >
         {services.length === 0 && !isLoading ? (
-          <View style={styles.emptyWrap}>
-            <Text style={styles.emptyText}>No services yet. Add one to start taking bookings.</Text>
-          </View>
+          <EmptyState
+            icon={<Wrench size={48} color={Color.placeholder} strokeWidth={1.4} />}
+            title="No services yet"
+            body="Add one to start taking bookings."
+          />
         ) : (
           services.map((s) => (
             <View key={s.id} style={[styles.card, s.isActive === false && styles.cardInactive]}>
@@ -76,6 +83,6 @@ export default function ServicesScreen() {
           ))
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

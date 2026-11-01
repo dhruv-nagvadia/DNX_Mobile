@@ -1,7 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Briefcase, CalendarDays, Home, User, Wallet } from 'lucide-react-native';
+import { CalendarDays, Home, User } from 'lucide-react-native';
 
 import { ROUTES, RootStackParamList } from './routes';
 import { Color, FontWeight } from '@/utils/Theme';
@@ -10,10 +10,13 @@ import RegisterScreen from '@/screens/auth/RegisterScreen';
 import ForgotPasswordScreen from '@/screens/auth/ForgotPasswordScreen';
 import HomeScreen from '@/screens/home/HomeScreen';
 import BookingsOrdersScreen from '@/screens/bookingsOrders/BookingsOrdersScreen';
+import OrderDetailScreen from '@/screens/bookingsOrders/OrderDetailScreen';
+import BookingDetailScreen from '@/screens/bookingsOrders/BookingDetailScreen';
 import BusinessesScreen from '@/screens/business/BusinessesScreen';
 import BusinessDetailScreen from '@/screens/business/BusinessDetailScreen';
 import BusinessHoursScreen from '@/screens/business/BusinessHoursScreen';
 import BusinessCalendarScreen from '@/screens/business/BusinessCalendarScreen';
+import BusinessPhotosScreen from '@/screens/business/BusinessPhotosScreen';
 import BusinessEditScreen from '@/screens/business/BusinessEditScreen';
 import ServicesScreen from '@/screens/catalog/ServicesScreen';
 import ServiceFormScreen from '@/screens/catalog/ServiceFormScreen';
@@ -26,6 +29,8 @@ import ReviewsScreen from '@/screens/reviews/ReviewsScreen';
 import EarningsScreen from '@/screens/earnings/EarningsScreen';
 import ProfileScreen from '@/screens/profile/ProfileScreen';
 import NotificationsScreen from '@/screens/notifications/NotificationsScreen';
+import BusinessCreateScreen from '@/screens/business/BusinessCreateScreen';
+import SupportScreen from '@/screens/profile/SupportScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -41,8 +46,13 @@ export function AuthStack() {
   );
 }
 
-/** Bottom tabs for the signed-in provider: Home, Bookings & Orders, Businesses,
- * Earnings, Profile. */
+/**
+ * Bottom tabs — just the 3 a provider reaches for constantly: Home, Bookings
+ * & Orders, Profile. Everything else (Businesses, Earnings, Coupons,
+ * Support, ...) lives one tap away from Home's quick-actions row and from
+ * Profile's menu instead of crowding the tab bar — leaves room to add more
+ * sections later without ever needing a 6th/7th tab.
+ */
 function TabNavigator() {
   return (
     <Tab.Navigator
@@ -73,22 +83,6 @@ function TabNavigator() {
         }}
       />
       <Tab.Screen
-        name={ROUTES.BUSINESSES}
-        component={BusinessesScreen}
-        options={{
-          tabBarLabel: 'Businesses',
-          tabBarIcon: ({ color, size }) => <Briefcase color={color} size={size} />,
-        }}
-      />
-      <Tab.Screen
-        name={ROUTES.EARNINGS}
-        component={EarningsScreen}
-        options={{
-          tabBarLabel: 'Earnings',
-          tabBarIcon: ({ color, size }) => <Wallet color={color} size={size} />,
-        }}
-      />
-      <Tab.Screen
         name={ROUTES.PROFILE}
         component={ProfileScreen}
         options={{
@@ -110,9 +104,17 @@ export function MainStack() {
       }}
     >
       <Stack.Screen name={ROUTES.TABS} component={TabNavigator} />
+      {/* Also reachable as a pushed screen (not just the bottom tab) — e.g. a
+          single business's scoped Orders/Bookings list from its Manage grid. */}
+      <Stack.Screen name={ROUTES.BOOKINGS_ORDERS} component={BookingsOrdersScreen} />
+      <Stack.Screen name={ROUTES.ORDER_DETAIL} component={OrderDetailScreen} />
+      <Stack.Screen name={ROUTES.BOOKING_DETAIL} component={BookingDetailScreen} />
+      <Stack.Screen name={ROUTES.BUSINESSES} component={BusinessesScreen} />
+      <Stack.Screen name={ROUTES.EARNINGS} component={EarningsScreen} />
       <Stack.Screen name={ROUTES.BUSINESS_DETAIL} component={BusinessDetailScreen} />
       <Stack.Screen name={ROUTES.BUSINESS_HOURS} component={BusinessHoursScreen} />
       <Stack.Screen name={ROUTES.BUSINESS_CALENDAR} component={BusinessCalendarScreen} />
+      <Stack.Screen name={ROUTES.BUSINESS_PHOTOS} component={BusinessPhotosScreen} />
       <Stack.Screen name={ROUTES.BUSINESS_EDIT} component={BusinessEditScreen} />
       <Stack.Screen name={ROUTES.SERVICES} component={ServicesScreen} />
       <Stack.Screen name={ROUTES.SERVICE_FORM} component={ServiceFormScreen} />
@@ -123,6 +125,8 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.COUPON_FORM} component={CouponFormScreen} />
       <Stack.Screen name={ROUTES.REVIEWS} component={ReviewsScreen} />
       <Stack.Screen name={ROUTES.NOTIFICATIONS} component={NotificationsScreen} />
+      <Stack.Screen name={ROUTES.BUSINESS_CREATE} component={BusinessCreateScreen} />
+      <Stack.Screen name={ROUTES.SUPPORT} component={SupportScreen} />
     </Stack.Navigator>
   );
 }

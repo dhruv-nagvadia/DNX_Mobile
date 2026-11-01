@@ -6,55 +6,64 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.background,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.sm,
-  },
-  title: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
   headerActions: {
     flexDirection: 'row',
     gap: Spacing.sm,
   },
   iconBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.surface,
-    ...Shadow.card,
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
   },
   addBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.primary,
+    backgroundColor: Color.white,
   },
 
   listContent: {
     padding: Spacing.lg,
-    paddingTop: Spacing.sm,
     gap: Spacing.sm,
   },
   card: {
     backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
     padding: Spacing.md,
     gap: 4,
+    borderWidth: 1,
+    borderColor: Color.border,
     ...Shadow.card,
   },
   cardInactive: {
     opacity: 0.55,
+  },
+  cardRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  productImage: {
+    width: 56,
+    height: 56,
+    borderRadius: Radius.md,
+    backgroundColor: Color.divider,
+  },
+  productImageFallback: {
+    width: 56,
+    height: 56,
+    borderRadius: Radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Color.divider,
+  },
+  cardMain: {
+    flex: 1,
+    gap: 4,
   },
   cardTop: {
     flexDirection: 'row',
@@ -102,7 +111,7 @@ export const styles = StyleSheet.create({
   actionBtn: {
     paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: Radius.md,
+    borderRadius: Radius.pill,
     borderWidth: 1,
     borderColor: Color.border,
   },
@@ -116,16 +125,5 @@ export const styles = StyleSheet.create({
   },
   actionBtnTextDanger: {
     color: Color.error,
-  },
-
-  emptyWrap: {
-    alignItems: 'center',
-    paddingVertical: Spacing.xl,
-    gap: 4,
-  },
-  emptyText: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-    textAlign: 'center',
   },
 });

@@ -6,9 +6,10 @@ import {
   useGetMyBusinessesQuery,
   useGetMyOrdersQuery,
 } from '@/redux/api/business/businessApi';
-import { DashboardBooking, BusinessOrder } from '@/redux/api/business/types';
+import { Business, DashboardBooking, BusinessOrder } from '@/redux/api/business/types';
+import { stockLevel } from '@/utils/units';
 
-import { AttentionItem } from './types';
+import { AttentionItem, LowStockItem } from './types';
 
 /**
  * Ports `frontend/src/pages/provider/DashboardPage/useDashboard.ts` 1:1 — same
@@ -35,6 +36,27 @@ const orderNeedsCollection = (o: BusinessOrder) =>
 const isOpenOrder = (o: BusinessOrder) =>
   o.status === 'PENDING' || o.status === 'CONFIRMED' || o.status === 'READY';
 
+const productStockLevel = (stockQty: number, stepQty: number, unlimitedStock?: boolean) =>
+  unlimitedStock ? (stockQty <= 0 ? 'out' : 'ok') : stockLevel(stockQty, stepQty);
+
+function deriveLowStock(businesses: Business[]): LowStockItem[] {
+  const items: LowStockItem[] = [];
+  businesses.forEach((b) => {
+    (b.products ?? []).forEach((p) => {
+      if (p.isActive === false) return;
+      const level = productStockLevel(p.stockQty, p.stepQty, p.unlimitedStock);
+      if (level === 'ok') return;
+      items.push({ product: p, businessId: b.id, businessName: b.businessName, level });
+    });
+  });
+  return items
+    .sort((a, b) => {
+      if (a.level !== b.level) return a.level === 'out' ? -1 : 1;
+      return a.product.stockQty - b.product.stockQty;
+    })
+    .slice(0, 6);
+}
+
 export function useHomeScreen() {
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const [refreshing, setRefreshing] = useState(false);
@@ -45,6 +67,10 @@ export function useHomeScreen() {
 
   const bookingsData = bookingsQuery.data;
   const ordersData = ordersQuery.data;
+  const businessesData = businesses.data;
+
+  const hasStore = useMemo(() => (businessesData ?? []).some((b) => b.type === 'STORE'), [businessesData]);
+  const lowStock = useMemo(() => deriveLowStock(businessesData ?? []), [businessesData]);
 
   const derived = useMemo(() => {
     const bookings = bookingsData ?? [];
@@ -110,6 +136,8 @@ export function useHomeScreen() {
     businesses: businesses.data ?? [],
     hasBusinesses: (businesses.data?.length ?? 0) > 0,
     isLoading: businesses.isLoading || bookingsQuery.isLoading || ordersQuery.isLoading,
+    hasStore,
+    lowStock,
     refreshing,
     refresh,
     ...derived,

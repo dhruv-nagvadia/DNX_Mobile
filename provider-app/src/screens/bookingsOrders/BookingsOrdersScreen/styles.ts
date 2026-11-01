@@ -12,11 +12,6 @@ export const styles = StyleSheet.create({
     paddingBottom: Spacing.sm,
     gap: Spacing.sm,
   },
-  title: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
 
   segment: {
     flexDirection: 'row',
@@ -50,9 +45,11 @@ export const styles = StyleSheet.create({
 
   card: {
     backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
     padding: Spacing.md,
     gap: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Color.border,
     ...Shadow.card,
   },
   cardTop: {
@@ -75,8 +72,9 @@ export const styles = StyleSheet.create({
     color: Color.textSecondary,
   },
   badgeRow: {
-    flexDirection: 'row',
-    gap: 6,
+    alignItems: 'flex-end',
+    gap: 4,
+    marginRight: -Spacing.md,
   },
 
   itemsPreview: {
@@ -104,7 +102,7 @@ export const styles = StyleSheet.create({
   actionBtn: {
     paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: Radius.md,
+    borderRadius: Radius.pill,
     borderWidth: 1,
     borderColor: Color.border,
   },
@@ -125,15 +123,5 @@ export const styles = StyleSheet.create({
   },
   actionBtnTextDanger: {
     color: Color.error,
-  },
-
-  emptyWrap: {
-    alignItems: 'center',
-    paddingVertical: Spacing.xl,
-    gap: 4,
-  },
-  emptyText: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
   },
 });

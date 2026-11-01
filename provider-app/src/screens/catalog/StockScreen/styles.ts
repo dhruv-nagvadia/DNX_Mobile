@@ -14,20 +14,15 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
     paddingBottom: Spacing.xl,
   },
-  title: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-    marginBottom: Spacing.xs,
-  },
-
   resultCard: {
     backgroundColor: Color.surface,
-    borderRadius: Radius.md,
-    padding: Spacing.sm + 2,
+    borderRadius: Radius.lg,
+    padding: Spacing.sm + 4,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Color.border,
     ...Shadow.card,
   },
   resultName: {
@@ -42,9 +37,11 @@ export const styles = StyleSheet.create({
 
   selectedCard: {
     backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
     padding: Spacing.md,
     gap: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Color.border,
     ...Shadow.card,
   },
   selectedHeader: {

@@ -7,144 +7,175 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.background,
   },
   content: {
-    padding: Spacing.lg,
-    gap: Spacing.md,
     paddingBottom: Spacing.xl,
   },
 
-  headerRow: {
+  hero: {
+    backgroundColor: Color.primary,
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.xl * 1.5,
+    paddingHorizontal: Spacing.lg,
+    alignItems: 'center',
+    gap: 4,
+  },
+  heroTopRow: {
+    position: 'absolute',
+    top: Spacing.lg,
+    left: Spacing.lg,
+    right: Spacing.lg,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
-  title: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  bellBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  heroIconBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.surface,
-    ...Shadow.card,
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
   },
   bellDot: {
     position: 'absolute',
-    top: 8,
-    right: 8,
+    top: 7,
+    right: 7,
     width: 8,
     height: 8,
     borderRadius: 4,
     backgroundColor: Color.error,
   },
-
-  statGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
+  avatar: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Color.accent,
+    marginTop: Spacing.sm,
   },
-  statTile: {
-    flexBasis: '48%',
-    flexGrow: 1,
+  avatarText: {
+    fontSize: FontSize.xl,
+    fontWeight: FontWeight.extrabold,
+    color: Color.ink,
+  },
+  heroName: {
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.extrabold,
+    color: Color.white,
+    marginTop: Spacing.xs,
+  },
+  heroEmail: {
+    fontSize: FontSize.sm,
+    color: Color.onDarkMuted,
+  },
+  heroPill: {
+    marginTop: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: Radius.pill,
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+  },
+  heroPillText: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.bold,
+    color: Color.white,
+  },
+
+  body: {
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.md,
+  },
+
+  statsCard: {
+    flexDirection: 'row',
     backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
-    padding: Spacing.md,
-    gap: 2,
+    borderRadius: Radius.xl,
+    borderWidth: 1,
+    borderColor: Color.border,
+    marginTop: -Spacing.xl,
     ...Shadow.card,
   },
+  stat: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: Spacing.md,
+    gap: 2,
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: Color.border,
+    marginVertical: Spacing.sm,
+  },
   statValue: {
-    fontSize: FontSize.xl,
+    fontSize: FontSize.lg,
     fontWeight: FontWeight.extrabold,
     color: Color.textPrimary,
   },
   statLabel: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-  },
-
-  card: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
-    padding: Spacing.md,
-    gap: Spacing.sm,
-    ...Shadow.card,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cardTitle: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  editLink: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.primary,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  detailLabel: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-  },
-  detailValue: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
-  },
-  errorText: {
-    fontSize: FontSize.sm,
-    color: Color.error,
-  },
-  editActions: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    marginTop: Spacing.xs,
-  },
-  editButton: {
-    flex: 1,
-  },
-
-  businessRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: Spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: Color.border,
-  },
-  businessRowFirst: {
-    borderTopWidth: 0,
-  },
-  businessName: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
-  },
-  businessMeta: {
     fontSize: FontSize.xs,
     color: Color.textSecondary,
   },
-  emptyText: {
+
+  sectionGroup: {
+    gap: Spacing.xs,
+  },
+  sectionLabel: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.bold,
+    color: Color.textSecondary,
+    letterSpacing: 0.5,
+    marginLeft: 2,
+  },
+  menu: {
+    backgroundColor: Color.surface,
+    borderRadius: Radius.xl,
+    borderWidth: 1,
+    borderColor: Color.border,
+    overflow: 'hidden',
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    padding: Spacing.sm + 2,
+    borderTopWidth: 1,
+    borderTopColor: Color.divider,
+  },
+  menuItemFirst: {
+    borderTopWidth: 0,
+  },
+  menuIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: Radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Color.primarySoft,
+  },
+  menuItemText: {
+    flex: 1,
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: Color.textPrimary,
+  },
+  menuItemValue: {
     fontSize: FontSize.sm,
     color: Color.textSecondary,
   },
 
-  logoutRow: {
+  logoutBtn: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: Spacing.sm,
+    justifyContent: 'center',
+    gap: Spacing.xs,
+    paddingVertical: Spacing.sm + 2,
+    borderRadius: Radius.xl,
+    borderWidth: 1,
+    borderColor: Color.errorBorder,
+    backgroundColor: Color.errorSoft,
   },
   logoutText: {
     fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
+    fontWeight: FontWeight.bold,
     color: Color.error,
   },
 
@@ -152,5 +183,37 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: FontSize.xs,
     color: Color.textSecondary,
+  },
+
+  errorText: {
+    fontSize: FontSize.sm,
+    color: Color.error,
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: Color.overlay,
+    justifyContent: 'flex-end',
+  },
+  modalSheet: {
+    backgroundColor: Color.surface,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
+    padding: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  modalTitle: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+    color: Color.textPrimary,
+    marginBottom: Spacing.xs,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    marginTop: Spacing.xs,
+  },
+  modalButton: {
+    flex: 1,
   },
 });

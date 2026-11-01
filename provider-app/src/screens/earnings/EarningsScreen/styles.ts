@@ -11,11 +11,6 @@ export const styles = StyleSheet.create({
     gap: Spacing.md,
     paddingBottom: Spacing.xl,
   },
-  title: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
 
   presetRow: {
     gap: Spacing.xs,
@@ -54,9 +49,11 @@ export const styles = StyleSheet.create({
     flexBasis: '48%',
     flexGrow: 1,
     backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
     padding: Spacing.md,
     gap: 4,
+    borderWidth: 1,
+    borderColor: Color.border,
     ...Shadow.card,
   },
   statValue: {
@@ -76,9 +73,11 @@ export const styles = StyleSheet.create({
 
   balanceCard: {
     backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
     padding: Spacing.md,
     gap: 6,
+    borderWidth: 1,
+    borderColor: Color.border,
     ...Shadow.card,
   },
   balanceTitle: {
@@ -125,28 +124,27 @@ export const styles = StyleSheet.create({
   },
 
   section: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
-    padding: Spacing.md,
     gap: Spacing.sm,
-    ...Shadow.card,
   },
   sectionTitle: {
-    fontSize: FontSize.md,
+    fontSize: FontSize.xs,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
+    color: Color.textSecondary,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+    marginLeft: 2,
   },
 
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: Spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: Color.border,
-  },
-  rowFirst: {
-    borderTopWidth: 0,
+    gap: Spacing.sm,
+    backgroundColor: Color.surface,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Color.border,
+    padding: Spacing.sm + 2,
   },
   rowMain: {
     flex: 1,
@@ -191,6 +189,14 @@ export const styles = StyleSheet.create({
     color: Color.primary,
   },
 
+  emptyCard: {
+    backgroundColor: Color.surface,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Color.border,
+    padding: Spacing.md,
+    alignItems: 'center',
+  },
   emptyText: {
     fontSize: FontSize.sm,
     color: Color.textSecondary,

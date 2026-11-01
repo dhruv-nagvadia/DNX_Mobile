@@ -1,6 +1,7 @@
 import React from 'react';
-import { RefreshControl, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
+import { AppHeader } from '@/components/AppHeader';
 import { formatMoney } from '@/utils/money';
 import { RANGE_PRESETS } from '@/utils/dateRange';
 import { EarningsTransaction } from '@/redux/api/business/types';
@@ -25,13 +26,12 @@ export default function EarningsScreen() {
   const balance = earnings?.balance.balanceMinor ?? 0;
 
   return (
-    <SafeAreaView style={styles.root}>
+    <View style={styles.root}>
+      <AppHeader title="Earnings" />
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing || isLoading} onRefresh={refresh} />}
       >
-        <Text style={styles.title}>Earnings</Text>
-
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.presetRow}>
           {RANGE_PRESETS.map((p) => (
             <TouchableOpacity
@@ -132,8 +132,8 @@ export default function EarningsScreen() {
             {businesses.length > 2 && earnings.businesses.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>By business</Text>
-                {earnings.businesses.map((b, i) => (
-                  <View key={b.id} style={[styles.row, i === 0 && styles.rowFirst]}>
+                {earnings.businesses.map((b) => (
+                  <View key={b.id} style={styles.row}>
                     <View style={styles.rowMain}>
                       <Text style={styles.rowTitle}>{b.name}</Text>
                       <Text style={styles.rowSubtitle}>
@@ -152,10 +152,12 @@ export default function EarningsScreen() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Completed sales</Text>
               {earnings.transactions.length === 0 ? (
-                <Text style={styles.emptyText}>No completed sales in this range.</Text>
+                <View style={styles.emptyCard}>
+                  <Text style={styles.emptyText}>No completed sales in this range.</Text>
+                </View>
               ) : (
-                earnings.transactions.map((t, i) => (
-                  <View key={`${t.kind}-${t.id}`} style={[styles.row, i === 0 && styles.rowFirst]}>
+                earnings.transactions.map((t) => (
+                  <View key={`${t.kind}-${t.id}`} style={styles.row}>
                     <View style={styles.rowMain}>
                       <View style={styles.badge}>
                         <Text style={styles.badgeText}>{t.kind === 'BOOKING' ? 'Booking' : 'Order'}</Text>
@@ -181,8 +183,8 @@ export default function EarningsScreen() {
             {earnings.payouts.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Settlements</Text>
-                {earnings.payouts.map((p, i) => (
-                  <View key={p.id} style={[styles.row, i === 0 && styles.rowFirst]}>
+                {earnings.payouts.map((p) => (
+                  <View key={p.id} style={styles.row}>
                     <View style={styles.rowMain}>
                       <View style={styles.badge}>
                         <Text style={styles.badgeText}>
@@ -204,6 +206,6 @@ export default function EarningsScreen() {
           </>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

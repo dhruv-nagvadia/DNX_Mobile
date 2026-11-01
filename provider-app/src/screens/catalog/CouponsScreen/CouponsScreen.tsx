@@ -1,7 +1,9 @@
 import React from 'react';
-import { Alert, RefreshControl, SafeAreaView, ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
-import { Plus } from 'lucide-react-native';
+import { Alert, RefreshControl, ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { Plus, Ticket } from 'lucide-react-native';
 
+import { AppHeader } from '@/components/AppHeader';
+import { EmptyState } from '@/components/EmptyState';
 import { Color } from '@/utils/Theme';
 import { formatMoney } from '@/utils/money';
 import { Coupon } from '@/redux/api/business/types';
@@ -37,22 +39,27 @@ export default function CouponsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Coupons</Text>
-        <TouchableOpacity style={styles.addBtn} onPress={addCoupon} accessibilityRole="button">
-          <Plus size={18} color={Color.white} />
-        </TouchableOpacity>
-      </View>
+    <View style={styles.root}>
+      <AppHeader
+        title="Coupons"
+        right={
+          <TouchableOpacity style={styles.addBtn} onPress={addCoupon} accessibilityRole="button">
+            <Plus size={18} color={Color.primary} />
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         refreshControl={<RefreshControl refreshing={refreshing || isLoading} onRefresh={refresh} />}
       >
         {coupons.length === 0 && !isLoading ? (
-          <View style={styles.emptyWrap}>
-            <Text style={styles.emptyText}>No coupons yet. Create one to run a promo.</Text>
-          </View>
+          <EmptyState
+            icon={<Ticket size={48} color={Color.placeholder} strokeWidth={1.4} />}
+            title="No coupons yet"
+            body="Create one to run a promo."
+          />
         ) : (
           coupons.map((c) => (
             <View key={c.id} style={[styles.card, !c.isActive && styles.cardInactive]}>
@@ -94,6 +101,6 @@ export default function CouponsScreen() {
           ))
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

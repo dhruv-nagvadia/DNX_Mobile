@@ -1,7 +1,8 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, Switch, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Switch, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/AppButton';
+import { AppHeader } from '@/components/AppHeader';
 import { AppInput } from '@/components/AppInput';
 import { Color } from '@/utils/Theme';
 
@@ -12,11 +13,10 @@ export default function ServiceFormScreen() {
   const { isNew, form, onChange, error, saving, partialPayLocked, submit } = useServiceFormScreen();
 
   return (
-    <SafeAreaView style={styles.root}>
+    <View style={styles.root}>
+      <AppHeader title={isNew ? 'Add a service' : 'Edit service'} />
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>{isNew ? 'Add a service' : 'Edit service'}</Text>
-
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           {!!error && <Text style={styles.errorText}>{error}</Text>}
 
           <AppInput label="Service name" value={form.name} onChangeText={(v) => onChange('name', v)} />
@@ -108,6 +108,6 @@ export default function ServiceFormScreen() {
           <AppButton title={isNew ? 'Add service' : 'Save changes'} loading={saving} onPress={submit} />
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }

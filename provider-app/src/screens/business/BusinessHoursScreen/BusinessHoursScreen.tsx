@@ -1,7 +1,8 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, Switch, Text, View } from 'react-native';
+import { ScrollView, Switch, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/AppButton';
+import { AppHeader } from '@/components/AppHeader';
 import { LoadingView } from '@/components/LoadingView';
 import { TimeField } from '@/components/TimeField';
 import { Color } from '@/utils/Theme';
@@ -30,17 +31,17 @@ export default function BusinessHoursScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.root}>
+      <View style={styles.root}>
+        <AppHeader title="Weekly hours" />
         <LoadingView />
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.root}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>Weekly hours</Text>
-
+    <View style={styles.root}>
+      <AppHeader title="Weekly hours" />
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {days.map((d) => (
           <View key={d.dayOfWeek} style={styles.dayCard}>
             <View style={styles.dayHeader}>
@@ -98,6 +99,6 @@ export default function BusinessHoursScreen() {
 
         <AppButton title="Save hours" onPress={save} loading={saving} disabled={!dirty} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

@@ -1,7 +1,10 @@
 import React from 'react';
-import { RefreshControl, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Star } from 'lucide-react-native';
 
 import { AppButton } from '@/components/AppButton';
+import { AppHeader } from '@/components/AppHeader';
+import { EmptyState } from '@/components/EmptyState';
 import { Color } from '@/utils/Theme';
 import { BusinessReview } from '@/redux/api/business/types';
 
@@ -73,13 +76,13 @@ export default function ReviewsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.root}>
+    <View style={styles.root}>
+      <AppHeader title="Reviews" />
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         refreshControl={<RefreshControl refreshing={refreshing || isLoading} onRefresh={refresh} />}
       >
-        <Text style={styles.title}>Reviews</Text>
-
         {summary.count > 0 && (
           <View style={styles.summaryCard}>
             <View style={styles.summaryLeft}>
@@ -107,15 +110,15 @@ export default function ReviewsScreen() {
         )}
 
         {reviews.length === 0 && !isLoading ? (
-          <View style={styles.emptyWrap}>
-            <Text style={styles.emptyText}>
-              No reviews yet. Reviews appear here after customers complete a booking and rate you.
-            </Text>
-          </View>
+          <EmptyState
+            icon={<Star size={48} color={Color.placeholder} strokeWidth={1.4} />}
+            title="No reviews yet"
+            body="Reviews appear here after customers complete a booking and rate you."
+          />
         ) : (
           reviews.map(renderReview)
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

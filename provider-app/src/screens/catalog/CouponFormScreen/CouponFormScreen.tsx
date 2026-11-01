@@ -1,7 +1,8 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
 
 import { AppButton } from '@/components/AppButton';
+import { AppHeader } from '@/components/AppHeader';
 import { AppInput } from '@/components/AppInput';
 import { Color } from '@/utils/Theme';
 
@@ -27,11 +28,10 @@ export default function CouponFormScreen() {
   const selectItem = (id: string) => onChange(itemScope === 'SERVICE' ? 'serviceId' : 'productId', id);
 
   return (
-    <SafeAreaView style={styles.root}>
+    <View style={styles.root}>
+      <AppHeader title={isNew ? 'Add a coupon' : 'Edit coupon'} />
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>{isNew ? 'Add a coupon' : 'Edit coupon'}</Text>
-
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           {!!error && <Text style={styles.errorText}>{error}</Text>}
 
           <AppInput
@@ -174,6 +174,6 @@ export default function CouponFormScreen() {
           <AppButton title={isNew ? 'Add coupon' : 'Save changes'} loading={saving} onPress={submit} />
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }

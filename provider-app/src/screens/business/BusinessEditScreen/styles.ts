@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { Color, FontSize, Spacing } from '@/utils/Theme';
 
 export const styles = StyleSheet.create({
   root: {
@@ -16,12 +16,6 @@ export const styles = StyleSheet.create({
     padding: Spacing.lg,
     gap: Spacing.sm,
     paddingBottom: Spacing.xl,
-  },
-  title: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-    marginBottom: Spacing.xs,
   },
   errorText: {
     fontSize: FontSize.sm,

@@ -4,6 +4,7 @@ import userReducer from './slices/userSlice';
 import { authApi } from './api/auth/authApi';
 import { businessApi } from './api/business/businessApi';
 import { notificationApi } from './api/notification/notificationApi';
+import { categoryApi } from './api/category/categoryApi';
 
 const store = configureStore({
   reducer: {
@@ -14,9 +15,15 @@ const store = configureStore({
     [authApi.reducerPath]: authApi.reducer,
     [businessApi.reducerPath]: businessApi.reducer,
     [notificationApi.reducerPath]: notificationApi.reducer,
+    [categoryApi.reducerPath]: categoryApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, businessApi.middleware, notificationApi.middleware),
+    getDefaultMiddleware().concat(
+      authApi.middleware,
+      businessApi.middleware,
+      notificationApi.middleware,
+      categoryApi.middleware,
+    ),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -6,36 +6,24 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.background,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.sm,
-  },
-  title: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
   markAllText: {
     fontSize: FontSize.sm,
     fontWeight: FontWeight.semibold,
-    color: Color.primary,
+    color: Color.white,
   },
 
   listContent: {
     padding: Spacing.lg,
-    paddingTop: Spacing.sm,
     gap: Spacing.sm,
   },
   row: {
     flexDirection: 'row',
     gap: Spacing.sm,
     backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
-    padding: Spacing.sm + 2,
+    borderRadius: Radius.xl,
+    padding: Spacing.sm + 4,
+    borderWidth: 1,
+    borderColor: Color.border,
     ...Shadow.card,
   },
   rowUnread: {
@@ -78,16 +66,6 @@ export const styles = StyleSheet.create({
   },
   time: {
     fontSize: FontSize.xs,
-    color: Color.textSecondary,
-  },
-
-  emptyWrap: {
-    alignItems: 'center',
-    paddingVertical: Spacing.xl,
-    gap: 4,
-  },
-  emptyText: {
-    fontSize: FontSize.sm,
     color: Color.textSecondary,
   },
 });

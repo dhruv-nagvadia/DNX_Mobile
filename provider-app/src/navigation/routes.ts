@@ -12,10 +12,13 @@ export const ROUTES = {
   TABS: 'Tabs',
   HOME: 'HomeScreen',
   BOOKINGS_ORDERS: 'BookingsOrdersScreen',
+  ORDER_DETAIL: 'OrderDetailScreen',
+  BOOKING_DETAIL: 'BookingDetailScreen',
   BUSINESSES: 'BusinessesScreen',
   BUSINESS_DETAIL: 'BusinessDetailScreen',
   BUSINESS_HOURS: 'BusinessHoursScreen',
   BUSINESS_CALENDAR: 'BusinessCalendarScreen',
+  BUSINESS_PHOTOS: 'BusinessPhotosScreen',
   BUSINESS_EDIT: 'BusinessEditScreen',
   SERVICES: 'ServicesScreen',
   SERVICE_FORM: 'ServiceFormScreen',
@@ -28,6 +31,8 @@ export const ROUTES = {
   EARNINGS: 'EarningsScreen',
   PROFILE: 'ProfileScreen',
   NOTIFICATIONS: 'NotificationsScreen',
+  BUSINESS_CREATE: 'BusinessCreateScreen',
+  SUPPORT: 'SupportScreen',
 } as const;
 
 /** Type-safe params for every route. `undefined` = no params. */
@@ -38,11 +43,16 @@ export type RootStackParamList = {
   [ROUTES.TABS]: undefined;
   [ROUTES.HOME]: undefined;
   // `tab` opens this screen straight onto Bookings or Orders (e.g. from Home's stat tiles).
-  [ROUTES.BOOKINGS_ORDERS]: { tab?: 'bookings' | 'orders' } | undefined;
+  // `businessId` scopes the list to one business (from its Manage grid) — the
+  // segment toggle is hidden and only that business's items are shown.
+  [ROUTES.BOOKINGS_ORDERS]: { tab?: 'bookings' | 'orders'; businessId?: string } | undefined;
+  [ROUTES.ORDER_DETAIL]: { orderId: string };
+  [ROUTES.BOOKING_DETAIL]: { bookingId: string };
   [ROUTES.BUSINESSES]: undefined;
   [ROUTES.BUSINESS_DETAIL]: { businessId: string };
   [ROUTES.BUSINESS_HOURS]: { businessId: string };
   [ROUTES.BUSINESS_CALENDAR]: { businessId: string };
+  [ROUTES.BUSINESS_PHOTOS]: { businessId: string };
   [ROUTES.BUSINESS_EDIT]: { businessId: string };
   [ROUTES.SERVICES]: { businessId: string };
   [ROUTES.SERVICE_FORM]: { businessId: string; serviceId?: string };
@@ -55,4 +65,6 @@ export type RootStackParamList = {
   [ROUTES.EARNINGS]: undefined;
   [ROUTES.PROFILE]: undefined;
   [ROUTES.NOTIFICATIONS]: undefined;
+  [ROUTES.BUSINESS_CREATE]: undefined;
+  [ROUTES.SUPPORT]: undefined;
 };

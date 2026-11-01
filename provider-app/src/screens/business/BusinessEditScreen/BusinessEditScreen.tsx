@@ -1,30 +1,33 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, Text } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 
 import { AppButton } from '@/components/AppButton';
+import { AppHeader } from '@/components/AppHeader';
 import { AppInput } from '@/components/AppInput';
 import { LoadingView } from '@/components/LoadingView';
 
 import { useBusinessEditScreen } from './useBusinessEditScreen';
 import { styles } from './styles';
 
+const DESCRIPTION_MAX_LENGTH = 500;
+
 export default function BusinessEditScreen() {
   const { isLoading, saving, form, onChange, error, save } = useBusinessEditScreen();
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.root}>
+      <View style={styles.root}>
+        <AppHeader title="Edit business details" />
         <LoadingView />
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    <View style={styles.root}>
+      <AppHeader title="Edit business details" />
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>Edit business details</Text>
-
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           {!!error && <Text style={styles.errorText}>{error}</Text>}
 
           <AppInput
@@ -48,8 +51,9 @@ export default function BusinessEditScreen() {
           />
           <AppInput
             label="Description"
-            hint="Optional — shown to customers"
+            hint={`Optional — shown to customers · ${form.description.length}/${DESCRIPTION_MAX_LENGTH}`}
             multiline
+            maxLength={DESCRIPTION_MAX_LENGTH}
             style={styles.description}
             value={form.description}
             onChangeText={(v) => onChange('description', v)}
@@ -73,6 +77,6 @@ export default function BusinessEditScreen() {
           <AppButton title="Save changes" loading={saving} onPress={save} />
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }

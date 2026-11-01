@@ -14,5 +14,13 @@ export function useBusinessesScreen() {
     navigation.navigate(ROUTES.BUSINESS_DETAIL, { businessId });
   };
 
-  return { businesses, isLoading, refreshing: isFetching, refresh: refetch, openBusiness };
+  const addBusiness = () => {
+    navigation.navigate(ROUTES.BUSINESS_CREATE);
+  };
+
+  const editBusiness = (businessId: string) => {
+    navigation.navigate(ROUTES.BUSINESS_EDIT, { businessId });
+  };
+
+  return { businesses, isLoading, refreshing: isFetching, refresh: refetch, openBusiness, addBusiness, editBusiness };
 }

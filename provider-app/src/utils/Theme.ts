@@ -16,7 +16,10 @@ export const Color = {
 
   white: '#FFFFFF',
   black: '#000000',
-  background: '#F4F7FB',
+  background: '#FFFFFF',
+  // Soft neutral fill for dividers, placeholder boxes and "neutral" chips —
+  // background is plain white now, so these need their own distinct value.
+  divider: '#F1F5F9',
   surface: '#FFFFFF',
 
   textPrimary: '#0F172A',
@@ -26,11 +29,15 @@ export const Color = {
   border: '#E2E8F0',
   error: '#EF4444',
   errorSoft: '#FEF0F0',
+  errorBorder: 'rgba(239, 68, 68, 0.35)',
   success: '#16A34A',
   successSoft: '#E9F9EF',
+  successBorder: 'rgba(22, 163, 74, 0.35)',
   warning: '#F59E0B',
   warningSoft: '#FEF6E7',
+  warningBorder: 'rgba(245, 158, 11, 0.35)',
   overlay: 'rgba(15, 23, 42, 0.5)',
+  primaryBorder: 'rgba(30, 58, 138, 0.3)',
 
   // ── Dark "ink" surfaces — the auth hero and any dark hero strip ──────
   ink: '#060B18',
@@ -48,6 +55,7 @@ export const Color = {
   accent: '#38BDF8',
   accent2: '#818CF8',
   accentSoft: 'rgba(56, 189, 248, 0.16)',
+  accentBorder: 'rgba(56, 189, 248, 0.35)',
 
   // Light-blue hero gradient — used only by the login/auth heroes.
   heroBlue1: '#38BDF8',
@@ -96,20 +104,14 @@ export const Spacing = {
 };
 
 export const Radius = {
-  sm: 6,
-  md: 10,
-  lg: 14,
-  xl: 18,
+  sm: 3,
+  md: 5,
+  lg: 6,
+  xl: 8,
   pill: 999,
 };
 
-/** Soft card shadow (iOS) + elevation (Android). */
+/** No shadows — sections are separated by a light border only. */
 export const Shadow = {
-  card: {
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.06,
-    shadowRadius: 16,
-    elevation: 3,
-  },
+  card: {},
 };

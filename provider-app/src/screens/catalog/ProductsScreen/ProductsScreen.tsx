@@ -1,7 +1,9 @@
 import React from 'react';
-import { Alert, RefreshControl, SafeAreaView, ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, RefreshControl, ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { Package, Plus } from 'lucide-react-native';
 
+import { AppHeader } from '@/components/AppHeader';
+import { EmptyState } from '@/components/EmptyState';
 import { Color } from '@/utils/Theme';
 import { priceLabel, stockLabel, stockLevel } from '@/utils/units';
 import { Product } from '@/redux/api/business/types';
@@ -46,43 +48,59 @@ export default function ProductsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Products</Text>
-        <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.iconBtn} onPress={goToStock} accessibilityRole="button">
-            <Package size={18} color={Color.textPrimary} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.addBtn} onPress={addProduct} accessibilityRole="button">
-            <Plus size={18} color={Color.white} />
-          </TouchableOpacity>
-        </View>
-      </View>
+    <View style={styles.root}>
+      <AppHeader
+        title="Products"
+        right={
+          <View style={styles.headerActions}>
+            <TouchableOpacity style={styles.iconBtn} onPress={goToStock} accessibilityRole="button">
+              <Package size={16} color={Color.white} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.addBtn} onPress={addProduct} accessibilityRole="button">
+              <Plus size={18} color={Color.primary} />
+            </TouchableOpacity>
+          </View>
+        }
+      />
 
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         refreshControl={<RefreshControl refreshing={refreshing || isLoading} onRefresh={refresh} />}
       >
         {products.length === 0 && !isLoading ? (
-          <View style={styles.emptyWrap}>
-            <Text style={styles.emptyText}>No products yet. Add one to start selling.</Text>
-          </View>
+          <EmptyState
+            icon={<Package size={48} color={Color.placeholder} strokeWidth={1.4} />}
+            title="No products yet"
+            body="Add one to start selling."
+          />
         ) : (
           products.map((p) => (
             <View key={p.id} style={[styles.card, p.isActive === false && styles.cardInactive]}>
-              <View style={styles.cardTop}>
-                <Text style={styles.name} numberOfLines={1}>
-                  {p.name}
-                </Text>
-                <Switch
-                  value={p.isActive !== false}
-                  onValueChange={() => toggleActive(p)}
-                  trackColor={{ true: Color.primary, false: Color.border }}
-                />
+              <View style={styles.cardRow}>
+                {p.imageUrl ? (
+                  <Image source={{ uri: p.imageUrl }} style={styles.productImage} />
+                ) : (
+                  <View style={styles.productImageFallback}>
+                    <Package size={20} color={Color.placeholder} />
+                  </View>
+                )}
+                <View style={styles.cardMain}>
+                  <View style={styles.cardTop}>
+                    <Text style={styles.name} numberOfLines={1}>
+                      {p.name}
+                    </Text>
+                    <Switch
+                      value={p.isActive !== false}
+                      onValueChange={() => toggleActive(p)}
+                      trackColor={{ true: Color.primary, false: Color.border }}
+                    />
+                  </View>
+                  {!!p.section && <Text style={styles.meta}>{p.section}</Text>}
+                  <Text style={styles.price}>{priceLabel(p.priceMinor, p.priceQty, p.measure, p.currency)}</Text>
+                  <StockBadge product={p} />
+                </View>
               </View>
-              {!!p.section && <Text style={styles.meta}>{p.section}</Text>}
-              <Text style={styles.price}>{priceLabel(p.priceMinor, p.priceQty, p.measure, p.currency)}</Text>
-              <StockBadge product={p} />
 
               <View style={styles.actionsRow}>
                 <TouchableOpacity style={styles.actionBtn} onPress={() => editProduct(p.id)}>
@@ -100,6 +118,6 @@ export default function ProductsScreen() {
           ))
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

@@ -11,19 +11,15 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
     paddingBottom: Spacing.xl,
   },
-  title: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-    marginBottom: Spacing.xs,
-  },
 
   summaryCard: {
     backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
     padding: Spacing.md,
     flexDirection: 'row',
     gap: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Color.border,
     ...Shadow.card,
   },
   summaryLeft: {
@@ -79,9 +75,11 @@ export const styles = StyleSheet.create({
 
   card: {
     backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
     padding: Spacing.md,
     gap: 6,
+    borderWidth: 1,
+    borderColor: Color.border,
     ...Shadow.card,
   },
   cardTop: {

@@ -4,25 +4,21 @@ import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Th
 export const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Color.background,
+    backgroundColor: Color.white,
   },
   scrollContent: {
     padding: Spacing.lg,
     paddingBottom: Spacing.xl,
-    gap: Spacing.lg,
+    gap: Spacing.md,
   },
 
-  header: {
-    gap: 2,
-  },
-  greeting: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  businessCount: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
+  bellBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
   },
 
   statGrid: {
@@ -33,14 +29,29 @@ export const styles = StyleSheet.create({
   statTile: {
     flexBasis: '48%',
     flexGrow: 1,
+    position: 'relative',
     backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
+    borderWidth: 1,
+    borderColor: Color.border,
     padding: Spacing.md,
-    gap: 4,
+    paddingRight: 48,
+    gap: Spacing.xs,
     ...Shadow.card,
   },
   statTileWide: {
     flexBasis: '100%',
+    paddingRight: Spacing.md,
+  },
+  statIcon: {
+    position: 'absolute',
+    top: Spacing.sm + 2,
+    right: Spacing.sm + 2,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   statValue: {
     fontSize: FontSize.xxl,
@@ -50,24 +61,101 @@ export const styles = StyleSheet.create({
   statLabel: {
     fontSize: FontSize.sm,
     fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
+    color: Color.textSecondary,
   },
   statHint: {
     fontSize: FontSize.xs,
-    color: Color.textSecondary,
+    color: Color.placeholder,
   },
 
-  section: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
-    padding: Spacing.md,
+  quickRow: {
+    flexDirection: 'row',
     gap: Spacing.sm,
+  },
+  quickCard: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    backgroundColor: Color.surface,
+    borderRadius: Radius.xl,
+    borderWidth: 1,
+    borderColor: Color.border,
+    padding: Spacing.md,
     ...Shadow.card,
+  },
+  quickIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickLabel: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
+    color: Color.textPrimary,
+  },
+
+  sectionGroup: {
+    gap: Spacing.xs,
+  },
+  sectionHeaderOuter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 2,
+  },
+  sectionHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  viewAllBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  viewAllText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: Color.primary,
+  },
+  chevronExpanded: {
+    transform: [{ rotate: '90deg' }],
+  },
+  section: {
+    gap: Spacing.sm,
   },
   sectionTitle: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
     color: Color.textPrimary,
+  },
+  sectionCount: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: Radius.pill,
+    backgroundColor: Color.primarySoft,
+  },
+  sectionCountText: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.bold,
+    color: Color.primary,
+  },
+  ctaLink: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
+    color: Color.primary,
+    marginTop: Spacing.xs,
+  },
+  emptyCard: {
+    backgroundColor: Color.surface,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Color.border,
+    padding: Spacing.md,
+    alignItems: 'center',
   },
   emptyText: {
     fontSize: FontSize.sm,
@@ -77,17 +165,28 @@ export const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: Spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: Color.border,
+    gap: Spacing.sm,
+    backgroundColor: Color.surface,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Color.border,
+    padding: Spacing.sm + 2,
   },
-  rowFirst: {
-    borderTopWidth: 0,
+  rowIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   rowMain: {
     flex: 1,
     gap: 2,
+  },
+  rowTime: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.semibold,
+    color: Color.textSecondary,
   },
   rowTitle: {
     fontSize: FontSize.sm,
@@ -98,24 +197,17 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.xs,
     color: Color.textSecondary,
   },
-  rowBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.warningSoft,
-  },
-  rowBadgeText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.warning,
+  edgeBadge: {
+    marginRight: -(Spacing.sm + 2),
   },
 
-  emptyBusinesses: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
-    gap: Spacing.xs,
-    alignItems: 'center',
-    ...Shadow.card,
+  orderRowRight: {
+    alignItems: 'flex-end',
+    gap: 4,
+  },
+  collectText: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.semibold,
+    color: Color.success,
   },
 });

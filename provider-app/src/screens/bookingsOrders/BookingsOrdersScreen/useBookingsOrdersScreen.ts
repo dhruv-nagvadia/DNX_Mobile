@@ -30,6 +30,8 @@ const dateFmt = new Intl.DateTimeFormat('en-IN', {
  */
 export function useBookingsOrdersScreen() {
   const route = useRoute<BookingsOrdersRouteProp>();
+  const businessId = route.params?.businessId;
+  const scoped = !!businessId;
   const [tab, setTab] = useState<ListTab>(route.params?.tab ?? 'bookings');
   const [reason, setReason] = useState('');
   const [pending, setPending] = useState<PendingAction>(null);
@@ -43,12 +45,18 @@ export function useBookingsOrdersScreen() {
   const [collectOrderPayment] = useCollectOrderPaymentMutation();
 
   const bookings = useMemo(
-    () => [...(bookingsQuery.data ?? [])].sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime()),
-    [bookingsQuery.data],
+    () =>
+      (bookingsQuery.data ?? [])
+        .filter((b) => !businessId || b.provider.id === businessId)
+        .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime()),
+    [bookingsQuery.data, businessId],
   );
   const orders = useMemo(
-    () => [...(ordersQuery.data ?? [])].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
-    [ordersQuery.data],
+    () =>
+      (ordersQuery.data ?? [])
+        .filter((o) => !businessId || o.provider.id === businessId)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
+    [ordersQuery.data, businessId],
   );
 
   const confirmBooking = useCallback(
@@ -134,6 +142,7 @@ export function useBookingsOrdersScreen() {
   return {
     tab,
     setTab,
+    scoped,
     bookings,
     orders,
     bookingsLoading: bookingsQuery.isLoading,

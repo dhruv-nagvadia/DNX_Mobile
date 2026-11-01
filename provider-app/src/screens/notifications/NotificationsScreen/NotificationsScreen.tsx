@@ -1,7 +1,9 @@
 import React from 'react';
-import { RefreshControl, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { CalendarClock, Package, XCircle } from 'lucide-react-native';
+import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Bell, CalendarClock, Package, XCircle } from 'lucide-react-native';
 
+import { AppHeader } from '@/components/AppHeader';
+import { EmptyState } from '@/components/EmptyState';
 import { Color } from '@/utils/Theme';
 import { AppNotification, NotificationType } from '@/redux/api/notification/types';
 
@@ -49,28 +51,32 @@ export default function NotificationsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Notifications</Text>
-        {unreadCount > 0 && (
-          <TouchableOpacity onPress={markAllRead} disabled={markingAll}>
-            <Text style={styles.markAllText}>Mark all read</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+    <View style={styles.root}>
+      <AppHeader
+        title="Notifications"
+        right={
+          unreadCount > 0 ? (
+            <TouchableOpacity onPress={markAllRead} disabled={markingAll}>
+              <Text style={styles.markAllText}>Mark all read</Text>
+            </TouchableOpacity>
+          ) : undefined
+        }
+      />
 
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         refreshControl={<RefreshControl refreshing={refreshing || isLoading} onRefresh={refresh} />}
       >
         {notifications.length === 0 && !isLoading ? (
-          <View style={styles.emptyWrap}>
-            <Text style={styles.emptyText}>You're all caught up.</Text>
-          </View>
+          <EmptyState
+            icon={<Bell size={48} color={Color.placeholder} strokeWidth={1.4} />}
+            title="You're all caught up"
+          />
         ) : (
           notifications.map(renderRow)
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

@@ -11,17 +11,14 @@ export const styles = StyleSheet.create({
     gap: Spacing.md,
     paddingBottom: Spacing.xl,
   },
-  title: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
 
   dayCard: {
     backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
     padding: Spacing.md,
     gap: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Color.border,
     ...Shadow.card,
   },
   dayHeader: {
@@ -48,9 +45,11 @@ export const styles = StyleSheet.create({
 
   breakCard: {
     backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
     padding: Spacing.md,
     gap: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Color.border,
     ...Shadow.card,
   },
   breakHeader: {

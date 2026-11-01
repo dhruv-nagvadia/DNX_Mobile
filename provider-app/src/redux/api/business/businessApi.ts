@@ -47,6 +47,12 @@ export const businessApi = createApi({
     'MyEarnings',
   ],
   endpoints: (builder) => ({
+    createBusiness: builder.mutation<Business, UpdateBusinessRequest>({
+      query: (data) => ({ endpoint: endpoints.myBusinesses, method: 'post', data }),
+      transformResponse: (res: ApiEnvelope<Business>) => res.data,
+      invalidatesTags: ['MyBusinesses'],
+    }),
+
     getMyBusinesses: builder.query<Business[], void>({
       query: () => ({ endpoint: endpoints.myBusinesses, method: 'get' }),
       transformResponse: (res: ApiEnvelope<Business[]>) => res.data,
@@ -61,6 +67,20 @@ export const businessApi = createApi({
 
     updateBusiness: builder.mutation<Business, { id: string; data: UpdateBusinessRequest }>({
       query: ({ id, data }) => ({ endpoint: endpoints.myBusinessById(id), method: 'patch', data }),
+      transformResponse: (res: ApiEnvelope<Business>) => res.data,
+      invalidatesTags: (_r, _e, { id }) => [{ type: 'MyBusiness', id }, 'MyBusinesses'],
+    }),
+
+    /** Reorders/removes gallery images (cover = index 0) — same endpoint as upload, just PUT + a plain array body. */
+    setBusinessImages: builder.mutation<Business, { id: string; images: string[] }>({
+      query: ({ id, images }) => ({ endpoint: endpoints.myBusinessImages(id), method: 'put', data: { images } }),
+      transformResponse: (res: ApiEnvelope<Business>) => res.data,
+      invalidatesTags: (_r, _e, { id }) => [{ type: 'MyBusiness', id }, 'MyBusinesses'],
+    }),
+
+    /** Uploads new gallery images (multipart/form-data, `images` field per file). */
+    uploadBusinessImages: builder.mutation<Business, { id: string; formData: FormData }>({
+      query: ({ id, formData }) => ({ endpoint: endpoints.myBusinessImages(id), method: 'post', data: formData }),
       transformResponse: (res: ApiEnvelope<Business>) => res.data,
       invalidatesTags: (_r, _e, { id }) => [{ type: 'MyBusiness', id }, 'MyBusinesses'],
     }),
@@ -292,13 +312,22 @@ export const businessApi = createApi({
       transformResponse: (res: ApiEnvelope<Earnings>) => res.data,
       providesTags: ['MyEarnings'],
     }),
+
+    deleteBusiness: builder.mutation<null, string>({
+      query: (id) => ({ endpoint: endpoints.myBusinessById(id), method: 'delete' }),
+      invalidatesTags: ['MyBusinesses'],
+    }),
   }),
 });
 
 export const {
+  useCreateBusinessMutation,
   useGetMyBusinessesQuery,
   useGetMyBusinessQuery,
   useUpdateBusinessMutation,
+  useSetBusinessImagesMutation,
+  useUploadBusinessImagesMutation,
+  useDeleteBusinessMutation,
   useGetBusinessBookingsQuery,
   useGetAllMyBookingsQuery,
   useGetMyOrdersQuery,

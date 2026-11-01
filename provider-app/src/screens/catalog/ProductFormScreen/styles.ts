@@ -14,12 +14,6 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
     paddingBottom: Spacing.xl,
   },
-  title: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-    marginBottom: Spacing.xs,
-  },
   errorText: {
     fontSize: FontSize.sm,
     color: Color.error,

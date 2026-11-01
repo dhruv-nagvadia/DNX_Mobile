@@ -8,12 +8,12 @@ import { clearCurrentUser, setCurrentUser } from '@/redux/slices/userSlice';
 import { resetAllApiCaches } from '@/redux/resetApiCaches';
 import { clearTokenCache } from '@/api/apiConfigs';
 import { StorageKeys } from '@/utils/Constants';
-import { useUpdateMeMutation } from '@/redux/api/auth/authApi';
+import { useChangePasswordMutation, useUpdateMeMutation } from '@/redux/api/auth/authApi';
 import { useGetMyBusinessesQuery } from '@/redux/api/business/businessApi';
 import { useGetUnreadCountQuery } from '@/redux/api/notification/notificationApi';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
-import { ProfileForm } from './types';
+import { PasswordForm, ProfileForm } from './types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'ProfileScreen'>;
 
@@ -28,6 +28,7 @@ export function useProfileScreen() {
   const { data: businesses = [] } = useGetMyBusinessesQuery();
   const { data: unreadCount = 0 } = useGetUnreadCountQuery();
   const [updateMe, { isLoading: saving }] = useUpdateMeMutation();
+  const [changePassword, { isLoading: changingPassword }] = useChangePasswordMutation();
 
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<ProfileForm>({
@@ -35,6 +36,14 @@ export function useProfileScreen() {
     email: currentUser?.email ?? '',
   });
   const [error, setError] = useState<string | null>(null);
+
+  const [changingPasswordModal, setChangingPasswordModal] = useState(false);
+  const [passwordForm, setPasswordForm] = useState<PasswordForm>({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const stats = useMemo(() => {
     const services = businesses.reduce((sum, b) => sum + b.services.length, 0);
@@ -71,6 +80,37 @@ export function useProfileScreen() {
     }
   }, [form, updateMe, dispatch]);
 
+  const openPasswordModal = useCallback(() => {
+    setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    setPasswordError(null);
+    setChangingPasswordModal(true);
+  }, []);
+  const closePasswordModal = useCallback(() => setChangingPasswordModal(false), []);
+  const onPasswordChange = useCallback((key: keyof PasswordForm, value: string) => {
+    setPasswordForm((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
+  const submitPasswordChange = useCallback(async () => {
+    setPasswordError(null);
+    if (passwordForm.newPassword.length < 8) {
+      setPasswordError('New password must be at least 8 characters');
+      return;
+    }
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordError('Passwords do not match');
+      return;
+    }
+    try {
+      await changePassword({
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      }).unwrap();
+      setChangingPasswordModal(false);
+    } catch {
+      setPasswordError('Could not change password. Check your current password.');
+    }
+  }, [passwordForm, changePassword]);
+
   const logout = useCallback(async () => {
     clearTokenCache();
     await AsyncStorage.multiRemove([StorageKeys.accessToken, StorageKeys.refreshToken]);
@@ -91,8 +131,19 @@ export function useProfileScreen() {
     startEdit,
     cancelEdit,
     save,
+    changingPasswordModal,
+    passwordForm,
+    passwordError,
+    changingPassword,
+    openPasswordModal,
+    closePasswordModal,
+    onPasswordChange,
+    submitPasswordChange,
     logout,
     goToBusiness: (businessId: string) => navigation.navigate(ROUTES.BUSINESS_DETAIL, { businessId }),
+    goToBusinesses: () => navigation.navigate(ROUTES.BUSINESSES),
+    goToEarnings: () => navigation.navigate(ROUTES.EARNINGS),
     goToNotifications: () => navigation.navigate(ROUTES.NOTIFICATIONS),
+    goToSupport: () => navigation.navigate(ROUTES.SUPPORT),
   };
 }
