@@ -6,12 +6,18 @@ export interface AuthUser {
   fullName: string;
   role: Role;
   phone?: string | null;
+  avatarUrl?: string | null;
 }
 
 export interface UpdateMeRequest {
   fullName?: string;
   email?: string;
   phone?: string;
+  avatarUrl?: string;
+}
+
+export interface UploadImageResponse {
+  url: string;
 }
 
 export interface ChangePasswordRequest {

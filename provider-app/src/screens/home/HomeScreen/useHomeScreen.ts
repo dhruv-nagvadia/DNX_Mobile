@@ -83,6 +83,8 @@ export function useHomeScreen() {
     const monthStart = new Date();
     monthStart.setDate(1);
     monthStart.setHours(0, 0, 0, 0);
+    const lastMonthStart = new Date(monthStart);
+    lastMonthStart.setMonth(lastMonthStart.getMonth() - 1);
 
     const active = bookings.filter((b) => b.status !== 'CANCELLED');
 
@@ -111,6 +113,28 @@ export function useHomeScreen() {
     const orderRevenue = orders
       .filter((o) => new Date(o.createdAt).getTime() >= monthStart.getTime())
       .reduce((sum, o) => sum + (o.amountPaidMinor ?? 0), 0);
+    const collectedThisMonth = bookingRevenue + orderRevenue;
+
+    // Last calendar month's total, for the "vs last month" trend line.
+    const bookingRevenueLastMonth = bookings
+      .filter((b) => {
+        const t = new Date(b.startTime).getTime();
+        return t >= lastMonthStart.getTime() && t < monthStart.getTime();
+      })
+      .reduce((sum, b) => sum + (b.amountPaidMinor ?? 0), 0);
+    const orderRevenueLastMonth = orders
+      .filter((o) => {
+        const t = new Date(o.createdAt).getTime();
+        return t >= lastMonthStart.getTime() && t < monthStart.getTime();
+      })
+      .reduce((sum, o) => sum + (o.amountPaidMinor ?? 0), 0);
+    const collectedLastMonth = bookingRevenueLastMonth + orderRevenueLastMonth;
+
+    // null = nothing to compare (both months empty, or no prior-month data —
+    // the UI shows no trend line rather than a misleading 0%/Infinity%).
+    const monthTrendPct =
+      collectedLastMonth > 0 ? ((collectedThisMonth - collectedLastMonth) / collectedLastMonth) * 100 : null;
+    const isNewMonthTrend = collectedLastMonth === 0 && collectedThisMonth > 0;
 
     return {
       todays,
@@ -119,7 +143,9 @@ export function useHomeScreen() {
       openOrders,
       openOrdersCount: openOrders.length,
       needsActionCount: attention.length + orderAttentionCount,
-      collectedThisMonth: bookingRevenue + orderRevenue,
+      collectedThisMonth,
+      monthTrendPct,
+      isNewMonthTrend,
       currency: bookings[0]?.currency ?? orders[0]?.currency ?? 'INR',
     };
   }, [bookingsData, ordersData]);

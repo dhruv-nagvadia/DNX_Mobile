@@ -8,34 +8,45 @@ import { moderateScale } from 'react-native-size-matters';
  * provider app reads as the same product family.
  */
 export const Color = {
-  // Brand — navy blue
+  // Brand — navy blue (shared palette spec, see frontend/src/styles/theme.css)
   primary: '#1E3A8A',
-  primaryDark: '#172554',
+  primaryDark: '#14264E',
   primaryHover: '#24479C',
-  primarySoft: '#EAF0FB',
+  primarySoft: '#DBEAFE',
 
   white: '#FFFFFF',
   black: '#000000',
-  background: '#FFFFFF',
+  background: '#F4F7FC',
   // Soft neutral fill for dividers, placeholder boxes and "neutral" chips —
   // background is plain white now, so these need their own distinct value.
   divider: '#F1F5F9',
   surface: '#FFFFFF',
+  surfaceSecondary: '#F8FAFC',
 
   textPrimary: '#0F172A',
+  // Mirrors the shared spec's "muted" text tier (labels, timestamps). The
+  // app only has one secondary-text tier today, so this keeps its existing
+  // value rather than adopting the spec's separate, darker "secondary" tier.
   textSecondary: '#64748B',
+  textMuted: '#64748B',
   placeholder: '#94A3B8',
 
   border: '#E2E8F0',
-  error: '#EF4444',
-  errorSoft: '#FEF0F0',
-  errorBorder: 'rgba(239, 68, 68, 0.35)',
+  error: '#DC2626',
+  errorSoft: '#FEE2E2',
+  errorBorder: 'rgba(220, 38, 38, 0.35)',
   success: '#16A34A',
-  successSoft: '#E9F9EF',
+  successSoft: '#DCFCE7',
   successBorder: 'rgba(22, 163, 74, 0.35)',
-  warning: '#F59E0B',
-  warningSoft: '#FEF6E7',
-  warningBorder: 'rgba(245, 158, 11, 0.35)',
+  warning: '#D97706',
+  warningSoft: '#FEF3C7',
+  warningBorder: 'rgba(217, 119, 6, 0.35)',
+  info: '#1D4ED8',
+  infoSoft: '#DBEAFE',
+  infoBorder: 'rgba(29, 78, 216, 0.35)',
+  special: '#6B21A8',
+  specialSoft: '#F3E8FF',
+  specialBorder: 'rgba(107, 33, 168, 0.35)',
   overlay: 'rgba(15, 23, 42, 0.5)',
   primaryBorder: 'rgba(30, 58, 138, 0.3)',
 
@@ -85,14 +96,32 @@ export const FontWeight = {
   extrabold: '800' as const,
 };
 
+/**
+ * Mirrors iOS's own Human Interface Guidelines type scale (Caption → Footnote
+ * → Body → Headline → Title3/2/1), so every screen should pick its text sizes
+ * by ROLE, not by eyeballing what "looks right" on that one screen:
+ *
+ *   xxxl (34) — hero numbers only (e.g. a big currency amount)
+ *   xxl  (27) — large stat/summary figures (e.g. a stat tile's count)
+ *   xl   (21) — screen titles (e.g. a nav bar / page header)
+ *   lg   (18) — top-of-screen greeting/header text
+ *   md   (16) — section headers (e.g. a list section's title)
+ *   sm   (14) — item/row names, button labels — the "thing itself"
+ *   xs   (12) — secondary/description text, meta, captions, timestamps —
+ *               always a step below whatever name/title it sits under
+ *
+ * Keeping every screen on this same role → size mapping (rather than each
+ * screen inventing its own) is what makes text sizes feel consistent across
+ * the whole app.
+ */
 export const FontSize = {
-  xs: moderateScale(11),
-  sm: moderateScale(13),
-  md: moderateScale(15),
-  lg: moderateScale(17),
-  xl: moderateScale(20),
-  xxl: moderateScale(26),
-  xxxl: moderateScale(32),
+  xs: moderateScale(12),
+  sm: moderateScale(14),
+  md: moderateScale(16),
+  lg: moderateScale(18),
+  xl: moderateScale(21),
+  xxl: moderateScale(27),
+  xxxl: moderateScale(34),
 };
 
 export const Spacing = {

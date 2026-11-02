@@ -27,6 +27,10 @@ import CouponsScreen from '@/screens/catalog/CouponsScreen';
 import CouponFormScreen from '@/screens/catalog/CouponFormScreen';
 import ReviewsScreen from '@/screens/reviews/ReviewsScreen';
 import EarningsScreen from '@/screens/earnings/EarningsScreen';
+import TodaysScheduleScreen from '@/screens/home/TodaysScheduleScreen';
+import AttentionListScreen from '@/screens/home/AttentionListScreen';
+import OpenOrdersScreen from '@/screens/home/OpenOrdersScreen';
+import LowStockListScreen from '@/screens/home/LowStockListScreen';
 import ProfileScreen from '@/screens/profile/ProfileScreen';
 import NotificationsScreen from '@/screens/notifications/NotificationsScreen';
 import BusinessCreateScreen from '@/screens/business/BusinessCreateScreen';
@@ -111,6 +115,10 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.BOOKING_DETAIL} component={BookingDetailScreen} />
       <Stack.Screen name={ROUTES.BUSINESSES} component={BusinessesScreen} />
       <Stack.Screen name={ROUTES.EARNINGS} component={EarningsScreen} />
+      <Stack.Screen name={ROUTES.TODAYS_SCHEDULE} component={TodaysScheduleScreen} />
+      <Stack.Screen name={ROUTES.ATTENTION_LIST} component={AttentionListScreen} />
+      <Stack.Screen name={ROUTES.OPEN_ORDERS} component={OpenOrdersScreen} />
+      <Stack.Screen name={ROUTES.LOW_STOCK_LIST} component={LowStockListScreen} />
       <Stack.Screen name={ROUTES.BUSINESS_DETAIL} component={BusinessDetailScreen} />
       <Stack.Screen name={ROUTES.BUSINESS_HOURS} component={BusinessHoursScreen} />
       <Stack.Screen name={ROUTES.BUSINESS_CALENDAR} component={BusinessCalendarScreen} />

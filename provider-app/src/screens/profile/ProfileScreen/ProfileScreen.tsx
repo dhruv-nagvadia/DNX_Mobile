@@ -1,9 +1,10 @@
 import React from 'react';
-import { Modal, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, Modal, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Bell,
   Briefcase,
+  Camera,
   ChevronRight,
   KeyRound,
   LifeBuoy,
@@ -78,6 +79,9 @@ export default function ProfileScreen() {
     startEdit,
     cancelEdit,
     save,
+    changeAvatar,
+    uploadingAvatar,
+    avatarError,
     changingPasswordModal,
     passwordForm,
     passwordError,
@@ -108,9 +112,28 @@ export default function ProfileScreen() {
               <Pencil size={16} color={Color.white} />
             </TouchableOpacity>
           </View>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{initialsOf(currentUser?.fullName ?? 'DNX')}</Text>
-          </View>
+          <TouchableOpacity
+            style={styles.avatarWrap}
+            onPress={changeAvatar}
+            disabled={uploadingAvatar}
+            accessibilityRole="button"
+          >
+            {currentUser?.avatarUrl ? (
+              <Image source={{ uri: currentUser.avatarUrl }} style={styles.avatarImage} />
+            ) : (
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>{initialsOf(currentUser?.fullName ?? 'DNX')}</Text>
+              </View>
+            )}
+            <View style={styles.avatarCameraBadge}>
+              {uploadingAvatar ? (
+                <ActivityIndicator size="small" color={Color.white} />
+              ) : (
+                <Camera size={13} color={Color.white} />
+              )}
+            </View>
+          </TouchableOpacity>
+          {!!avatarError && <Text style={styles.avatarErrorText}>{avatarError}</Text>}
           <Text style={styles.heroName}>{currentUser?.fullName}</Text>
           <Text style={styles.heroEmail}>{currentUser?.email}</Text>
           <View style={styles.heroPill}>

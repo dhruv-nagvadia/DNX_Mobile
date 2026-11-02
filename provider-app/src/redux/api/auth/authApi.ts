@@ -10,6 +10,7 @@ import {
   RequestPasswordResetRequest,
   ResetPasswordRequest,
   UpdateMeRequest,
+  UploadImageResponse,
 } from './types';
 import { ApiEnvelope } from '../types';
 
@@ -42,6 +43,13 @@ export const authApi = createApi({
       invalidatesTags: ['Me'],
     }),
 
+    // Generic single-image upload (e.g. the provider's own avatar) — the
+    // returned url is then saved via `updateMe({ avatarUrl })`.
+    uploadImage: builder.mutation<UploadImageResponse, FormData>({
+      query: (formData) => ({ endpoint: endpoints.uploadImage, method: 'post', data: formData }),
+      transformResponse: (res: ApiEnvelope<UploadImageResponse>) => res.data,
+    }),
+
     changePassword: builder.mutation<void, ChangePasswordRequest>({
       query: (data) => ({ endpoint: endpoints.changePassword, method: 'post', data }),
       transformResponse: () => undefined,
@@ -64,6 +72,7 @@ export const {
   useRegisterMutation,
   useGetMeQuery,
   useUpdateMeMutation,
+  useUploadImageMutation,
   useChangePasswordMutation,
   useRequestPasswordResetMutation,
   useResetPasswordMutation,

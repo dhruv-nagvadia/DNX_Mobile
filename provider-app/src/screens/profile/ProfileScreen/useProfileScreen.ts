@@ -2,13 +2,14 @@ import { useCallback, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { clearCurrentUser, setCurrentUser } from '@/redux/slices/userSlice';
 import { resetAllApiCaches } from '@/redux/resetApiCaches';
 import { clearTokenCache } from '@/api/apiConfigs';
 import { StorageKeys } from '@/utils/Constants';
-import { useChangePasswordMutation, useUpdateMeMutation } from '@/redux/api/auth/authApi';
+import { useChangePasswordMutation, useUpdateMeMutation, useUploadImageMutation } from '@/redux/api/auth/authApi';
 import { useGetMyBusinessesQuery } from '@/redux/api/business/businessApi';
 import { useGetUnreadCountQuery } from '@/redux/api/notification/notificationApi';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
@@ -28,7 +29,10 @@ export function useProfileScreen() {
   const { data: businesses = [] } = useGetMyBusinessesQuery();
   const { data: unreadCount = 0 } = useGetUnreadCountQuery();
   const [updateMe, { isLoading: saving }] = useUpdateMeMutation();
+  const [uploadImage] = useUploadImageMutation();
   const [changePassword, { isLoading: changingPassword }] = useChangePasswordMutation();
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
 
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<ProfileForm>({
@@ -79,6 +83,31 @@ export function useProfileScreen() {
       setError('Could not save. That email may already be in use.');
     }
   }, [form, updateMe, dispatch]);
+
+  const changeAvatar = useCallback(async () => {
+    setAvatarError(null);
+    const result = await launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, quality: 0.8 });
+    const asset = result.assets?.[0];
+    if (result.didCancel || !asset?.uri) {
+      return;
+    }
+    setUploadingAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', {
+        uri: asset.uri,
+        name: asset.fileName ?? 'avatar.jpg',
+        type: asset.type ?? 'image/jpeg',
+      } as unknown as Blob);
+      const { url } = await uploadImage(formData).unwrap();
+      const updated = await updateMe({ avatarUrl: url }).unwrap();
+      dispatch(setCurrentUser(updated));
+    } catch {
+      setAvatarError('Could not update your photo. Please try again.');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  }, [uploadImage, updateMe, dispatch]);
 
   const openPasswordModal = useCallback(() => {
     setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
@@ -131,6 +160,9 @@ export function useProfileScreen() {
     startEdit,
     cancelEdit,
     save,
+    changeAvatar,
+    uploadingAvatar,
+    avatarError,
     changingPasswordModal,
     passwordForm,
     passwordError,

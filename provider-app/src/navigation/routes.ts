@@ -29,6 +29,10 @@ export const ROUTES = {
   COUPON_FORM: 'CouponFormScreen',
   REVIEWS: 'ReviewsScreen',
   EARNINGS: 'EarningsScreen',
+  TODAYS_SCHEDULE: 'TodaysScheduleScreen',
+  ATTENTION_LIST: 'AttentionListScreen',
+  OPEN_ORDERS: 'OpenOrdersScreen',
+  LOW_STOCK_LIST: 'LowStockListScreen',
   PROFILE: 'ProfileScreen',
   NOTIFICATIONS: 'NotificationsScreen',
   BUSINESS_CREATE: 'BusinessCreateScreen',
@@ -63,6 +67,10 @@ export type RootStackParamList = {
   [ROUTES.COUPON_FORM]: { businessId: string; couponId?: string };
   [ROUTES.REVIEWS]: { businessId: string };
   [ROUTES.EARNINGS]: undefined;
+  [ROUTES.TODAYS_SCHEDULE]: undefined;
+  [ROUTES.ATTENTION_LIST]: undefined;
+  [ROUTES.OPEN_ORDERS]: undefined;
+  [ROUTES.LOW_STOCK_LIST]: undefined;
   [ROUTES.PROFILE]: undefined;
   [ROUTES.NOTIFICATIONS]: undefined;
   [ROUTES.BUSINESS_CREATE]: undefined;

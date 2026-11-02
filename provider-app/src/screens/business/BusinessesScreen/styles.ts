@@ -20,9 +20,7 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
+    gap: Spacing.sm,
     backgroundColor: Color.surface,
     borderRadius: Radius.xl,
     padding: Spacing.md,
@@ -30,16 +28,39 @@ export const styles = StyleSheet.create({
     borderColor: Color.border,
     ...Shadow.card,
   },
+  cardRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
   cardMain: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
   },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: Spacing.sm,
+    paddingTop: Spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: Color.divider,
+  },
+  infoLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  dot: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+  },
   editBtn: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: Radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Color.primarySoft,
@@ -62,12 +83,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     gap: 2,
   },
-  cardTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
   name: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
@@ -78,25 +93,11 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: Color.textSecondary,
   },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
   ratingText: {
     fontSize: FontSize.sm,
     fontWeight: FontWeight.semibold,
-    color: Color.warning,
-  },
-  verifiedBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.successSoft,
-  },
-  verifiedText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.success,
+    // Golden/amber, not the darker warning color — matches a star rating's
+    // usual look (and the web app's rating star color).
+    color: '#F59E0B',
   },
 });
