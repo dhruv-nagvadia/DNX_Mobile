@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { TrendingDown, TrendingUp } from 'lucide-react-native';
+import { ArrowDown, ArrowUp } from 'lucide-react-native';
 
 import { TrendChart } from '@/components/TrendChart';
 import { Color } from '@/utils/Theme';
@@ -20,49 +20,50 @@ const formatMajor = (v: number, currency: string) =>
 
 const compact = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}k` : String(Math.round(v)));
 
-/** Ports `frontend/src/components/EarningsPanel/EarningsPanel.tsx` — a
- * per-business earnings trend chart shown on the business detail screen
- * (same placement as the web dashboard, not the top-level Earnings tab). */
+/** Per-business earnings on the Business Detail screen (mockup: Week/Month/
+ * Year segment, date range, big total, "+12% vs. previous month" pill, area
+ * chart). The section title ("Earnings") is rendered by the screen. */
 export function EarningsPanel({ businessId, isStore }: EarningsPanelProps) {
-  const { period, setPeriod, points, total, trendPct, currency } = useEarningsPanel(businessId, isStore);
+  const { period, setPeriod, points, total, trendPct, currency, rangeLabel, compareLabel } =
+    useEarningsPanel(businessId, isStore);
+  const up = (trendPct ?? 0) >= 0;
 
   return (
-    <View style={styles.card}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Earnings trend</Text>
-        <View style={styles.segment}>
-          {PERIODS.map((p) => (
-            <TouchableOpacity
-              key={p.id}
-              style={[styles.segmentBtn, period === p.id && styles.segmentBtnActive]}
-              onPress={() => setPeriod(p.id)}
-            >
-              <Text style={[styles.segmentText, period === p.id && styles.segmentTextActive]}>{p.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+    <View style={styles.wrap}>
+      <View style={styles.segment}>
+        {PERIODS.map((p) => (
+          <TouchableOpacity
+            key={p.id}
+            style={[styles.segmentBtn, period === p.id && styles.segmentBtnActive]}
+            onPress={() => setPeriod(p.id)}
+            accessibilityRole="button"
+            accessibilityState={{ selected: period === p.id }}
+          >
+            <Text style={[styles.segmentText, period === p.id && styles.segmentTextActive]}>{p.label}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
-      <View style={styles.headline}>
-        <Text style={styles.headlineValue} numberOfLines={1}>
-          {formatMajor(total, currency)}
-        </Text>
-        {trendPct !== null && (
-          <View style={[styles.trendBadge, trendPct >= 0 ? styles.trendUp : styles.trendDown]}>
-            {trendPct >= 0 ? (
-              <TrendingUp size={12} color={Color.success} />
-            ) : (
-              <TrendingDown size={12} color={Color.error} />
-            )}
-            <Text style={[styles.trendText, trendPct >= 0 ? styles.trendTextUp : styles.trendTextDown]}>
-              {trendPct >= 0 ? '+' : ''}
+      <Text style={styles.range}>{rangeLabel}</Text>
+      <Text style={styles.total} numberOfLines={1} adjustsFontSizeToFit>
+        {formatMajor(total, currency)}
+      </Text>
+      {trendPct !== null && (
+        <View style={styles.trendRow}>
+          <View style={[styles.trendPill, up ? styles.trendPillUp : styles.trendPillDown]}>
+            {up ? <ArrowUp size={14} color={Color.success} /> : <ArrowDown size={14} color={Color.error} />}
+            <Text style={[styles.trendText, up ? styles.trendTextUp : styles.trendTextDown]}>
+              {up ? '+' : ''}
               {trendPct.toFixed(0)}%
             </Text>
           </View>
-        )}
-      </View>
+          <Text style={styles.trendLabel}>{compareLabel}</Text>
+        </View>
+      )}
 
-      <TrendChart data={points} height={160} highlightLast formatAxis={compact} />
+      <View style={styles.chart}>
+        <TrendChart data={points} height={160} highlightLast formatAxis={compact} />
+      </View>
     </View>
   );
 }

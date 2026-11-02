@@ -12,4 +12,7 @@ export interface AppHeaderProps {
   /** Shows the "D" brand mark instead of a back button — for tab-root screens. */
   logo?: boolean;
   right?: ReactNode;
+  /** `navy` (default) solid brand bar; `light` = the mockup look (page-coloured
+   * background, dark arrow + title) used by Home and the Business Detail flow. */
+  variant?: 'navy' | 'light';
 }

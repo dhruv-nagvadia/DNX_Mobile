@@ -1,271 +1,303 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Theme';
+import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, INK, LINK, ModernRadius, PAGE_BG, SOFT_FILL } from '@/utils/modernTheme';
+
+export const STAR_COLOR = '#F5B301';
+
+/** Review avatar circle colours, alternating (blue, lavender). */
+export const AVATAR_COLORS = [
+  { bg: '#E0E7FF', fg: '#3730A3' },
+  { bg: '#EDE9FE', fg: '#6D28D9' },
+];
 
 export const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Color.background,
+    backgroundColor: PAGE_BG,
   },
   scrollContent: {
-    padding: Spacing.lg,
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.xl,
     gap: Spacing.md,
   },
 
+  // Header actions
   headerActions: {
     flexDirection: 'row',
-    gap: Spacing.xs,
+    gap: Spacing.sm,
   },
   headerBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 46,
+    height: 42,
+    borderRadius: ModernRadius.box,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    backgroundColor: '#E9EEF6',
   },
 
-  hero: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.xl,
-    padding: Spacing.md,
-    gap: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Color.border,
-    ...Shadow.card,
+  // Cover + identity
+  cover: {
+    width: '100%',
+    height: 190,
+    borderRadius: ModernRadius.card,
+    backgroundColor: SOFT_FILL,
   },
-  heroTop: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+  coverEmpty: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.primarySoft,
+    gap: Spacing.xs,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: Color.border,
   },
-  avatarImage: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: Color.divider,
+  coverEmptyText: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
   },
-  heroMain: {
-    flex: 1,
-    gap: 3,
-    justifyContent: 'center',
+  identity: {
+    gap: Spacing.xs + 2,
+    paddingHorizontal: Spacing.sm,
   },
-  heroNameRow: {
+  nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
-  heroName: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.extrabold,
-    color: Color.textPrimary,
+  name: {
     flexShrink: 1,
+    fontSize: FontSize.xl + 2,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
   },
-  heroCategory: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
+  categoryPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    backgroundColor: '#EEF1F8',
   },
-  heroNoRating: {
-    fontSize: FontSize.xs,
-    color: Color.placeholder,
+  categoryText: {
+    fontSize: FontSize.xs + 1,
+    color: '#4F5D8A',
   },
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 6,
   },
-  ratingText: {
+  ratingValue: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  ratingCount: {
+    fontSize: FontSize.md,
+    color: INK,
+  },
+  mutedText: {
     fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.warning,
+    color: Color.textSecondary,
   },
 
+  // Blocked banner
   banner: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Spacing.sm,
-    backgroundColor: Color.errorSoft,
-    borderRadius: Radius.lg,
-    padding: Spacing.sm + 2,
+    gap: Spacing.sm + 4,
+    padding: Spacing.md,
+    borderRadius: ModernRadius.box,
+    backgroundColor: '#FDECEC',
+    borderWidth: 1,
+    borderColor: '#F7C9C9',
+  },
+  bannerMain: {
+    flex: 1,
+    gap: 4,
+  },
+  bannerTitle: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+    color: '#991B1B',
   },
   bannerText: {
-    flex: 1,
     fontSize: FontSize.sm,
-    color: Color.error,
+    color: '#7F1D1D',
     lineHeight: FontSize.sm * 1.4,
   },
 
-  sectionGroup: {
-    gap: Spacing.xs,
+  // Sections
+  section: {
+    gap: Spacing.sm + 4,
   },
-  sectionLabelRow: {
+  divider: {
+    height: 1,
+    backgroundColor: CARD_BORDER,
+  },
+  sectionHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 2,
+    justifyContent: 'space-between',
   },
-  sectionLabel: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.textSecondary,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
+  sectionTitle: {
+    fontSize: FontSize.lg + 2,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
   },
-  sectionAction: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.primary,
+  linkBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
-  sectionCard: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.xl,
-    borderWidth: 1,
-    borderColor: Color.border,
-    padding: Spacing.sm + 2,
-    gap: Spacing.sm,
+  linkText: {
+    fontSize: FontSize.sm + 1,
+    fontWeight: FontWeight.semibold,
+    color: LINK,
   },
 
-  contactRow: {
+  // Manage grid
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: Spacing.sm + 4,
+  },
+  tile: {
+    width: '48.5%',
+    height: 96,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    borderRadius: ModernRadius.box,
+    borderWidth: 1,
+  },
+  tileText: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+
+  // About
+  aboutText: {
+    fontSize: FontSize.md,
+    color: INK,
+    lineHeight: FontSize.md * 1.45,
+  },
+  showMoreBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
+    alignSelf: 'center',
+    gap: 4,
+  },
+
+  // Contact
+  contactRow: {
+    flexDirection: 'row',
+    gap: Spacing.md,
   },
   contactIcon: {
     width: 28,
-    height: 28,
-    borderRadius: Radius.md,
+    paddingTop: Spacing.sm + 2,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Color.primarySoft,
   },
-  contactText: {
+  contactMain: {
     flex: 1,
-    fontSize: FontSize.sm,
-    color: Color.textPrimary,
+    gap: 2,
+    paddingVertical: Spacing.sm,
   },
-  contactTextMuted: {
-    color: Color.placeholder,
-    fontStyle: 'italic',
+  contactDivider: {
+    borderBottomWidth: 1,
+    borderBottomColor: CARD_BORDER,
   },
-  aboutText: {
-    fontSize: FontSize.sm,
-    color: Color.textPrimary,
-    lineHeight: FontSize.sm * 1.5,
-  },
-  aboutToggle: {
-    marginTop: 4,
-    fontSize: FontSize.sm,
+  contactLabel: {
+    fontSize: FontSize.sm + 1,
     fontWeight: FontWeight.bold,
-    color: Color.primary,
+    color: INK,
+  },
+  contactValue: {
+    fontSize: FontSize.md,
+    color: INK,
+    lineHeight: FontSize.md * 1.35,
   },
 
-  reviewSummaryRow: {
+  // Reviews
+  stars: {
+    flexDirection: 'row',
+    gap: 2,
+  },
+  halfStar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    overflow: 'hidden',
+  },
+  reviewSummary: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: Spacing.sm,
-    paddingBottom: Spacing.xs,
+    paddingBottom: Spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: CARD_BORDER,
   },
   reviewSummaryValue: {
     fontSize: FontSize.xxl,
     fontWeight: FontWeight.extrabold,
-    color: Color.textPrimary,
-  },
-  reviewSummaryMeta: {
-    gap: 2,
+    color: INK,
   },
   reviewSummaryCount: {
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
+    fontSize: FontSize.md,
+    color: INK,
   },
-  reviewEmptyRow: {
+  reviewEmpty: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
-  },
-  reviewStars: {
-    flexDirection: 'row',
-    gap: 1,
+    gap: Spacing.sm,
   },
   reviewRow: {
     flexDirection: 'row',
-    gap: Spacing.sm,
-    paddingTop: Spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: Color.divider,
+    gap: Spacing.sm + 4,
+    paddingVertical: Spacing.xs,
   },
-  reviewRowFirst: {
-    borderTopWidth: 0,
+  reviewRowDivider: {
+    borderTopWidth: 1,
+    borderTopColor: CARD_BORDER,
+    paddingTop: Spacing.sm + 4,
   },
   reviewAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.accentSoft,
   },
   reviewAvatarText: {
-    fontSize: FontSize.xs,
+    fontSize: FontSize.lg,
     fontWeight: FontWeight.bold,
-    color: Color.accent2,
   },
   reviewMain: {
     flex: 1,
-    gap: 2,
-  },
-  reviewAuthorRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: Spacing.xs,
+    gap: 3,
   },
   reviewAuthor: {
-    flexShrink: 1,
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
+    fontSize: FontSize.sm + 1,
+    fontWeight: FontWeight.bold,
+    color: INK,
   },
-  reviewComment: {
-    fontSize: FontSize.xs,
+  reviewMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  reviewTime: {
+    fontSize: FontSize.xs + 1,
     color: Color.textSecondary,
   },
-
-  menuGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
-  },
-  menuTile: {
-    flexBasis: '31%',
-    flexGrow: 1,
-    alignItems: 'center',
-    gap: Spacing.xs,
-    backgroundColor: Color.surface,
-    borderRadius: Radius.xl,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.xs,
-    borderWidth: 1,
-    borderColor: Color.border,
-    ...Shadow.card,
-  },
-  menuTileIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Color.primarySoft,
-  },
-  menuTileText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
-    textAlign: 'center',
+  reviewComment: {
+    fontSize: FontSize.sm + 1,
+    color: INK,
+    lineHeight: (FontSize.sm + 1) * 1.4,
   },
 });

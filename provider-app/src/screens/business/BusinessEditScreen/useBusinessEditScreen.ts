@@ -34,7 +34,7 @@ export function useBusinessEditScreen() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!business) return;
+    if (!business) {return;}
     setForm({
       businessName: business.businessName,
       phone: business.phone,
@@ -53,8 +53,8 @@ export function useBusinessEditScreen() {
 
   const save = useCallback(async () => {
     setError(null);
-    if (!form.businessName.trim()) return setError('Business name is required');
-    if (!form.phone.trim()) return setError('Phone is required');
+    if (!form.businessName.trim()) {return setError('Business name is required');}
+    if (!form.phone.trim()) {return setError('Phone is required');}
 
     try {
       await updateBusiness({

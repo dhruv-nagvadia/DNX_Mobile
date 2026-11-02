@@ -34,7 +34,7 @@ export function useStockScreen() {
 
   const results = useMemo(() => {
     const all = business?.products ?? [];
-    if (!search.trim()) return all;
+    if (!search.trim()) {return all;}
     const q = search.trim().toLowerCase();
     return all.filter((p) => p.name.toLowerCase().includes(q));
   }, [business, search]);
@@ -53,7 +53,7 @@ export function useStockScreen() {
 
   const toggleAvailability = useCallback(
     async (inStock: boolean) => {
-      if (!selected) return;
+      if (!selected) {return;}
       await setStockStatus({ businessId, productId: selected.id, inStock }).unwrap().catch(() => undefined);
       setSelected(null);
     },
@@ -75,10 +75,10 @@ export function useStockScreen() {
   );
 
   const submitAdjustment = useCallback(async () => {
-    if (!selected) return;
+    if (!selected) {return;}
     setError(null);
     const qty = Number(amount);
-    if (!Number.isFinite(qty) || qty <= 0) return setError('Enter a valid amount');
+    if (!Number.isFinite(qty) || qty <= 0) {return setError('Enter a valid amount');}
 
     const base = toBase(qty, selected.measure, unit);
     const delta = direction === 'add' ? base : -base;

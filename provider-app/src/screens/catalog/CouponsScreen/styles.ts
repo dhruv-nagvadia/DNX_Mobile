@@ -1,81 +1,91 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Theme';
+import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { ACTION, CARD_BORDER, CARD_SHADOW, INK, LINK, ModernRadius, PAGE_BG } from '@/utils/modernTheme';
 
 export const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Color.background,
-  },
-  addBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Color.white,
+    backgroundColor: PAGE_BG,
   },
 
   listContent: {
-    padding: Spacing.lg,
-    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.xs,
+    paddingBottom: Spacing.xl,
+    gap: Spacing.sm + 4,
   },
+  addBtn: {
+    alignSelf: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: Spacing.md + 2,
+    paddingVertical: 12,
+    borderRadius: ModernRadius.button,
+    backgroundColor: ACTION,
+    marginBottom: Spacing.xs,
+  },
+  addBtnText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
+    color: Color.white,
+  },
+
   card: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.xl,
-    padding: Spacing.md,
-    gap: 4,
+    backgroundColor: Color.white,
+    borderRadius: ModernRadius.card,
     borderWidth: 1,
-    borderColor: Color.border,
-    ...Shadow.card,
-  },
-  cardInactive: {
-    opacity: 0.55,
+    borderColor: CARD_BORDER,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    gap: 4,
+    ...CARD_SHADOW,
   },
   cardTop: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    gap: Spacing.sm,
+    marginBottom: 2,
   },
   code: {
+    flex: 1,
     fontSize: FontSize.md,
     fontWeight: FontWeight.extrabold,
-    color: Color.textPrimary,
-    letterSpacing: 0.5,
+    color: ACTION,
+    letterSpacing: 0.3,
+  },
+  codeOff: {
+    color: INK,
+  },
+  iconBtn: {
+    padding: 4,
+  },
+
+  discount: {
+    fontSize: FontSize.sm,
+    color: INK,
+  },
+  discountMain: {
+    fontWeight: FontWeight.semibold,
+    color: LINK,
+  },
+  discountMainOff: {
+    fontWeight: FontWeight.semibold,
+    color: INK,
   },
   meta: {
     fontSize: FontSize.sm,
-    color: Color.textSecondary,
+    color: INK,
   },
-  discount: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    color: Color.primary,
+  metaGap: {
+    marginTop: Spacing.xs,
+  },
+  expiryDate: {
+    color: ACTION,
+    fontWeight: FontWeight.medium,
   },
   expired: {
     color: Color.error,
-  },
-
-  actionsRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    marginTop: 4,
-  },
-  actionBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: Radius.pill,
-    borderWidth: 1,
-    borderColor: Color.border,
-  },
-  actionBtnDanger: {
-    borderColor: 'rgba(239, 68, 68, 0.4)',
-  },
-  actionBtnText: {
-    fontSize: FontSize.xs,
     fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
-  },
-  actionBtnTextDanger: {
-    color: Color.error,
   },
 });

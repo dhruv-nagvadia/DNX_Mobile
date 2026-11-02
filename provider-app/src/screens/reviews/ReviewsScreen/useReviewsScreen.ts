@@ -38,7 +38,9 @@ export function useReviewsScreen() {
   }, []);
 
   const saveReply = useCallback(async () => {
-    if (!editingId) return;
+    if (!editingId) {
+      return;
+    }
     await replyToReview({ businessId, reviewId: editingId, reply: draft.trim() || null })
       .unwrap()
       .catch(() => undefined);

@@ -2,29 +2,47 @@ import React from 'react';
 import { StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft } from 'lucide-react-native';
+import { ArrowLeft, ChevronLeft } from 'lucide-react-native';
 
 import { Color } from '@/utils/Theme';
+import { INK, PAGE_BG } from '@/utils/modernTheme';
 
 import { AppHeaderProps } from './types';
 import { styles } from './styles';
 
 /**
- * The standard chrome for every screen — a solid navy header mirroring the
- * web dashboard's branded sidebar/top bar (same `Color.primary` navy, same
- * "D" mark), so the provider app reads as the same product as the web
- * dashboard rather than borrowing the customer app's plain white headers.
- * Tab roots show the brand mark (`logo`); pushed screens show a back button.
+ * The standard chrome for every screen.
+ *
+ * - `variant="navy"` (default): a solid navy header mirroring the web
+ *   dashboard's branded top bar. Tab roots show the "D" mark (`logo`);
+ *   pushed screens show a back chevron.
+ * - `variant="light"`: the mockup look used by Home and the Business Detail
+ *   flow — page-coloured background, dark back arrow and dark bold title.
  */
-export function AppHeader({ title, subtitle, onBack, showBack, logo = false, right }: AppHeaderProps) {
+export function AppHeader({
+  title,
+  subtitle,
+  onBack,
+  showBack,
+  logo = false,
+  right,
+  variant = 'navy',
+}: AppHeaderProps) {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const handleBack = onBack ?? (() => navigation.goBack());
   const canShowBack = showBack ?? !logo;
+  const light = variant === 'light';
 
   return (
-    <View style={[styles.header, { paddingTop: insets.top + 10 }]} pointerEvents="box-none">
-      <StatusBar barStyle="light-content" backgroundColor={Color.primary} />
+    <View
+      style={[styles.header, light && styles.headerLight, { paddingTop: insets.top + 10 }]}
+      pointerEvents="box-none"
+    >
+      <StatusBar
+        barStyle={light ? 'dark-content' : 'light-content'}
+        backgroundColor={light ? PAGE_BG : Color.primary}
+      />
 
       {logo ? (
         <View style={styles.logoMark}>
@@ -38,17 +56,17 @@ export function AppHeader({ title, subtitle, onBack, showBack, logo = false, rig
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ChevronLeft size={24} color={Color.white} />
+          {light ? <ArrowLeft size={24} color={INK} /> : <ChevronLeft size={24} color={Color.white} />}
         </TouchableOpacity>
       ) : null}
 
       {!!title && (
         <View style={styles.titleGroup}>
-          <Text style={styles.title} numberOfLines={1}>
+          <Text style={[styles.title, light && styles.titleLight]} numberOfLines={1}>
             {title}
           </Text>
           {!!subtitle && (
-            <Text style={styles.subtitle} numberOfLines={1}>
+            <Text style={[styles.subtitle, light && styles.subtitleLight]} numberOfLines={1}>
               {subtitle}
             </Text>
           )}

@@ -152,7 +152,7 @@ export function useBusinessCalendarScreen() {
   );
 
   const monthLabel = useMemo(
-    () => monthCursor.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }),
+    () => monthCursor.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
     [monthCursor],
   );
   const weekLabel = useMemo(() => {
@@ -190,6 +190,25 @@ export function useBusinessCalendarScreen() {
     setSelectedKey(dateKey(start));
     setView('week');
   }, []);
+
+  // Month-grid tap → jump to that day's week, keeping the tapped day selected.
+  const openDay = useCallback((key: string) => {
+    const day = new Date(`${key}T00:00:00`);
+    setWeekStart(startOfWeek(day));
+    setSelectedKey(key);
+    setView('week');
+  }, []);
+
+  const goThisWeek = useCallback(() => {
+    setWeekStart(startOfWeek(today));
+    setSelectedKey(dateKey(today));
+  }, [today]);
+
+  const countFor = useCallback((key: string) => itemsByKey.get(key)?.length ?? 0, [itemsByKey]);
+  const isInMonth = useCallback(
+    (d: Date) => d.getMonth() === monthCursor.getMonth() && d.getFullYear() === monthCursor.getFullYear(),
+    [monthCursor],
+  );
 
   const effectiveFor = useCallback(
     (key: string): DayForm => {
@@ -249,12 +268,17 @@ export function useBusinessCalendarScreen() {
     goThisMonth,
     weekSummaries,
     selectWeek,
+    openDay,
+    countFor,
+    isInMonth,
+    todayKey: dateKey(today),
 
     // Week view
     weekLabel,
     isCurrentWeek,
     goPrevWeek,
     goNextWeek,
+    goThisWeek,
     weekDays,
     dateKey,
     selectedKey,

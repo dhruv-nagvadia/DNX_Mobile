@@ -1,280 +1,325 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Theme';
+import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { ACTION, CARD_BORDER, CARD_SHADOW, INK, LINK, ModernRadius, PAGE_BG, PILL, SOFT_FILL } from '@/utils/modernTheme';
+
+const card = {
+  backgroundColor: Color.white,
+  borderRadius: ModernRadius.card,
+  borderWidth: 1,
+  borderColor: CARD_BORDER,
+  ...CARD_SHADOW,
+};
 
 export const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Color.background,
+    backgroundColor: PAGE_BG,
   },
   content: {
-    padding: Spacing.lg,
-    gap: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
     paddingBottom: Spacing.xl,
+    gap: Spacing.md,
   },
 
+  todayBtn: {
+    paddingHorizontal: Spacing.sm + 4,
+    paddingVertical: 6,
+    borderRadius: ModernRadius.pill,
+    backgroundColor: PILL.blue.bg,
+  },
+  todayBtnText: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.semibold,
+    color: PILL.blue.fg,
+  },
+
+  // ── Month | Week segment ───────────────────────────────────────────────
   segment: {
     flexDirection: 'row',
-    backgroundColor: Color.border,
-    borderRadius: Radius.md,
+    alignSelf: 'center',
+    width: '86%',
+    backgroundColor: SOFT_FILL,
+    borderRadius: ModernRadius.pill,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
     padding: 3,
   },
   segmentBtn: {
     flex: 1,
-    paddingVertical: 8,
-    borderRadius: Radius.sm,
+    paddingVertical: Spacing.sm + 2,
+    borderRadius: ModernRadius.pill,
     alignItems: 'center',
   },
   segmentBtnActive: {
-    backgroundColor: Color.surface,
+    backgroundColor: ACTION,
   },
   segmentText: {
     fontSize: FontSize.sm,
     fontWeight: FontWeight.semibold,
-    color: Color.textSecondary,
+    color: INK,
   },
   segmentTextActive: {
-    color: Color.textPrimary,
+    color: Color.white,
   },
 
-  weekList: {
-    gap: Spacing.sm,
-  },
-  weekRow: {
+  // ── Period nav (< Oct 2026 >) ──────────────────────────────────────────
+  periodNav: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
-    backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: Color.border,
-    padding: Spacing.sm + 2,
-  },
-  weekRowMuted: {
-    opacity: 0.5,
-  },
-  weekMain: {
-    flex: 1,
-  },
-  weekRange: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
-  },
-  weekCountBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.primarySoft,
-  },
-  weekCountText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.primary,
-  },
-  weekEmptyText: {
-    fontSize: FontSize.xs,
-    color: Color.placeholder,
-  },
-
-  toolbar: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  toolbarNav: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
+    gap: Spacing.sm,
   },
   navBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-  },
-  todayBtn: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.primarySoft,
-  },
-  todayBtnText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.primary,
   },
   periodLabel: {
-    fontSize: FontSize.sm,
+    flex: 1,
+    textAlign: 'center',
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+
+  // ── Month grid ─────────────────────────────────────────────────────────
+  monthGrid: {
+    ...card,
+    paddingHorizontal: Spacing.xs,
+    paddingVertical: Spacing.sm + 4,
+    gap: Spacing.xs,
+  },
+  gridRow: {
+    flexDirection: 'row',
+  },
+  weekdayLabel: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: FontSize.xs,
     fontWeight: FontWeight.semibold,
+    color: INK,
+    paddingBottom: Spacing.sm,
+  },
+  dayCell: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 4,
+    gap: 3,
+  },
+  dayCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dayCircleSelected: {
+    backgroundColor: ACTION,
+  },
+  dayNum: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+    color: INK,
+  },
+  dayNumMuted: {
+    color: Color.placeholder,
+    fontWeight: FontWeight.regular,
+  },
+  dayNumToday: {
+    color: ACTION,
+    fontWeight: FontWeight.bold,
+  },
+  dayNumSelected: {
+    color: Color.white,
+    fontWeight: FontWeight.bold,
+  },
+  dayDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: 'transparent',
+  },
+  dayDotOn: {
+    backgroundColor: LINK,
+  },
+  dayDotMuted: {
+    opacity: 0.4,
+  },
+
+  // ── Selected-day summary card ──────────────────────────────────────────
+  selectedCard: {
+    ...card,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm + 6,
+    paddingHorizontal: Spacing.md + 4,
+    paddingVertical: Spacing.md + 2,
+  },
+  selectedMain: {
+    flex: 1,
+    gap: 2,
+  },
+  selectedTitle: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  selectedSubtitle: {
+    fontSize: FontSize.sm,
     color: Color.textSecondary,
   },
 
-  chipStrip: {
-    gap: Spacing.sm,
-    paddingVertical: 2,
+  // ── Week day chips ─────────────────────────────────────────────────────
+  chipRow: {
+    flexDirection: 'row',
+    gap: 6,
   },
   chip: {
-    width: 56,
-    paddingVertical: 10,
-    borderRadius: Radius.lg,
+    flex: 1,
     alignItems: 'center',
-    backgroundColor: Color.surface,
+    paddingTop: Spacing.sm,
+    paddingBottom: 6,
+    borderRadius: ModernRadius.box,
     borderWidth: 1,
-    borderColor: Color.border,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
     gap: 2,
   },
   chipActive: {
-    backgroundColor: Color.primary,
-    borderColor: Color.primary,
+    backgroundColor: ACTION,
+    borderColor: ACTION,
   },
   chipDay: {
     fontSize: FontSize.xs,
-    color: Color.textSecondary,
+    fontWeight: FontWeight.medium,
+    color: INK,
   },
   chipDayActive: {
-    color: Color.onDark,
+    color: 'rgba(255, 255, 255, 0.85)',
   },
   chipDate: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
+    color: INK,
   },
   chipDateActive: {
     color: Color.white,
   },
+  // Marks a date with custom (override) hours.
   chipDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: Color.accent,
-    marginTop: 2,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: 'transparent',
+  },
+  chipDotOn: {
+    backgroundColor: Color.warning,
+  },
+  chipDotActive: {
+    opacity: 0.9,
   },
 
-  card: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.xl,
+  // ── Sections (bookings list / override hours) ──────────────────────────
+  section: {
+    ...card,
     padding: Spacing.md,
-    gap: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Color.border,
-    ...Shadow.card,
+    gap: Spacing.sm + 4,
   },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cardTitle: {
+  sectionTitle: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  overrideTag: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.accent2,
-  },
-  timesRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  timeField: {
-    flex: 1,
+    color: INK,
   },
 
-  sectionGroup: {
-    gap: Spacing.xs,
-  },
-  sectionLabelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 2,
-  },
-  sectionLabel: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.textSecondary,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-  },
-  sectionCount: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.primarySoft,
-  },
-  sectionCountText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.primary,
-  },
-  itemList: {
-    gap: Spacing.sm,
-  },
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
-    backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: Color.border,
-    padding: Spacing.sm + 2,
+    gap: Spacing.sm + 4,
+    paddingVertical: Spacing.sm + 2,
   },
-  itemIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  itemRowDivider: {
+    borderBottomWidth: 1,
+    borderBottomColor: Color.divider,
+  },
+  timeBox: {
+    minWidth: 86,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Color.primarySoft,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: ModernRadius.box,
+    backgroundColor: '#EEF4FF',
+  },
+  timeBoxText: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  timeBoxEnd: {
+    fontSize: 10,
+    color: Color.textSecondary,
+    marginTop: 1,
   },
   itemMain: {
     flex: 1,
-    gap: 1,
+    gap: 2,
   },
   itemTitle: {
     fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
+    fontWeight: FontWeight.bold,
+    color: INK,
   },
   itemSubtitle: {
     fontSize: FontSize.xs,
     color: Color.textSecondary,
   },
-  edgeBadge: {
-    marginRight: -(Spacing.sm + 2),
-  },
-  emptyCard: {
+  emptyRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
-    backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: Color.border,
-    padding: Spacing.md,
+    gap: Spacing.sm,
+    paddingVertical: Spacing.xs,
   },
   emptyText: {
     fontSize: FontSize.sm,
     color: Color.textSecondary,
   },
 
-  actionsRow: {
+  overrideHeader: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
   },
-  actionButton: {
+  overrideHeaderText: {
     flex: 1,
+    gap: 2,
   },
-
+  overrideHint: {
+    fontSize: FontSize.xs,
+    color: Color.textSecondary,
+  },
+  rangeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  rangeDash: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+    color: INK,
+  },
   errorText: {
     fontSize: FontSize.sm,
     color: Color.error,
+  },
+  primaryButton: {
+    backgroundColor: ACTION,
+    borderRadius: ModernRadius.button,
+  },
+  outlineButton: {
+    borderRadius: ModernRadius.button,
+    borderWidth: 1.5,
+    borderColor: ACTION,
+    backgroundColor: Color.white,
   },
 });

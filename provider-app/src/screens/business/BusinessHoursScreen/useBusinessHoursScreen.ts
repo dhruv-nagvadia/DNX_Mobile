@@ -12,7 +12,7 @@ const DEFAULT_CLOSE = '18:00';
 function normalize(hours: BusinessHour[] | undefined): BusinessHour[] {
   return Array.from({ length: 7 }, (_, dayOfWeek) => {
     const existing = hours?.find((h) => h.dayOfWeek === dayOfWeek);
-    if (existing) return existing;
+    if (existing) {return existing;}
     // Mon(1)-Sat(6) default open; Sun(0) defaults closed — mirrors the web form's defaults.
     return {
       dayOfWeek,
@@ -42,7 +42,9 @@ export function useBusinessHoursScreen() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!business) return;
+    if (!business) {
+      return;
+    }
     const normalized = normalize(business.businessHours);
     setDays(normalized);
     setBaseline(JSON.stringify(normalized));
@@ -67,7 +69,22 @@ export function useBusinessHoursScreen() {
     setHasBreak((prev) => !prev);
   }, []);
 
-  const dirty = useMemo(() => JSON.stringify(days) !== baseline, [days, baseline]);
+  // What would actually be saved: each open day gets the daily break if it
+  // fits inside that day's hours. Comparing THIS (not just `days`) against
+  // the loaded hours means a break-only change also enables Save.
+  const payload = useMemo(
+    () =>
+      days.map((d) => {
+        if (!d.isOpen) {
+          return { ...d, breakStart: null, breakEnd: null };
+        }
+        const fits = hasBreak && breakStart >= d.openTime && breakEnd <= d.closeTime;
+        return { ...d, breakStart: fits ? breakStart : null, breakEnd: fits ? breakEnd : null };
+      }),
+    [days, hasBreak, breakStart, breakEnd],
+  );
+
+  const dirty = useMemo(() => JSON.stringify(payload) !== baseline, [payload, baseline]);
 
   const save = useCallback(async () => {
     setError(null);
@@ -83,11 +100,7 @@ export function useBusinessHoursScreen() {
       return;
     }
 
-    const withBreak = days.map((d) => {
-      if (!d.isOpen) return { ...d, breakStart: null, breakEnd: null };
-      const fits = hasBreak && breakStart >= d.openTime && breakEnd <= d.closeTime;
-      return { ...d, breakStart: fits ? breakStart : null, breakEnd: fits ? breakEnd : null };
-    });
+    const withBreak = payload;
 
     try {
       await setBusinessHours({ id: businessId, hours: withBreak }).unwrap();
@@ -97,7 +110,7 @@ export function useBusinessHoursScreen() {
     } catch {
       setError('Could not save your hours. Please try again.');
     }
-  }, [days, hasBreak, breakStart, breakEnd, businessId, setBusinessHours, navigation]);
+  }, [days, payload, hasBreak, breakStart, breakEnd, businessId, setBusinessHours, navigation]);
 
   return {
     isLoading,

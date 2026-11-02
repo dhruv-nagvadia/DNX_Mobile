@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
+import { INK, PAGE_BG } from '@/utils/modernTheme';
 
 export const styles = StyleSheet.create({
   header: {
@@ -8,6 +9,18 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingBottom: 14,
     backgroundColor: Color.primary,
+  },
+  headerLight: {
+    backgroundColor: PAGE_BG,
+    paddingBottom: Spacing.sm + 4,
+  },
+  titleLight: {
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  subtitleLight: {
+    color: Color.textSecondary,
   },
   backBtn: {
     width: 36,

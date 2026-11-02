@@ -1,166 +1,191 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Theme';
+import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { ACTION, CARD_BORDER, CARD_SHADOW, INK, LINK, ModernRadius, PAGE_BG, SOFT_FILL } from '@/utils/modernTheme';
+
+export const STAR_FILLED = '#FBBF24';
+export const STAR_EMPTY = '#E5E7EB';
+
+const AVATAR = 48;
 
 export const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Color.background,
+    backgroundColor: PAGE_BG,
   },
   listContent: {
-    padding: Spacing.lg,
-    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.xs,
     paddingBottom: Spacing.xl,
+    gap: Spacing.md,
   },
 
-  summaryCard: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.xl,
-    padding: Spacing.md,
-    flexDirection: 'row',
-    gap: Spacing.lg,
+  card: {
+    backgroundColor: Color.white,
+    borderRadius: ModernRadius.card,
     borderWidth: 1,
-    borderColor: Color.border,
-    ...Shadow.card,
+    borderColor: CARD_BORDER,
+    padding: Spacing.md,
+    ...CARD_SHADOW,
   },
-  summaryLeft: {
+
+  // ── Summary ────────────────────────────────────────────────────────────
+  summaryTop: {
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 6,
+    paddingTop: Spacing.xs,
+    paddingBottom: Spacing.md,
   },
   summaryAvg: {
-    fontSize: FontSize.xxxl,
+    fontSize: FontSize.xxxl * 1.3,
     fontWeight: FontWeight.extrabold,
-    color: Color.textPrimary,
-  },
-  summaryStars: {
-    fontSize: FontSize.sm,
-    color: Color.warning,
+    color: INK,
   },
   summaryCount: {
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
+    fontSize: FontSize.sm,
+    color: INK,
+    opacity: 0.8,
   },
   distribution: {
-    flex: 1,
-    justifyContent: 'center',
-    gap: 4,
+    gap: Spacing.sm + 4,
   },
   distRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: Spacing.sm,
+  },
+  distLabelWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    width: 32,
   },
   distLabel: {
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
-    width: 10,
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: INK,
   },
   distTrack: {
     flex: 1,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: Color.border,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: SOFT_FILL,
     overflow: 'hidden',
   },
   distFill: {
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: Color.warning,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: ACTION,
   },
-  distCount: {
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
-    width: 20,
+  distPct: {
+    width: 40,
     textAlign: 'right',
+    fontSize: FontSize.sm,
+    color: INK,
   },
 
-  card: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.xl,
-    padding: Spacing.md,
-    gap: 6,
-    borderWidth: 1,
-    borderColor: Color.border,
-    ...Shadow.card,
-  },
-  cardTop: {
+  // ── Stars ──────────────────────────────────────────────────────────────
+  starRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    gap: 2,
+  },
+  starClip: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    overflow: 'hidden',
+  },
+
+  // ── Review rows ────────────────────────────────────────────────────────
+  review: {
+    paddingVertical: Spacing.sm + 4,
+    gap: Spacing.sm,
+  },
+  reviewDivider: {
+    borderTopWidth: 1,
+    borderTopColor: CARD_BORDER,
+  },
+  reviewTop: {
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: Spacing.sm + 4,
+  },
+  avatar: {
+    width: AVATAR,
+    height: AVATAR,
+    borderRadius: AVATAR / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: {
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.bold,
+  },
+  reviewHead: {
+    flex: 1,
+    gap: 3,
   },
   name: {
-    fontSize: FontSize.sm,
+    fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
+    color: INK,
   },
   date: {
     fontSize: FontSize.xs,
     color: Color.textSecondary,
   },
-  stars: {
-    fontSize: FontSize.sm,
-    color: Color.warning,
-  },
   comment: {
     fontSize: FontSize.sm,
-    color: Color.textPrimary,
+    color: INK,
     lineHeight: FontSize.sm * 1.5,
   },
 
   replyBox: {
-    marginTop: 4,
-    paddingTop: Spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: Color.border,
+    backgroundColor: SOFT_FILL,
+    borderRadius: ModernRadius.box,
+    padding: Spacing.sm + 4,
     gap: 4,
   },
   replyLabel: {
     fontSize: FontSize.xs,
     fontWeight: FontWeight.semibold,
-    color: Color.primary,
+    color: ACTION,
   },
   replyText: {
     fontSize: FontSize.sm,
-    color: Color.textSecondary,
+    color: INK,
+    lineHeight: FontSize.sm * 1.4,
   },
 
   replyLink: {
     alignSelf: 'flex-start',
-    marginTop: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
   replyLinkText: {
     fontSize: FontSize.sm,
     fontWeight: FontWeight.semibold,
-    color: Color.primary,
+    color: LINK,
   },
 
   editorInput: {
-    marginTop: 6,
-    minHeight: 70,
+    minHeight: 80,
     borderWidth: 1,
-    borderColor: Color.border,
-    borderRadius: Radius.md,
-    padding: Spacing.sm,
+    borderColor: CARD_BORDER,
+    backgroundColor: SOFT_FILL,
+    borderRadius: ModernRadius.box,
+    padding: Spacing.sm + 4,
     fontSize: FontSize.sm,
-    color: Color.textPrimary,
+    color: INK,
     textAlignVertical: 'top',
   },
   editorActions: {
     flexDirection: 'row',
     gap: Spacing.sm,
-    marginTop: Spacing.xs,
+    marginTop: Spacing.sm,
   },
   editorButton: {
     flex: 1,
-  },
-
-  emptyWrap: {
-    alignItems: 'center',
-    paddingVertical: Spacing.xl,
-    gap: 4,
-  },
-  emptyText: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-    textAlign: 'center',
   },
 });

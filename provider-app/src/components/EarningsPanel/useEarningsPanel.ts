@@ -7,7 +7,15 @@ import { EarningsPeriod } from './types';
 
 const dayFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'short' });
 const monthFmt = new Intl.DateTimeFormat('en-IN', { month: 'short' });
+const rangeFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** The trend compares the last point with the one before it. */
+const COMPARE_LABEL: Record<EarningsPeriod, string> = {
+  week: 'vs. previous day',
+  month: 'vs. previous week',
+  year: 'vs. previous month',
+};
 
 interface Bucket {
   label: string;
@@ -54,7 +62,7 @@ export function useEarningsPanel(businessId: string, isStore: boolean) {
   const bookingsQuery = useGetBusinessBookingsQuery(businessId, { skip: isStore });
   const ordersQuery = useGetMyOrdersQuery(undefined, { skip: !isStore });
 
-  const { points, total, trendPct, currency, isEmpty } = useMemo(() => {
+  const { points, total, trendPct, currency, isEmpty, rangeLabel } = useMemo(() => {
     const buckets = bucketsFor(period);
     const values = new Array(buckets.length).fill(0);
     let cur = 'INR';
@@ -62,7 +70,9 @@ export function useEarningsPanel(businessId: string, isStore: boolean) {
 
     if (isStore) {
       for (const o of ordersQuery.data ?? []) {
-        if (o.provider.id !== businessId || o.status === 'CANCELLED') continue;
+        if (o.provider.id !== businessId || o.status === 'CANCELLED') {
+          continue;
+        }
         const t = new Date(o.createdAt).getTime();
         const idx = buckets.findIndex((b) => t >= b.start && t < b.end);
         if (idx >= 0) {
@@ -73,7 +83,9 @@ export function useEarningsPanel(businessId: string, isStore: boolean) {
       }
     } else {
       for (const b of bookingsQuery.data ?? []) {
-        if (b.status === 'CANCELLED') continue;
+        if (b.status === 'CANCELLED') {
+          continue;
+        }
         const t = new Date(b.startTime).getTime();
         const idx = buckets.findIndex((bk) => t >= bk.start && t < bk.end);
         if (idx >= 0) {
@@ -89,8 +101,16 @@ export function useEarningsPanel(businessId: string, isStore: boolean) {
     const prev = values[values.length - 2] ?? 0;
     const last = values[values.length - 1] ?? 0;
     const pct = prev > 0 ? ((last - prev) / prev) * 100 : null;
+    const range = `${rangeFmt.format(new Date(buckets[0].start))} – ${rangeFmt.format(new Date())}`;
 
-    return { points: pts, total: Math.round(sumTotal), trendPct: pct, currency: cur, isEmpty: !any };
+    return {
+      points: pts,
+      total: Math.round(sumTotal),
+      trendPct: pct,
+      currency: cur,
+      isEmpty: !any,
+      rangeLabel: range,
+    };
   }, [period, isStore, businessId, bookingsQuery.data, ordersQuery.data]);
 
   return {
@@ -101,6 +121,8 @@ export function useEarningsPanel(businessId: string, isStore: boolean) {
     trendPct,
     currency,
     isEmpty,
+    rangeLabel,
+    compareLabel: COMPARE_LABEL[period],
     isLoading: isStore ? ordersQuery.isLoading : bookingsQuery.isLoading,
   };
 }

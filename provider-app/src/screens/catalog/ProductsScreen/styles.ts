@@ -1,129 +1,131 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Theme';
+import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { ACTION, CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG, TINT } from '@/utils/modernTheme';
 
+// Mockup look ("Salon Business Management App UI Collage.png" → Products):
+// light header, right-aligned filled "Add" button, one white rounded card
+// listing every product with inset dividers, outlined "Manage Stock" footer.
 export const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Color.background,
+    backgroundColor: PAGE_BG,
   },
-  headerActions: {
+  flex: {
+    flex: 1,
+  },
+  listContent: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.xs,
+    paddingBottom: Spacing.lg,
+    gap: Spacing.md,
+  },
+
+  toolbar: {
     flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  iconBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    justifyContent: 'flex-end',
   },
   addBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Color.white,
+    gap: 6,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 10,
+    borderRadius: ModernRadius.button,
+    backgroundColor: ACTION,
+  },
+  addBtnText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
+    color: Color.white,
   },
 
-  listContent: {
-    padding: Spacing.lg,
-    gap: Spacing.sm,
-  },
   card: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.xl,
-    padding: Spacing.md,
-    gap: 4,
+    backgroundColor: Color.white,
+    borderRadius: ModernRadius.card,
     borderWidth: 1,
-    borderColor: Color.border,
-    ...Shadow.card,
+    borderColor: CARD_BORDER,
+    paddingHorizontal: Spacing.md,
+    ...CARD_SHADOW,
   },
-  cardInactive: {
+  divider: {
+    height: 1,
+    backgroundColor: CARD_BORDER,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.sm + 6,
+  },
+  rowLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    gap: Spacing.sm + 2,
+  },
+  dimmed: {
     opacity: 0.55,
   },
-  cardRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  productImage: {
+  thumb: {
     width: 56,
     height: 56,
-    borderRadius: Radius.md,
+    borderRadius: ModernRadius.box,
     backgroundColor: Color.divider,
   },
-  productImageFallback: {
-    width: 56,
-    height: 56,
-    borderRadius: Radius.md,
+  thumbFallback: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.divider,
+    backgroundColor: TINT.blue.colors[0],
+    borderWidth: 1,
+    borderColor: TINT.blue.border,
   },
-  cardMain: {
+  rowMain: {
     flex: 1,
-    gap: 4,
-  },
-  cardTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    gap: 3,
   },
   name: {
-    fontSize: FontSize.md,
+    fontSize: FontSize.sm,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-    flex: 1,
+    color: INK,
   },
   meta: {
-    fontSize: FontSize.sm,
+    fontSize: FontSize.xs,
     color: Color.textSecondary,
   },
-  price: {
+  stockPill: {
+    marginTop: 3,
+  },
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm + 2,
+  },
+  switch: {
+    transform: [{ scaleX: 0.85 }, { scaleY: 0.85 }],
+  },
+  iconBtn: {
+    padding: 2,
+  },
+
+  footer: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.lg,
+    backgroundColor: PAGE_BG,
+  },
+  stockBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: 14,
+    borderRadius: ModernRadius.button,
+    borderWidth: 1.5,
+    borderColor: ACTION,
+    backgroundColor: Color.white,
+  },
+  stockBtnText: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-
-  stockBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: Radius.pill,
-  },
-  stockOk: { backgroundColor: Color.successSoft },
-  stockLow: { backgroundColor: Color.warningSoft },
-  stockOut: { backgroundColor: Color.errorSoft },
-  stockOkText: { color: Color.success },
-  stockLowText: { color: Color.warning },
-  stockOutText: { color: Color.error },
-  stockBadgeText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-  },
-
-  actionsRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    marginTop: 4,
-  },
-  actionBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: Radius.pill,
-    borderWidth: 1,
-    borderColor: Color.border,
-  },
-  actionBtnDanger: {
-    borderColor: 'rgba(239, 68, 68, 0.4)',
-  },
-  actionBtnText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
-  },
-  actionBtnTextDanger: {
-    color: Color.error,
+    color: ACTION,
   },
 });

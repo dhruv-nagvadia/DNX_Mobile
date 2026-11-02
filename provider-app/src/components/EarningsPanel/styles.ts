@@ -1,85 +1,82 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Theme';
+import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { ACTION, INK } from '@/utils/modernTheme';
 
+// Only shown on the Business Detail screen (mockup look — sits directly on
+// the page background, no card).
 export const styles = StyleSheet.create({
-  card: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.xl,
-    padding: Spacing.md,
-    gap: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Color.border,
-    ...Shadow.card,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-
-  segment: {
-    flexDirection: 'row',
-    backgroundColor: Color.border,
-    borderRadius: Radius.md,
-    padding: 2,
-  },
-  segmentBtn: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: Radius.sm,
-  },
-  segmentBtnActive: {
-    backgroundColor: Color.surface,
-  },
-  segmentText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.textSecondary,
-  },
-  segmentTextActive: {
-    color: Color.textPrimary,
-  },
-
-  headline: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
+  wrap: {
     gap: Spacing.xs,
   },
-  headlineValue: {
-    flexShrink: 1,
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
-    color: Color.textPrimary,
+  segment: {
+    flexDirection: 'row',
+    padding: 4,
+    borderRadius: 999,
+    backgroundColor: '#EEF1F6',
+    borderWidth: 1,
+    borderColor: '#E3E8F0',
+    marginBottom: Spacing.sm,
   },
-  trendBadge: {
-    flexShrink: 0,
+  segmentBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 999,
+    alignItems: 'center',
+  },
+  segmentBtnActive: {
+    backgroundColor: ACTION,
+  },
+  segmentText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: INK,
+  },
+  segmentTextActive: {
+    color: Color.white,
+  },
+  range: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+  },
+  total: {
+    fontSize: FontSize.xxxl,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  trendRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  trendPill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: Radius.pill,
+    borderRadius: 999,
   },
-  trendUp: {
+  trendPillUp: {
     backgroundColor: Color.successSoft,
   },
-  trendDown: {
+  trendPillDown: {
     backgroundColor: Color.errorSoft,
   },
   trendText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
   },
   trendTextUp: {
     color: Color.success,
   },
   trendTextDown: {
     color: Color.error,
+  },
+  trendLabel: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+  },
+  chart: {
+    marginTop: Spacing.sm,
   },
 });

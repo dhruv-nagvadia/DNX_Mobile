@@ -12,7 +12,7 @@ import {
 import { BusinessOrder, DashboardBooking, OrderStatus } from '@/redux/api/business/types';
 import { bookingNeedsCollection, orderNeedsCollection } from '@/utils/status';
 
-import { BookingsOrdersRouteProp, ListTab, PendingAction } from './types';
+import { BookingsOrdersRouteProp, ListTab, PendingAction, StatusFilter } from './types';
 
 const dateFmt = new Intl.DateTimeFormat('en-IN', {
   day: 'numeric',
@@ -20,6 +20,28 @@ const dateFmt = new Intl.DateTimeFormat('en-IN', {
   hour: 'numeric',
   minute: '2-digit',
 });
+const timeFmt = new Intl.DateTimeFormat('en-IN', {
+  hour: 'numeric',
+  minute: '2-digit',
+  hour12: true,
+});
+const dayFmt = new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short' });
+
+/** "Today, 10:00 AM" / "Tomorrow, …" / "Yesterday, …" — otherwise "2 Nov, 10:00 AM". */
+function formatWhen(iso: string): string {
+  const d = new Date(iso);
+  const startOf = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diffDays = Math.round((startOf(d) - startOf(new Date())) / 86_400_000);
+  const day =
+    diffDays === 0
+      ? 'Today'
+      : diffDays === 1
+        ? 'Tomorrow'
+        : diffDays === -1
+          ? 'Yesterday'
+          : dayFmt.format(d);
+  return `${day}, ${timeFmt.format(d).toUpperCase()}`;
+}
 
 /**
  * Ports the web dashboard's OrdersManager + BusinessBookings status machine:
@@ -32,7 +54,13 @@ export function useBookingsOrdersScreen() {
   const route = useRoute<BookingsOrdersRouteProp>();
   const businessId = route.params?.businessId;
   const scoped = !!businessId;
-  const [tab, setTab] = useState<ListTab>(route.params?.tab ?? 'bookings');
+  const [tab, setTabState] = useState<ListTab>(route.params?.tab ?? 'bookings');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
+  const setTab = useCallback((next: ListTab) => {
+    setTabState(next);
+    // Bookings and orders have different status sets — start each tab on "All".
+    setStatusFilter('ALL');
+  }, []);
   const [reason, setReason] = useState('');
   const [pending, setPending] = useState<PendingAction>(null);
   const [actingId, setActingId] = useState<string | null>(null);
@@ -57,6 +85,15 @@ export function useBookingsOrdersScreen() {
         .filter((o) => !businessId || o.provider.id === businessId)
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
     [ordersQuery.data, businessId],
+  );
+
+  const filteredBookings = useMemo(
+    () => (statusFilter === 'ALL' ? bookings : bookings.filter((b) => b.status === statusFilter)),
+    [bookings, statusFilter],
+  );
+  const filteredOrders = useMemo(
+    () => (statusFilter === 'ALL' ? orders : orders.filter((o) => o.status === statusFilter)),
+    [orders, statusFilter],
   );
 
   const confirmBooking = useCallback(
@@ -95,7 +132,9 @@ export function useBookingsOrdersScreen() {
   const collectOrderNow = useCallback(
     async (o: BusinessOrder) => {
       setActingId(o.id);
-      await collectOrderPayment({ orderId: o.id }).unwrap().catch(() => undefined);
+      await collectOrderPayment({ orderId: o.id })
+        .unwrap()
+        .catch(() => undefined);
       setActingId(null);
     },
     [collectOrderPayment],
@@ -108,9 +147,13 @@ export function useBookingsOrdersScreen() {
   const closeModal = useCallback(() => setPending(null), []);
 
   const submitModal = useCallback(async () => {
-    if (!pending) return;
+    if (!pending) {
+      return;
+    }
     setActingId(
-      pending.kind === 'cancelBooking' || pending.kind === 'collectBooking' ? pending.booking.id : pending.order.id,
+      pending.kind === 'cancelBooking' || pending.kind === 'collectBooking'
+        ? pending.booking.id
+        : pending.order.id,
     );
     if (pending.kind === 'cancelBooking') {
       await updateBookingStatus({
@@ -131,7 +174,10 @@ export function useBookingsOrdersScreen() {
         .unwrap()
         .catch(() => undefined);
     } else if (pending.kind === 'collectBooking') {
-      await collectBookingPayment({ id: pending.booking.provider.id, bookingId: pending.booking.id })
+      await collectBookingPayment({
+        id: pending.booking.provider.id,
+        bookingId: pending.booking.id,
+      })
         .unwrap()
         .catch(() => undefined);
     }
@@ -143,8 +189,10 @@ export function useBookingsOrdersScreen() {
     tab,
     setTab,
     scoped,
-    bookings,
-    orders,
+    statusFilter,
+    setStatusFilter,
+    bookings: filteredBookings,
+    orders: filteredOrders,
     bookingsLoading: bookingsQuery.isLoading,
     ordersLoading: ordersQuery.isLoading,
     refreshing: bookingsQuery.isFetching || ordersQuery.isFetching,
@@ -168,5 +216,6 @@ export function useBookingsOrdersScreen() {
     closeModal,
     submitModal,
     dateFmt,
+    formatWhen,
   };
 }

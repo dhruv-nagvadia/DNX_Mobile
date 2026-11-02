@@ -3,27 +3,31 @@ import { useMemo } from 'react';
 import { useGetBusinessBookingsQuery, useGetMyOrdersQuery } from '@/redux/api/business/businessApi';
 import { BusinessOrderItem } from '@/redux/api/business/types';
 
-import { TopItem, TopSellersData } from './types';
+import { BusiestDay, TopItem, TopSellersData } from './types';
 
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MAX_ITEMS = 5;
 
 const lineTotal = (it: BusinessOrderItem) => Math.round((it.quantity / it.priceQty) * it.priceMinor);
 
-/** Weekday label with the most activity, or null if there's nothing to rank. */
-function busiestWeekday(dates: Date[]): string | null {
+/** The weekday with the most activity, plus how many sales that weekday
+ * averages (total on that weekday ÷ distinct dates of it that had any). */
+function busiestWeekday(dates: Date[]): BusiestDay | null {
   if (dates.length === 0) {
     return null;
   }
   const counts = new Array(7).fill(0);
+  const distinct: Set<string>[] = Array.from({ length: 7 }, () => new Set<string>());
   for (const d of dates) {
     counts[d.getDay()] += 1;
+    distinct[d.getDay()].add(d.toDateString());
   }
   const max = Math.max(...counts);
   if (max === 0) {
     return null;
   }
-  return WEEKDAYS[counts.indexOf(max)];
+  const day = counts.indexOf(max);
+  return { day: WEEKDAYS[day], avg: Math.round(max / Math.max(distinct[day].size, 1)) };
 }
 
 /**
