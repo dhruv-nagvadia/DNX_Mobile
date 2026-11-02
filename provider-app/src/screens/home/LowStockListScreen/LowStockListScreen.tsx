@@ -40,6 +40,7 @@ export default function LowStockListScreen() {
       <StatusBadge
         label={item.level === 'out' ? 'Out of Stock' : `Only ${item.product.stockQty} left`}
         tone="error"
+        style={styles.centerBadge}
       />
     </TouchableOpacity>
   );

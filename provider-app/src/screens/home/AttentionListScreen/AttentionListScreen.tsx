@@ -43,11 +43,22 @@ export default function AttentionListScreen() {
         </View>
       </View>
       <View style={styles.right}>
-        <StatusBadge
-          label={item.confirm ? 'Confirm Request' : 'Collect Payment'}
-          tone={item.confirm ? 'warning' : 'success'}
-        />
-        {!item.confirm && <Text style={styles.amount}>{formatMoney(item.due, item.booking.currency)}</Text>}
+        {item.confirm && (
+          <StatusBadge
+            label="Confirm Request"
+            tone="warning"
+            style={styles.compactBadge}
+            textStyle={styles.compactBadgeText}
+          />
+        )}
+        {item.collect && (
+          <StatusBadge
+            label={`Collect ${formatMoney(item.due, item.booking.currency)}`}
+            tone="success"
+            style={styles.compactBadge}
+            textStyle={styles.compactBadgeText}
+          />
+        )}
       </View>
     </TouchableOpacity>
   );

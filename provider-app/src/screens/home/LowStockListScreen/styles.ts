@@ -44,4 +44,10 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.xs,
     color: Color.textSecondary,
   },
+  // Vertically centers the trailing badge within the row — overrides the
+  // badge's own `alignSelf: 'flex-start'`, which otherwise pins it to the
+  // top of a taller (2-line) row instead of centering with its content.
+  centerBadge: {
+    alignSelf: 'center',
+  },
 });

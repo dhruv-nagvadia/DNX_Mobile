@@ -6,11 +6,11 @@ import { ShoppingBag, User } from 'lucide-react-native';
 
 import { AppHeader } from '@/components/AppHeader';
 import { EmptyState } from '@/components/EmptyState';
-import { StatusBadge } from '@/components/StatusBadge';
+import { BadgeTone, StatusBadge } from '@/components/StatusBadge';
 import { Color } from '@/utils/Theme';
 import { formatMoney } from '@/utils/money';
 import { orderStatusBadge } from '@/utils/status';
-import { BusinessOrder, PaymentMethod } from '@/redux/api/business/types';
+import { BusinessOrder } from '@/redux/api/business/types';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
 import { useOpenOrdersScreen } from './useOpenOrdersScreen';
@@ -22,10 +22,26 @@ function orderRef(id: string): string {
   return `#${id.slice(-6).toUpperCase()}`;
 }
 
+/** Ports `frontend/src/pages/provider/DashboardPage/DashboardPage.tsx`'s
+ * `paymentLine` — an online order shows its payment STATUS ("Paid"/"Online"),
+ * not an amount; only cash/partial orders show the outstanding amount due. */
 function paymentLineFor(o: BusinessOrder): string {
+  if (o.paymentMethod === 'ONLINE') {
+    return o.paymentStatus === 'PAID' ? 'Paid' : 'Online';
+  }
   const due = o.amountMinor - o.amountPaidMinor;
-  const labels: Record<PaymentMethod, string> = { CASH: 'COD', ONLINE: 'Online', PARTIAL: 'Partial' };
-  return `${labels[o.paymentMethod]}: ${formatMoney(due, o.currency)}`;
+  const label = o.paymentMethod === 'CASH' ? 'COD' : 'Partial';
+  return `${label}: ${formatMoney(due, o.currency)}`;
+}
+
+/** Tone for the payment-line badge — paid is settled (success), a still-due
+ * COD/partial balance needs the provider's attention (warning), a pending
+ * online payment is neither (neutral). */
+function paymentToneFor(o: BusinessOrder): BadgeTone {
+  if (o.paymentMethod === 'ONLINE') {
+    return o.paymentStatus === 'PAID' ? 'success' : 'neutral';
+  }
+  return 'warning';
 }
 
 export default function OpenOrdersScreen() {
@@ -52,8 +68,18 @@ export default function OpenOrdersScreen() {
           </Text>
         </View>
         <View style={styles.right}>
-          <StatusBadge label={statusInfo.label} tone={statusInfo.tone} />
-          <Text style={styles.amount}>{paymentLineFor(o)}</Text>
+          <StatusBadge
+            label={statusInfo.label}
+            tone={statusInfo.tone}
+            style={styles.compactBadge}
+            textStyle={styles.compactBadgeText}
+          />
+          <StatusBadge
+            label={paymentLineFor(o)}
+            tone={paymentToneFor(o)}
+            style={styles.compactBadge}
+            textStyle={styles.compactBadgeText}
+          />
         </View>
       </TouchableOpacity>
     );

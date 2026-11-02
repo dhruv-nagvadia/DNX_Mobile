@@ -50,11 +50,19 @@ export const styles = StyleSheet.create({
   },
   right: {
     alignItems: 'flex-end',
-    gap: 5,
+    gap: 4,
   },
-  amount: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.textSecondary,
+  // Compact variant for stacking 2 badges (Confirm Request + Collect ₹X)
+  // without the row growing tall.
+  compactBadge: {
+    // Overrides the badge's own `alignSelf: 'flex-start'` — otherwise a
+    // narrower badge stacked under a wider one hugs its LEFT edge instead
+    // of lining up on the right with every other badge in the column.
+    alignSelf: 'flex-end',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  compactBadgeText: {
+    fontSize: 11,
   },
 });
