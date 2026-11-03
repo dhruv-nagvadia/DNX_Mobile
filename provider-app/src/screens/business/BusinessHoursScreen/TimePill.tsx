@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Modal, ScrollView, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
+import { Clock } from 'lucide-react-native';
+
 import { AppButton } from '@/components/AppButton';
 import { styles as pickerStyles } from '@/components/TimeField/styles';
 import { HOURS_12, MERIDIEMS, MINUTES_5, parse24, to24 } from '@/components/TimeField/utils';
-import { FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, INK, ModernRadius, SOFT_FILL } from '@/utils/modernTheme';
+import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, INK, ModernRadius } from '@/utils/modernTheme';
 
 interface TimePillProps {
   /** Shown as the picker sheet's title and as the accessibility label. */
@@ -56,7 +58,13 @@ export function TimePill({ label, value, onChange, size = 'regular', disabled, s
         accessibilityLabel={`${label}, ${formatPill(value)}`}
         activeOpacity={0.7}
       >
-        <Text style={[styles.text, size === 'compact' && styles.textCompact]} numberOfLines={1}>
+        <Clock size={size === 'compact' ? 14 : 18} color={INK} strokeWidth={1.9} />
+        <Text
+          style={[styles.text, size === 'compact' && styles.textCompact]}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.8}
+        >
           {formatPill(value)}
         </Text>
       </TouchableOpacity>
@@ -129,26 +137,30 @@ export function TimePill({ label, value, onChange, size = 'regular', disabled, s
 const styles = StyleSheet.create({
   pill: {
     flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: Spacing.sm + 4,
     minHeight: 48,
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: Spacing.md,
     borderRadius: ModernRadius.box,
     borderWidth: 1,
     borderColor: CARD_BORDER,
-    backgroundColor: SOFT_FILL,
+    backgroundColor: Color.white,
   },
   pillCompact: {
-    minHeight: 38,
+    justifyContent: 'center',
+    gap: 5,
+    minHeight: 36,
     paddingHorizontal: 6,
-    backgroundColor: '#F7F9FC',
+    borderRadius: 10,
   },
   pillDisabled: {
-    opacity: 0.5,
+    opacity: 0.45,
   },
   text: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
+    flexShrink: 1,
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.medium,
     color: INK,
   },
   textCompact: {

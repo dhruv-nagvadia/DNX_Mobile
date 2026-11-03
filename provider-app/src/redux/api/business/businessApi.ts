@@ -19,6 +19,7 @@ import {
   Product,
   ProductInput,
   AdjustStockInput,
+  StockAdjustment,
   Coupon,
   CouponInput,
   BusinessReview,
@@ -45,6 +46,7 @@ export const businessApi = createApi({
     'Coupons',
     'BusinessReviews',
     'MyEarnings',
+    'StockAdjustments',
   ],
   endpoints: (builder) => ({
     createBusiness: builder.mutation<Business, UpdateBusinessRequest>({
@@ -236,6 +238,17 @@ export const businessApi = createApi({
       invalidatesTags: (_r, _e, { businessId }) => [{ type: 'MyBusiness', id: businessId }, 'MyBusinesses'],
     }),
 
+    /** Stock change history for one business, newest first. */
+    getStockAdjustments: builder.query<StockAdjustment[], { businessId: string; limit?: number }>({
+      query: ({ businessId, limit }) => ({
+        endpoint: endpoints.businessStockAdjustments(businessId),
+        method: 'get',
+        params: limit ? { limit } : undefined,
+      }),
+      transformResponse: (res: ApiEnvelope<StockAdjustment[]>) => res.data,
+      providesTags: (_r, _e, { businessId }) => [{ type: 'StockAdjustments', id: businessId }],
+    }),
+
     adjustProductStock: builder.mutation<Product, { businessId: string; productId: string; data: AdjustStockInput }>({
       query: ({ businessId, productId, data }) => ({
         endpoint: endpoints.businessProductStock(businessId, productId),
@@ -243,7 +256,11 @@ export const businessApi = createApi({
         data,
       }),
       transformResponse: (res: ApiEnvelope<Product>) => res.data,
-      invalidatesTags: (_r, _e, { businessId }) => [{ type: 'MyBusiness', id: businessId }, 'MyBusinesses'],
+      invalidatesTags: (_r, _e, { businessId }) => [
+        { type: 'MyBusiness', id: businessId },
+        'MyBusinesses',
+        { type: 'StockAdjustments', id: businessId },
+      ],
     }),
 
     setProductStockStatus: builder.mutation<Product, { businessId: string; productId: string; inStock: boolean }>({
@@ -253,7 +270,11 @@ export const businessApi = createApi({
         data: { inStock },
       }),
       transformResponse: (res: ApiEnvelope<Product>) => res.data,
-      invalidatesTags: (_r, _e, { businessId }) => [{ type: 'MyBusiness', id: businessId }, 'MyBusinesses'],
+      invalidatesTags: (_r, _e, { businessId }) => [
+        { type: 'MyBusiness', id: businessId },
+        'MyBusinesses',
+        { type: 'StockAdjustments', id: businessId },
+      ],
     }),
 
     // ── Coupons — their own tag; unlike services/products they aren't
@@ -345,6 +366,7 @@ export const {
   useCreateProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
+  useGetStockAdjustmentsQuery,
   useAdjustProductStockMutation,
   useSetProductStockStatusMutation,
   useGetCouponsQuery,

@@ -1,14 +1,28 @@
 import { StyleSheet } from 'react-native';
 import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
 import {
-  ACTION,
   CARD_BORDER,
   CARD_SHADOW,
   INK,
+  LINK,
   ModernRadius,
   PAGE_BG,
+  PILL,
   SOFT_FILL,
 } from '@/utils/modernTheme';
+
+/** Orders view ("Mobile Orders Dashboard UI.png") — active chip / primary
+ * button blue matches the sibling catalog screens. */
+export const COLLECT_GREEN = PILL.green.fg;
+const AVATAR_BG = '#EEF1FB';
+const THUMB = 46;
+
+/** Bookings "In progress" tile — mint gradient with a teal icon. */
+export const TEAL_TINT = {
+  colors: ['#EEFBF8', '#DAF4EE'],
+  border: '#C9ECE3',
+  icon: PILL.teal.fg,
+};
 
 /**
  * Mockup look ("Salon Business Management App UI Collage.png" → Bookings):
@@ -54,129 +68,386 @@ export const styles = StyleSheet.create({
     color: INK,
   },
 
-  // Status filter chips
-  chipsScroll: {
-    flexGrow: 0,
-  },
-  chipsContent: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    gap: Spacing.sm,
-  },
-  chip: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 8,
-    borderRadius: ModernRadius.pill,
-    backgroundColor: Color.white,
-    borderWidth: 1,
-    borderColor: CARD_BORDER,
-  },
-  chipActive: {
-    backgroundColor: ACTION,
-    borderColor: ACTION,
-  },
-  chipText: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: INK,
-  },
-  chipTextActive: {
-    color: Color.white,
-  },
-
-  listContent: {
-    paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.xs,
-    paddingBottom: Spacing.xl,
-    gap: Spacing.md,
-  },
-
-  // Card
-  card: {
-    backgroundColor: Color.white,
-    borderRadius: ModernRadius.card,
-    padding: Spacing.md,
-    gap: Spacing.md,
-    borderWidth: 1,
-    borderColor: CARD_BORDER,
-    ...CARD_SHADOW,
-  },
-  cardBody: {
-    gap: 4,
-  },
-  cardTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: Spacing.sm,
-  },
-  cardTitle: {
-    flex: 1,
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    color: INK,
-  },
-  pillCol: {
-    alignItems: 'flex-end',
-    gap: 4,
-  },
-  pillRight: {
-    alignSelf: 'flex-end',
-  },
-  cardSubtitle: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-  },
-  cardMeta: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-  },
-
   // Inline actions
-  actions: {
-    gap: Spacing.sm,
-  },
   actionsRow: {
     flexDirection: 'row',
     gap: Spacing.sm,
   },
-  btn: {
+  btnBusy: {
+    opacity: 0.6,
+  },
+  // ── Orders view ─────────────────────────────────────────────────────────
+  flex: {
+    flex: 1,
+  },
+  ordersHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm + 4,
+    paddingHorizontal: Spacing.md + 4,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.sm,
+    backgroundColor: PAGE_BG,
+  },
+  backBtn: {
+    alignSelf: 'flex-start',
+    paddingTop: 6,
+  },
+  headerText: {
+    flex: 1,
+    gap: 2,
+  },
+  title: {
+    fontSize: FontSize.xxl,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: FontSize.md,
+    color: Color.textSecondary,
+  },
+  ordersContent: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
+    gap: Spacing.md - 2,
+  },
+  search: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    height: 46,
+    paddingHorizontal: Spacing.md - 2,
+    borderRadius: ModernRadius.box,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
+  },
+  searchInput: {
+    flex: 1,
+    paddingVertical: 0,
+    fontSize: FontSize.md,
+    color: INK,
+  },
+  // Bleed the chip row to the screen edges so chips scroll off-screen.
+  countChipsScroll: {
+    marginHorizontal: -Spacing.md,
+    flexGrow: 0,
+  },
+  countChips: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+  },
+  countChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingLeft: Spacing.md,
+    paddingRight: Spacing.sm,
+    paddingVertical: 7,
+    borderRadius: ModernRadius.pill,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
+  },
+  countChipActive: {
+    borderColor: LINK,
+    backgroundColor: LINK,
+  },
+  countChipText: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.medium,
+    color: INK,
+  },
+  countChipTextActive: {
+    color: Color.white,
+    fontWeight: FontWeight.semibold,
+  },
+  countBadge: {
+    minWidth: 26,
+    alignItems: 'center',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: ModernRadius.pill,
+    backgroundColor: SOFT_FILL,
+  },
+  countBadgeActive: {
+    backgroundColor: 'rgba(255,255,255,0.28)',
+  },
+  countBadgeText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: INK,
+  },
+  countBadgeTextActive: {
+    color: Color.white,
+  },
+
+  tiles: {
+    flexDirection: 'row',
+    gap: Spacing.sm + 2,
+  },
+  tile: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.sm + 2,
+    paddingVertical: Spacing.md - 2,
+    borderRadius: ModernRadius.box,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  tileIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.55)',
+  },
+  tileText: {
+    flex: 1,
+  },
+  tileLabel: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: INK,
+  },
+  tileValue: {
+    fontSize: FontSize.xl,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  noMatch: {
+    paddingVertical: Spacing.lg,
+    textAlign: 'center',
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+  },
+
+  // Order card
+  oCard: {
+    backgroundColor: Color.white,
+    borderRadius: ModernRadius.card,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm + 4,
+    paddingBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    ...CARD_SHADOW,
+  },
+  oTop: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.sm,
+  },
+  oTopText: {
+    flex: 1,
+  },
+  oId: {
+    fontSize: FontSize.lg + 2,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  oWhen: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+    marginTop: 1,
+  },
+  oPill: {
+    paddingHorizontal: Spacing.sm + 4,
+    paddingVertical: 5,
+    borderRadius: ModernRadius.pill,
+  },
+  oPillShrink: {
+    flexShrink: 1,
+  },
+  oPillText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+  },
+  oDivider: {
+    height: 1,
+    backgroundColor: CARD_BORDER,
+    marginVertical: Spacing.sm + 2,
+    opacity: 0.7,
+  },
+  oRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm + 4,
+  },
+  oRowText: {
+    flex: 1,
+    gap: 1,
+  },
+  oAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: ModernRadius.box,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: AVATAR_BG,
+  },
+  oName: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  oMeta: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+  },
+  oBusiness: {
+    fontSize: FontSize.xs,
+    color: Color.textSecondary,
+  },
+  oCallBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: ModernRadius.box,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
+  },
+  oThumbs: {
+    flexDirection: 'row',
+  },
+  oThumb: {
+    width: THUMB,
+    height: THUMB,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: Color.white,
+    backgroundColor: SOFT_FILL,
+  },
+  oThumbOverlap: {
+    marginLeft: -8,
+  },
+  oThumbImg: {
+    width: '100%',
+    height: '100%',
+  },
+  oItems: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.medium,
+    color: INK,
+  },
+  oAmountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: Spacing.sm,
+  },
+  oAmount: {
+    flexShrink: 1,
+    fontSize: FontSize.xl,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  oActions: {
+    gap: Spacing.sm,
+    marginTop: Spacing.md - 2,
+  },
+  oBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    minHeight: 44,
+    minHeight: 46,
     paddingHorizontal: Spacing.sm,
-    borderRadius: ModernRadius.button,
+    borderRadius: 10,
     borderWidth: 1.5,
   },
-  btnPrimary: {
-    backgroundColor: ACTION,
-    borderColor: ACTION,
+  oBtnPrimary: {
+    backgroundColor: LINK,
+    borderColor: LINK,
   },
-  btnDanger: {
+  oBtnDanger: {
     backgroundColor: Color.white,
     borderColor: Color.error,
   },
-  btnOutline: {
+  oBtnCollect: {
     backgroundColor: Color.white,
-    borderColor: ACTION,
+    borderColor: COLLECT_GREEN,
   },
-  btnBusy: {
-    opacity: 0.6,
+  oBtnText: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
   },
-  btnText: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.bold,
-  },
-  btnTextPrimary: {
+  oBtnTextPrimary: {
     color: Color.white,
   },
-  btnTextDanger: {
+  oBtnTextDanger: {
     color: Color.error,
   },
-  btnTextOutline: {
-    color: ACTION,
+  oBtnTextCollect: {
+    color: COLLECT_GREEN,
+  },
+
+  // Booking card ("Salon Bookings Management Dashboard.png") — reuses the
+  // order card's o* layout and adds these bits.
+  bCalIcon: {
+    marginTop: 2,
+  },
+  bWhen: {
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  bStatusCol: {
+    alignItems: 'flex-end',
+    gap: 4,
+    maxWidth: '45%',
+  },
+  bStarted: {
+    fontSize: FontSize.xs,
+    color: Color.textSecondary,
+  },
+  bPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    flexShrink: 1,
+  },
+  bPayPill: {
+    alignSelf: 'flex-start',
+  },
+  bPillText: {
+    flexShrink: 1,
+  },
+  bDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  bServiceBox: {
+    backgroundColor: PILL.lavender.bg,
+  },
+  bPrice: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  bCallBtn: {
+    borderColor: LINK,
+  },
+  bBtnNeutral: {
+    backgroundColor: Color.white,
+    borderColor: INK,
+  },
+  bBtnTextNeutral: {
+    color: INK,
+  },
+  bBtnDisabled: {
+    opacity: 0.45,
   },
 });

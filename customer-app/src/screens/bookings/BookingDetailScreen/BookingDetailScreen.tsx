@@ -275,8 +275,8 @@ export default function BookingDetailScreen() {
           </View>
         )}
 
-        {/* Actions */}
-        {upcoming && (
+        {/* Actions — not once the service has started (the server rejects both then). */}
+        {upcoming && booking.status !== 'IN_PROGRESS' && (
           <View style={styles.actions}>
             <TouchableOpacity
               style={[styles.actionBtn, styles.actionGhost]}

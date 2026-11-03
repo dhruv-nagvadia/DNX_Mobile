@@ -73,6 +73,7 @@ export const endpoints = {
   businessProducts: (businessId: string) => `/provider/businesses/${businessId}/products`,
   businessProduct: (businessId: string, productId: string) =>
     `/provider/businesses/${businessId}/products/${productId}`,
+  businessStockAdjustments: (businessId: string) => `/provider/businesses/${businessId}/stock-adjustments`,
   businessProductStock: (businessId: string, productId: string) =>
     `/provider/businesses/${businessId}/products/${productId}/stock`,
   businessProductAvailability: (businessId: string, productId: string) =>

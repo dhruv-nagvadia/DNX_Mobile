@@ -18,7 +18,10 @@ export interface CalendarItem {
   time: string;
   endTime?: string;
   title: string;
+  /** Service name (bookings) or "First item +N more" (orders). */
   subtitle: string;
+  amountMinor: number;
+  currency: string;
   status: BookingStatus | OrderStatus;
 }
 
@@ -32,4 +35,21 @@ export interface WeekSummary {
   days: Date[];
   count: number;
   inMonth: boolean;
+}
+
+/** Where a date's hours come from — drives the cell tint and the Hours pill. */
+export type HoursSource = 'weekly' | 'custom' | 'closedOverride';
+
+/** Everything a calendar cell needs to render one date. */
+export interface DayInfo {
+  count: number;
+  hasPending: boolean;
+  hasConfirmed: boolean;
+  hasCompleted: boolean;
+  /** Closed by the weekly schedule (no override for this date). */
+  closedWeekly: boolean;
+  /** Closed by a per-date override. */
+  closedOverride: boolean;
+  /** Open with per-date custom hours. */
+  customOpen: boolean;
 }

@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useRoute } from '@react-navigation/native';
+import { Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 
 import {
@@ -10,6 +11,9 @@ import {
 
 import { BusinessPhotosRouteProp } from './types';
 
+/** Server-side cap on photos per business (uploads beyond this are rejected). */
+export const MAX_IMAGES = 12;
+
 /**
  * Ports `frontend/src/pages/provider/BusinessDetailPage/useBusinessDetail.ts`'s
  * `addImages`/`setCover`/`removeImage` — same `images: string[]` array on the
@@ -18,6 +22,7 @@ import { BusinessPhotosRouteProp } from './types';
  */
 export function useBusinessPhotosScreen() {
   const { businessId } = useRoute<BusinessPhotosRouteProp>().params;
+  const navigation = useNavigation();
 
   const { data: business, isLoading, isFetching, refetch } = useGetMyBusinessQuery(businessId);
   const [uploadImages, { isLoading: uploading }] = useUploadBusinessImagesMutation();
@@ -25,30 +30,44 @@ export function useBusinessPhotosScreen() {
   const [error, setError] = useState<string | null>(null);
 
   const images = useMemo(() => business?.images ?? [], [business]);
+  const remaining = Math.max(0, MAX_IMAGES - images.length);
+  const isFull = remaining === 0;
 
   const addPhotos = useCallback(async () => {
     setError(null);
-    const result = await launchImageLibrary({ mediaType: 'photo', selectionLimit: 0, quality: 0.8 });
+    if (remaining <= 0) {
+      Alert.alert('Photo limit reached', `Maximum of ${MAX_IMAGES} photos reached — remove one to add another.`);
+      return;
+    }
+    const result = await launchImageLibrary({ mediaType: 'photo', selectionLimit: remaining, quality: 0.8 });
     if (result.didCancel || !result.assets?.length) {
       return;
     }
-    const formData = new FormData();
-    result.assets.forEach((asset, i) => {
-      if (!asset.uri) {
-        return;
-      }
-      formData.append('images', {
-        uri: asset.uri,
-        name: asset.fileName ?? `photo-${i}.jpg`,
-        type: asset.type ?? 'image/jpeg',
-      } as unknown as Blob);
-    });
+    if (result.assets.length > remaining) {
+      Alert.alert(
+        'Too many photos',
+        `You can add ${remaining} more photo${remaining === 1 ? '' : 's'} (up to ${MAX_IMAGES} in total).`,
+      );
+      return;
+    }
+    // The server accepts at most 8 files per request — upload in batches.
+    const assets = result.assets.filter((asset) => !!asset.uri);
     try {
-      await uploadImages({ id: businessId, formData }).unwrap();
+      for (let start = 0; start < assets.length; start += 8) {
+        const formData = new FormData();
+        assets.slice(start, start + 8).forEach((asset, i) => {
+          formData.append('images', {
+            uri: asset.uri,
+            name: asset.fileName ?? `photo-${start + i}.jpg`,
+            type: asset.type ?? 'image/jpeg',
+          } as unknown as Blob);
+        });
+        await uploadImages({ id: businessId, formData }).unwrap();
+      }
     } catch {
       setError('Could not upload those photos. Please try again.');
     }
-  }, [businessId, uploadImages]);
+  }, [businessId, remaining, uploadImages]);
 
   const setCover = useCallback(
     async (url: string) => {
@@ -76,8 +95,34 @@ export function useBusinessPhotosScreen() {
     [businessId, images, setImages],
   );
 
+  /** Swap a photo with its neighbour (-1 = up/earlier, 1 = down/later). Moving
+   * a photo into position 1 makes it the cover. */
+  const moveImage = useCallback(
+    async (url: string, direction: -1 | 1) => {
+      const from = images.indexOf(url);
+      const to = from + direction;
+      if (from < 0 || to < 0 || to >= images.length) {
+        return;
+      }
+      setError(null);
+      const next = [...images];
+      next[from] = images[to];
+      next[to] = url;
+      try {
+        await setImages({ id: businessId, images: next }).unwrap();
+      } catch {
+        setError('Could not move that photo. Please try again.');
+      }
+    },
+    [businessId, images, setImages],
+  );
+
   return {
+    businessName: business?.businessName ?? '',
     images,
+    remaining,
+    isFull,
+    goBack: () => navigation.goBack(),
     isLoading,
     refreshing: isFetching,
     refresh: refetch,
@@ -87,5 +132,6 @@ export function useBusinessPhotosScreen() {
     addPhotos,
     setCover,
     removeImage,
+    moveImage,
   };
 }

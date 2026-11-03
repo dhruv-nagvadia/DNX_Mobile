@@ -1,71 +1,167 @@
 import React from 'react';
 import {
-  ActivityIndicator,
   RefreshControl,
   ScrollView,
+  StatusBar,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CalendarDays, Wallet } from 'lucide-react-native';
+import {
+  ArrowLeft,
+  Bell,
+  CalendarDays,
+  Command,
+  Handbag,
+  Search,
+  ShoppingBag,
+  Wallet,
+} from 'lucide-react-native';
 
 import { ActionModal } from '@/components/ActionModal';
 import { AppHeader } from '@/components/AppHeader';
 import { EmptyState } from '@/components/EmptyState';
-import { Pill } from '@/components/Pill';
-import { BadgeTone } from '@/components/StatusBadge';
-import { Color } from '@/utils/Theme';
-import { ACTION, PILL, PillColors } from '@/utils/modernTheme';
+import { GradientBackground } from '@/components/GradientBackground';
+import { Color, Spacing } from '@/utils/Theme';
+import { INK, PAGE_BG, TINT } from '@/utils/modernTheme';
 import { formatMoney } from '@/utils/money';
-import { bookingStatusBadge, orderStatusBadge, paymentBadge } from '@/utils/status';
-import { DashboardBooking, BusinessOrder } from '@/redux/api/business/types';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
 import { useBookingsOrdersScreen } from './useBookingsOrdersScreen';
-import { StatusFilter } from './types';
-import { styles } from './styles';
+import { BookingChip, OrderChip } from './types';
+import { BookingCard } from './BookingCard';
+import { OrderCard } from './OrderCard';
+import { TEAL_TINT, styles } from './styles';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'BookingsOrdersScreen'>;
 
-const BOOKING_FILTERS: { key: StatusFilter; label: string }[] = [
+/** Bookings chips (with counts); "Cancelled" also counts/filters NO_SHOW. */
+const BOOKING_CHIPS: { key: BookingChip; label: string }[] = [
   { key: 'ALL', label: 'All' },
-  { key: 'PENDING', label: 'Pending' },
+  { key: 'PENDING', label: 'New' },
   { key: 'CONFIRMED', label: 'Confirmed' },
+  { key: 'IN_PROGRESS', label: 'In progress' },
   { key: 'COMPLETED', label: 'Completed' },
   { key: 'CANCELLED', label: 'Cancelled' },
-  { key: 'NO_SHOW', label: 'No-show' },
 ];
 
-const ORDER_FILTERS: { key: StatusFilter; label: string }[] = [
+/** Orders chips (with counts); "Cancelled" also counts/filters NO_SHOW. */
+const ORDER_CHIPS: { key: OrderChip; label: string }[] = [
   { key: 'ALL', label: 'All' },
   { key: 'PENDING', label: 'New' },
   { key: 'CONFIRMED', label: 'Confirmed' },
   { key: 'READY', label: 'Ready' },
   { key: 'COMPLETED', label: 'Completed' },
   { key: 'CANCELLED', label: 'Cancelled' },
-  { key: 'NO_SHOW', label: 'No-show' },
 ];
 
-/** Status pill colours — Pending orange, Confirmed blue, Completed green (per mockup). */
-const TONE_PILL: Record<BadgeTone, PillColors> = {
-  warning: PILL.orange,
-  accent: PILL.blue,
-  success: PILL.green,
-  neutral: PILL.grey,
-  error: PILL.red,
-  brand: PILL.lavender,
-};
+const BACK_HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
 
-/** Payment pills are secondary info — only flag the states that need attention. */
-const PAYMENT_PILL: Record<BadgeTone, PillColors> = {
-  ...TONE_PILL,
-  warning: PILL.yellow,
-};
+function SummaryTile({
+  label,
+  value,
+  theme,
+  icon,
+}: {
+  label: string;
+  value: string;
+  theme: { colors: string[]; border: string };
+  icon: React.ReactNode;
+}) {
+  return (
+    <View style={[styles.tile, { borderColor: theme.border }]}>
+      <GradientBackground colors={theme.colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      <View style={styles.tileIcon}>{icon}</View>
+      <View style={styles.tileText}>
+        <Text style={styles.tileLabel} numberOfLines={1}>
+          {label}
+        </Text>
+        <Text
+          style={styles.tileValue}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.7}
+        >
+          {value}
+        </Text>
+      </View>
+    </View>
+  );
+}
 
-function lineTotal(item: BusinessOrder['items'][number]) {
-  return (item.quantity / item.priceQty) * item.priceMinor;
+function CountChips<K extends string>({
+  chips,
+  counts,
+  active,
+  onSelect,
+}: {
+  chips: { key: K; label: string }[];
+  counts: Record<K, number>;
+  active: string;
+  onSelect: (key: K) => void;
+}) {
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      style={styles.countChipsScroll}
+      contentContainerStyle={styles.countChips}
+    >
+      {chips.map((c) => {
+        const on = active === c.key;
+        return (
+          <TouchableOpacity
+            key={c.key}
+            style={[styles.countChip, on && styles.countChipActive]}
+            onPress={() => onSelect(c.key)}
+            accessibilityRole="button"
+            accessibilityState={{ selected: on }}
+          >
+            <Text style={[styles.countChipText, on && styles.countChipTextActive]}>
+              {c.label}
+            </Text>
+            <View style={[styles.countBadge, on && styles.countBadgeActive]}>
+              <Text style={[styles.countBadgeText, on && styles.countBadgeTextActive]}>
+                {counts[c.key]}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        );
+      })}
+    </ScrollView>
+  );
+}
+
+function SearchBox({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (text: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <View style={styles.search}>
+      <Search size={20} color={INK} />
+      <TextInput
+        style={styles.searchInput}
+        value={value}
+        onChangeText={onChange}
+        placeholder={placeholder}
+        placeholderTextColor={Color.placeholder}
+        returnKeyType="search"
+        autoCapitalize="none"
+        autoCorrect={false}
+        clearButtonMode="while-editing"
+      />
+    </View>
+  );
 }
 
 export default function BookingsOrdersScreen() {
@@ -82,244 +178,209 @@ export default function BookingsOrdersScreen() {
     refreshing,
     refresh,
     actingId,
-    confirmBooking,
-    completeBooking,
-    collectBookingDue,
+    setBookingStatus,
+    bookingNeedsCollection,
     openCancelBooking,
     openCollectBooking,
+    allBookingsCount,
+    bookingStats,
+    allOrdersCount,
+    orderStats,
+    search,
+    setSearch,
+    businessName,
     advanceOrder,
-    collectOrderNow,
     orderNeedsCollection,
     openCancelOrder,
+    openCollectOrder,
     pending,
     reason,
     setReason,
     closeModal,
     submitModal,
-    formatWhen,
   } = useBookingsOrdersScreen();
   const navigation = useNavigation<Nav>();
-
-  const renderBooking = (b: DashboardBooking) => {
-    const statusInfo = bookingStatusBadge(b.status);
-    const payInfo = paymentBadge({
-      status: b.status,
-      paymentStatus: b.paymentStatus,
-      paymentMethod: b.paymentMethod,
-      amountMinor: b.amountMinor,
-      amountPaidMinor: b.amountPaidMinor,
-      currency: b.currency,
-    });
-    const busy = actingId === b.id;
-    const dueCollect = collectBookingDue(b);
-    const canCancel = b.status === 'PENDING' || b.status === 'CONFIRMED';
-
-    return (
-      <View key={b.id} style={styles.card}>
-        <TouchableOpacity
-          style={styles.cardBody}
-          activeOpacity={0.7}
-          onPress={() => navigation.navigate(ROUTES.BOOKING_DETAIL, { bookingId: b.id })}
-        >
-          <View style={styles.cardTop}>
-            <Text style={styles.cardTitle} numberOfLines={1}>
-              {b.user.fullName}
-            </Text>
-            <View style={styles.pillCol}>
-              <Pill
-                label={statusInfo.label}
-                colors={TONE_PILL[statusInfo.tone]}
-                style={styles.pillRight}
-              />
-              <Pill
-                label={payInfo.label}
-                colors={PAYMENT_PILL[payInfo.tone]}
-                style={styles.pillRight}
-              />
-            </View>
-          </View>
-          <Text style={styles.cardSubtitle} numberOfLines={1}>
-            {b.service.name}
-            {scoped ? '' : ` · ${b.provider.businessName}`}
-          </Text>
-          <Text style={styles.cardMeta}>
-            {formatWhen(b.startTime)} • {formatMoney(b.amountMinor, b.currency)}
-          </Text>
-        </TouchableOpacity>
-
-        {(canCancel || dueCollect) && (
-          <View style={styles.actions}>
-            {canCancel && (
-              <View style={styles.actionsRow}>
-                {b.status === 'PENDING' && (
-                  <ActionButton
-                    label="Confirm"
-                    tone="primary"
-                    busy={busy}
-                    onPress={() => confirmBooking(b)}
-                  />
-                )}
-                {b.status === 'CONFIRMED' && (
-                  <ActionButton
-                    label="Complete"
-                    tone="primary"
-                    busy={busy}
-                    onPress={() => completeBooking(b)}
-                  />
-                )}
-                <ActionButton
-                  label="Cancel"
-                  tone="danger"
-                  busy={busy}
-                  onPress={() => openCancelBooking(b)}
-                />
-              </View>
-            )}
-            {dueCollect && (
-              <View style={styles.actionsRow}>
-                <ActionButton
-                  label={`Collect Payment · ${formatMoney(b.amountMinor - (b.amountPaidMinor ?? 0), b.currency)}`}
-                  tone="outline"
-                  icon={<Wallet size={18} color={ACTION} />}
-                  busy={busy}
-                  onPress={() => openCollectBooking(b)}
-                />
-              </View>
-            )}
-          </View>
-        )}
-      </View>
-    );
-  };
-
-  const renderOrder = (o: BusinessOrder) => {
-    const statusInfo = orderStatusBadge(o.status);
-    const payInfo = paymentBadge({
-      status: o.status,
-      paymentStatus: o.paymentStatus,
-      paymentMethod: o.paymentMethod,
-      amountMinor: o.amountMinor,
-      amountPaidMinor: o.amountPaidMinor,
-      refundedMinor: o.refundedMinor,
-      currency: o.currency,
-    });
-    const busy = actingId === o.id;
-    const preview = o.items
-      .slice(0, 2)
-      .map((i) => i.name)
-      .join(', ');
-    const more = o.items.length > 2 ? ` +${o.items.length - 2} more` : '';
-    const total = o.items.reduce((sum, i) => sum + lineTotal(i), 0) || o.amountMinor;
-    const canCancel = o.status === 'PENDING' || o.status === 'CONFIRMED' || o.status === 'READY';
-    const dueCollect = orderNeedsCollection(o);
-
-    return (
-      <View key={o.id} style={styles.card}>
-        <TouchableOpacity
-          style={styles.cardBody}
-          activeOpacity={0.7}
-          onPress={() => navigation.navigate(ROUTES.ORDER_DETAIL, { orderId: o.id })}
-        >
-          <View style={styles.cardTop}>
-            <Text style={styles.cardTitle} numberOfLines={1}>
-              {scoped ? o.user.fullName : o.provider.businessName}
-            </Text>
-            <View style={styles.pillCol}>
-              <Pill
-                label={statusInfo.label}
-                colors={TONE_PILL[statusInfo.tone]}
-                style={styles.pillRight}
-              />
-              <Pill
-                label={payInfo.label}
-                colors={PAYMENT_PILL[payInfo.tone]}
-                style={styles.pillRight}
-              />
-            </View>
-          </View>
-          {!scoped && (
-            <Text style={styles.cardSubtitle} numberOfLines={1}>
-              {o.user.fullName}
-            </Text>
-          )}
-          {!!preview && (
-            <Text style={styles.cardSubtitle} numberOfLines={1}>
-              {preview}
-              {more}
-            </Text>
-          )}
-          <Text style={styles.cardMeta}>
-            {formatWhen(o.createdAt)} • {formatMoney(total, o.currency)}
-          </Text>
-        </TouchableOpacity>
-
-        {(canCancel || dueCollect) && (
-          <View style={styles.actions}>
-            {canCancel && (
-              <View style={styles.actionsRow}>
-                {o.status === 'PENDING' && (
-                  <ActionButton
-                    label="Confirm"
-                    tone="primary"
-                    busy={busy}
-                    onPress={() => advanceOrder(o, 'CONFIRMED')}
-                  />
-                )}
-                {o.status === 'CONFIRMED' && (
-                  <ActionButton
-                    label="Mark ready"
-                    tone="primary"
-                    busy={busy}
-                    onPress={() => advanceOrder(o, 'READY')}
-                  />
-                )}
-                {o.status === 'READY' && (
-                  <ActionButton
-                    label="Complete"
-                    tone="primary"
-                    busy={busy}
-                    onPress={() => advanceOrder(o, 'COMPLETED')}
-                  />
-                )}
-                <ActionButton
-                  label="Cancel"
-                  tone="danger"
-                  busy={busy}
-                  onPress={() => openCancelOrder(o)}
-                />
-              </View>
-            )}
-            {dueCollect && (
-              <View style={styles.actionsRow}>
-                <ActionButton
-                  label={`Collect Payment · ${formatMoney(o.amountMinor - o.amountPaidMinor, o.currency)}`}
-                  tone="outline"
-                  icon={<Wallet size={18} color={ACTION} />}
-                  busy={busy}
-                  onPress={() => collectOrderNow(o)}
-                />
-              </View>
-            )}
-          </View>
-        )}
-      </View>
-    );
-  };
+  const insets = useSafeAreaInsets();
 
   const loading = tab === 'bookings' ? bookingsLoading : ordersLoading;
-  const list = tab === 'bookings' ? bookings : orders;
-  const filters = tab === 'bookings' ? BOOKING_FILTERS : ORDER_FILTERS;
-  const activeFilterLabel = filters.find((f) => f.key === statusFilter)?.label;
-  const noun = tab === 'bookings' ? 'bookings' : 'orders';
-  const emptyTitle =
-    statusFilter === 'ALL'
-      ? `No ${noun} yet`
-      : `No ${activeFilterLabel?.toLowerCase() ?? ''} ${noun}`;
+
+  const ordersCountLabel = `${allOrdersCount} order${allOrdersCount === 1 ? '' : 's'}`;
+
+  const ordersView = (
+    <ScrollView
+      style={styles.flex}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={[styles.ordersContent, { paddingBottom: insets.bottom + Spacing.xl }]}
+      refreshControl={<RefreshControl refreshing={refreshing || loading} onRefresh={refresh} />}
+    >
+      {allOrdersCount === 0 && !ordersLoading ? (
+        <EmptyState
+          icon={<CalendarDays size={48} color={Color.placeholder} strokeWidth={1.4} />}
+          title="No orders yet"
+        />
+      ) : (
+        allOrdersCount > 0 && (
+          <>
+            <SearchBox
+              value={search}
+              onChange={setSearch}
+              placeholder="Search by order ID or customer..."
+            />
+
+            <CountChips
+              chips={ORDER_CHIPS}
+              counts={orderStats.counts}
+              active={statusFilter}
+              onSelect={setStatusFilter}
+            />
+
+            <View style={styles.tiles}>
+              <SummaryTile
+                label="New"
+                value={String(orderStats.counts.PENDING)}
+                theme={TINT.lavender}
+                icon={<Handbag size={24} color={TINT.lavender.icon} strokeWidth={1.8} />}
+              />
+              <SummaryTile
+                label="Ready"
+                value={String(orderStats.counts.READY)}
+                theme={TINT.mint}
+                icon={<ShoppingBag size={24} color={TINT.mint.icon} strokeWidth={1.8} />}
+              />
+              <SummaryTile
+                label="To collect"
+                value={formatMoney(orderStats.toCollectMinor, orderStats.currency)}
+                theme={TINT.peach}
+                icon={<Wallet size={24} color={TINT.peach.icon} strokeWidth={1.8} />}
+              />
+            </View>
+
+            {orders.length === 0 ? (
+              <Text style={styles.noMatch}>No orders match</Text>
+            ) : (
+              orders.map((o) => (
+                <OrderCard
+                  key={o.id}
+                  order={o}
+                  showBusiness={!scoped}
+                  busy={actingId === o.id}
+                  needsCollection={orderNeedsCollection(o)}
+                  onOpen={() => navigation.navigate(ROUTES.ORDER_DETAIL, { orderId: o.id })}
+                  onAdvance={(status) => advanceOrder(o, status)}
+                  onCancel={() => openCancelOrder(o)}
+                  onCollect={() => openCollectOrder(o)}
+                />
+              ))
+            )}
+          </>
+        )
+      )}
+    </ScrollView>
+  );
+
+  const bookingsView = (
+    <ScrollView
+      style={styles.flex}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={[styles.ordersContent, { paddingBottom: insets.bottom + Spacing.xl }]}
+      refreshControl={<RefreshControl refreshing={refreshing || loading} onRefresh={refresh} />}
+    >
+      {allBookingsCount === 0 && !bookingsLoading ? (
+        <EmptyState
+          icon={<CalendarDays size={48} color={Color.placeholder} strokeWidth={1.4} />}
+          title="No bookings yet"
+        />
+      ) : (
+        allBookingsCount > 0 && (
+          <>
+            <SearchBox
+              value={search}
+              onChange={setSearch}
+              placeholder="Search by customer or service..."
+            />
+
+            <CountChips
+              chips={BOOKING_CHIPS}
+              counts={bookingStats.counts}
+              active={statusFilter}
+              onSelect={setStatusFilter}
+            />
+
+            <View style={styles.tiles}>
+              <SummaryTile
+                label="New"
+                value={String(bookingStats.counts.PENDING)}
+                theme={TINT.lavender}
+                icon={<Bell size={24} color={TINT.lavender.icon} strokeWidth={1.8} />}
+              />
+              <SummaryTile
+                label="In progress"
+                value={String(bookingStats.counts.IN_PROGRESS)}
+                theme={TEAL_TINT}
+                icon={<Command size={24} color={TEAL_TINT.icon} strokeWidth={1.8} />}
+              />
+              <SummaryTile
+                label="To collect"
+                value={formatMoney(bookingStats.toCollectMinor, bookingStats.currency)}
+                theme={TINT.peach}
+                icon={<Wallet size={24} color={TINT.peach.icon} strokeWidth={1.8} />}
+              />
+            </View>
+
+            {bookings.length === 0 ? (
+              <Text style={styles.noMatch}>No bookings match</Text>
+            ) : (
+              bookings.map((b) => (
+                <BookingCard
+                  key={b.id}
+                  booking={b}
+                  showBusiness={!scoped}
+                  busy={actingId === b.id}
+                  needsCollection={bookingNeedsCollection(b)}
+                  onOpen={() => navigation.navigate(ROUTES.BOOKING_DETAIL, { bookingId: b.id })}
+                  onSetStatus={(status) => setBookingStatus(b, status)}
+                  onCancel={() => openCancelBooking(b)}
+                  onCollect={() => openCollectBooking(b)}
+                />
+              ))
+            )}
+          </>
+        )
+      )}
+    </ScrollView>
+  );
+
+  const bookingsTodayLabel = `${bookingStats.today} today`;
+  const headerTitle = tab === 'orders' ? 'Orders' : 'Bookings';
+  const headerCount = tab === 'orders' ? ordersCountLabel : bookingsTodayLabel;
+
+  const isCollect = pending?.kind === 'collectBooking' || pending?.kind === 'collectOrder';
 
   return (
     <View style={styles.root}>
       {scoped ? (
-        <AppHeader variant="light" title={tab === 'bookings' ? 'Bookings' : 'Orders'} />
+        <View style={[styles.ordersHeader, { paddingTop: insets.top + Spacing.md }]}>
+          <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
+          <TouchableOpacity
+            style={styles.backBtn}
+            onPress={() => navigation.goBack()}
+            hitSlop={BACK_HIT_SLOP}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+          >
+            <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+          </TouchableOpacity>
+          <View style={styles.headerText}>
+            <Text style={styles.title} numberOfLines={1}>
+              {headerTitle}
+            </Text>
+            <Text style={styles.subtitle} numberOfLines={1}>
+              {businessName ? `${businessName}  •  ${headerCount}` : headerCount}
+            </Text>
+          </View>
+        </View>
       ) : (
         <AppHeader variant="light" logo title="Bookings & Orders" />
       )}
@@ -346,107 +407,23 @@ export default function BookingsOrdersScreen() {
         </View>
       )}
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.chipsScroll}
-        contentContainerStyle={styles.chipsContent}
-      >
-        {filters.map((f) => {
-          const active = f.key === statusFilter;
-          return (
-            <TouchableOpacity
-              key={f.key}
-              style={[styles.chip, active && styles.chipActive]}
-              onPress={() => setStatusFilter(f.key)}
-              accessibilityRole="button"
-              accessibilityState={{ selected: active }}
-            >
-              <Text style={[styles.chipText, active && styles.chipTextActive]}>{f.label}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContent}
-        refreshControl={<RefreshControl refreshing={refreshing || loading} onRefresh={refresh} />}
-      >
-        {list.length === 0 && !loading ? (
-          <EmptyState
-            icon={<CalendarDays size={48} color={Color.placeholder} strokeWidth={1.4} />}
-            title={emptyTitle}
-          />
-        ) : tab === 'bookings' ? (
-          bookings.map(renderBooking)
-        ) : (
-          orders.map(renderOrder)
-        )}
-      </ScrollView>
+      {tab === 'orders' ? ordersView : bookingsView}
 
       <ActionModal
         visible={!!pending}
-        title={pending?.kind === 'collectBooking' ? 'Mark as paid?' : 'Cancel this?'}
+        title={isCollect ? 'Mark as paid?' : 'Cancel this?'}
         message={
-          pending?.kind === 'collectBooking'
+          isCollect
             ? 'This marks the outstanding amount as collected in cash.'
             : 'Let the customer know why, if you want to.'
         }
-        reasonValue={pending?.kind === 'collectBooking' ? undefined : reason}
-        onReasonChange={pending?.kind === 'collectBooking' ? undefined : setReason}
-        confirmLabel={pending?.kind === 'collectBooking' ? 'Mark paid' : 'Confirm cancel'}
-        confirmTone={pending?.kind === 'collectBooking' ? 'default' : 'danger'}
+        reasonValue={isCollect ? undefined : reason}
+        onReasonChange={isCollect ? undefined : setReason}
+        confirmLabel={isCollect ? 'Mark paid' : 'Confirm cancel'}
+        confirmTone={isCollect ? 'default' : 'danger'}
         onConfirm={submitModal}
         onCancel={closeModal}
       />
     </View>
-  );
-}
-
-function ActionButton({
-  label,
-  tone,
-  icon,
-  busy,
-  onPress,
-}: {
-  label: string;
-  tone: 'primary' | 'danger' | 'outline';
-  icon?: React.ReactNode;
-  busy: boolean;
-  onPress: () => void;
-}) {
-  const boxStyle =
-    tone === 'primary'
-      ? styles.btnPrimary
-      : tone === 'danger'
-        ? styles.btnDanger
-        : styles.btnOutline;
-  const textStyle =
-    tone === 'primary'
-      ? styles.btnTextPrimary
-      : tone === 'danger'
-        ? styles.btnTextDanger
-        : styles.btnTextOutline;
-  return (
-    <TouchableOpacity
-      style={[styles.btn, boxStyle, busy && styles.btnBusy]}
-      disabled={busy}
-      onPress={onPress}
-      activeOpacity={0.8}
-      accessibilityRole="button"
-    >
-      {busy && tone === 'primary' ? (
-        <ActivityIndicator size="small" color={Color.white} />
-      ) : (
-        <>
-          {icon}
-          <Text style={[styles.btnText, textStyle]} numberOfLines={1}>
-            {label}
-          </Text>
-        </>
-      )}
-    </TouchableOpacity>
   );
 }

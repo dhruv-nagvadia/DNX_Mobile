@@ -27,6 +27,8 @@ export function bookingStatusBadge(status: BookingStatus): { label: string; tone
       return { label: 'Pending', tone: 'warning' };
     case 'CONFIRMED':
       return { label: 'Confirmed', tone: 'accent' };
+    case 'IN_PROGRESS':
+      return { label: 'In progress', tone: 'brand' };
     case 'COMPLETED':
       return { label: 'Completed', tone: 'success' };
     case 'CANCELLED':

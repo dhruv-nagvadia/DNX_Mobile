@@ -136,9 +136,26 @@ export function useHomeScreen() {
       collectedLastMonth > 0 ? ((collectedThisMonth - collectedLastMonth) / collectedLastMonth) * 100 : null;
     const isNewMonthTrend = collectedLastMonth === 0 && collectedThisMonth > 0;
 
+    // Money collected in each of the last 4 calendar months (oldest → this
+    // month), same rule as `collectedThisMonth` — drives the money card's bars.
+    const monthlyCollected = [3, 2, 1, 0].map((back) => {
+      const from = new Date(monthStart.getFullYear(), monthStart.getMonth() - back, 1).getTime();
+      const to = new Date(monthStart.getFullYear(), monthStart.getMonth() - back + 1, 1).getTime();
+      const inRange = (t: number) => t >= from && t < to;
+      return (
+        bookings
+          .filter((b) => inRange(new Date(b.startTime).getTime()))
+          .reduce((sum, b) => sum + (b.amountPaidMinor ?? 0), 0) +
+        orders
+          .filter((o) => inRange(new Date(o.createdAt).getTime()))
+          .reduce((sum, o) => sum + (o.amountPaidMinor ?? 0), 0)
+      );
+    });
+
     return {
       todays,
       upcomingCount,
+      monthlyCollected,
       attention,
       openOrders,
       openOrdersCount: openOrders.length,

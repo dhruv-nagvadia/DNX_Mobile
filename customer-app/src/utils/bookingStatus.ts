@@ -4,6 +4,7 @@ import { Color } from './Theme';
 export const STATUS_LABEL: Record<BookingStatus, string> = {
   PENDING: 'Pending',
   CONFIRMED: 'Confirmed',
+  IN_PROGRESS: 'In progress',
   COMPLETED: 'Completed',
   CANCELLED: 'Cancelled',
   NO_SHOW: 'No-show',
@@ -14,6 +15,8 @@ export function statusColors(status: BookingStatus): [string, string] {
   switch (status) {
     case 'CONFIRMED':
       return [Color.primarySoft, Color.primary];
+    case 'IN_PROGRESS':
+      return ['rgba(13,148,136,0.12)', '#0D9488'];
     case 'COMPLETED':
       return ['rgba(22,163,74,0.12)', Color.success];
     case 'CANCELLED':
@@ -26,6 +29,10 @@ export function statusColors(status: BookingStatus): [string, string] {
 
 /** True for upcoming, still-active bookings. */
 export function isUpcomingBooking(status: BookingStatus, endTime: string): boolean {
+  // An in-progress appointment is still active, even if it runs past its end time.
+  if (status === 'IN_PROGRESS') {
+    return true;
+  }
   return (status === 'PENDING' || status === 'CONFIRMED') && new Date(endTime).getTime() >= Date.now();
 }
 

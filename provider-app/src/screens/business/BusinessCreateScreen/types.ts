@@ -4,13 +4,13 @@ import { BusinessType } from '@/redux/api/business/types';
 
 export type BusinessCreateNavigationProp = NativeStackNavigationProp<RootStackParamList, 'BusinessCreateScreen'>;
 
-/** Mirrors the web dashboard's `BusinessFormPage` step order for create
- * (type → details → payments → location) — photos are left out here since
- * there's no image-upload endpoint this app's RTK Query layer can call yet;
- * a provider can still add photos from the web dashboard. */
-export type BusinessCreateStepId = 'type' | 'details' | 'payments' | 'location';
+/** Mockup "Mobile Business Onboarding Flow.png": type → details → payments →
+ * photos → location, then a "Done" screen once the business is created.
+ * Photos are held locally (the upload endpoint needs the new business id) and
+ * uploaded right after the create call succeeds. */
+export type BusinessCreateStepId = 'type' | 'details' | 'payments' | 'photos' | 'location';
 
-export const BUSINESS_CREATE_STEPS: BusinessCreateStepId[] = ['type', 'details', 'payments', 'location'];
+export const BUSINESS_CREATE_STEPS: BusinessCreateStepId[] = ['type', 'details', 'payments', 'photos', 'location'];
 
 export interface BusinessCreateForm {
   type: BusinessType;
@@ -30,3 +30,10 @@ export interface BusinessCreateForm {
 }
 
 export type BusinessCreateErrors = Partial<Record<keyof BusinessCreateForm, string>>;
+
+/** A photo picked from the library, waiting to be uploaded once the business exists. */
+export interface LocalPhoto {
+  uri: string;
+  name: string;
+  type: string;
+}

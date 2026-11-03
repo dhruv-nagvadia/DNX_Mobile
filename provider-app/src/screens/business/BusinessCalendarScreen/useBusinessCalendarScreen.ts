@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import {
   useDeleteDateHourMutation,
@@ -9,8 +10,19 @@ import {
   useGetMyOrdersQuery,
   useSetDateHourMutation,
 } from '@/redux/api/business/businessApi';
+import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
-import { BusinessCalendarRouteProp, CalendarItem, CalendarView, DayForm, WeekSummary } from './types';
+import {
+  BusinessCalendarRouteProp,
+  CalendarItem,
+  CalendarView,
+  DayForm,
+  DayInfo,
+  HoursSource,
+  WeekSummary,
+} from './types';
+
+type Nav = NativeStackNavigationProp<RootStackParamList, 'BusinessCalendarScreen'>;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -47,13 +59,13 @@ function addDays(d: Date, n: number): Date {
 /**
  * Ports `frontend/src/components/BusinessCalendar/useBusinessCalendar.ts`'s
  * month/week navigation (same Sunday-start weeks, same effective-hours
- * resolution + save/reset flow) onto a two-level mobile drill-down instead of
- * the web's single grid: pick Month to see that month's weeks with their
- * order/booking counts, tap a week to see its 7 days and that day's items +
- * hours editor — so last month's history is as reachable as this week's.
+ * resolution + save/reset flow). Either view shows the selected day's hours
+ * editor and that day's bookings (services) / orders (stores) below the grid.
+ * All values come from the business, date-hours, bookings and orders queries.
  */
 export function useBusinessCalendarScreen() {
   const route = useRoute<BusinessCalendarRouteProp>();
+  const navigation = useNavigation<Nav>();
   const { businessId } = route.params;
 
   const today = useMemo(() => startOfDay(new Date()), []);
@@ -111,11 +123,17 @@ export function useBusinessCalendarScreen() {
       orders
         .filter((o) => o.provider.id === businessId && o.status !== 'CANCELLED')
         .forEach((o) => {
+          const first = o.items[0]?.name;
+          const more = o.items.length - 1;
           push(dateKey(new Date(o.createdAt)), {
             id: o.id,
             time: o.createdAt,
             title: o.user.fullName,
-            subtitle: `${o.items.length} item${o.items.length === 1 ? '' : 's'}`,
+            subtitle: first
+              ? `${first}${more > 0 ? ` +${more} more` : ''}`
+              : `${o.items.length} item${o.items.length === 1 ? '' : 's'}`,
+            amountMinor: o.amountMinor,
+            currency: o.currency,
             status: o.status,
           });
         });
@@ -129,6 +147,8 @@ export function useBusinessCalendarScreen() {
             endTime: b.endTime,
             title: b.user.fullName,
             subtitle: b.service.name,
+            amountMinor: b.amountMinor,
+            currency: b.currency,
             status: b.status,
           });
         });
@@ -152,9 +172,23 @@ export function useBusinessCalendarScreen() {
   );
 
   const monthLabel = useMemo(
-    () => monthCursor.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
+    () => new Intl.DateTimeFormat('en-IN', { month: 'long', year: 'numeric' }).format(monthCursor),
     [monthCursor],
   );
+
+  // Header count — the month on screen (month view) or the selected day's
+  // month (week view). Cancelled items are already excluded above.
+  const visibleMonth = view === 'month' ? monthCursor : startOfMonth(new Date(`${selectedKey}T00:00:00`));
+  const visibleMonthPrefix = dateKey(visibleMonth).slice(0, 7);
+  const monthCount = useMemo(() => {
+    let n = 0;
+    itemsByKey.forEach((arr, key) => {
+      if (key.startsWith(visibleMonthPrefix)) {
+        n += arr.length;
+      }
+    });
+    return n;
+  }, [itemsByKey, visibleMonthPrefix]);
   const weekLabel = useMemo(() => {
     const startFmt = new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short' });
     const endFmt = new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -204,6 +238,13 @@ export function useBusinessCalendarScreen() {
     setSelectedKey(dateKey(today));
   }, [today]);
 
+  // Jump both views (and the selection) back to today.
+  const goToday = useCallback(() => {
+    setMonthCursor(startOfMonth(today));
+    setWeekStart(startOfWeek(today));
+    setSelectedKey(dateKey(today));
+  }, [today]);
+
   const countFor = useCallback((key: string) => itemsByKey.get(key)?.length ?? 0, [itemsByKey]);
   const isInMonth = useCallback(
     (d: Date) => d.getMonth() === monthCursor.getMonth() && d.getFullYear() === monthCursor.getFullYear(),
@@ -224,6 +265,56 @@ export function useBusinessCalendarScreen() {
       return { isOpen: false, openTime: '09:00', closeTime: '18:00' };
     },
     [overrideByKey, business],
+  );
+
+  const dayInfo = useCallback(
+    (key: string): DayInfo => {
+      const items = itemsByKey.get(key) ?? [];
+      const override = overrideByKey.get(key);
+      let closedWeekly = false;
+      if (!override && business) {
+        const dayOfWeek = new Date(`${key}T00:00:00`).getDay();
+        const weekly = business.businessHours.find((h) => h.dayOfWeek === dayOfWeek);
+        closedWeekly = !weekly || !weekly.isOpen;
+      }
+      return {
+        count: items.length,
+        hasPending: items.some((i) => i.status === 'PENDING'),
+        hasConfirmed: items.some((i) => i.status === 'CONFIRMED'),
+        hasCompleted: items.some((i) => i.status === 'COMPLETED' || i.status === 'READY'),
+        closedWeekly,
+        closedOverride: !!override && !override.isOpen,
+        customOpen: !!override && override.isOpen,
+      };
+    },
+    [itemsByKey, overrideByKey, business],
+  );
+
+  const selectedOverride = overrideByKey.get(selectedKey);
+  const hoursSource: HoursSource = !selectedOverride
+    ? 'weekly'
+    : selectedOverride.isOpen
+      ? 'custom'
+      : 'closedOverride';
+
+  const selectedItems = useMemo(() => itemsByKey.get(selectedKey) ?? [], [itemsByKey, selectedKey]);
+  const selectedTotalMinor = useMemo(
+    () => selectedItems.reduce((sum, i) => sum + i.amountMinor, 0),
+    [selectedItems],
+  );
+  const selectedCurrency = selectedItems[0]?.currency ?? 'INR';
+
+  const goBack = useCallback(() => navigation.goBack(), [navigation]);
+  const viewAll = useCallback(
+    () => navigation.navigate(ROUTES.BOOKINGS_ORDERS, { businessId, tab: isStore ? 'orders' : 'bookings' }),
+    [navigation, businessId, isStore],
+  );
+  const openItem = useCallback(
+    (id: string) =>
+      isStore
+        ? navigation.navigate(ROUTES.ORDER_DETAIL, { orderId: id })
+        : navigation.navigate(ROUTES.BOOKING_DETAIL, { bookingId: id }),
+    [navigation, isStore],
   );
 
   // Re-sync the form whenever the selected date (or the data behind it) changes.
@@ -259,6 +350,13 @@ export function useBusinessCalendarScreen() {
     view,
     setView,
     itemLabel: isStore ? ('order' as const) : ('booking' as const),
+    businessName: business?.businessName ?? '',
+    monthCount,
+    goToday,
+    goBack,
+    viewAll,
+    openItem,
+    dayInfo,
 
     // Month view
     monthLabel,
@@ -285,7 +383,10 @@ export function useBusinessCalendarScreen() {
     selectDay,
     hasOverrideFor: (key: string) => overrideByKey.has(key),
     hasOverride,
-    items: itemsByKey.get(selectedKey) ?? [],
+    items: selectedItems,
+    selectedTotalMinor,
+    selectedCurrency,
+    hoursSource,
 
     // Hours editor (either view can have a day selected)
     form,

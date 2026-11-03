@@ -46,6 +46,7 @@ export const PILL = {
   grey: { bg: SOFT_FILL, fg: INK },
   red: { bg: '#FDE2E2', fg: '#DC2626' },
   yellow: { bg: '#FEF3C7', fg: '#B45309' },
+  teal: { bg: '#CCFBF1', fg: '#0F766E' },
 } satisfies Record<string, PillColors>;
 
 /** Pastel tile themes (Manage grid / stat tiles): gradient, border, icon colour. */

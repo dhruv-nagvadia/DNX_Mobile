@@ -1,29 +1,33 @@
 import React from 'react';
-import { ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ArrowLeft, ArrowRight, CalendarDays, CalendarOff, ChevronRight } from 'lucide-react-native';
+import { ActivityIndicator, ScrollView, StatusBar, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  RotateCcw,
+  Save,
+} from 'lucide-react-native';
 
-import { AppButton } from '@/components/AppButton';
-import { AppHeader } from '@/components/AppHeader';
-import { StatusBadge } from '@/components/StatusBadge';
+import { Pill } from '@/components/Pill';
 import { Color } from '@/utils/Theme';
-import { ACTION, INK } from '@/utils/modernTheme';
-import { bookingStatusBadge, orderStatusBadge } from '@/utils/status';
+import { INK, PAGE_BG, PILL, PillColors } from '@/utils/modernTheme';
+import { formatMoney } from '@/utils/money';
 import { BookingStatus, OrderStatus } from '@/redux/api/business/types';
-import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
 import { TimePill } from '../BusinessHoursScreen/TimePill';
+import { DayCell } from './DayCell';
+import { HoursSource } from './types';
 import { useBusinessCalendarScreen } from './useBusinessCalendarScreen';
-import { styles } from './styles';
+import { BRAND_BLUE, TRACK, styles } from './styles';
 
-type Nav = NativeStackNavigationProp<RootStackParamList, 'BusinessCalendarScreen'>;
+const BACK_HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
+const WEEKDAY_LETTERS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const TRACK = { true: ACTION, false: Color.border };
-
-const dayFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'short' });
-const shortDateFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+const weekdayShortFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'short' });
+const dayTitleFmt = new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 const longDateFmt = new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 const timeFmt = new Intl.DateTimeFormat('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
 
@@ -32,33 +36,52 @@ function formatTime(iso: string): string {
   return timeFmt.format(new Date(iso)).toUpperCase();
 }
 
+const STATUS_PILL: Record<BookingStatus | OrderStatus, { label: string; colors: PillColors }> = {
+  PENDING: { label: 'Pending', colors: PILL.orange },
+  CONFIRMED: { label: 'Confirmed', colors: PILL.blue },
+  IN_PROGRESS: { label: 'In progress', colors: PILL.teal },
+  READY: { label: 'Ready', colors: PILL.green },
+  COMPLETED: { label: 'Completed', colors: PILL.green },
+  CANCELLED: { label: 'Cancelled', colors: { bg: PILL.grey.bg, fg: Color.textSecondary } },
+  NO_SHOW: { label: 'No-show', colors: PILL.red },
+};
+
+const SOURCE_PILL: Record<HoursSource, { label: string; colors: PillColors }> = {
+  weekly: { label: 'Weekly default', colors: { bg: PILL.grey.bg, fg: Color.textSecondary } },
+  custom: { label: 'Custom hours', colors: PILL.orange },
+  closedOverride: { label: 'Closed (override)', colors: PILL.red },
+};
+
 export default function BusinessCalendarScreen() {
   const {
     view,
     setView,
     itemLabel,
+    businessName,
+    monthCount,
+    goToday,
+    goBack,
+    viewAll,
+    openItem,
+    dayInfo,
     monthLabel,
-    isCurrentMonth,
     goPrevMonth,
     goNextMonth,
-    goThisMonth,
     weekSummaries,
-    openDay,
-    countFor,
     isInMonth,
     todayKey,
     weekLabel,
-    isCurrentWeek,
     goPrevWeek,
     goNextWeek,
-    goThisWeek,
     weekDays,
     dateKey,
     selectedKey,
     selectDay,
-    hasOverrideFor,
     hasOverride,
     items,
+    selectedTotalMinor,
+    selectedCurrency,
+    hoursSource,
     form,
     setForm,
     saving,
@@ -67,30 +90,60 @@ export default function BusinessCalendarScreen() {
     save,
     resetToWeekly,
   } = useBusinessCalendarScreen();
+  const insets = useSafeAreaInsets();
+
+  const isStore = itemLabel === 'order';
+  const plural = isStore ? 'orders' : 'bookings';
+  const titleWord = isStore ? 'Orders' : 'Bookings';
+  const countLabel = (n: number) => `${n} ${n === 1 ? itemLabel : plural}`;
+
+  const monthSummary = `${countLabel(monthCount)} this month`;
+  const subtitle = businessName ? `${businessName} • ${monthSummary}` : monthSummary;
 
   const selectedDate = new Date(`${selectedKey}T00:00:00`);
-  const navigation = useNavigation<Nav>();
-  const itemLabelPlural = itemLabel === 'order' ? 'orders' : 'bookings';
-  const itemLabelTitle = itemLabel === 'order' ? 'Orders' : 'Bookings';
-  const selectedCount = countFor(selectedKey);
-  const selectedShort = shortDateFmt.format(selectedDate);
-
-  const showToday = view === 'month' ? !isCurrentMonth : !isCurrentWeek;
-  const todayButton = showToday ? (
-    <TouchableOpacity
-      style={styles.todayBtn}
-      onPress={view === 'month' ? goThisMonth : goThisWeek}
-      accessibilityRole="button"
-    >
-      <Text style={styles.todayBtnText}>{view === 'month' ? 'This month' : 'This week'}</Text>
-    </TouchableOpacity>
-  ) : null;
+  const daySubtitle =
+    items.length > 0
+      ? `${countLabel(items.length)} • ${formatMoney(selectedTotalMinor, selectedCurrency)}`
+      : `No ${plural}`;
+  const source = SOURCE_PILL[hoursSource];
+  const resetDisabled = !hasOverride || deleting;
 
   return (
-    <View style={styles.root}>
-      <AppHeader title="Calendar" variant="light" right={todayButton} />
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Month | Week segment */}
+    <View style={[styles.root, { paddingTop: insets.top }]}>
+      <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
+
+      {/* ── Header ─────────────────────────────────────────────────────── */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={goBack}
+          hitSlop={BACK_HIT_SLOP}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+        >
+          <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+        </TouchableOpacity>
+        <View style={styles.headerText}>
+          <Text style={styles.title} numberOfLines={1}>
+            Calendar
+          </Text>
+          <Text style={styles.subtitle} numberOfLines={1}>
+            {subtitle}
+          </Text>
+        </View>
+        <TouchableOpacity
+          style={styles.todayBtn}
+          onPress={goToday}
+          accessibilityRole="button"
+          accessibilityLabel="Go to today"
+          activeOpacity={0.7}
+        >
+          <Text style={styles.todayBtnText}>Today</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView style={styles.flex} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {/* ── Month | Week segment ─────────────────────────────────────── */}
         <View style={styles.segment}>
           <TouchableOpacity
             style={[styles.segmentBtn, view === 'month' && styles.segmentBtnActive]}
@@ -110,27 +163,37 @@ export default function BusinessCalendarScreen() {
           </TouchableOpacity>
         </View>
 
-        {view === 'month' ? (
-          <>
-            <View style={styles.periodNav}>
-              <TouchableOpacity
-                style={styles.navBtn}
-                onPress={goPrevMonth}
-                accessibilityLabel="Previous month"
-                hitSlop={8}
-              >
-                <ArrowLeft size={22} color={INK} />
-              </TouchableOpacity>
-              <Text style={styles.periodLabel}>{monthLabel}</Text>
-              <TouchableOpacity style={styles.navBtn} onPress={goNextMonth} accessibilityLabel="Next month" hitSlop={8}>
-                <ArrowRight size={22} color={INK} />
-              </TouchableOpacity>
-            </View>
+        {/* ── Calendar card ────────────────────────────────────────────── */}
+        <View style={styles.calendarCard}>
+          <View style={styles.periodNav}>
+            <TouchableOpacity
+              style={styles.navBtn}
+              onPress={view === 'month' ? goPrevMonth : goPrevWeek}
+              accessibilityRole="button"
+              accessibilityLabel={view === 'month' ? 'Previous month' : 'Previous week'}
+              hitSlop={8}
+            >
+              <ChevronLeft size={24} color={INK} strokeWidth={2.2} />
+            </TouchableOpacity>
+            <Text style={styles.periodLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
+              {view === 'month' ? monthLabel : weekLabel}
+            </Text>
+            <TouchableOpacity
+              style={styles.navBtn}
+              onPress={view === 'month' ? goNextMonth : goNextWeek}
+              accessibilityRole="button"
+              accessibilityLabel={view === 'month' ? 'Next month' : 'Next week'}
+              hitSlop={8}
+            >
+              <ChevronRight size={24} color={INK} strokeWidth={2.2} />
+            </TouchableOpacity>
+          </View>
 
-            <View style={styles.monthGrid}>
+          {view === 'month' ? (
+            <>
               <View style={styles.gridRow}>
-                {WEEKDAYS.map((w) => (
-                  <Text key={w} style={styles.weekdayLabel}>
+                {WEEKDAY_LETTERS.map((w, i) => (
+                  <Text key={`${w}${i}`} style={styles.weekdayLabel}>
                     {w}
                   </Text>
                 ))}
@@ -139,196 +202,201 @@ export default function BusinessCalendarScreen() {
                 <View key={w.key} style={styles.gridRow}>
                   {w.days.map((d) => {
                     const key = dateKey(d);
-                    const selected = key === selectedKey;
-                    const inMonth = isInMonth(d);
-                    const hasItems = countFor(key) > 0;
                     return (
-                      <TouchableOpacity
+                      <DayCell
                         key={key}
-                        style={styles.dayCell}
-                        onPress={() => selectDay(key)}
-                        accessibilityRole="button"
-                        accessibilityState={{ selected }}
+                        date={d}
+                        info={dayInfo(key)}
+                        inMonth={isInMonth(d)}
+                        isToday={key === todayKey}
+                        selected={key === selectedKey}
                         accessibilityLabel={longDateFmt.format(d)}
-                      >
-                        <View style={[styles.dayCircle, selected && styles.dayCircleSelected]}>
-                          <Text
-                            style={[
-                              styles.dayNum,
-                              !inMonth && styles.dayNumMuted,
-                              key === todayKey && styles.dayNumToday,
-                              selected && styles.dayNumSelected,
-                            ]}
-                          >
-                            {d.getDate()}
-                          </Text>
-                        </View>
-                        <View style={[styles.dayDot, hasItems && styles.dayDotOn, !inMonth && styles.dayDotMuted]} />
-                      </TouchableOpacity>
+                        onPress={() => selectDay(key)}
+                      />
                     );
                   })}
                 </View>
               ))}
-            </View>
-
-            <TouchableOpacity
-              style={styles.selectedCard}
-              onPress={() => openDay(selectedKey)}
-              accessibilityRole="button"
-              accessibilityLabel={`Open ${longDateFmt.format(selectedDate)}`}
-            >
-              <CalendarDays size={30} color={ACTION} strokeWidth={1.8} />
-              <View style={styles.selectedMain}>
-                <Text style={styles.selectedTitle}>{longDateFmt.format(selectedDate)}</Text>
-                <Text style={styles.selectedSubtitle}>
-                  {selectedCount > 0
-                    ? `${selectedCount} ${selectedCount === 1 ? itemLabel : itemLabelPlural}`
-                    : `No ${itemLabelPlural}`}
-                  {hasOverride ? ' · Custom hours' : ''}
-                </Text>
-              </View>
-              <ChevronRight size={22} color={INK} />
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            <View style={styles.periodNav}>
-              <TouchableOpacity style={styles.navBtn} onPress={goPrevWeek} accessibilityLabel="Previous week" hitSlop={8}>
-                <ArrowLeft size={22} color={INK} />
-              </TouchableOpacity>
-              <Text style={styles.periodLabel} numberOfLines={1}>
-                {weekLabel}
-              </Text>
-              <TouchableOpacity style={styles.navBtn} onPress={goNextWeek} accessibilityLabel="Next week" hitSlop={8}>
-                <ArrowRight size={22} color={INK} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.chipRow}>
+            </>
+          ) : (
+            <View style={styles.gridRow}>
               {weekDays.map((d) => {
                 const key = dateKey(d);
-                const active = key === selectedKey;
+                return (
+                  <DayCell
+                    key={key}
+                    date={d}
+                    info={dayInfo(key)}
+                    inMonth
+                    isToday={key === todayKey}
+                    selected={key === selectedKey}
+                    weekdayLabel={weekdayShortFmt.format(d)}
+                    accessibilityLabel={longDateFmt.format(d)}
+                    onPress={() => selectDay(key)}
+                  />
+                );
+              })}
+            </View>
+          )}
+
+          <View style={styles.legend}>
+            <View style={styles.legendChip}>
+              <View style={[styles.legendDot, styles.legendBookings]} />
+              <Text style={styles.legendText}>{titleWord}</Text>
+            </View>
+            <View style={styles.legendChip}>
+              <View style={[styles.legendDot, styles.legendClosed]} />
+              <Text style={styles.legendText}>Closed</Text>
+            </View>
+            <View style={styles.legendChip}>
+              <View style={[styles.legendDot, styles.legendCustom]} />
+              <Text style={styles.legendText}>Custom hours</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* ── Selected day: hours editor ───────────────────────────────── */}
+        <View style={styles.section}>
+          <View style={styles.dayHeader}>
+            <CalendarDays size={30} color={INK} strokeWidth={1.8} />
+            <View style={styles.dayHeaderText}>
+              <Text style={styles.dayTitle}>{dayTitleFmt.format(selectedDate)}</Text>
+              <Text style={styles.daySubtitle}>{daySubtitle}</Text>
+            </View>
+          </View>
+
+          <View style={styles.divider} />
+
+          <View style={styles.hoursRow}>
+            <Clock size={24} color={INK} strokeWidth={1.9} />
+            <Text style={styles.hoursLabel}>Hours</Text>
+            <Pill label={source.label} colors={source.colors} style={styles.sourcePill} />
+          </View>
+
+          <View style={styles.editRow}>
+            <View style={styles.switchWrap}>
+              <Switch
+                value={form.isOpen}
+                onValueChange={(v) => setForm((f) => ({ ...f, isOpen: v }))}
+                trackColor={TRACK}
+                thumbColor={Color.white}
+                ios_backgroundColor={TRACK.false}
+                accessibilityLabel="Open on this date"
+              />
+              <Text style={styles.switchLabel}>{form.isOpen ? 'Open' : 'Closed'}</Text>
+            </View>
+            <TimePill
+              size="compact"
+              label="Opens"
+              value={form.openTime}
+              disabled={!form.isOpen}
+              onChange={(v) => setForm((f) => ({ ...f, openTime: v }))}
+            />
+            <Text style={styles.rangeDash}>–</Text>
+            <TimePill
+              size="compact"
+              label="Closes"
+              value={form.closeTime}
+              disabled={!form.isOpen}
+              onChange={(v) => setForm((f) => ({ ...f, closeTime: v }))}
+            />
+          </View>
+
+          {!!error && <Text style={styles.errorText}>{error}</Text>}
+
+          <View style={styles.actionsRow}>
+            <TouchableOpacity
+              style={[styles.primaryBtn, saving && styles.btnDisabled]}
+              onPress={save}
+              disabled={saving}
+              accessibilityRole="button"
+              accessibilityLabel="Save for this date"
+              accessibilityState={{ disabled: saving, busy: saving }}
+              activeOpacity={0.8}
+            >
+              {saving ? (
+                <ActivityIndicator size="small" color={Color.white} />
+              ) : (
+                <>
+                  <Save size={20} color={Color.white} strokeWidth={2} />
+                  <Text style={styles.primaryBtnText} numberOfLines={1}>
+                    Save for this date
+                  </Text>
+                </>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.outlineBtn, resetDisabled && !deleting && styles.btnDisabled]}
+              onPress={resetToWeekly}
+              disabled={resetDisabled}
+              accessibilityRole="button"
+              accessibilityLabel="Reset to weekly default"
+              accessibilityState={{ disabled: resetDisabled, busy: deleting }}
+              activeOpacity={0.7}
+            >
+              {deleting ? (
+                <ActivityIndicator size="small" color={BRAND_BLUE} />
+              ) : (
+                <>
+                  <RotateCcw size={18} color={BRAND_BLUE} strokeWidth={2.2} />
+                  <Text style={styles.outlineBtnText}>Reset</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* ── That day's bookings / orders ─────────────────────────────── */}
+        <View style={styles.section}>
+          <View style={styles.listHeader}>
+            <CalendarDays size={26} color={INK} strokeWidth={1.9} />
+            <Text style={styles.listTitle} numberOfLines={1}>
+              {titleWord} ({items.length})
+            </Text>
+            <TouchableOpacity
+              style={styles.viewAll}
+              onPress={viewAll}
+              accessibilityRole="button"
+              accessibilityLabel={`View all ${plural}`}
+              hitSlop={8}
+            >
+              <Text style={styles.viewAllText}>View all</Text>
+              <ChevronRight size={18} color={BRAND_BLUE} strokeWidth={2.2} />
+            </TouchableOpacity>
+          </View>
+
+          {items.length > 0 ? (
+            <View>
+              {items.map((item) => {
+                const status = STATUS_PILL[item.status];
                 return (
                   <TouchableOpacity
-                    key={key}
-                    style={[styles.chip, active && styles.chipActive]}
-                    onPress={() => selectDay(key)}
+                    key={item.id}
+                    style={styles.itemRow}
+                    onPress={() => openItem(item.id)}
                     accessibilityRole="button"
-                    accessibilityState={{ selected: active }}
+                    activeOpacity={0.7}
                   >
-                    <Text style={[styles.chipDay, active && styles.chipDayActive]}>{dayFmt.format(d)}</Text>
-                    <Text style={[styles.chipDate, active && styles.chipDateActive]}>{d.getDate()}</Text>
-                    <View style={[styles.chipDot, hasOverrideFor(key) && styles.chipDotOn, active && styles.chipDotActive]} />
+                    <View style={styles.timeBox}>
+                      <Text style={styles.timeBoxText}>{formatTime(item.time)}</Text>
+                    </View>
+                    <View style={styles.itemMain}>
+                      <Text style={styles.itemTitle} numberOfLines={1}>
+                        {item.title}
+                      </Text>
+                      <Text style={styles.itemSubtitle} numberOfLines={1}>
+                        {item.subtitle} • {formatMoney(item.amountMinor, item.currency)}
+                      </Text>
+                    </View>
+                    <Pill label={status.label} colors={status.colors} style={styles.statusPill} />
                   </TouchableOpacity>
                 );
               })}
             </View>
-
-            {/* That day's bookings / orders */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                {itemLabelTitle} on {selectedShort} ({items.length})
-              </Text>
-              {items.length > 0 ? (
-                <View>
-                  {items.map((item, i) => {
-                    const statusInfo =
-                      itemLabel === 'order'
-                        ? orderStatusBadge(item.status as OrderStatus)
-                        : bookingStatusBadge(item.status as BookingStatus);
-                    return (
-                      <TouchableOpacity
-                        key={item.id}
-                        style={[styles.itemRow, i < items.length - 1 && styles.itemRowDivider]}
-                        onPress={() =>
-                          itemLabel === 'order'
-                            ? navigation.navigate(ROUTES.ORDER_DETAIL, { orderId: item.id })
-                            : navigation.navigate(ROUTES.BOOKING_DETAIL, { bookingId: item.id })
-                        }
-                      >
-                        <View style={styles.timeBox}>
-                          <Text style={styles.timeBoxText}>{formatTime(item.time)}</Text>
-                          {!!item.endTime && <Text style={styles.timeBoxEnd}>to {formatTime(item.endTime)}</Text>}
-                        </View>
-                        <View style={styles.itemMain}>
-                          <Text style={styles.itemTitle} numberOfLines={1}>
-                            {item.title}
-                          </Text>
-                          <Text style={styles.itemSubtitle} numberOfLines={1}>
-                            {item.subtitle}
-                          </Text>
-                        </View>
-                        <StatusBadge label={statusInfo.label} tone={statusInfo.tone} />
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-              ) : (
-                <View style={styles.emptyRow}>
-                  <CalendarOff size={15} color={Color.placeholder} />
-                  <Text style={styles.emptyText}>No {itemLabelPlural} on this date.</Text>
-                </View>
-              )}
-            </View>
-
-            {/* Per-date hours override */}
-            <View style={styles.section}>
-              <View style={styles.overrideHeader}>
-                <View style={styles.overrideHeaderText}>
-                  <Text style={styles.sectionTitle} numberOfLines={1}>
-                    Override Hours ({selectedShort})
-                  </Text>
-                  <Text style={styles.overrideHint}>
-                    {form.isOpen ? 'Open' : 'Closed'} on this date
-                    {hasOverride ? ' · Custom hours' : ' · Weekly default'}
-                  </Text>
-                </View>
-                <Switch
-                  value={form.isOpen}
-                  onValueChange={(v) => setForm((f) => ({ ...f, isOpen: v }))}
-                  trackColor={TRACK}
-                  thumbColor={Color.white}
-                  ios_backgroundColor={Color.border}
-                  accessibilityLabel="Open on this date"
-                />
-              </View>
-
-              {form.isOpen && (
-                <View style={styles.rangeRow}>
-                  <TimePill
-                    label="Opens"
-                    value={form.openTime}
-                    onChange={(v) => setForm((f) => ({ ...f, openTime: v }))}
-                  />
-                  <Text style={styles.rangeDash}>–</Text>
-                  <TimePill
-                    label="Closes"
-                    value={form.closeTime}
-                    onChange={(v) => setForm((f) => ({ ...f, closeTime: v }))}
-                  />
-                </View>
-              )}
-
-              {!!error && <Text style={styles.errorText}>{error}</Text>}
-
-              <AppButton
-                style={styles.primaryButton}
-                title="Save for this date"
-                loading={saving}
-                onPress={save}
-              />
-              {hasOverride && (
-                <AppButton
-                  style={styles.outlineButton}
-                  title="Reset to Weekly Default"
-                  variant="secondary"
-                  loading={deleting}
-                  onPress={resetToWeekly}
-                />
-              )}
-            </View>
-          </>
-        )}
+          ) : (
+            <Text style={styles.emptyText}>No {plural} on this date.</Text>
+          )}
+        </View>
       </ScrollView>
     </View>
   );

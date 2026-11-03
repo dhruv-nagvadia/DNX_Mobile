@@ -39,9 +39,14 @@ type PillColors = { bg: string; fg: string };
 const timeFmt = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digit' });
 const PREVIEW_LIMIT = 3;
 
-// Purely decorative — a fixed ascending staircase, not real per-period
-// revenue data (matches the mockup's look).
-const HERO_BAR_HEIGHTS = [26, 50, 66, 104];
+// Money-card bars: last 4 months' collected amounts, scaled to the tallest bar.
+const HERO_BAR_MAX = 104;
+const HERO_BAR_MIN = 14;
+
+function heroBarHeight(value: number, all: number[]): number {
+  const max = Math.max(...all, 0);
+  return max > 0 ? Math.max(Math.round((value / max) * HERO_BAR_MAX), HERO_BAR_MIN) : HERO_BAR_MIN;
+}
 
 function initialsOf(name: string): string {
   return (
@@ -189,6 +194,7 @@ export default function HomeScreen() {
     openOrdersCount,
     needsActionCount,
     collectedThisMonth,
+    monthlyCollected,
     monthTrendPct,
     isNewMonthTrend,
     currency,
@@ -293,8 +299,8 @@ export default function HomeScreen() {
             <View style={styles.heroCard}>
               <GradientBackground colors={HERO_GRADIENT} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
               <View style={styles.heroBars} pointerEvents="none">
-                {HERO_BAR_HEIGHTS.map((h, i) => (
-                  <View key={i} style={[styles.heroBar, { height: h }]} />
+                {monthlyCollected.map((v, i) => (
+                  <View key={i} style={[styles.heroBar, { height: heroBarHeight(v, monthlyCollected) }]} />
                 ))}
               </View>
               <View style={styles.heroLeft}>
