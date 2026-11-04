@@ -175,9 +175,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.sm + 4,
   },
-  dimmed: {
-    opacity: 0.55,
-  },
   thumb: {
     width: THUMB,
     height: THUMB,

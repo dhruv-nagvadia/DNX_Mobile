@@ -1,6 +1,7 @@
 export interface ProfileForm {
   fullName: string;
   email: string;
+  phone: string;
 }
 
 export interface PasswordForm {

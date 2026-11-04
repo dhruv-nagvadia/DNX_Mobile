@@ -33,7 +33,7 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>DNX uses your location to pin your business on the map so customers can find you.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to add photos to your business listing.</string>
 	<key>UILaunchStoryboardName</key>

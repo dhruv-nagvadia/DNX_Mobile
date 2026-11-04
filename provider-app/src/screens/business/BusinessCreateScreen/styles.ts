@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PILL, PillColors, SOFT_FILL } from '@/utils/modernTheme';
+import { CARD_BORDER, CARD_SHADOW, INK, LINK, ModernRadius, PILL, PillColors, SOFT_FILL } from '@/utils/modernTheme';
 
 /** Mockup "Mobile Business Onboarding Flow.png": light header with a slim
  * 5-segment progress bar, white cards, sticky Back / Continue footer.
@@ -303,6 +303,64 @@ export const styles = StyleSheet.create({
   pairRow: {
     flexDirection: 'row',
     gap: Spacing.md,
+  },
+  // "Pin your location" card (current-location button + saved pill).
+  pinCard: {
+    marginTop: Spacing.md,
+    padding: Spacing.md,
+    gap: Spacing.sm + 4,
+    borderRadius: ModernRadius.card,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
+  pinCardHead: {
+    flexDirection: 'row',
+    gap: Spacing.sm + 4,
+  },
+  pinCardText: {
+    flex: 1,
+    gap: 2,
+  },
+  pinCardTitle: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  pinCardSub: {
+    fontSize: FontSize.sm,
+    color: Color.textSecondary,
+  },
+  locateBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    height: 46,
+    borderRadius: ModernRadius.button,
+    borderWidth: 1.5,
+    borderColor: LINK,
+  },
+  locateBtnText: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+    color: LINK,
+  },
+  locationSaved: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    gap: 6,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs + 2,
+    borderRadius: ModernRadius.pill,
+    backgroundColor: PILL.green.bg,
+  },
+  locationSavedText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: PILL.green.fg,
   },
   pinRow: {
     flexDirection: 'row',

@@ -83,6 +83,7 @@ function ServiceCard({
   deleting,
   onToggle,
   onEdit,
+  onOpen,
   onDelete,
 }: {
   service: Service;
@@ -90,6 +91,8 @@ function ServiceCard({
   deleting: boolean;
   onToggle: () => void;
   onEdit: () => void;
+  /** Opens the details screen (whole card is the tap target). */
+  onOpen: () => void;
   onDelete: () => void;
 }) {
   const active = s.isActive !== false;
@@ -97,7 +100,7 @@ function ServiceCard({
   const description = s.description?.trim();
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={onOpen} activeOpacity={0.85} accessibilityRole="button">
       <View style={styles.cardTop}>
         <View style={styles.cardMain}>
           <View style={styles.iconBox}>
@@ -181,7 +184,7 @@ function ServiceCard({
           </View>
         )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -206,6 +209,7 @@ export default function ServicesScreen() {
     goBack,
     addService,
     editService,
+    openService,
   } = useServicesScreen();
 
   const hasServices = services.length > 0;
@@ -350,6 +354,7 @@ export default function ServicesScreen() {
                     deleting={deleting}
                     onToggle={() => toggleActive(s)}
                     onEdit={() => editService(s.id)}
+                    onOpen={() => openService(s.id)}
                     onDelete={() => confirmDelete(s.id, s.name)}
                   />
                 ))

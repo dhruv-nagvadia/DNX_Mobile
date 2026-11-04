@@ -109,9 +109,11 @@ export function useBusinessCalendarScreen() {
   const overrideByKey = useMemo(() => new Map(overrides.map((o) => [o.date.slice(0, 10), o])), [overrides]);
   const hasOverride = overrideByKey.has(selectedKey);
 
-  // Every booking/order, keyed by date — these queries return the full list
-  // (no date filter), so this covers any month, past or future, at once.
-  const itemsByKey = useMemo(() => {
+  // Every booking/order (cancelled included), keyed by date — these queries
+  // return the full list (no date filter), so this covers any month at once.
+  // The selected day's list shows them all (status pill tells cancelled apart);
+  // counts, dots and earnings use `itemsByKey` below, which drops cancelled.
+  const allItemsByKey = useMemo(() => {
     const m = new Map<string, CalendarItem[]>();
     const push = (key: string, item: CalendarItem) => {
       const arr = m.get(key) ?? [];
@@ -121,7 +123,7 @@ export function useBusinessCalendarScreen() {
 
     if (isStore) {
       orders
-        .filter((o) => o.provider.id === businessId && o.status !== 'CANCELLED')
+        .filter((o) => o.provider.id === businessId)
         .forEach((o) => {
           const first = o.items[0]?.name;
           const more = o.items.length - 1;
@@ -139,7 +141,6 @@ export function useBusinessCalendarScreen() {
         });
     } else {
       bookings
-        .filter((b) => b.status !== 'CANCELLED')
         .forEach((b) => {
           push(dateKey(new Date(b.startTime)), {
             id: b.id,
@@ -157,6 +158,17 @@ export function useBusinessCalendarScreen() {
     m.forEach((arr) => arr.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()));
     return m;
   }, [isStore, orders, bookings, businessId]);
+
+  const itemsByKey = useMemo(() => {
+    const m = new Map<string, CalendarItem[]>();
+    allItemsByKey.forEach((arr, key) => {
+      const active = arr.filter((i) => i.status !== 'CANCELLED');
+      if (active.length > 0) {
+        m.set(key, active);
+      }
+    });
+    return m;
+  }, [allItemsByKey]);
 
   const weekSummaries: WeekSummary[] = useMemo(
     () =>
@@ -297,10 +309,12 @@ export function useBusinessCalendarScreen() {
       ? 'custom'
       : 'closedOverride';
 
-  const selectedItems = useMemo(() => itemsByKey.get(selectedKey) ?? [], [itemsByKey, selectedKey]);
+  const selectedItems = useMemo(() => allItemsByKey.get(selectedKey) ?? [], [allItemsByKey, selectedKey]);
+  const selectedActive = useMemo(() => itemsByKey.get(selectedKey) ?? [], [itemsByKey, selectedKey]);
+  const selectedActiveCount = selectedActive.length;
   const selectedTotalMinor = useMemo(
-    () => selectedItems.reduce((sum, i) => sum + i.amountMinor, 0),
-    [selectedItems],
+    () => selectedActive.reduce((sum, i) => sum + i.amountMinor, 0),
+    [selectedActive],
   );
   const selectedCurrency = selectedItems[0]?.currency ?? 'INR';
 
@@ -385,6 +399,7 @@ export function useBusinessCalendarScreen() {
     hasOverride,
     items: selectedItems,
     selectedTotalMinor,
+    selectedActiveCount,
     selectedCurrency,
     hoursSource,
 

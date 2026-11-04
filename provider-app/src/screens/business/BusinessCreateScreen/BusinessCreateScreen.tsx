@@ -24,6 +24,8 @@ import {
   Image as ImageIcon,
   Info,
   Layers,
+  LocateFixed,
+  MapPin,
   Minus,
   Plus,
   ShoppingBag,
@@ -35,7 +37,7 @@ import type { LucideIcon } from 'lucide-react-native';
 import { GradientBackground } from '@/components/GradientBackground';
 import { Pill } from '@/components/Pill';
 import { Color, Spacing } from '@/utils/Theme';
-import { INK, PILL, TINT } from '@/utils/modernTheme';
+import { INK, LINK, PILL, TINT } from '@/utils/modernTheme';
 
 import { DEPOSIT_MAX, DEPOSIT_MIN, MAX_PHOTOS, useBusinessCreateScreen } from './useBusinessCreateScreen';
 import { BusinessCreateStepId } from './types';
@@ -135,6 +137,11 @@ export default function BusinessCreateScreen() {
     close,
     form,
     onChange,
+    pinMatch,
+    autoFilled,
+    locationSaved,
+    locating,
+    locateMe,
     setType,
     setCategory,
     categoriesForType,
@@ -573,6 +580,32 @@ export default function BusinessCreateScreen() {
                   onChangeText={(v) => onChange('state', v)}
                   containerStyle={styles.flex}
                 />
+              </View>
+              <View style={styles.pinCard}>
+                <View style={styles.pinCardHead}>
+                  <MapPin size={22} color={INK} />
+                  <View style={styles.pinCardText}>
+                    <Text style={styles.pinCardTitle}>Pin your location</Text>
+                    <Text style={styles.pinCardSub}>Set the exact location on the map for better accuracy.</Text>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  style={styles.locateBtn}
+                  onPress={locateMe}
+                  disabled={locating}
+                  accessibilityRole="button"
+                >
+                  {locating ? <ActivityIndicator color={LINK} /> : <LocateFixed size={18} color={LINK} />}
+                  <Text style={styles.locateBtnText}>
+                    {locating ? 'Locating…' : locationSaved ? 'Update my location' : 'Use my current location'}
+                  </Text>
+                </TouchableOpacity>
+                {locationSaved && (
+                  <View style={styles.locationSaved}>
+                    <Check size={16} color={PILL.green.fg} />
+                    <Text style={styles.locationSavedText}>Location saved</Text>
+                  </View>
+                )}
               </View>
             </>
           )}

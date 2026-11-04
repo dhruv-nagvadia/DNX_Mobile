@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Clipboard from '@react-native-clipboard/clipboard';
 import {
   Alert,
   DimensionValue,
@@ -20,6 +21,7 @@ import {
   CircleSlash,
   Clock,
   Command,
+  Copy,
   Package,
   Pencil,
   Plus,
@@ -169,7 +171,6 @@ function CouponCard({
   onDelete: () => void;
 }) {
   const { status, expiringSoon } = state;
-  const faded = status === 'expired' || status === 'usedUp';
   const { main, cap } = discountParts(c);
   const scope = scopeRow(c);
   const ScopeIcon = scope.Icon;
@@ -181,7 +182,7 @@ function CouponCard({
 
   return (
     <View style={styles.card}>
-      <View style={[styles.cardBody, faded && styles.dimmed]}>
+      <View style={styles.cardBody}>
         <View style={styles.cardTop}>
           <View style={styles.discountCol}>
             <Text style={styles.discount} numberOfLines={1}>
@@ -195,11 +196,7 @@ function CouponCard({
           </View>
         </View>
 
-        <View style={styles.codeChip}>
-          <Text selectable style={styles.code} numberOfLines={1}>
-            {c.code}
-          </Text>
-        </View>
+        <CodeChip code={c.code} />
 
         {!!description && <Text style={styles.description}>{description}</Text>}
 
@@ -246,7 +243,7 @@ function CouponCard({
       </View>
 
       <View style={styles.footer}>
-        <View style={[styles.toggleRow, faded && styles.dimmed]}>
+        <View style={styles.toggleRow}>
           <Switch
             value={c.isActive}
             onValueChange={onToggle}
@@ -280,6 +277,42 @@ function CouponCard({
         </View>
       </View>
     </View>
+  );
+}
+
+/** Dashed code chip with a copy button ("Copied" for 1.5s after tapping). */
+function CodeChip({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    if (!copied) {
+      return;
+    }
+    const t = setTimeout(() => setCopied(false), 1500);
+    return () => clearTimeout(t);
+  }, [copied]);
+
+  return (
+    <TouchableOpacity
+      style={styles.codeChip}
+      onPress={() => {
+        Clipboard.setString(code);
+        setCopied(true);
+      }}
+      accessibilityRole="button"
+      accessibilityLabel={`Copy code ${code}`}
+    >
+      <Text selectable style={styles.code} numberOfLines={1}>
+        {code}
+      </Text>
+      {copied ? (
+        <View style={styles.copiedRow}>
+          <Check size={16} color={PILL.green.fg} />
+          <Text style={styles.copiedText}>Copied</Text>
+        </View>
+      ) : (
+        <Copy size={18} color={INK} />
+      )}
+    </TouchableOpacity>
   );
 }
 

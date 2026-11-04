@@ -20,6 +20,8 @@ import {
   ProductInput,
   AdjustStockInput,
   StockAdjustment,
+  ProductReview,
+  OwnerProductReview,
   Coupon,
   CouponInput,
   BusinessReview,
@@ -47,6 +49,9 @@ export const businessApi = createApi({
     'BusinessReviews',
     'MyEarnings',
     'StockAdjustments',
+    'AllCoupons',
+    'AllReviews',
+    'AllProductReviews',
   ],
   endpoints: (builder) => ({
     createBusiness: builder.mutation<Business, UpdateBusinessRequest>({
@@ -239,14 +244,23 @@ export const businessApi = createApi({
     }),
 
     /** Stock change history for one business, newest first. */
-    getStockAdjustments: builder.query<StockAdjustment[], { businessId: string; limit?: number }>({
-      query: ({ businessId, limit }) => ({
+    getStockAdjustments: builder.query<
+      StockAdjustment[],
+      { businessId: string; limit?: number; productId?: string }
+    >({
+      query: ({ businessId, limit, productId }) => ({
         endpoint: endpoints.businessStockAdjustments(businessId),
         method: 'get',
-        params: limit ? { limit } : undefined,
+        params: { ...(limit ? { limit } : {}), ...(productId ? { productId } : {}) },
       }),
       transformResponse: (res: ApiEnvelope<StockAdjustment[]>) => res.data,
       providesTags: (_r, _e, { businessId }) => [{ type: 'StockAdjustments', id: businessId }],
+    }),
+
+    /** One product's customer reviews, newest first. */
+    getProductReviews: builder.query<ProductReview[], string>({
+      query: (productId) => ({ endpoint: endpoints.productReviews(productId), method: 'get' }),
+      transformResponse: (res: ApiEnvelope<ProductReview[]>) => res.data,
     }),
 
     adjustProductStock: builder.mutation<Product, { businessId: string; productId: string; data: AdjustStockInput }>({
@@ -279,6 +293,13 @@ export const businessApi = createApi({
 
     // ── Coupons — their own tag; unlike services/products they aren't
     // embedded on Business, so they don't invalidate MyBusiness. ──────────
+    /** Every coupon across all businesses, each with `provider` (id + name). */
+    getAllCoupons: builder.query<Coupon[], void>({
+      query: () => ({ endpoint: endpoints.allCoupons, method: 'get' }),
+      transformResponse: (res: ApiEnvelope<Coupon[]>) => res.data,
+      providesTags: ['AllCoupons'],
+    }),
+
     getCoupons: builder.query<Coupon[], string>({
       query: (businessId) => ({ endpoint: endpoints.businessCoupons(businessId), method: 'get' }),
       transformResponse: (res: ApiEnvelope<Coupon[]>) => res.data,
@@ -288,7 +309,7 @@ export const businessApi = createApi({
     createCoupon: builder.mutation<Coupon, { businessId: string; data: CouponInput }>({
       query: ({ businessId, data }) => ({ endpoint: endpoints.businessCoupons(businessId), method: 'post', data }),
       transformResponse: (res: ApiEnvelope<Coupon>) => res.data,
-      invalidatesTags: (_r, _e, { businessId }) => [{ type: 'Coupons', id: businessId }],
+      invalidatesTags: (_r, _e, { businessId }) => [{ type: 'Coupons', id: businessId }, 'AllCoupons'],
     }),
 
     updateCoupon: builder.mutation<Coupon, { businessId: string; couponId: string; data: Partial<CouponInput> }>({
@@ -298,7 +319,7 @@ export const businessApi = createApi({
         data,
       }),
       transformResponse: (res: ApiEnvelope<Coupon>) => res.data,
-      invalidatesTags: (_r, _e, { businessId }) => [{ type: 'Coupons', id: businessId }],
+      invalidatesTags: (_r, _e, { businessId }) => [{ type: 'Coupons', id: businessId }, 'AllCoupons'],
     }),
 
     deleteCoupon: builder.mutation<{ id: string }, { businessId: string; couponId: string }>({
@@ -307,7 +328,7 @@ export const businessApi = createApi({
         method: 'delete',
       }),
       transformResponse: (res: ApiEnvelope<{ id: string }>) => res.data,
-      invalidatesTags: (_r, _e, { businessId }) => [{ type: 'Coupons', id: businessId }],
+      invalidatesTags: (_r, _e, { businessId }) => [{ type: 'Coupons', id: businessId }, 'AllCoupons'],
     }),
 
     // ── Reviews — product-review replies aren't wired on the web either
@@ -325,7 +346,35 @@ export const businessApi = createApi({
         data: { reply },
       }),
       transformResponse: (res: ApiEnvelope<BusinessReview>) => res.data,
-      invalidatesTags: (_r, _e, { businessId }) => [{ type: 'BusinessReviews', id: businessId }],
+      invalidatesTags: (_r, _e, { businessId }) => [{ type: 'BusinessReviews', id: businessId }, 'AllReviews'],
+    }),
+
+    /** Every business review across all of the owner's businesses. */
+    getAllReviews: builder.query<BusinessReview[], void>({
+      query: () => ({ endpoint: endpoints.allReviews, method: 'get' }),
+      transformResponse: (res: ApiEnvelope<BusinessReview[]>) => res.data,
+      providesTags: ['AllReviews'],
+    }),
+
+    /** Every product review across all of the owner's stores. */
+    getAllProductReviews: builder.query<OwnerProductReview[], void>({
+      query: () => ({ endpoint: endpoints.allProductReviews, method: 'get' }),
+      transformResponse: (res: ApiEnvelope<OwnerProductReview[]>) => res.data,
+      providesTags: ['AllProductReviews'],
+    }),
+
+    /** Reply to (or clear the reply on) a product review. */
+    replyToProductReview: builder.mutation<
+      OwnerProductReview,
+      { businessId: string; productId: string; reviewId: string; reply: string | null }
+    >({
+      query: ({ businessId, productId, reviewId, reply }) => ({
+        endpoint: endpoints.businessProductReviewReply(businessId, productId, reviewId),
+        method: 'patch',
+        data: { reply },
+      }),
+      transformResponse: (res: ApiEnvelope<OwnerProductReview>) => res.data,
+      invalidatesTags: ['AllProductReviews'],
     }),
 
     getMyEarnings: builder.query<Earnings, EarningsParams | void>({
@@ -367,13 +416,18 @@ export const {
   useUpdateProductMutation,
   useDeleteProductMutation,
   useGetStockAdjustmentsQuery,
+  useGetProductReviewsQuery,
   useAdjustProductStockMutation,
   useSetProductStockStatusMutation,
+  useGetAllCouponsQuery,
   useGetCouponsQuery,
   useCreateCouponMutation,
   useUpdateCouponMutation,
   useDeleteCouponMutation,
   useGetBusinessReviewsQuery,
+  useGetAllReviewsQuery,
+  useGetAllProductReviewsQuery,
+  useReplyToProductReviewMutation,
   useReplyToReviewMutation,
   useGetMyEarningsQuery,
 } = businessApi;

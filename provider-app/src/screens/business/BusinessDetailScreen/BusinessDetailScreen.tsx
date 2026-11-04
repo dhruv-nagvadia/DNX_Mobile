@@ -325,7 +325,7 @@ export default function BusinessDetailScreen() {
                 <ManageTile icon={Calendar} label="Bookings" tint={TINT.lavender} onPress={goToBookingsOrders} />
               </>
             )}
-            <ManageTile icon={Tag} label="Coupons" tint={TINT.peach} onPress={goToCoupons} />
+            <ManageTile icon={Tag} label="Offers" tint={TINT.peach} onPress={goToCoupons} />
             <ManageTile icon={ImageIcon} label="Photos" tint={TINT.mint} onPress={goToPhotos} />
             <ManageTile icon={Clock} label="Hours" tint={TINT.lavender} onPress={goToHours} />
             <ManageTile icon={Calendar} label="Calendar" tint={TINT.blue} onPress={goToCalendar} />

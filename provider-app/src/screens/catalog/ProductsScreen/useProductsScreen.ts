@@ -116,6 +116,7 @@ export function useProductsScreen() {
     goBack: () => navigation.goBack(),
     addProduct: () => navigation.navigate(ROUTES.PRODUCT_FORM, { businessId }),
     editProduct: (productId: string) => navigation.navigate(ROUTES.PRODUCT_FORM, { businessId, productId }),
+    openProduct: (productId: string) => navigation.navigate(ROUTES.PRODUCT_DETAIL, { businessId, productId }),
     goToStock: () => navigation.navigate(ROUTES.STOCK, { businessId }),
   };
 }

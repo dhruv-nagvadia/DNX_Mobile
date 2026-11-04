@@ -16,7 +16,7 @@ import {
   Info,
   Package,
   ShoppingBag,
-  Store,
+  Tag,
   User,
   Wallet,
 } from 'lucide-react-native';
@@ -183,7 +183,6 @@ export default function HomeScreen() {
   const {
     currentUser,
     hasBusinesses,
-    businesses,
     isLoading,
     refreshing,
     refresh,
@@ -200,6 +199,8 @@ export default function HomeScreen() {
     currency,
     hasStore,
     lowStock,
+    activeOffersCount,
+    totalOffersCount,
   } = useHomeScreen();
   const navigation = useNavigation<Nav>();
   const insets = useSafeAreaInsets();
@@ -265,20 +266,6 @@ export default function HomeScreen() {
           <>
             {/* 2. Quick links */}
             <View style={styles.quickRow}>
-              <TouchableOpacity style={styles.quickCard} onPress={() => navigation.navigate(ROUTES.BUSINESSES)}>
-                <View style={styles.quickIcon}>
-                  <Store size={20} color={Color.primary} />
-                </View>
-                <View style={styles.quickMain}>
-                  <Text style={styles.quickLabel} numberOfLines={1}>
-                    My Businesses
-                  </Text>
-                  <Text style={styles.quickSubtitle} numberOfLines={1}>
-                    {businesses.length} Business{businesses.length === 1 ? '' : 'es'}
-                  </Text>
-                </View>
-                <ChevronRight size={18} color={INK} />
-              </TouchableOpacity>
               <TouchableOpacity style={styles.quickCard} onPress={() => navigation.navigate(ROUTES.EARNINGS)}>
                 <View style={styles.quickIcon}>
                   <Wallet size={20} color={Color.primary} />
@@ -289,6 +276,22 @@ export default function HomeScreen() {
                   </Text>
                   <Text style={styles.quickSubtitle} numberOfLines={1}>
                     View income, payouts
+                  </Text>
+                </View>
+                <ChevronRight size={18} color={INK} />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.quickCard} onPress={() => navigation.navigate(ROUTES.ALL_OFFERS)}>
+                <View style={styles.quickIcon}>
+                  <Tag size={20} color={Color.primary} />
+                </View>
+                <View style={styles.quickMain}>
+                  <Text style={styles.quickLabel} numberOfLines={1}>
+                    Offers
+                  </Text>
+                  <Text style={styles.quickSubtitle} numberOfLines={1}>
+                    {totalOffersCount === 0
+                      ? 'Create a discount'
+                      : `${activeOffersCount} active offer${activeOffersCount === 1 ? '' : 's'}`}
                   </Text>
                 </View>
                 <ChevronRight size={18} color={INK} />

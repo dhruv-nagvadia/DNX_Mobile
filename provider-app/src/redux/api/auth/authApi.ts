@@ -55,6 +55,12 @@ export const authApi = createApi({
       transformResponse: () => undefined,
     }),
 
+    /** Permanently deactivates the account (password required). */
+    deleteAccount: builder.mutation<void, { password: string }>({
+      query: (data) => ({ endpoint: endpoints.me, method: 'delete', data }),
+      transformResponse: () => undefined,
+    }),
+
     requestPasswordReset: builder.mutation<void, RequestPasswordResetRequest>({
       query: (data) => ({ endpoint: endpoints.forgotPassword, method: 'post', data }),
       transformResponse: () => undefined,
@@ -74,6 +80,7 @@ export const {
   useUpdateMeMutation,
   useUploadImageMutation,
   useChangePasswordMutation,
+  useDeleteAccountMutation,
   useRequestPasswordResetMutation,
   useResetPasswordMutation,
 } = authApi;

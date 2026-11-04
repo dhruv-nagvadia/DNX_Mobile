@@ -30,6 +30,7 @@ export function useOrderDetailScreen() {
   const [actionLoading, setActionLoading] = useState(false);
   const [reason, setReason] = useState('');
   const [showCancel, setShowCancel] = useState(false);
+  const [showCollect, setShowCollect] = useState(false);
 
   const advance = useCallback(
     async (status: OrderStatus) => {
@@ -68,6 +69,10 @@ export function useOrderDetailScreen() {
     setShowCancel(false);
   }, [order, reason, updateOrderStatus]);
 
+  // Same "Mark as paid?" confirm step the Orders list uses before collecting.
+  const openCollect = useCallback(() => setShowCollect(true), []);
+  const closeCollect = useCallback(() => setShowCollect(false), []);
+
   const collectNow = useCallback(async () => {
     if (!order) {
       return;
@@ -75,6 +80,7 @@ export function useOrderDetailScreen() {
     setActionLoading(true);
     await collectOrderPayment({ orderId: order.id }).unwrap().catch(() => undefined);
     setActionLoading(false);
+    setShowCollect(false);
   }, [order, collectOrderPayment]);
 
   return {
@@ -85,6 +91,9 @@ export function useOrderDetailScreen() {
     actionLoading,
     advance,
     collectNow,
+    showCollect,
+    openCollect,
+    closeCollect,
     showCancel,
     reason,
     setReason,

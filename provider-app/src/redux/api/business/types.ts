@@ -200,6 +200,8 @@ export interface Coupon {
   usageLimit?: number | null;
   usedCount: number;
   isActive: boolean;
+  /** Only on the all-businesses list (GET /provider/coupons). */
+  provider?: { id: string; businessName: string };
   createdAt: string;
 }
 
@@ -235,6 +237,17 @@ export interface BusinessBooking {
   cancelReason?: string | null;
   /** When the provider started the service (status IN_PROGRESS). */
   startedAt?: string | null;
+  /** Home visit: where the service happens and the travel fee charged. */
+  serviceAddressLine?: string | null;
+  serviceLat?: number | null;
+  serviceLng?: number | null;
+  travelFeeMinor?: number;
+  /** When the provider accepted the booking. */
+  confirmedAt?: string | null;
+  /** When it was settled (completed, or cancelled/no-show with money kept). */
+  settledAt?: string | null;
+  discountMinor?: number;
+  couponCode?: string | null;
   createdAt?: string;
   service: { name: string; durationMin?: number };
   user: { fullName: string; phone?: string | null };
@@ -249,6 +262,8 @@ export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'READY' | 'COMPLETED' | 'CAN
 
 export interface BusinessOrderItem {
   id: string;
+  /** The product this line was for (null if that product was since deleted). */
+  productId?: string | null;
   name: string;
   measure: Measure;
   priceMinor: number;
@@ -270,10 +285,44 @@ export interface BusinessOrder {
   note?: string | null;
   cancelReason?: string | null;
   createdAt: string;
+  /** When the store accepted the order. */
+  confirmedAt?: string | null;
   readyAt?: string | null;
+  /** When it was settled (completed, or cancelled/no-show with money kept). */
+  settledAt?: string | null;
+  discountMinor?: number;
+  couponCode?: string | null;
   items: BusinessOrderItem[];
   user: { fullName: string; phone?: string | null };
   provider: { id: string; businessName: string };
+}
+
+/** A customer's review of one product (public product reviews list). */
+export interface ProductReview {
+  id: string;
+  rating: number;
+  comment?: string | null;
+  providerReply?: string | null;
+  repliedAt?: string | null;
+  createdAt: string;
+  user: { fullName: string };
+}
+
+/** A product review as seen by the owner across all stores (global Reviews page). */
+export interface OwnerProductReview {
+  id: string;
+  rating: number;
+  comment?: string | null;
+  providerReply?: string | null;
+  repliedAt?: string | null;
+  createdAt: string;
+  user: { fullName: string };
+  product: {
+    id: string;
+    name: string;
+    imageUrl?: string | null;
+    provider: { id: string; businessName: string };
+  };
 }
 
 export interface BusinessReview {

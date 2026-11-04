@@ -1,7 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { CalendarDays, Home, User } from 'lucide-react-native';
+import { CalendarDays, Home, Store, User } from 'lucide-react-native';
 
 import { ROUTES, RootStackParamList } from './routes';
 import { Color, FontWeight } from '@/utils/Theme';
@@ -20,8 +20,11 @@ import BusinessPhotosScreen from '@/screens/business/BusinessPhotosScreen';
 import BusinessEditScreen from '@/screens/business/BusinessEditScreen';
 import ServicesScreen from '@/screens/catalog/ServicesScreen';
 import ServiceFormScreen from '@/screens/catalog/ServiceFormScreen';
+import ServiceDetailScreen from '@/screens/catalog/ServiceDetailScreen';
 import ProductsScreen from '@/screens/catalog/ProductsScreen';
 import ProductFormScreen from '@/screens/catalog/ProductFormScreen';
+import ProductDetailScreen from '@/screens/catalog/ProductDetailScreen';
+import AllOffersScreen from '@/screens/catalog/AllOffersScreen';
 import StockScreen from '@/screens/catalog/StockScreen';
 import CouponsScreen from '@/screens/catalog/CouponsScreen';
 import CouponFormScreen from '@/screens/catalog/CouponFormScreen';
@@ -51,11 +54,9 @@ export function AuthStack() {
 }
 
 /**
- * Bottom tabs — just the 3 a provider reaches for constantly: Home, Bookings
- * & Orders, Profile. Everything else (Businesses, Earnings, Coupons,
- * Support, ...) lives one tap away from Home's quick-actions row and from
- * Profile's menu instead of crowding the tab bar — leaves room to add more
- * sections later without ever needing a 6th/7th tab.
+ * Bottom tabs — the 4 a provider reaches for constantly: Home, Bookings &
+ * Orders, Businesses, Profile. Earnings and Offers are one tap away from
+ * Home's quick cards; everything else from Profile's menu.
  */
 function TabNavigator() {
   return (
@@ -87,6 +88,14 @@ function TabNavigator() {
         }}
       />
       <Tab.Screen
+        name={ROUTES.BUSINESSES}
+        component={BusinessesScreen}
+        options={{
+          tabBarLabel: 'Businesses',
+          tabBarIcon: ({ color, size }) => <Store color={color} size={size} />,
+        }}
+      />
+      <Tab.Screen
         name={ROUTES.PROFILE}
         component={ProfileScreen}
         options={{
@@ -113,8 +122,8 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.BOOKINGS_ORDERS} component={BookingsOrdersScreen} />
       <Stack.Screen name={ROUTES.ORDER_DETAIL} component={OrderDetailScreen} />
       <Stack.Screen name={ROUTES.BOOKING_DETAIL} component={BookingDetailScreen} />
-      <Stack.Screen name={ROUTES.BUSINESSES} component={BusinessesScreen} />
       <Stack.Screen name={ROUTES.EARNINGS} component={EarningsScreen} />
+      <Stack.Screen name={ROUTES.ALL_OFFERS} component={AllOffersScreen} />
       <Stack.Screen name={ROUTES.TODAYS_SCHEDULE} component={TodaysScheduleScreen} />
       <Stack.Screen name={ROUTES.ATTENTION_LIST} component={AttentionListScreen} />
       <Stack.Screen name={ROUTES.OPEN_ORDERS} component={OpenOrdersScreen} />
@@ -126,8 +135,10 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.BUSINESS_EDIT} component={BusinessEditScreen} />
       <Stack.Screen name={ROUTES.SERVICES} component={ServicesScreen} />
       <Stack.Screen name={ROUTES.SERVICE_FORM} component={ServiceFormScreen} />
+      <Stack.Screen name={ROUTES.SERVICE_DETAIL} component={ServiceDetailScreen} />
       <Stack.Screen name={ROUTES.PRODUCTS} component={ProductsScreen} />
       <Stack.Screen name={ROUTES.PRODUCT_FORM} component={ProductFormScreen} />
+      <Stack.Screen name={ROUTES.PRODUCT_DETAIL} component={ProductDetailScreen} />
       <Stack.Screen name={ROUTES.STOCK} component={StockScreen} />
       <Stack.Screen name={ROUTES.COUPONS} component={CouponsScreen} />
       <Stack.Screen name={ROUTES.COUPON_FORM} component={CouponFormScreen} />

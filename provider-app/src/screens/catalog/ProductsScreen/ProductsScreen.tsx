@@ -88,12 +88,15 @@ function ProductCard({
   deleting,
   onToggle,
   onEdit,
+  onOpen,
   onDelete,
 }: {
   product: Product;
   deleting: boolean;
   onToggle: () => void;
   onEdit: () => void;
+  /** Opens the details screen (whole card is the tap target). */
+  onOpen: () => void;
   onDelete: () => void;
 }) {
   const active = p.isActive !== false;
@@ -103,9 +106,9 @@ function ProductCard({
   const ratingCount = p.ratingCount ?? 0;
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={onOpen} activeOpacity={0.85} accessibilityRole="button">
       <View style={styles.cardTop}>
-        <View style={[styles.cardMain, !active && styles.dimmed]}>
+        <View style={styles.cardMain}>
           {p.imageUrl ? (
             <Image source={{ uri: p.imageUrl }} style={styles.thumb} />
           ) : (
@@ -178,7 +181,7 @@ function ProductCard({
 
       <View style={styles.divider} />
 
-      <View style={[styles.bottomRow, !active && styles.dimmed]}>
+      <View style={styles.bottomRow}>
         <View style={[styles.stockPill, { backgroundColor: pill.colors.bg }]}>
           <PillIcon size={16} color={pill.colors.fg} strokeWidth={2.2} />
           <Text style={[styles.stockPillText, { color: pill.colors.fg }]} numberOfLines={1}>
@@ -198,7 +201,7 @@ function ProductCard({
           )}
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -223,6 +226,7 @@ export default function ProductsScreen() {
     goBack,
     addProduct,
     editProduct,
+    openProduct,
     goToStock,
   } = useProductsScreen();
 
@@ -352,6 +356,7 @@ export default function ProductsScreen() {
                     deleting={deleting}
                     onToggle={() => toggleActive(p)}
                     onEdit={() => editProduct(p.id)}
+                    onOpen={() => openProduct(p.id)}
                     onDelete={() => confirmDelete(p.id, p.name)}
                   />
                 ))

@@ -80,6 +80,7 @@ export default function BusinessCalendarScreen() {
     hasOverride,
     items,
     selectedTotalMinor,
+    selectedActiveCount,
     selectedCurrency,
     hoursSource,
     form,
@@ -102,8 +103,8 @@ export default function BusinessCalendarScreen() {
 
   const selectedDate = new Date(`${selectedKey}T00:00:00`);
   const daySubtitle =
-    items.length > 0
-      ? `${countLabel(items.length)} • ${formatMoney(selectedTotalMinor, selectedCurrency)}`
+    selectedActiveCount > 0
+      ? `${countLabel(selectedActiveCount)} • ${formatMoney(selectedTotalMinor, selectedCurrency)}`
       : `No ${plural}`;
   const source = SOURCE_PILL[hoursSource];
   const resetDisabled = !hasOverride || deleting;

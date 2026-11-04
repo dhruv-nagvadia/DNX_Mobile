@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG } from '@/utils/modernTheme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG, PILL } from '@/utils/modernTheme';
 
 /** Mockup "Polished Salon Offers Management App.png": light header with a
  * round add button, search, status chips, pastel summary tiles and coupon
@@ -171,9 +171,6 @@ export const styles = StyleSheet.create({
     paddingBottom: Spacing.md - 2,
     gap: Spacing.sm,
   },
-  dimmed: {
-    opacity: 0.55,
-  },
   cardTop: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -213,7 +210,10 @@ export const styles = StyleSheet.create({
   codeChip: {
     alignSelf: 'flex-start',
     minWidth: 150,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm + 2,
     paddingHorizontal: Spacing.md + 4,
     paddingVertical: 6,
     borderRadius: 8,
@@ -221,6 +221,16 @@ export const styles = StyleSheet.create({
     borderStyle: 'dashed',
     borderColor: CODE_BORDER,
     backgroundColor: '#F7F9FF',
+  },
+  copiedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  copiedText: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.semibold,
+    color: PILL.green.fg,
   },
   code: {
     fontSize: FontSize.md,

@@ -8,6 +8,7 @@ import { useGetCategoriesQuery } from '@/redux/api/category/categoryApi';
 import { Business, BusinessType } from '@/redux/api/business/types';
 import { ROUTES } from '@/navigation/routes';
 import { lookupPincode } from '@/utils/pincode';
+import { getDeviceLocation } from '@/utils/location';
 
 import { MAX_IMAGES } from '../BusinessPhotosScreen/useBusinessPhotosScreen';
 import {
@@ -76,6 +77,36 @@ export function useBusinessCreateScreen() {
   // City/State were filled by it (typing in either clears its "Auto-filled" tag).
   const [pinMatch, setPinMatch] = useState<{ city: string; state: string } | null>(null);
   const [autoFilled, setAutoFilled] = useState({ city: false, state: false });
+
+  // "Use my current location" — GPS coordinates saved with the business (so it
+  // shows on the map / in "nearest" search) plus a best-effort address fill.
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [locating, setLocating] = useState(false);
+  const locateMe = useCallback(async () => {
+    setLocating(true);
+    const loc = await getDeviceLocation();
+    setLocating(false);
+    if (!loc) {
+      Alert.alert(
+        "Couldn't get your location",
+        'Allow location access for DNX in your phone settings, turn on GPS, then try again.',
+      );
+      return;
+    }
+    setCoords({ lat: loc.lat, lng: loc.lng });
+    // Fill only empty fields — never overwrite what the owner typed.
+    setForm((prev) => ({
+      ...prev,
+      addressLine: prev.addressLine.trim() ? prev.addressLine : loc.address ?? prev.addressLine,
+      postalCode: prev.postalCode.trim() ? prev.postalCode : loc.postalCode ?? prev.postalCode,
+      city: prev.city.trim() ? prev.city : loc.city ?? prev.city,
+      state: prev.state.trim() ? prev.state : loc.state ?? prev.state,
+    }));
+    setAutoFilled((prev) => ({
+      city: prev.city || (!cityRef.current.trim() && !!loc.city),
+      state: prev.state || (!stateRef.current.trim() && !!loc.state),
+    }));
+  }, []);
 
   const onChange = useCallback(<K extends keyof BusinessCreateForm>(key: K, value: BusinessCreateForm[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -269,6 +300,8 @@ export function useBusinessCreateScreen() {
         city: form.city.trim() || undefined,
         state: form.state.trim() || undefined,
         postalCode: form.postalCode.trim() || undefined,
+        latitude: coords?.lat,
+        longitude: coords?.lng,
         depositPercent: form.depositPercent.trim() ? Number(form.depositPercent) : undefined,
         codEnabled: form.type === 'STORE' ? form.codEnabled : undefined,
         partialPayEnabled: form.partialPayEnabled,
@@ -298,7 +331,7 @@ export function useBusinessCreateScreen() {
       }
     }
     setCreated(business);
-  }, [form, photos, createBusiness, uploadImages, validateStep]);
+  }, [form, photos, coords, createBusiness, uploadImages, validateStep]);
 
   // ── Done view actions ───────────────────────────────────────────────────
   const goToBusiness = useCallback(() => {
@@ -341,6 +374,9 @@ export function useBusinessCreateScreen() {
     onChange,
     pinMatch,
     autoFilled,
+    locationSaved: !!coords,
+    locating,
+    locateMe,
     setType,
     setCategory,
     categoriesForType,

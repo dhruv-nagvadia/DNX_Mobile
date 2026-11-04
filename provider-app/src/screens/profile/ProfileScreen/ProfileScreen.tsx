@@ -10,13 +10,16 @@ import {
   LifeBuoy,
   LogOut,
   Pencil,
+  Star,
   Wallet,
 } from 'lucide-react-native';
 
 import { AppButton } from '@/components/AppButton';
 import { AppInput } from '@/components/AppInput';
+import { Pill } from '@/components/Pill';
 import { Color, Spacing } from '@/utils/Theme';
 import { AppConfig } from '@/utils/Constants';
+import { PILL } from '@/utils/modernTheme';
 
 import { useProfileScreen } from './useProfileScreen';
 import { styles } from './styles';
@@ -36,12 +39,14 @@ const MENU_TONES = {
   primary: { bg: Color.primarySoft, fg: Color.primary },
   accent: { bg: Color.accentSoft, fg: Color.accent2 },
   success: { bg: Color.successSoft, fg: Color.success },
+  warning: { bg: Color.warningSoft, fg: Color.warning },
 };
 
 function MenuRow({
   icon,
   label,
   value,
+  badge,
   onPress,
   first,
   tone = 'primary',
@@ -49,6 +54,7 @@ function MenuRow({
   icon: React.ReactElement;
   label: string;
   value?: string;
+  badge?: string;
   onPress: () => void;
   first?: boolean;
   tone?: keyof typeof MENU_TONES;
@@ -61,6 +67,7 @@ function MenuRow({
       </View>
       <Text style={styles.menuItemText}>{label}</Text>
       {!!value && <Text style={styles.menuItemValue}>{value}</Text>}
+      {!!badge && <Pill label={badge} colors={PILL.orange} style={styles.menuBadge} />}
       <ChevronRight size={18} color={Color.placeholder} />
     </TouchableOpacity>
   );
@@ -71,6 +78,7 @@ export default function ProfileScreen() {
     currentUser,
     stats,
     unreadCount,
+    reviewsNeedingReply,
     editing,
     form,
     onChange,
@@ -93,6 +101,7 @@ export default function ProfileScreen() {
     logout,
     goToBusinesses,
     goToEarnings,
+    goToReviews,
     goToNotifications,
     goToSupport,
   } = useProfileScreen();
@@ -169,6 +178,13 @@ export default function ProfileScreen() {
             <View style={styles.menu}>
               <MenuRow first icon={<Briefcase />} label="My businesses" onPress={goToBusinesses} tone="primary" />
               <MenuRow icon={<Wallet />} label="Earnings" onPress={goToEarnings} tone="success" />
+              <MenuRow
+                icon={<Star />}
+                label="Reviews"
+                badge={reviewsNeedingReply > 0 ? `${reviewsNeedingReply} need reply` : undefined}
+                onPress={goToReviews}
+                tone="warning"
+              />
             </View>
           </View>
 

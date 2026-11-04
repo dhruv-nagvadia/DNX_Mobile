@@ -187,6 +187,9 @@ export const styles = StyleSheet.create({
     fontWeight: FontWeight.semibold,
     color: Color.textPrimary,
   },
+  menuBadge: {
+    alignSelf: 'center',
+  },
   menuItemValue: {
     fontSize: FontSize.sm,
     color: Color.textSecondary,

@@ -22,10 +22,13 @@ export const ROUTES = {
   BUSINESS_EDIT: 'BusinessEditScreen',
   SERVICES: 'ServicesScreen',
   SERVICE_FORM: 'ServiceFormScreen',
+  SERVICE_DETAIL: 'ServiceDetailScreen',
   PRODUCTS: 'ProductsScreen',
   PRODUCT_FORM: 'ProductFormScreen',
+  PRODUCT_DETAIL: 'ProductDetailScreen',
   STOCK: 'StockScreen',
   COUPONS: 'CouponsScreen',
+  ALL_OFFERS: 'AllOffersScreen',
   COUPON_FORM: 'CouponFormScreen',
   REVIEWS: 'ReviewsScreen',
   EARNINGS: 'EarningsScreen',
@@ -60,12 +63,16 @@ export type RootStackParamList = {
   [ROUTES.BUSINESS_EDIT]: { businessId: string };
   [ROUTES.SERVICES]: { businessId: string };
   [ROUTES.SERVICE_FORM]: { businessId: string; serviceId?: string };
+  [ROUTES.SERVICE_DETAIL]: { businessId: string; serviceId: string };
   [ROUTES.PRODUCTS]: { businessId: string };
   [ROUTES.PRODUCT_FORM]: { businessId: string; productId?: string };
+  [ROUTES.PRODUCT_DETAIL]: { businessId: string; productId: string };
   [ROUTES.STOCK]: { businessId: string };
   [ROUTES.COUPONS]: { businessId: string };
+  [ROUTES.ALL_OFFERS]: undefined;
   [ROUTES.COUPON_FORM]: { businessId: string; couponId?: string };
-  [ROUTES.REVIEWS]: { businessId: string };
+  // No businessId = every review across all businesses (opened from Profile).
+  [ROUTES.REVIEWS]: { businessId?: string } | undefined;
   [ROUTES.EARNINGS]: undefined;
   [ROUTES.TODAYS_SCHEDULE]: undefined;
   [ROUTES.ATTENTION_LIST]: undefined;

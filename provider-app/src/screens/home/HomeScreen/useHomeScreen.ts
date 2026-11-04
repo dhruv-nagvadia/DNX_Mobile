@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useAppSelector } from '@/redux/hooks';
 import {
+  useGetAllCouponsQuery,
   useGetAllMyBookingsQuery,
   useGetMyBusinessesQuery,
   useGetMyOrdersQuery,
@@ -167,12 +168,28 @@ export function useHomeScreen() {
     };
   }, [bookingsData, ordersData]);
 
+  // Offers quick card: live offers = switched on, not expired, not used up.
+  const couponsQuery = useGetAllCouponsQuery();
+  const couponsData = couponsQuery.data;
+  const activeOffersCount = useMemo(() => {
+    const now = Date.now();
+    return (couponsData ?? []).filter(
+      (c) =>
+        c.isActive &&
+        !(c.expiresAt && new Date(c.expiresAt).getTime() < now) &&
+        !(c.usageLimit != null && c.usedCount >= c.usageLimit),
+    ).length;
+  }, [couponsData]);
+
   const refresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([businesses.refetch(), bookingsQuery.refetch(), ordersQuery.refetch()]).finally(() =>
-      setRefreshing(false),
-    );
-  }, [businesses, bookingsQuery, ordersQuery]);
+    await Promise.all([
+      businesses.refetch(),
+      bookingsQuery.refetch(),
+      ordersQuery.refetch(),
+      couponsQuery.refetch(),
+    ]).finally(() => setRefreshing(false));
+  }, [businesses, bookingsQuery, ordersQuery, couponsQuery]);
 
   return {
     currentUser,
@@ -181,6 +198,8 @@ export function useHomeScreen() {
     isLoading: businesses.isLoading || bookingsQuery.isLoading || ordersQuery.isLoading,
     hasStore,
     lowStock,
+    activeOffersCount,
+    totalOffersCount: couponsData?.length ?? 0,
     refreshing,
     refresh,
     ...derived,

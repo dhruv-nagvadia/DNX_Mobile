@@ -140,5 +140,6 @@ export function useServicesScreen() {
     goBack: () => navigation.goBack(),
     addService: () => navigation.navigate(ROUTES.SERVICE_FORM, { businessId }),
     editService: (serviceId: string) => navigation.navigate(ROUTES.SERVICE_FORM, { businessId, serviceId }),
+    openService: (serviceId: string) => navigation.navigate(ROUTES.SERVICE_DETAIL, { businessId, serviceId }),
   };
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { ArrowDown, ArrowUp } from 'lucide-react-native';
 
-import { TrendChart } from '@/components/TrendChart';
+import { SmoothTrendChart } from '@/components/SmoothTrendChart';
 import { Color } from '@/utils/Theme';
 
 import { useEarningsPanel } from './useEarningsPanel';
@@ -17,8 +17,6 @@ const PERIODS: { id: EarningsPeriod; label: string }[] = [
 
 const formatMajor = (v: number, currency: string) =>
   `${currency === 'INR' ? '₹' : currency + ' '}${v.toLocaleString('en-IN')}`;
-
-const compact = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}k` : String(Math.round(v)));
 
 /** Per-business earnings on the Business Detail screen (mockup: Week/Month/
  * Year segment, date range, big total, "+12% vs. previous month" pill, area
@@ -62,7 +60,12 @@ export function EarningsPanel({ businessId, isStore }: EarningsPanelProps) {
       )}
 
       <View style={styles.chart}>
-        <TrendChart data={points} height={160} highlightLast formatAxis={compact} />
+        <SmoothTrendChart
+          points={points.map((p) => ({ label: p.label, value: Math.round(p.value * 100) }))}
+          seriesLabel="Earnings"
+          showSecondary={false}
+          emptyText="No completed sales in this period yet."
+        />
       </View>
     </View>
   );

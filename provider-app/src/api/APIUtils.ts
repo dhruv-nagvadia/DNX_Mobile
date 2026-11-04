@@ -28,6 +28,8 @@ export default BASE_URL;
  * different TypeScript client.
  */
 export const endpoints = {
+  // Reverse geocoding (our backend proxies Nominatim) — coordinates → address.
+  geoReverse: '/geo/reverse',
   // Auth — provider accounts (PROVIDER); refresh/me are shared/token-based
   register: '/provider/auth/register',
   login: '/provider/auth/login',
@@ -81,11 +83,18 @@ export const endpoints = {
 
   // Coupons
   businessCoupons: (businessId: string) => `/provider/businesses/${businessId}/coupons`,
+  // Every coupon across all of the owner's businesses (global Offers screen).
+  allCoupons: '/provider/coupons',
   businessCoupon: (businessId: string, couponId: string) =>
     `/provider/businesses/${businessId}/coupons/${couponId}`,
 
   // Reviews
   businessReviews: (businessId: string) => `/provider/businesses/${businessId}/reviews`,
+  // Every business review / product review across all of the owner's businesses.
+  allReviews: '/provider/reviews',
+  allProductReviews: '/provider/product-reviews',
+  // Public list of one product's reviews (same endpoint the customer app uses).
+  productReviews: (productId: string) => `/customer/products/${productId}/reviews`,
   businessReviewReply: (businessId: string, reviewId: string) =>
     `/provider/businesses/${businessId}/reviews/${reviewId}/reply`,
   businessProductReviewReply: (businessId: string, productId: string, reviewId: string) =>

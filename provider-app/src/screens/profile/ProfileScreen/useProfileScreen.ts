@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -9,12 +10,23 @@ import { clearCurrentUser, setCurrentUser } from '@/redux/slices/userSlice';
 import { resetAllApiCaches } from '@/redux/resetApiCaches';
 import { clearTokenCache } from '@/api/apiConfigs';
 import { StorageKeys } from '@/utils/Constants';
-import { useChangePasswordMutation, useUpdateMeMutation, useUploadImageMutation } from '@/redux/api/auth/authApi';
-import { useGetMyBusinessesQuery } from '@/redux/api/business/businessApi';
+import {
+  useChangePasswordMutation,
+  useDeleteAccountMutation,
+  useUpdateMeMutation,
+  useUploadImageMutation,
+} from '@/redux/api/auth/authApi';
+import {
+  useGetAllProductReviewsQuery,
+  useGetAllReviewsQuery,
+  useGetMyBusinessesQuery,
+} from '@/redux/api/business/businessApi';
 import { useGetUnreadCountQuery } from '@/redux/api/notification/notificationApi';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
 import { PasswordForm, ProfileForm } from './types';
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'ProfileScreen'>;
 
@@ -28,9 +40,15 @@ export function useProfileScreen() {
 
   const { data: businesses = [] } = useGetMyBusinessesQuery();
   const { data: unreadCount = 0 } = useGetUnreadCountQuery();
+  const { data: allReviews = [] } = useGetAllReviewsQuery();
+  const { data: allProductReviews = [] } = useGetAllProductReviewsQuery();
   const [updateMe, { isLoading: saving }] = useUpdateMeMutation();
   const [uploadImage] = useUploadImageMutation();
   const [changePassword, { isLoading: changingPassword }] = useChangePasswordMutation();
+  const [deleteAccount, { isLoading: deletingAccount }] = useDeleteAccountMutation();
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
 
@@ -38,6 +56,7 @@ export function useProfileScreen() {
   const [form, setForm] = useState<ProfileForm>({
     fullName: currentUser?.fullName ?? '',
     email: currentUser?.email ?? '',
+    phone: currentUser?.phone ?? '',
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -52,13 +71,39 @@ export function useProfileScreen() {
   const stats = useMemo(() => {
     const services = businesses.reduce((sum, b) => sum + b.services.length, 0);
     const products = businesses.reduce((sum, b) => sum + (b.products?.length ?? 0), 0);
-    const rated = businesses.filter((b) => b.ratingCount > 0);
-    const avgRating = rated.length ? rated.reduce((sum, b) => sum + b.ratingAvg, 0) / rated.length : null;
+    // Weighted by review count, so a business with 1 review doesn't skew it.
+    const ratingCount = businesses.reduce((sum, b) => sum + (b.ratingCount ?? 0), 0);
+    const avgRating = ratingCount
+      ? businesses.reduce((sum, b) => sum + (b.ratingAvg ?? 0) * (b.ratingCount ?? 0), 0) / ratingCount
+      : null;
     return { businessCount: businesses.length, services, products, avgRating };
   }, [businesses]);
 
+  /** Unreplied business + product reviews across every business. */
+  const reviewsNeedingReply = useMemo(
+    () =>
+      allReviews.filter((r) => !r.providerReply).length + allProductReviews.filter((r) => !r.providerReply).length,
+    [allReviews, allProductReviews],
+  );
+
+  /** "Since Aug 2026" from the account's createdAt (null when unknown). */
+  const memberSince = useMemo(() => {
+    if (!currentUser?.createdAt) {
+      return null;
+    }
+    const d = new Date(currentUser.createdAt);
+    if (Number.isNaN(d.getTime())) {
+      return null;
+    }
+    return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+  }, [currentUser?.createdAt]);
+
   const startEdit = useCallback(() => {
-    setForm({ fullName: currentUser?.fullName ?? '', email: currentUser?.email ?? '' });
+    setForm({
+      fullName: currentUser?.fullName ?? '',
+      email: currentUser?.email ?? '',
+      phone: currentUser?.phone ?? '',
+    });
     setError(null);
     setEditing(true);
   }, [currentUser]);
@@ -74,9 +119,17 @@ export function useProfileScreen() {
 
   const save = useCallback(async () => {
     setError(null);
-    if (!form.fullName.trim()) return setError('Enter your name');
+    if (!form.fullName.trim()) {
+      setError('Enter your name');
+      return;
+    }
+    const phone = form.phone.trim();
     try {
-      const updated = await updateMe({ fullName: form.fullName.trim(), email: form.email.trim() }).unwrap();
+      const updated = await updateMe({
+        fullName: form.fullName.trim(),
+        email: form.email.trim(),
+        ...(phone ? { phone } : {}),
+      }).unwrap();
       dispatch(setCurrentUser(updated));
       setEditing(false);
     } catch {
@@ -140,18 +193,59 @@ export function useProfileScreen() {
     }
   }, [passwordForm, changePassword]);
 
-  const logout = useCallback(async () => {
+  const clearSession = useCallback(async () => {
     clearTokenCache();
     await AsyncStorage.multiRemove([StorageKeys.accessToken, StorageKeys.refreshToken]);
     resetAllApiCaches(dispatch);
     dispatch(clearCurrentUser());
   }, [dispatch]);
 
+  const logout = useCallback(() => {
+    Alert.alert('Log out?', 'You will need to sign in again to manage your businesses.', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Log out', style: 'destructive', onPress: () => void clearSession() },
+    ]);
+  }, [clearSession]);
+
+  const openDeleteModal = useCallback(() => {
+    setDeletePassword('');
+    setDeleteError(null);
+    setDeleteModal(true);
+  }, []);
+  const closeDeleteModal = useCallback(() => setDeleteModal(false), []);
+  const onDeletePasswordChange = useCallback((value: string) => {
+    setDeletePassword(value);
+    setDeleteError(null);
+  }, []);
+
+  const submitDeleteAccount = useCallback(async () => {
+    setDeleteError(null);
+    if (!deletePassword) {
+      setDeleteError('Enter your password');
+      return;
+    }
+    try {
+      await deleteAccount({ password: deletePassword }).unwrap();
+      setDeleteModal(false);
+      await clearSession();
+    } catch (err) {
+      const status = (err as { status?: number })?.status;
+      if (status === 400 || status === 401 || status === 403) {
+        setDeleteError('Incorrect password');
+      } else {
+        const msg = (err as { data?: { message?: string } })?.data?.message;
+        setDeleteError(msg || 'Could not delete your account. Please try again.');
+      }
+    }
+  }, [deletePassword, deleteAccount, clearSession]);
+
   return {
     currentUser,
     businesses,
     stats,
+    memberSince,
     unreadCount,
+    reviewsNeedingReply,
     editing,
     form,
     onChange,
@@ -172,9 +266,19 @@ export function useProfileScreen() {
     onPasswordChange,
     submitPasswordChange,
     logout,
+    deleteModal,
+    deletePassword,
+    deleteError,
+    deletingAccount,
+    openDeleteModal,
+    closeDeleteModal,
+    onDeletePasswordChange,
+    submitDeleteAccount,
     goToBusiness: (businessId: string) => navigation.navigate(ROUTES.BUSINESS_DETAIL, { businessId }),
     goToBusinesses: () => navigation.navigate(ROUTES.BUSINESSES),
     goToEarnings: () => navigation.navigate(ROUTES.EARNINGS),
+    goToOffers: () => navigation.navigate(ROUTES.ALL_OFFERS),
+    goToReviews: () => navigation.navigate(ROUTES.REVIEWS),
     goToNotifications: () => navigation.navigate(ROUTES.NOTIFICATIONS),
     goToSupport: () => navigation.navigate(ROUTES.SUPPORT),
   };
