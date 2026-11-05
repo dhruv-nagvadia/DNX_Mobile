@@ -74,7 +74,8 @@ export function useProfileScreen() {
     // Weighted by review count, so a business with 1 review doesn't skew it.
     const ratingCount = businesses.reduce((sum, b) => sum + (b.ratingCount ?? 0), 0);
     const avgRating = ratingCount
-      ? businesses.reduce((sum, b) => sum + (b.ratingAvg ?? 0) * (b.ratingCount ?? 0), 0) / ratingCount
+      ? businesses.reduce((sum, b) => sum + (b.ratingAvg ?? 0) * (b.ratingCount ?? 0), 0) /
+        ratingCount
       : null;
     return { businessCount: businesses.length, services, products, avgRating };
   }, [businesses]);
@@ -82,7 +83,8 @@ export function useProfileScreen() {
   /** Unreplied business + product reviews across every business. */
   const reviewsNeedingReply = useMemo(
     () =>
-      allReviews.filter((r) => !r.providerReply).length + allProductReviews.filter((r) => !r.providerReply).length,
+      allReviews.filter((r) => !r.providerReply).length +
+      allProductReviews.filter((r) => !r.providerReply).length,
     [allReviews, allProductReviews],
   );
 
@@ -139,7 +141,11 @@ export function useProfileScreen() {
 
   const changeAvatar = useCallback(async () => {
     setAvatarError(null);
-    const result = await launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, quality: 0.8 });
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      selectionLimit: 1,
+      quality: 0.8,
+    });
     const asset = result.assets?.[0];
     if (result.didCancel || !asset?.uri) {
       return;
@@ -203,7 +209,13 @@ export function useProfileScreen() {
   const logout = useCallback(() => {
     Alert.alert('Log out?', 'You will need to sign in again to manage your businesses.', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Log out', style: 'destructive', onPress: () => void clearSession() },
+      {
+        text: 'Log out',
+        style: 'destructive',
+        onPress: () => {
+          clearSession();
+        },
+      },
     ]);
   }, [clearSession]);
 
@@ -274,7 +286,8 @@ export function useProfileScreen() {
     closeDeleteModal,
     onDeletePasswordChange,
     submitDeleteAccount,
-    goToBusiness: (businessId: string) => navigation.navigate(ROUTES.BUSINESS_DETAIL, { businessId }),
+    goToBusiness: (businessId: string) =>
+      navigation.navigate(ROUTES.BUSINESS_DETAIL, { businessId }),
     goToBusinesses: () => navigation.navigate(ROUTES.BUSINESSES),
     goToEarnings: () => navigation.navigate(ROUTES.EARNINGS),
     goToOffers: () => navigation.navigate(ROUTES.ALL_OFFERS),

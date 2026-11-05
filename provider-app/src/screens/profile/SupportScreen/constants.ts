@@ -73,8 +73,8 @@ export const FAQS: Faq[] = [
     question: 'How can I manage my offers (coupons)?',
     answer: [
       'Open ',
-      { text: 'Profile → Offers', route: ROUTES.ALL_OFFERS },
-      ' (or a business’s Offers tile) to create, edit, switch on/off or delete your coupons.',
+      { text: 'Offers', route: ROUTES.ALL_OFFERS },
+      ' from Profile, Home or a business’s Offers tile to create, edit, switch on/off or delete your coupons.',
     ],
   },
   {

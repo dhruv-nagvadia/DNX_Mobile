@@ -1,28 +1,49 @@
 import React from 'react';
-import { ActivityIndicator, Image, Modal, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  Modal,
+  ScrollView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Bell,
-  Briefcase,
+  Calendar,
   Camera,
   ChevronRight,
-  KeyRound,
-  LifeBuoy,
+  CircleHelp,
+  Coins,
+  Command,
+  Lock,
   LogOut,
+  Package,
   Pencil,
   Star,
-  Wallet,
+  Store,
+  Tag,
+  User,
+  Users,
 } from 'lucide-react-native';
 
 import { AppButton } from '@/components/AppButton';
 import { AppInput } from '@/components/AppInput';
+import { GradientBackground } from '@/components/GradientBackground';
 import { Pill } from '@/components/Pill';
-import { Color, Spacing } from '@/utils/Theme';
+import { Color } from '@/utils/Theme';
 import { AppConfig } from '@/utils/Constants';
-import { PILL } from '@/utils/modernTheme';
+import { INK, PILL, TINT } from '@/utils/modernTheme';
 
 import { useProfileScreen } from './useProfileScreen';
 import { styles } from './styles';
+
+/** Navy → royal-blue hero card, as in "DNX Provider Profile Dashboard.png". */
+const PROFILE_HERO_GRADIENT = ['#0A1A4F', '#0F2E7A', '#1A44B0'];
+/** Translucent white pill on the navy hero ("Since Aug 2026"). */
+const HERO_GLASS_PILL = { bg: 'rgba(255, 255, 255, 0.18)', fg: Color.white };
 
 function initialsOf(name: string): string {
   return (
@@ -35,41 +56,94 @@ function initialsOf(name: string): string {
   );
 }
 
+/** Round icon-box colours for menu rows. */
 const MENU_TONES = {
-  primary: { bg: Color.primarySoft, fg: Color.primary },
-  accent: { bg: Color.accentSoft, fg: Color.accent2 },
-  success: { bg: Color.successSoft, fg: Color.success },
-  warning: { bg: Color.warningSoft, fg: Color.warning },
+  blue: { bg: '#E3ECFD', fg: '#1D4ED8' },
+  green: { bg: '#DDF5E6', fg: '#15803D' },
+  orange: { bg: '#FDEBD8', fg: '#EA580C' },
+  lavender: { bg: '#EDE9FE', fg: '#6D28D9' },
+  red: { bg: '#FDE2E2', fg: Color.error },
 };
+
+function StatTile({
+  tint,
+  icon,
+  label,
+  value,
+  star,
+  onPress,
+}: {
+  tint: (typeof TINT)[keyof typeof TINT];
+  icon: React.ReactElement;
+  label: string;
+  value: string;
+  star?: boolean;
+  onPress?: () => void;
+}) {
+  return (
+    <TouchableOpacity
+      style={[styles.tile, { borderColor: tint.border }]}
+      onPress={onPress}
+      disabled={!onPress}
+      activeOpacity={0.8}
+    >
+      <GradientBackground colors={tint.colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      <View style={styles.tileIcon}>
+        {React.cloneElement(icon, { size: 24, color: tint.icon })}
+      </View>
+      <View style={styles.tileText}>
+        <Text style={styles.tileLabel} numberOfLines={1}>
+          {label}
+        </Text>
+        <View style={styles.tileValueRow}>
+          {star && <Star size={18} color="#F5B301" fill="#F5B301" />}
+          <Text style={styles.tileValue}>{value}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+}
 
 function MenuRow({
   icon,
   label,
-  value,
-  badge,
   onPress,
   first,
-  tone = 'primary',
+  tone,
+  trailing,
+  danger,
 }: {
   icon: React.ReactElement;
   label: string;
-  value?: string;
-  badge?: string;
   onPress: () => void;
   first?: boolean;
-  tone?: keyof typeof MENU_TONES;
+  tone: keyof typeof MENU_TONES;
+  trailing?: React.ReactNode;
+  danger?: boolean;
 }) {
   const { bg, fg } = MENU_TONES[tone];
   return (
-    <TouchableOpacity style={[styles.menuItem, first && styles.menuItemFirst]} onPress={onPress}>
+    <TouchableOpacity style={styles.menuItem} onPress={onPress} accessibilityRole="button">
       <View style={[styles.menuIcon, { backgroundColor: bg }]}>
-        {React.cloneElement(icon, { size: 16, color: fg })}
+        {React.cloneElement(icon, { size: 18, color: fg })}
       </View>
-      <Text style={styles.menuItemText}>{label}</Text>
-      {!!value && <Text style={styles.menuItemValue}>{value}</Text>}
-      {!!badge && <Pill label={badge} colors={PILL.orange} style={styles.menuBadge} />}
-      <ChevronRight size={18} color={Color.placeholder} />
+      <View style={[styles.menuBody, !first && styles.menuBodyDivided]}>
+        <Text style={[styles.menuItemText, danger && styles.menuItemTextDanger]} numberOfLines={1}>
+          {label}
+        </Text>
+        {trailing}
+        <ChevronRight size={20} color={INK} />
+      </View>
     </TouchableOpacity>
+  );
+}
+
+function MenuCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>{title}</Text>
+      {children}
+    </View>
   );
 }
 
@@ -77,6 +151,7 @@ export default function ProfileScreen() {
   const {
     currentUser,
     stats,
+    memberSince,
     unreadCount,
     reviewsNeedingReply,
     editing,
@@ -99,33 +174,51 @@ export default function ProfileScreen() {
     onPasswordChange,
     submitPasswordChange,
     logout,
+    deleteModal,
+    deletePassword,
+    deleteError,
+    deletingAccount,
+    openDeleteModal,
+    closeDeleteModal,
+    onDeletePasswordChange,
+    submitDeleteAccount,
     goToBusinesses,
     goToEarnings,
+    goToOffers,
     goToReviews,
     goToNotifications,
     goToSupport,
   } = useProfileScreen();
   const insets = useSafeAreaInsets();
 
+  const contactLine = [currentUser?.email, currentUser?.phone].filter(Boolean).join('  •  ');
+
   return (
     <View style={styles.root}>
-      <StatusBar barStyle="light-content" backgroundColor={Color.primary} />
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={[styles.hero, { paddingTop: insets.top + Spacing.lg }]}>
-          <View style={[styles.heroTopRow, { top: insets.top + Spacing.sm }]}>
-            <TouchableOpacity style={styles.heroIconBtn} onPress={goToNotifications} accessibilityRole="button">
-              <Bell size={18} color={Color.white} />
-              {unreadCount > 0 && <View style={styles.bellDot} />}
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.heroIconBtn} onPress={startEdit} accessibilityRole="button">
-              <Pencil size={16} color={Color.white} />
-            </TouchableOpacity>
-          </View>
+      <StatusBar barStyle="dark-content" backgroundColor={Color.background} />
+      <ScrollView
+        contentContainerStyle={[styles.content, { paddingTop: insets.top + 8 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.pageTitle}>Profile</Text>
+
+        {/* Hero card */}
+        <View style={styles.hero}>
+          <GradientBackground
+            colors={PROFILE_HERO_GRADIENT}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          />
+          <TouchableOpacity style={styles.editBtn} onPress={startEdit} accessibilityRole="button">
+            <Pencil size={14} color={Color.white} />
+            <Text style={styles.editBtnText}>Edit</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.avatarWrap}
             onPress={changeAvatar}
             disabled={uploadingAvatar}
             accessibilityRole="button"
+            accessibilityLabel="Change profile photo"
           >
             {currentUser?.avatarUrl ? (
               <Image source={{ uri: currentUser.avatarUrl }} style={styles.avatarImage} />
@@ -138,87 +231,172 @@ export default function ProfileScreen() {
               {uploadingAvatar ? (
                 <ActivityIndicator size="small" color={Color.white} />
               ) : (
-                <Camera size={13} color={Color.white} />
+                <Camera size={12} color={Color.white} />
               )}
             </View>
           </TouchableOpacity>
-          {!!avatarError && <Text style={styles.avatarErrorText}>{avatarError}</Text>}
-          <Text style={styles.heroName}>{currentUser?.fullName}</Text>
-          <Text style={styles.heroEmail}>{currentUser?.email}</Text>
-          <View style={styles.heroPill}>
-            <Text style={styles.heroPillText}>Provider</Text>
-          </View>
-        </View>
-
-        <View style={styles.body}>
-          <View style={styles.statsCard}>
-            <TouchableOpacity style={styles.stat} onPress={goToBusinesses}>
-              <Text style={styles.statValue}>{stats.businessCount}</Text>
-              <Text style={styles.statLabel}>Businesses</Text>
-            </TouchableOpacity>
-            <View style={styles.statDivider} />
-            <View style={styles.stat}>
-              <Text style={styles.statValue}>{stats.services}</Text>
-              <Text style={styles.statLabel}>Services</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.stat}>
-              <Text style={styles.statValue}>{stats.products}</Text>
-              <Text style={styles.statLabel}>Products</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.stat}>
-              <Text style={styles.statValue}>{stats.avgRating ? stats.avgRating.toFixed(1) : '—'}</Text>
-              <Text style={styles.statLabel}>Rating</Text>
-            </View>
-          </View>
-
-          <View style={styles.sectionGroup}>
-            <Text style={styles.sectionLabel}>BUSINESS</Text>
-            <View style={styles.menu}>
-              <MenuRow first icon={<Briefcase />} label="My businesses" onPress={goToBusinesses} tone="primary" />
-              <MenuRow icon={<Wallet />} label="Earnings" onPress={goToEarnings} tone="success" />
-              <MenuRow
-                icon={<Star />}
-                label="Reviews"
-                badge={reviewsNeedingReply > 0 ? `${reviewsNeedingReply} need reply` : undefined}
-                onPress={goToReviews}
-                tone="warning"
+          <View style={styles.heroInfo}>
+            <Text style={styles.heroName} numberOfLines={1}>
+              {currentUser?.fullName}
+            </Text>
+            {!!contactLine && (
+              <Text style={styles.heroContact} numberOfLines={2}>
+                {contactLine}
+              </Text>
+            )}
+            <View style={styles.heroPills}>
+              <Pill
+                label="Provider"
+                colors={PILL.lavender}
+                icon={<Users size={13} color={PILL.lavender.fg} />}
               />
+              {!!memberSince && (
+                <Pill
+                  label={`Since ${memberSince}`}
+                  colors={HERO_GLASS_PILL}
+                  icon={<Calendar size={13} color={Color.white} />}
+                />
+              )}
             </View>
+            {!!avatarError && <Text style={styles.avatarErrorText}>{avatarError}</Text>}
           </View>
-
-          <View style={styles.sectionGroup}>
-            <Text style={styles.sectionLabel}>ACCOUNT</Text>
-            <View style={styles.menu}>
-              <MenuRow first icon={<Pencil />} label="Edit profile" onPress={startEdit} tone="accent" />
-              <MenuRow icon={<KeyRound />} label="Change password" onPress={openPasswordModal} tone="accent" />
-            </View>
-          </View>
-
-          <View style={styles.sectionGroup}>
-            <Text style={styles.sectionLabel}>SUPPORT</Text>
-            <View style={styles.menu}>
-              <MenuRow first icon={<Bell />} label="Notifications" onPress={goToNotifications} tone="primary" />
-              <MenuRow icon={<LifeBuoy />} label="Help & support" onPress={goToSupport} tone="primary" />
-            </View>
-          </View>
-
-          <TouchableOpacity style={styles.logoutBtn} onPress={logout} accessibilityRole="button">
-            <LogOut size={16} color={Color.error} />
-            <Text style={styles.logoutText}>Log out</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.version}>DNX Provider v{AppConfig.version}</Text>
         </View>
+
+        {/* 2×2 stat tiles */}
+        <View style={styles.tiles}>
+          <StatTile
+            tint={TINT.blue}
+            icon={<Store />}
+            label="Businesses"
+            value={String(stats.businessCount)}
+            onPress={goToBusinesses}
+          />
+          <StatTile
+            tint={TINT.lavender}
+            icon={<Command />}
+            label="Services"
+            value={String(stats.services)}
+          />
+          <StatTile
+            tint={TINT.peach}
+            icon={<Package />}
+            label="Products"
+            value={String(stats.products)}
+          />
+          <StatTile
+            tint={TINT.mint}
+            icon={<Star />}
+            label="Avg rating"
+            value={stats.avgRating ? stats.avgRating.toFixed(1) : '—'}
+            star={!!stats.avgRating}
+            onPress={goToReviews}
+          />
+        </View>
+
+        <MenuCard title="Business">
+          <MenuRow
+            first
+            icon={<Store />}
+            label="My businesses"
+            tone="blue"
+            onPress={goToBusinesses}
+            trailing={
+              <View style={styles.countBadge}>
+                <Text style={styles.countBadgeText}>{stats.businessCount}</Text>
+              </View>
+            }
+          />
+          <MenuRow
+            icon={<Coins />}
+            label="Earnings & payouts"
+            tone="green"
+            onPress={goToEarnings}
+          />
+          <MenuRow icon={<Tag />} label="Offers" tone="orange" onPress={goToOffers} />
+          <MenuRow
+            icon={<Star />}
+            label="Reviews"
+            tone="lavender"
+            onPress={goToReviews}
+            trailing={
+              reviewsNeedingReply > 0 ? (
+                <Pill
+                  label={`${reviewsNeedingReply} need reply`}
+                  colors={PILL.orange}
+                  style={styles.trailingPill}
+                />
+              ) : undefined
+            }
+          />
+        </MenuCard>
+
+        <MenuCard title="Account">
+          <MenuRow first icon={<User />} label="Edit profile" tone="blue" onPress={startEdit} />
+          <MenuRow
+            icon={<Lock />}
+            label="Change password"
+            tone="lavender"
+            onPress={openPasswordModal}
+          />
+          <MenuRow
+            icon={<Bell />}
+            label="Notifications"
+            tone="green"
+            onPress={goToNotifications}
+            trailing={
+              unreadCount > 0 ? (
+                <View style={styles.unreadBadge}>
+                  <Text style={styles.unreadBadgeText}>
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </Text>
+                </View>
+              ) : undefined
+            }
+          />
+        </MenuCard>
+
+        <MenuCard title="Help">
+          <MenuRow
+            first
+            icon={<CircleHelp />}
+            label="Help & support"
+            tone="blue"
+            onPress={goToSupport}
+          />
+        </MenuCard>
+
+        <View style={styles.logoutCard}>
+          <MenuRow first danger icon={<LogOut />} label="Log out" tone="red" onPress={logout} />
+        </View>
+
+        <TouchableOpacity
+          style={styles.deleteLink}
+          onPress={openDeleteModal}
+          accessibilityRole="button"
+        >
+          <Text style={styles.deleteLinkText}>Delete account</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.version}>DNX Provider • v{AppConfig.version}</Text>
       </ScrollView>
 
+      {/* Edit profile */}
       <Modal visible={editing} transparent animationType="fade" onRequestClose={cancelEdit}>
         <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={cancelEdit}>
-          <TouchableOpacity activeOpacity={1} style={styles.modalSheet} onPress={(e) => e.stopPropagation()}>
+          <TouchableOpacity
+            activeOpacity={1}
+            style={styles.modalSheet}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.modalHandle} />
             <Text style={styles.modalTitle}>Edit profile</Text>
             {!!error && <Text style={styles.errorText}>{error}</Text>}
-            <AppInput label="Full name" dense value={form.fullName} onChangeText={(v) => onChange('fullName', v)} />
+            <AppInput
+              label="Full name"
+              dense
+              value={form.fullName}
+              onChangeText={(v) => onChange('fullName', v)}
+            />
             <AppInput
               label="Email"
               dense
@@ -227,17 +405,49 @@ export default function ProfileScreen() {
               value={form.email}
               onChangeText={(v) => onChange('email', v)}
             />
+            <AppInput
+              label="Phone"
+              dense
+              keyboardType="phone-pad"
+              value={form.phone}
+              onChangeText={(v) => onChange('phone', v)}
+            />
             <View style={styles.modalActions}>
-              <AppButton style={styles.modalButton} title="Cancel" variant="secondary" onPress={cancelEdit} />
-              <AppButton style={styles.modalButton} title="Save" loading={saving} onPress={save} />
+              <AppButton
+                style={styles.modalButton}
+                title="Cancel"
+                variant="secondary"
+                onPress={cancelEdit}
+              />
+              <AppButton
+                style={[styles.modalButton, styles.primaryButton]}
+                title="Save"
+                loading={saving}
+                onPress={save}
+              />
             </View>
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
 
-      <Modal visible={changingPasswordModal} transparent animationType="fade" onRequestClose={closePasswordModal}>
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={closePasswordModal}>
-          <TouchableOpacity activeOpacity={1} style={styles.modalSheet} onPress={(e) => e.stopPropagation()}>
+      {/* Change password */}
+      <Modal
+        visible={changingPasswordModal}
+        transparent
+        animationType="fade"
+        onRequestClose={closePasswordModal}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={closePasswordModal}
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            style={styles.modalSheet}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.modalHandle} />
             <Text style={styles.modalTitle}>Change password</Text>
             {!!passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
             <AppInput
@@ -262,12 +472,62 @@ export default function ProfileScreen() {
               onChangeText={(v) => onPasswordChange('confirmPassword', v)}
             />
             <View style={styles.modalActions}>
-              <AppButton style={styles.modalButton} title="Cancel" variant="secondary" onPress={closePasswordModal} />
               <AppButton
                 style={styles.modalButton}
+                title="Cancel"
+                variant="secondary"
+                onPress={closePasswordModal}
+              />
+              <AppButton
+                style={[styles.modalButton, styles.primaryButton]}
                 title="Update"
                 loading={changingPassword}
                 onPress={submitPasswordChange}
+              />
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* Delete account */}
+      <Modal
+        visible={deleteModal}
+        transparent
+        animationType="fade"
+        onRequestClose={closeDeleteModal}
+      >
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={closeDeleteModal}>
+          <TouchableOpacity
+            activeOpacity={1}
+            style={styles.modalSheet}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.modalHandle} />
+            <Text style={styles.modalTitle}>Delete account</Text>
+            <Text style={styles.modalBody}>
+              This deactivates your provider account. You'll be signed out and won't be able to sign
+              in or manage your businesses again. Enter your password to confirm.
+            </Text>
+            <AppInput
+              label="Password"
+              dense
+              secureTextEntry
+              value={deletePassword}
+              onChangeText={onDeletePasswordChange}
+              error={deleteError ?? undefined}
+            />
+            <View style={styles.modalActions}>
+              <AppButton
+                style={styles.modalButton}
+                title="Cancel"
+                variant="secondary"
+                onPress={closeDeleteModal}
+              />
+              <AppButton
+                style={[styles.modalButton, styles.dangerButton]}
+                title="Delete account"
+                loading={deletingAccount}
+                onPress={submitDeleteAccount}
               />
             </View>
           </TouchableOpacity>
