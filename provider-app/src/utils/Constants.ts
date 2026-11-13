@@ -3,6 +3,8 @@ export const StorageKeys = {
   accessToken: '@dnxp/accessToken',
   refreshToken: '@dnxp/refreshToken',
   activeBusinessId: '@dnxp/activeBusinessId',
+  /** Set when the user signed in WITHOUT "Keep me signed in" — the session is dropped on next launch. */
+  sessionOnly: '@dnxp/sessionOnly',
 } as const;
 
 export const AppConfig = {

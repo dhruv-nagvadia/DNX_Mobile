@@ -1,23 +1,19 @@
-import React from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React, { useRef } from 'react';
+import { Pressable, Text, TextInput, View } from 'react-native';
+import { ArrowLeft, KeyRound, Lock, Mail } from 'lucide-react-native';
 
-import { AlertBanner } from '@/components/AlertBanner';
-import { AppButton } from '@/components/AppButton';
-import { AppInput } from '@/components/AppInput';
-import { AuthHero } from '@/components/AuthHero';
-import { Color, Spacing } from '@/utils/Theme';
+import { LINK } from '@/utils/modernTheme';
+
+import {
+  AuthBanner,
+  AuthField,
+  AuthScreenShell,
+  AuthSubmitButton,
+  LINK_HIT_SLOP,
+  authStyles,
+} from '../shared';
 
 import { useForgotPasswordScreen } from './useForgotPasswordScreen';
-import { styles } from './styles';
 
 /** JSX only — all logic comes from useForgotPasswordScreen. */
 export default function ForgotPasswordScreen() {
@@ -32,103 +28,105 @@ export default function ForgotPasswordScreen() {
     onSubmit,
     goToLogin,
   } = useForgotPasswordScreen();
-  const insets = useSafeAreaInsets();
+  const passwordRef = useRef<TextInput>(null);
 
   return (
-    <View style={styles.root}>
-      <StatusBar barStyle="light-content" backgroundColor={Color.ink} />
-
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <AuthHero promise="Forgot your" accentTail="password?" compact showBack onBack={goToLogin} />
-
-        <View style={styles.sheet}>
-          <ScrollView
-            style={styles.flex}
-            contentContainerStyle={[
-              styles.sheetContent,
-              { paddingBottom: insets.bottom + Spacing.xl },
-            ]}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
+    <AuthScreenShell
+      subtitle="Reset your password"
+      footer={
+        <View style={authStyles.switchRow}>
+          <Pressable
+            style={authStyles.backLink}
+            onPress={goToLogin}
+            disabled={isLoading}
+            hitSlop={LINK_HIT_SLOP}
+            accessibilityRole="link"
+            accessibilityLabel="Back to sign in"
           >
-            <View style={styles.formSection}>
-              <Text style={styles.heading}>
-                {step === 'request' ? 'Reset your password' : 'Enter the code'}
-              </Text>
-              <Text style={styles.subheading}>
-                {step === 'request'
-                  ? "We'll send a reset code to your email."
-                  : 'Enter the code we emailed you, then choose a new password.'}
-              </Text>
-
-              {!!serverError && <AlertBanner message={serverError} />}
-              {!!successMessage && !serverError && (
-                <AlertBanner tone="success" message={successMessage} />
-              )}
-
-              <AppInput
-                label="Email"
-                placeholder="you@example.com"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                autoComplete="email"
-                textContentType="emailAddress"
-                value={form.email}
-                onChangeText={(v) => onChange('email', v)}
-                error={errors.email}
-                editable={!isLoading && step === 'request'}
-              />
-
-              {step === 'reset' && (
-                <>
-                  <AppInput
-                    label="Reset code"
-                    placeholder="6-digit code"
-                    keyboardType="number-pad"
-                    value={form.otp}
-                    onChangeText={(v) => onChange('otp', v)}
-                    error={errors.otp}
-                    editable={!isLoading}
-                  />
-                  <AppInput
-                    label="New password"
-                    placeholder="At least 8 characters"
-                    secureTextEntry
-                    autoComplete="password-new"
-                    textContentType="newPassword"
-                    value={form.newPassword}
-                    onChangeText={(v) => onChange('newPassword', v)}
-                    error={errors.newPassword}
-                    editable={!isLoading}
-                  />
-                </>
-              )}
-
-              <AppButton
-                style={styles.submit}
-                title={step === 'request' ? 'Send reset code' : 'Reset password'}
-                onPress={onSubmit}
-                loading={isLoading}
-              />
-
-              <View style={styles.switchRow}>
-                <TouchableOpacity
-                  onPress={goToLogin}
-                  disabled={isLoading}
-                  hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }}
-                  accessibilityRole="link"
-                >
-                  <Text style={styles.switchLink}>Back to sign in</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </ScrollView>
+            <ArrowLeft size={18} color={LINK} strokeWidth={2.4} />
+            <Text style={authStyles.switchLink}>Back to sign in</Text>
+          </Pressable>
         </View>
-      </KeyboardAvoidingView>
-    </View>
+      }
+    >
+      {step === 'request' ? (
+        <>
+          <Text style={authStyles.heading}>Forgot password?</Text>
+          <Text style={authStyles.subheading}>
+            Enter your email and we'll send you a 6-digit code.
+          </Text>
+
+          {!!serverError && <AuthBanner message={serverError} />}
+
+          <AuthField
+            label="Email"
+            icon={Mail}
+            placeholder="you@business.com"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="email"
+            textContentType="emailAddress"
+            returnKeyType="send"
+            onSubmitEditing={onSubmit}
+            value={form.email}
+            onChangeText={(v) => onChange('email', v)}
+            error={errors.email}
+            editable={!isLoading}
+          />
+
+          <AuthSubmitButton label="Send code" onPress={onSubmit} loading={isLoading} />
+        </>
+      ) : (
+        <>
+          <Text style={authStyles.heading}>Enter your code</Text>
+          <Text style={authStyles.subheading}>
+            We sent a code to{' '}
+            <Text style={authStyles.subheadingStrong}>{form.email.trim()}</Text>
+          </Text>
+
+          {!!serverError && <AuthBanner message={serverError} />}
+          {!!successMessage && !serverError && (
+            <AuthBanner tone="success" message={successMessage} />
+          )}
+
+          <AuthField
+            label="Reset code"
+            icon={KeyRound}
+            placeholder="6-digit code"
+            keyboardType="number-pad"
+            maxLength={6}
+            autoComplete="one-time-code"
+            textContentType="oneTimeCode"
+            returnKeyType="next"
+            onSubmitEditing={() => passwordRef.current?.focus()}
+            value={form.otp}
+            onChangeText={(v) => onChange('otp', v)}
+            error={errors.otp}
+            editable={!isLoading}
+          />
+
+          <AuthField
+            inputRef={passwordRef}
+            label="New password"
+            icon={Lock}
+            password
+            placeholder="At least 8 characters"
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="password-new"
+            textContentType="newPassword"
+            returnKeyType="done"
+            onSubmitEditing={onSubmit}
+            value={form.newPassword}
+            onChangeText={(v) => onChange('newPassword', v)}
+            error={errors.newPassword}
+            editable={!isLoading}
+          />
+
+          <AuthSubmitButton label="Reset password" onPress={onSubmit} loading={isLoading} />
+        </>
+      )}
+    </AuthScreenShell>
   );
 }

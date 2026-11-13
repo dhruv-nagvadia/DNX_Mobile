@@ -25,6 +25,13 @@ export function useLoginScreen() {
   const [form, setForm] = useState<LoginForm>({ email: '', password: '' });
   const [errors, setErrors] = useState<LoginErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
+  // UI preference only for now — the session is always persisted, so this
+  // isn't wired to token storage yet.
+  const [keepSignedIn, setKeepSignedIn] = useState(true);
+
+  const toggleKeepSignedIn = useCallback(() => {
+    setKeepSignedIn((prev) => !prev);
+  }, []);
 
   const onChange = useCallback((key: keyof LoginForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -45,7 +52,9 @@ export function useLoginScreen() {
     setServerError(null);
     const validationErrors = validateLogin(form);
     setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
 
     try {
       const result = await login({ email: form.email.trim(), password: form.password }).unwrap();
@@ -54,6 +63,12 @@ export function useLoginScreen() {
         [StorageKeys.accessToken, result.accessToken],
         [StorageKeys.refreshToken, result.refreshToken],
       ]);
+      // Without "Keep me signed in", the session lasts until the app is closed.
+      if (keepSignedIn) {
+        await AsyncStorage.removeItem(StorageKeys.sessionOnly);
+      } else {
+        await AsyncStorage.setItem(StorageKeys.sessionOnly, '1');
+      }
       setTokenCache(result.accessToken);
       // A previous account's session on this device may have left cached
       // data behind — clear it before this account's screens mount.
@@ -73,7 +88,7 @@ export function useLoginScreen() {
       DEBUG_LOGGER('Login failed', 'onSubmit', FILE, '48', ERROR);
       setServerError('That email and password don’t match. Please try again.');
     }
-  }, [form, login, dispatch]);
+  }, [form, login, dispatch, keepSignedIn]);
 
   const goToRegister = useCallback(() => {
     navigation.navigate(ROUTES.REGISTER);
@@ -88,6 +103,8 @@ export function useLoginScreen() {
     errors,
     serverError,
     isLoading,
+    keepSignedIn,
+    toggleKeepSignedIn,
     onChange,
     onBlur,
     onSubmit,

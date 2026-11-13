@@ -9,13 +9,21 @@ export function validateForgotPassword(
 ): ForgotPasswordErrors {
   const errors: ForgotPasswordErrors = {};
 
-  if (!form.email.trim()) errors.email = 'Email is required';
-  else if (!EMAIL_RE.test(form.email)) errors.email = 'Enter a valid email';
+  if (!form.email.trim()) {
+    errors.email = 'Email is required';
+  } else if (!EMAIL_RE.test(form.email)) {
+    errors.email = 'Enter a valid email';
+  }
 
   if (step === 'reset') {
-    if (!form.otp.trim()) errors.otp = 'Enter the code sent to your email';
-    if (!form.newPassword) errors.newPassword = 'New password is required';
-    else if (form.newPassword.length < 8) errors.newPassword = 'Minimum 8 characters';
+    if (!form.otp.trim()) {
+      errors.otp = 'Enter the code sent to your email';
+    }
+    if (!form.newPassword) {
+      errors.newPassword = 'New password is required';
+    } else if (form.newPassword.length < 8) {
+      errors.newPassword = 'Minimum 8 characters';
+    }
   }
 
   return errors;

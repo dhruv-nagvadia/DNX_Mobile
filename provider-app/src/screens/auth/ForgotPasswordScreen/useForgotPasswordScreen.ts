@@ -39,7 +39,9 @@ export function useForgotPasswordScreen() {
     setSuccessMessage(null);
     const validationErrors = validateForgotPassword(form, step);
     setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
 
     try {
       if (step === 'request') {

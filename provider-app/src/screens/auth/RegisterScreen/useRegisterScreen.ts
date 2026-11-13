@@ -47,7 +47,9 @@ export function useRegisterScreen() {
     setServerError(null);
     const validationErrors = validateRegister(form);
     setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
 
     try {
       const result = await register({
