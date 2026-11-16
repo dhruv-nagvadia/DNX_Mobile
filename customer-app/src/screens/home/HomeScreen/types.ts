@@ -10,7 +10,8 @@ export interface Offer {
   title: string;
   subtitle: string;
   tag: string;
-  bg: string;
+  /** Pastel card theme (modernTheme TINT key). */
+  tint: 'peach' | 'lavender' | 'mint' | 'blue';
   // Set when the coupon is restricted to one category — tapping the card
   // takes the customer straight there. Null/undefined means it works anywhere.
   categorySlug?: string | null;

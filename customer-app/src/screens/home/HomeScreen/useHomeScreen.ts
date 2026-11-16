@@ -13,17 +13,16 @@ import { ROUTES } from '@/navigation/routes';
 import { Category } from '@/redux/api/category/types';
 import { ProductType } from '@/redux/api/productType/types';
 import { Provider } from '@/redux/api/provider/types';
-import { Color } from '@/utils/Theme';
 import { HomeScreenNavigationProp, Offer } from './types';
 import { LOCATION, HERO_BANNERS } from './mock';
 
-// Cycled across cards — same palette the old hardcoded offers used.
-const OFFER_COLORS = [Color.primary, Color.primaryDark, Color.ink2];
+// Pastel themes cycled across the offer cards (see modernTheme TINT).
+const OFFER_TINTS: Offer['tint'][] = ['peach', 'lavender', 'mint', 'blue'];
 
 function discountLabel(c: PlatformCoupon): string {
   return c.discountType === 'PERCENT'
-    ? `Flat ${c.discountValue}% OFF`
-    : `₹${Math.round(c.discountValue / 100)} OFF`;
+    ? `${c.discountValue}% OFF`
+    : `FLAT ₹${Math.round(c.discountValue / 100)} OFF`;
 }
 
 /** Maps a real, redeemable platform coupon to the Home "Offers for you" card shape. */
@@ -33,7 +32,7 @@ function toOffer(c: PlatformCoupon, i: number): Offer {
     title: discountLabel(c),
     subtitle: c.description || 'Apply this code at checkout',
     tag: c.code,
-    bg: OFFER_COLORS[i % OFFER_COLORS.length],
+    tint: OFFER_TINTS[i % OFFER_TINTS.length],
     categorySlug: c.categorySlug,
     categoryName: c.categoryName,
   };
@@ -61,17 +60,26 @@ export function useHomeScreen() {
   };
 
   // "Most booked" service businesses — top-ranked providers (booking-count sort later).
-  const { data: providersPage } = useGetProvidersQuery({ type: 'SERVICE', limit: 3, ...locationFilter });
+  const { data: providersPage } = useGetProvidersQuery({
+    type: 'SERVICE',
+    limit: 3,
+    ...locationFilter,
+  });
   // Nearby stores you can order products from.
   const { data: storesPage } = useGetProvidersQuery({ type: 'STORE', limit: 6, ...locationFilter });
 
   // When the backend had to widen past an exact postal-code match, let the
   // customer know these results cover a broader area.
-  const describeScope = useCallback((scope: 'postalCode' | 'city' | 'state' | null | undefined) => {
-    if (scope === 'city') return `Showing results across ${customerLocation?.city ?? 'your city'}`;
-    if (scope === 'state') return `Showing results across ${customerLocation?.state ?? 'your state'}`;
-    return null;
-  }, [customerLocation?.city, customerLocation?.state]);
+  const describeScope = useCallback(
+    (scope: 'postalCode' | 'city' | 'state' | null | undefined) => {
+      if (scope === 'city')
+        return `Showing results across ${customerLocation?.city ?? 'your city'}`;
+      if (scope === 'state')
+        return `Showing results across ${customerLocation?.state ?? 'your state'}`;
+      return null;
+    },
+    [customerLocation?.city, customerLocation?.state],
+  );
 
   const mostBookedBanner = describeScope(providersPage?.locationScope);
   const storesBanner = describeScope(storesPage?.locationScope);
@@ -98,7 +106,10 @@ export function useHomeScreen() {
   // ordered by everyday-use popularity (Category.sortOrder), so this just
   // splits by type without re-sorting. Home only teases the first two rows,
   // with "View all" opening the complete, type-specific list.
-  const serviceCategories = useMemo(() => categories.filter((c) => c.type !== 'STORE'), [categories]);
+  const serviceCategories = useMemo(
+    () => categories.filter((c) => c.type !== 'STORE'),
+    [categories],
+  );
   const storeCategories = useMemo(() => categories.filter((c) => c.type === 'STORE'), [categories]);
   const visibleServiceCategories = serviceCategories.slice(0, HOME_CATEGORY_LIMIT);
   const visibleStoreCategories = storeCategories.slice(0, HOME_CATEGORY_LIMIT);
@@ -187,6 +198,14 @@ export function useHomeScreen() {
     () => navigation.navigate(ROUTES.ALL_CATEGORIES, { type: 'STORE' }),
     [navigation],
   );
+  const goToAllStores = useCallback(
+    () => navigation.navigate(ROUTES.ALL_BUSINESSES, { type: 'STORE' }),
+    [navigation],
+  );
+  const goToAllServices = useCallback(
+    () => navigation.navigate(ROUTES.ALL_BUSINESSES, { type: 'SERVICE' }),
+    [navigation],
+  );
   const goToAllProductTypes = useCallback(
     () => navigation.navigate(ROUTES.ALL_PRODUCT_TYPES),
     [navigation],
@@ -221,6 +240,8 @@ export function useHomeScreen() {
     goToAllServiceCategories,
     goToAllStoreCategories,
     goToAllProductTypes,
+    goToAllStores,
+    goToAllServices,
     cartCount,
     // Falls back to a static default until the customer sets a real location.
     location: customerLocation?.label ?? LOCATION,

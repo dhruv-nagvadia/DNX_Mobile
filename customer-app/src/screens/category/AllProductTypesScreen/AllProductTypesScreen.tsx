@@ -1,63 +1,48 @@
 import React from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, ScrollView, View, useWindowDimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { AppHeader } from '@/components/AppHeader';
-import { ProductTypeIcon } from '@/components/ProductTypeIcon';
-import { Color, Spacing } from '@/utils/Theme';
-import { useGridItemWidth } from '@/utils/useGridItemWidth';
+import { CARD_GAP, ProductTypeCard } from '@/components/BusinessCards';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { useGetProductTypesQuery } from '@/redux/api/productType/productTypeApi';
 import { ProductType } from '@/redux/api/productType/types';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
+import { LINK, ModernSize } from '@/utils/modernTheme';
 
 import { styles } from './styles';
 
-type Nav = { navigate: <T extends keyof RootStackParamList>(r: T, p?: RootStackParamList[T]) => void };
+type Nav = {
+  navigate: <T extends keyof RootStackParamList>(r: T, p?: RootStackParamList[T]) => void;
+};
 
-const PRODUCT_COLUMNS = 3;
-const PRODUCT_GAP = Spacing.sm;
-
-/** Every product type a customer can shop by, pooled across all stores —
- * same real-photo card look as Home's row, wrapped into a grid here since
- * this screen shows everything at once. */
+/** Every product type — the same pastel-backed photo card as Home's "Shop by product", 3 per row. */
 export default function AllProductTypesScreen() {
   const navigation = useNavigation<Nav>();
   const { data: productTypes = [], isLoading } = useGetProductTypesQuery();
-  // Exact width so columns + gaps fill the row edge-to-edge on any device,
-  // instead of a fixed card width leaving a ragged gap at the row's end.
-  const productCardWidth = useGridItemWidth(PRODUCT_COLUMNS, PRODUCT_GAP, Spacing.lg);
 
-  const onPress = (t: ProductType) => navigation.navigate(ROUTES.PRODUCT_TYPE, { slug: t.slug, name: t.name });
+  // Three per row — close to Home's product card (~133pt) and evenly spaced.
+  const { width } = useWindowDimensions();
+  const cardW = Math.floor((width - ModernSize.gutter * 2 - CARD_GAP * 2) / 3);
+
+  const onPress = (t: ProductType) =>
+    navigation.navigate(ROUTES.PRODUCT_TYPE, { slug: t.slug, name: t.name });
 
   return (
     <View style={styles.container}>
-      <AppHeader title="Shop by product" />
+      <ScreenHeader
+        title="Shop by product"
+        subtitle={isLoading ? undefined : `${productTypes.length} product types`}
+      />
 
       {isLoading ? (
         <View style={styles.center}>
-          <ActivityIndicator color={Color.primary} />
+          <ActivityIndicator color={LINK} />
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.grid}>
-            {productTypes.map((t) => (
-              <TouchableOpacity
-                key={t.id}
-                style={[styles.productCard, { width: productCardWidth }]}
-                activeOpacity={0.85}
-                onPress={() => onPress(t)}
-              >
-                <View style={styles.productCardImageWrap}>
-                  {t.iconUrl ? (
-                    <Image source={{ uri: t.iconUrl }} style={styles.productCardImage} resizeMode="contain" />
-                  ) : (
-                    <ProductTypeIcon slug={t.slug} size={28} color={Color.primary} />
-                  )}
-                </View>
-                <Text style={styles.productCardName} numberOfLines={2}>
-                  {t.name}
-                </Text>
-              </TouchableOpacity>
+            {productTypes.map((t, i) => (
+              <ProductTypeCard key={t.id} type={t} width={cardW} index={i} onPress={onPress} />
             ))}
           </View>
         </ScrollView>

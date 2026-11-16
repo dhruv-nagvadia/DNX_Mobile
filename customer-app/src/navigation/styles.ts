@@ -1,10 +1,24 @@
 import { StyleSheet } from 'react-native';
-import { Color } from '@/utils/Theme';
+import { Color, FontWeight } from '@/utils/Theme';
 
 export const styles = StyleSheet.create({
   /** Ink placeholder shown while the onboarding flag is read. */
   bootPlaceholder: {
     flex: 1,
     backgroundColor: Color.ink,
+  },
+  /** Bottom-tab icon slot; gets a soft blue pill when the tab is active. */
+  tabIconWrap: {
+    width: 56,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabLabel: {
+    marginTop: 4,
+    fontSize: 11,
+    fontWeight: FontWeight.semibold,
+    textAlign: 'center',
   },
 });

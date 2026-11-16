@@ -225,6 +225,7 @@ export function useProviderDetail() {
         type: provider.subcategory?.name ?? provider.category.name,
         categorySlug: provider.category.slug,
         rating: provider.ratingAvg,
+        image: provider.images[0] ?? null,
       });
     }
   }, [provider, isReschedule]);

@@ -1,93 +1,27 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
 
+import { LINK, ModernSize, ModernType } from '@/utils/modernTheme';
+import { FontWeight } from '@/utils/Theme';
+
+/** Register-only styles; the shared auth layout lives in ../shared/styles. */
 export const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: Color.ink,
-  },
-  flex: {
-    flex: 1,
-  },
-
-  /**
-   * Takes the remaining height and clips its scrolling child to the rounded
-   * top corners — this is what keeps scrolling inside the sheet instead of
-   * moving the whole screen.
-   */
-  sheet: {
-    flex: 1,
-    backgroundColor: Color.surface,
-    borderTopLeftRadius: Radius.xl,
-    borderTopRightRadius: Radius.xl,
-    marginTop: -Spacing.lg,
-    overflow: 'hidden',
-  },
-  sheetContent: {
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.xl,
-  },
-
-  formSection: {
-    gap: Spacing.xs,
-  },
-  heading: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.bold,
-    letterSpacing: -0.5,
-    color: Color.textPrimary,
-  },
-  subheading: {
-    fontSize: FontSize.sm,
-    lineHeight: FontSize.sm * 1.5,
-    color: Color.textSecondary,
-    marginBottom: Spacing.lg,
-  },
-
-  // Shown when the email is already registered.
   existingAction: {
-    paddingVertical: Spacing.sm + 2,
-    paddingHorizontal: Spacing.md,
-    marginBottom: Spacing.md,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Color.primary,
-    backgroundColor: Color.primarySoft,
+    marginTop: 12,
+    height: ModernSize.controlSm + 4,
+    borderRadius: ModernSize.controlRadius,
+    borderWidth: 1.5,
+    borderColor: LINK,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   existingActionText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
-    color: Color.primary,
+    color: LINK,
   },
-
-  submit: {
-    marginTop: Spacing.sm,
-  },
-  consentText: {
-    marginTop: Spacing.md,
-    fontSize: FontSize.xs,
-    lineHeight: FontSize.xs * 1.5,
-    color: Color.textSecondary,
-    textAlign: 'center',
-  },
-  consentLink: {
-    fontWeight: FontWeight.semibold,
-    color: Color.primary,
-  },
-  switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: Spacing.lg,
-  },
-  switchText: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-  },
-  switchLink: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.primary,
+  // PasswordStrength carries its own bottom margin; pull it up under the field.
+  strength: {
+    marginTop: 8,
+    marginBottom: -16,
   },
 });

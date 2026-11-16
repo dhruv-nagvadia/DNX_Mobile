@@ -1,259 +1,160 @@
 import { StyleSheet } from 'react-native';
+
 import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Theme';
+import { CARD_SHADOW, INK, LINK, ModernSize, PAGE_BG, PILL } from '@/utils/modernTheme';
+
+/**
+ * Mockup "designs/customer/mobile/user_dashboard.png". Rails are sized from
+ * the screen width in HomeScreen (2-up offers, 3-up stores, 4-up photo rows),
+ * these styles carry the look.
+ */
+const G = ModernSize.gutter;
+/** Gap between cards in every grid / rail. */
+export const GAP = 10;
+const MUTED = Color.textSecondary;
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.background,
+    backgroundColor: PAGE_BG,
   },
   content: {
-    padding: Spacing.lg,
-    paddingBottom: Spacing.xl,
+    paddingHorizontal: G,
+    paddingTop: 6,
+    paddingBottom: 28,
+  },
+  fill: {
+    width: '100%',
+    height: '100%',
+  },
+  // Horizontal rails run edge-to-edge while their first card lines up with the gutter.
+  bleed: {
+    marginHorizontal: -G,
+  },
+  hRow: {
+    paddingHorizontal: G,
+    gap: GAP,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: GAP,
   },
 
-  // ── Header ───────────────────────────────────────────────────────────
-  headerTop: {
+  // ── Header ──────────────────────────────────────────────────────────────
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: Spacing.md,
+    minHeight: 48,
   },
-  locationPill: {
+  locationBtn: {
     flex: 1,
     flexShrink: 1,
-    minWidth: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    marginRight: Spacing.sm,
-  },
-  locationLabel: {
-    flexShrink: 0,
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
-    marginRight: 2,
+    gap: 6,
+    minWidth: 0,
   },
   locationText: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
+    minWidth: 0,
   },
-  locationChevron: {
-    flexShrink: 0,
+  locationLabel: {
+    fontSize: 12,
+    color: MUTED,
   },
-  headerRight: {
-    flexShrink: 0,
+  locationValueRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
+    gap: 3,
   },
-  bellBtn: {
-    width: 46,
-    height: 46,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
+  locationValue: {
+    flexShrink: 1,
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  brand: {
+    fontSize: 22,
+    fontWeight: FontWeight.extrabold,
+    letterSpacing: -0.5,
+    color: '#1D4ED8',
+  },
+  // Hugs its content (DNX · bell · avatar) so the address gets the rest of the row.
+  headerRight: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 14,
+    marginLeft: 10,
   },
-  bellBadge: {
+  iconBtn: {
+    padding: 2,
+  },
+  badge: {
     position: 'absolute',
-    top: -7,
-    right: -9,
-    minWidth: 22,
-    height: 22,
+    top: -5,
+    right: -7,
+    minWidth: 18,
+    height: 18,
     paddingHorizontal: 4,
-    borderRadius: 11,
+    borderRadius: 9,
     backgroundColor: Color.error,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: Color.surface,
   },
-  bellBadgeText: {
-    color: Color.white,
-    fontSize: 14,
+  badgeText: {
+    fontSize: 11,
     fontWeight: FontWeight.bold,
+    color: Color.white,
   },
   avatar: {
-    width: 46,
-    height: 46,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.primary,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: PILL.blue.bg,
+    borderWidth: 2,
+    borderColor: Color.white,
     alignItems: 'center',
     justifyContent: 'center',
+    ...CARD_SHADOW,
   },
   avatarText: {
-    color: Color.white,
-    fontSize: FontSize.md,
+    fontSize: 16,
     fontWeight: FontWeight.bold,
+    color: LINK,
   },
 
-  // ── Search ───────────────────────────────────────────────────────────
+  // ── Greeting + search ───────────────────────────────────────────────────
+  greeting: {
+    marginTop: 10,
+    fontSize: 26,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.5,
+    color: INK,
+  },
+  greetingSub: {
+    marginTop: 2,
+    fontSize: 15,
+    color: '#475569',
+  },
   search: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
-    height: 54,
-    paddingHorizontal: Spacing.md,
-    borderRadius: Radius.md,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-    ...Shadow.card,
+    gap: 12,
+    height: 48,
+    marginTop: 14,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
-  searchText: { fontSize: FontSize.md, color: Color.placeholder },
-
-  // ── Section heads ────────────────────────────────────────────────────
-  sectionHead: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: Spacing.xl,
-    marginBottom: Spacing.md,
-  },
-  sectionTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  // Groups a title with an inline tag (e.g. "Shop by category" + "Products")
-  // as one flex-shrinkable unit, so a sibling "View all" link stays pinned
-  // right instead of a 3-way space-between squeezing awkwardly.
-  sectionTitleGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    flexShrink: 1,
-  },
-  sectionLink: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.primary,
-  },
-  sectionTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.primarySoft,
-  },
-  sectionTagText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.primaryDark,
-  },
-  scopeBanner: {
-    marginTop: -Spacing.sm,
-    marginBottom: Spacing.md,
-  },
-  scopeBannerText: {
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
-    fontStyle: 'italic',
+  searchText: {
+    flex: 1,
+    fontSize: 15,
+    color: '#475569',
   },
 
-  // ── Store cards (horizontal) ─────────────────────────────────────────
-  storeCard: {
-    width: 150,
-    padding: Spacing.md,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-  },
-  storeThumb: {
-    width: '100%',
-    height: 84,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    marginBottom: Spacing.sm,
-  },
-  storeThumbImg: { width: '100%', height: '100%' },
-  storeName: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
-  storeMeta: { marginTop: 2, fontSize: FontSize.xs, color: Color.textSecondary },
-  storeFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: Spacing.sm,
-  },
-  storeRating: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  storeRatingText: {
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
-    fontWeight: FontWeight.semibold,
-  },
-  shopChip: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.primary,
-  },
-  shopChipText: { fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Color.white },
-
-  // ── Offers carousel ──────────────────────────────────────────────────
-  hRow: {
-    gap: Spacing.md,
-    paddingRight: Spacing.lg,
-  },
-  offerCard: {
-    width: 250,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
-  },
-  offerTitle: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.extrabold,
-    color: Color.white,
-  },
-  offerSub: {
-    marginTop: 4,
-    fontSize: FontSize.sm,
-    color: Color.onDarkMuted,
-  },
-  offerTag: {
-    alignSelf: 'flex-start',
-    marginTop: Spacing.md,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.glassStrong,
-  },
-  offerTagText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.white,
-    letterSpacing: 0.5,
-  },
-
-  // ── Most booked chips ────────────────────────────────────────────────
-  chipsRow: {
-    gap: Spacing.sm,
-    paddingRight: Spacing.lg,
-  },
-  chip: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 10,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-  },
-  chipText: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
-  },
-
-  // ── Top hero carousel ────────────────────────────────────────────────
+  // ── Hero carousel (kept exactly as the original design) ───────────────
   heroScroll: {
     marginTop: Spacing.lg,
     borderRadius: Radius.lg,
@@ -269,9 +170,6 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  // Text over the quiet left third of a dark-background banner. Less padding
-  // on the left (card edge) than the right (where the art starts), so the
-  // text sits close to the edge instead of leaving a visible gap.
   heroTextLeft: {
     position: 'absolute',
     left: 0,
@@ -282,9 +180,6 @@ export const styles = StyleSheet.create({
     paddingLeft: Spacing.sm,
     paddingRight: Spacing.xl,
   },
-  // Text over the quiet bottom strip of a light-background banner — a fixed
-  // height band (not just bottom-anchored) so it stays put, and no side
-  // padding so the one-line headline has the full card width to fit in.
   heroTextBottom: {
     position: 'absolute',
     left: 0,
@@ -307,9 +202,7 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.xs,
     lineHeight: 16,
   },
-  // First/second banners — "lightly bold" details text, per feedback.
   heroSubtitleBold: { fontWeight: FontWeight.semibold },
-  // Third banner — tighter gap under the headline, centered under it.
   heroSubtitleDark: { color: Color.textSecondary, marginTop: 2, textAlign: 'center' },
   heroDots: {
     flexDirection: 'row',
@@ -328,249 +221,141 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.primary,
   },
 
-  // ── Most booked (business rows) ──────────────────────────────────────
-  mbCard: {
+  // ── Section heads ───────────────────────────────────────────────────────
+  sectionHead: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
+    justifyContent: 'space-between',
+    gap: 12,
+    marginTop: 22,
+    marginBottom: 12,
   },
-  mbAvatar: {
-    width: 54,
-    height: 54,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  mbAvatarImg: { width: '100%', height: '100%' },
-  mbInfo: { flex: 1, minWidth: 0 },
-  mbName: {
-    fontSize: FontSize.md,
+  sectionTitle: {
+    flexShrink: 1,
+    fontSize: 19,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
+    letterSpacing: -0.3,
+    color: INK,
   },
-  mbMeta: {
-    marginTop: 2,
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-  },
-  mbRating: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-    marginTop: 6,
-  },
-  mbRatingText: {
-    fontSize: FontSize.xs,
+  sectionLink: {
+    fontSize: 14,
     fontWeight: FontWeight.semibold,
-    color: Color.textSecondary,
+    color: '#1D4ED8',
+  },
+  scopeText: {
+    marginTop: -6,
+    marginBottom: 10,
+    fontSize: 12,
+    color: MUTED,
   },
 
-  // ── Category grid ────────────────────────────────────────────────────
-  grid: {
+  // ── Offers ──────────────────────────────────────────────────────────────
+  offerCard: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    rowGap: Spacing.lg,
-    columnGap: Spacing.sm,
+    alignItems: 'flex-start',
+    gap: 10,
+    paddingVertical: 12,
+    paddingLeft: 12,
+    paddingRight: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    overflow: 'hidden',
+    ...CARD_SHADOW,
   },
-  catCard: { alignItems: 'center' },
+  offerText: {
+    flex: 1,
+    minWidth: 0,
+  },
+  offerTitle: {
+    fontSize: 15,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  offerSub: {
+    marginTop: 1,
+    fontSize: 12,
+    color: MUTED,
+  },
+  dashRow: {
+    flexDirection: 'row',
+    gap: 3,
+    height: 1.5,
+    marginVertical: 9,
+    overflow: 'hidden',
+    opacity: 0.55,
+  },
+  dash: {
+    width: 5,
+    height: 1.5,
+    borderRadius: 1,
+  },
+  offerCode: {
+    alignSelf: 'flex-start',
+    maxWidth: '100%',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 999,
+    borderWidth: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.55)',
+  },
+  offerCodeText: {
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+
+  // ── Category grid ───────────────────────────────────────────────────────
   catTile: {
-    width: 64,
-    height: 64,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
+    minHeight: 84,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
-    ...Shadow.card,
+    gap: 6,
+    paddingHorizontal: 4,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+    ...CARD_SHADOW,
   },
   catName: {
-    fontSize: FontSize.xs,
+    fontSize: 14,
+    lineHeight: 17,
     fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
     textAlign: 'center',
+    color: INK,
   },
 
-  // ── "Shop by product" — real-photo cards in a horizontal row. Same white
-  // card + soft icon-tile look as every other card in the app (catTile,
-  // StoreProductCard), just sized up for a bigger, richer photo. ──
-  productCard: {
-    width: 124,
-    borderRadius: Radius.lg,
-    padding: Spacing.sm,
-    alignItems: 'center',
-    backgroundColor: Color.surface,
-    ...Shadow.card,
-  },
-  productCardImageWrap: {
-    width: 82,
-    height: 82,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 6,
-  },
-  productCardImage: {
-    width: '100%',
-    height: '100%',
-  },
-  productCardName: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-    textAlign: 'center',
+  // Popular services list (rows live in components/BusinessCards).
+  list: {
+    gap: 8,
   },
 
-  // ── Reminders ────────────────────────────────────────────────────────
-  reminderCard: {
+  // ── Recently viewed ─────────────────────────────────────────────────────
+  recentChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
+    gap: 10,
+    padding: 6,
+    paddingRight: 10,
+    borderRadius: 12,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
-  reminderIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  reminderInfo: { flex: 1, minWidth: 0 },
-  reminderTitle: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  reminderSub: {
-    marginTop: 2,
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-  },
-  reminderCta: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.bold,
-    color: Color.primary,
-  },
-
-  // ── Recently viewed ──────────────────────────────────────────────────
-  recentCard: {
-    width: 168,
-    padding: Spacing.md,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-  },
-  recentIcon: {
-    width: 42,
-    height: 42,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.sm,
-  },
-  recentName: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  recentType: {
-    marginTop: 2,
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
-  },
-  recentRating: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 6,
-  },
-  recentRatingText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.textSecondary,
-  },
-
-  // ── Booking card (conditional section) ───────────────────────────────
-  bookingCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-  },
-  bookingIcon: {
+  recentThumb: {
     width: 48,
     height: 48,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
+    borderRadius: 9,
+    backgroundColor: '#E2E8F0',
+  },
+  recentThumbIcon: {
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#EEF4FF',
   },
-  bookingInfo: { flex: 1, minWidth: 0 },
-  bookingName: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  bookingMeta: {
-    marginTop: 2,
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-  },
-  statusPill: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.primarySoft,
-  },
-  statusText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.primary,
-  },
-
-  // ── Trust strip ──────────────────────────────────────────────────────
-  trust: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: Spacing.xl,
-    paddingVertical: Spacing.lg,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.primarySoft,
-  },
-  trustItem: { flex: 1, alignItems: 'center' },
-  trustValue: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.extrabold,
-    color: Color.primaryDark,
-  },
-  trustLabel: {
-    marginTop: 2,
-    fontSize: FontSize.xs,
-    color: Color.primary,
-  },
-  trustDivider: {
-    width: 1,
-    height: 32,
-    backgroundColor: 'rgba(30, 58, 138, 0.15)',
+  recentName: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+    color: INK,
   },
 });

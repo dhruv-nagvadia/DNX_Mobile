@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import { API_BASE_URL } from '@env';
 
 /**
@@ -19,7 +19,30 @@ const LAN_IP = '192.168.1.5';
 const DEV_HOST = Platform.OS === 'android' ? LAN_IP : 'localhost';
 const DEV_FALLBACK = `http://${DEV_HOST}:4000/api/v1`;
 
-const BASE_URL = API_BASE_URL || DEV_FALLBACK;
+/**
+ * In development, point at whatever machine Metro is serving the bundle from.
+ * The Mac's LAN IP changes with the Wi-Fi network, and a stale IP in
+ * .env.development makes every request time out after 20s; Metro's own
+ * address is always the right one. Only private/local hosts are swapped.
+ * Release builds are untouched.
+ */
+function withMetroHost(url: string): string {
+  if (!__DEV__) {
+    return url;
+  }
+  const scriptURL: string | undefined = NativeModules?.SourceCode?.scriptURL;
+  const metroHost = scriptURL?.match(/^https?:\/\/([^/:]+)/)?.[1];
+  const target = url.match(/^(https?:\/\/)([^/:]+)(.*)$/);
+  if (!metroHost || !target) {
+    return url;
+  }
+  const isLocal = (h: string) =>
+    /^(localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)$/.test(h);
+  // Android emulator reaches the host Mac via 10.0.2.2 and Metro reports that, so it works too.
+  return isLocal(target[2]) && isLocal(metroHost) ? `${target[1]}${metroHost}${target[3]}` : url;
+}
+
+const BASE_URL = withMetroHost(API_BASE_URL || DEV_FALLBACK);
 
 export default BASE_URL;
 

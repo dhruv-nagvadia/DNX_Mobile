@@ -16,6 +16,7 @@ export const ROUTES = {
   ALL_CATEGORIES: 'AllCategoriesScreen',
   PRODUCT_TYPE: 'ProductTypeScreen',
   ALL_PRODUCT_TYPES: 'AllProductTypesScreen',
+  ALL_BUSINESSES: 'AllBusinessesScreen',
   PROVIDER_LIST: 'ProviderListScreen',
   PROVIDER_DETAILS: 'ProviderDetailsScreen',
   BOOKING_SUMMARY: 'BookingSummaryScreen',
@@ -67,6 +68,14 @@ export type RootStackParamList = {
   [ROUTES.ALL_CATEGORIES]: { type?: 'SERVICE' | 'STORE' } | undefined;
   [ROUTES.PRODUCT_TYPE]: { slug: string; name: string };
   [ROUTES.ALL_PRODUCT_TYPES]: undefined;
+  // Every store ("Order from stores") or service business ("Popular services") near the
+  // customer — optionally narrowed to one category ("Top rated in Beauty & Wellness").
+  [ROUTES.ALL_BUSINESSES]: {
+    type: 'SERVICE' | 'STORE';
+    categorySlug?: string;
+    title?: string;
+    sort?: 'rating';
+  };
   [ROUTES.PROVIDER_LIST]: { categorySlug?: string; subcategorySlug?: string; title: string };
   [ROUTES.PROVIDER_DETAILS]: {
     providerId: string;

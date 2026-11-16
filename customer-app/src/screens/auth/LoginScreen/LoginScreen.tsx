@@ -1,21 +1,17 @@
 import React, { useRef } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StatusBar,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Pressable, Text, TextInput, View } from 'react-native';
+import { Lock, Mail } from 'lucide-react-native';
 
-import { AlertBanner } from '@/components/AlertBanner';
-import { AppButton } from '@/components/AppButton';
-import { AppInput } from '@/components/AppInput';
-import { AuthHero } from '@/components/AuthHero';
-import { Color, Spacing } from '@/utils/Theme';
+import {
+  AuthBanner,
+  AuthField,
+  AuthLegalRow,
+  AuthScreenShell,
+  AuthSubmitButton,
+  AuthSwitchRow,
+  LINK_HIT_SLOP,
+  authStyles,
+} from '../shared';
 
 import { useLoginScreen } from './useLoginScreen';
 import { styles } from './styles';
@@ -32,105 +28,80 @@ export default function LoginScreen() {
     onSubmit,
     goToRegister,
     goToForgotPassword,
+    goToTerms,
+    goToPrivacy,
   } = useLoginScreen();
-  const insets = useSafeAreaInsets();
   const passwordRef = useRef<TextInput>(null);
 
   return (
-    <View style={styles.root}>
-      <StatusBar barStyle="light-content" backgroundColor={Color.ink} />
+    <AuthScreenShell
+      subtitle="Book services and shop near you"
+      footer={
+        <>
+          <AuthSwitchRow
+            prompt="New to DNX?"
+            linkText="Create an account"
+            onPress={goToRegister}
+            disabled={isLoading}
+          />
+          <AuthLegalRow onTerms={goToTerms} onPrivacy={goToPrivacy} />
+        </>
+      }
+    >
+      <Text style={authStyles.heading}>Welcome back</Text>
+      <Text style={authStyles.subheading}>Sign in to see your bookings and orders</Text>
 
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        {/* Fixed: the hero never scrolls. */}
-        <AuthHero promise="Every service in your life," accentTail="in one app." />
+      {!!serverError && <AuthBanner message={serverError} />}
 
-        {/* The sheet owns the only scroll view on this screen. */}
-        <View style={styles.sheet}>
-          <ScrollView
-            style={styles.flex}
-            contentContainerStyle={[
-              styles.sheetContent,
-              { paddingBottom: insets.bottom + Spacing.xl },
-            ]}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.formSection}>
-              <Text style={styles.heading}>Welcome back</Text>
-              <Text style={styles.subheading}>
-                Sign in to see your bookings, reminders and receipts.
-              </Text>
+      <AuthField
+        label="Email"
+        icon={Mail}
+        placeholder="you@example.com"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+        autoComplete="email"
+        textContentType="emailAddress"
+        returnKeyType="next"
+        onSubmitEditing={() => passwordRef.current?.focus()}
+        value={form.email}
+        onChangeText={(v) => onChange('email', v)}
+        onBlur={() => onBlur('email')}
+        error={errors.email}
+        editable={!isLoading}
+      />
 
-              {!!serverError && <AlertBanner message={serverError} />}
+      <AuthField
+        inputRef={passwordRef}
+        label="Password"
+        icon={Lock}
+        password
+        placeholder="Enter your password"
+        autoCapitalize="none"
+        autoCorrect={false}
+        autoComplete="password"
+        textContentType="password"
+        returnKeyType="done"
+        onSubmitEditing={onSubmit}
+        value={form.password}
+        onChangeText={(v) => onChange('password', v)}
+        onBlur={() => onBlur('password')}
+        error={errors.password}
+        editable={!isLoading}
+      />
 
-              <AppInput
-                label="Email"
-                placeholder="you@example.com"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                autoComplete="email"
-                textContentType="emailAddress"
-                returnKeyType="next"
-                onSubmitEditing={() => passwordRef.current?.focus()}
-                value={form.email}
-                onChangeText={(v) => onChange('email', v)}
-                onBlur={() => onBlur('email')}
-                error={errors.email}
-                editable={!isLoading}
-              />
+      <View style={styles.optionsRow}>
+        <Pressable
+          onPress={goToForgotPassword}
+          disabled={isLoading}
+          hitSlop={LINK_HIT_SLOP}
+          accessibilityRole="link"
+        >
+          <Text style={styles.forgotText}>Forgot password?</Text>
+        </Pressable>
+      </View>
 
-              <AppInput
-                inputRef={passwordRef}
-                label="Password"
-                placeholder="Enter your password"
-                secureTextEntry
-                autoComplete="password"
-                textContentType="password"
-                returnKeyType="done"
-                onSubmitEditing={onSubmit}
-                value={form.password}
-                onChangeText={(v) => onChange('password', v)}
-                onBlur={() => onBlur('password')}
-                error={errors.password}
-                editable={!isLoading}
-              />
-
-              <TouchableOpacity
-                onPress={goToForgotPassword}
-                disabled={isLoading}
-                style={styles.forgotLink}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                accessibilityRole="link"
-              >
-                <Text style={styles.switchLink}>Forgot password?</Text>
-              </TouchableOpacity>
-
-              <AppButton
-                style={styles.submit}
-                title="Sign in"
-                onPress={onSubmit}
-                loading={isLoading}
-              />
-
-              <View style={styles.switchRow}>
-                <Text style={styles.switchText}>New to DNX? </Text>
-                <TouchableOpacity
-                  onPress={goToRegister}
-                  disabled={isLoading}
-                  hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }}
-                  accessibilityRole="link"
-                >
-                  <Text style={styles.switchLink}>Create an account</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </ScrollView>
-        </View>
-      </KeyboardAvoidingView>
-    </View>
+      <AuthSubmitButton label="Sign in" onPress={onSubmit} loading={isLoading} />
+    </AuthScreenShell>
   );
 }

@@ -1,32 +1,96 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
-  StatusBar,
-  Dimensions,
-  NativeSyntheticEvent,
+  Image,
   NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, MapPin, ChevronDown, Star, ShoppingCart, ShoppingBag } from 'lucide-react-native';
+import {
+  ChevronDown,
+  Flower2,
+  LayoutGrid,
+  MapPin,
+  Search,
+  ShoppingCart,
+  TicketPercent,
+} from 'lucide-react-native';
 
+import {
+  ProductTypeCard,
+  ServiceRow,
+  StoreCard,
+  StoreCategoryCard,
+  useCardWidth,
+} from '@/components/BusinessCards';
 import { CategoryIcon } from '@/components/CategoryIcon';
-import { ProductTypeIcon } from '@/components/ProductTypeIcon';
+import { GradientBackground } from '@/components/GradientBackground';
 import { NotificationBellButton } from '@/components/NotificationBellButton';
-import { Color, Spacing } from '@/utils/Theme';
-import { useGridItemWidth } from '@/utils/useGridItemWidth';
+import { INK, LINK, ModernSize, PAGE_BG, TINT } from '@/utils/modernTheme';
+import { TILE_CYCLE } from '@/utils/homeTiles';
 
 import { useHomeScreen } from './useHomeScreen';
-import { styles } from './styles';
+import { GAP, styles } from './styles';
 
-const CAT_COLUMNS = 4;
-const CAT_GAP = Spacing.sm;
-// The hero carousel sits inside the screen's side padding, not edge-to-edge.
-const HERO_WIDTH = Dimensions.get('window').width - Spacing.lg * 2;
+const GUTTER = ModernSize.gutter;
+const HIT = { top: 8, bottom: 8, left: 8, right: 8 };
+
+const OFFER_ICONS = [TicketPercent, Flower2];
+
+function SectionHead({ title, onViewAll }: { title: string; onViewAll?: () => void }) {
+  return (
+    <View style={styles.sectionHead}>
+      <Text style={styles.sectionTitle} numberOfLines={1}>
+        {title}
+      </Text>
+      {!!onViewAll && (
+        <TouchableOpacity onPress={onViewAll} hitSlop={HIT} accessibilityRole="link">
+          <Text style={styles.sectionLink}>View all</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+}
+
+/**
+ * Dashed rule drawn from short segments — RN's borderStyle 'dashed' doesn't
+ * render on a single side on iOS, so the coupon divider used to disappear.
+ */
+function DashedLine({ color }: { color: string }) {
+  return (
+    <View style={styles.dashRow}>
+      {Array.from({ length: 40 }, (_, i) => (
+        <View key={i} style={[styles.dash, { backgroundColor: color }]} />
+      ))}
+    </View>
+  );
+}
+
+/** Business photo for a recently-viewed chip; category icon if it has none or it fails. */
+function RecentThumb({ uri, categorySlug }: { uri?: string | null; categorySlug: string }) {
+  const [failed, setFailed] = useState(false);
+  if (uri && !failed) {
+    return (
+      <Image
+        source={{ uri }}
+        style={styles.recentThumb}
+        resizeMode="cover"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+  return (
+    <View style={[styles.recentThumb, styles.recentThumbIcon]}>
+      <CategoryIcon slug={categorySlug} size={22} color={TINT.blue.icon} strokeWidth={1.8} />
+    </View>
+  );
+}
 
 /** JSX only — logic comes from useHomeScreen. */
 export default function HomeScreen() {
@@ -59,66 +123,108 @@ export default function HomeScreen() {
     goToAllServiceCategories,
     goToAllStoreCategories,
     goToAllProductTypes,
+    goToAllStores,
+    goToAllServices,
     cartCount,
   } = useHomeScreen();
 
-  // Exact width so 4 columns + gaps fill the row edge-to-edge on any device,
-  // instead of a percentage width that leaves a gap or overflows.
-  const catCardWidth = useGridItemWidth(CAT_COLUMNS, CAT_GAP, Spacing.lg);
+  // Every rail is sized from the screen width so the mockup's 2 / 3 / 4-up
+  // layouts fill the row exactly on any phone.
+  const { width } = useWindowDimensions();
+  const contentW = width - GUTTER * 2;
+  const quarterW = Math.floor((contentW - GAP * 3) / 4);
+  // Business cards use the same width as their "View all" grid (two per
+  // screen width), so the card is identical in both places.
+  const cardW = useCardWidth();
+  // "Shop by product" matches its View all grid exactly (3 per screen width).
+  const productW = Math.floor((contentW - GAP * 2) / 3);
+  // "Order from stores" keeps its own wider card (~2 per screen).
+  const storeW = Math.floor(contentW * 0.48);
+  const recentW = Math.floor(contentW * 0.5);
+  const halfW = Math.floor((contentW - GAP) / 2);
+  const heroW = contentW;
 
   const [heroIndex, setHeroIndex] = useState(0);
   const onHeroScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) =>
-    setHeroIndex(Math.round(e.nativeEvent.contentOffset.x / HERO_WIDTH));
+    setHeroIndex(Math.round(e.nativeEvent.contentOffset.x / heroW));
+
+  // With more categories than fit, the 8th tile becomes "More" (like the mockup).
+  const serviceTiles = hasMoreServiceCategories ? serviceCategories.slice(0, 7) : serviceCategories;
+  const productTiles = productTypes;
+  const businessTiles = storeCategories;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor={Color.background} />
+      <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Header: location + notifications + avatar */}
-        <View style={styles.headerTop}>
+        {/* ── Header: location · DNX · bell/avatar ─────────────────────── */}
+        <View style={styles.header}>
           <TouchableOpacity
-            style={styles.locationPill}
+            style={styles.locationBtn}
             activeOpacity={0.7}
             onPress={goToLocationPicker}
+            accessibilityRole="button"
+            accessibilityLabel={`Deliver to ${location}. Change location`}
           >
-            <MapPin size={16} color={Color.primary} />
-            <Text style={styles.locationLabel}>Location</Text>
-            <Text style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">
-              {location}
-            </Text>
-            <ChevronDown size={16} color={Color.textSecondary} style={styles.locationChevron} />
+            <MapPin size={22} color={LINK} strokeWidth={2} />
+            <View style={styles.locationText}>
+              <Text style={styles.locationLabel}>Deliver to</Text>
+              <View style={styles.locationValueRow}>
+                <Text style={styles.locationValue} numberOfLines={1}>
+                  {location}
+                </Text>
+                <ChevronDown size={14} color={INK} strokeWidth={2.6} />
+              </View>
+            </View>
           </TouchableOpacity>
 
           <View style={styles.headerRight}>
-            <TouchableOpacity
-              style={styles.bellBtn}
-              activeOpacity={0.8}
-              onPress={goToCart}
-              accessibilityLabel="Cart"
-            >
-              <ShoppingCart size={20} color={Color.textPrimary} />
-              {cartCount > 0 && (
-                <View style={styles.bellBadge}>
-                  <Text style={styles.bellBadgeText}>{cartCount}</Text>
+            <Text style={styles.brand} accessibilityRole="header">
+              DNX
+            </Text>
+            {cartCount > 0 && (
+              <TouchableOpacity
+                style={styles.iconBtn}
+                activeOpacity={0.8}
+                onPress={goToCart}
+                hitSlop={HIT}
+                accessibilityLabel={`Cart, ${cartCount} items`}
+              >
+                <ShoppingCart size={22} color={INK} strokeWidth={1.9} />
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{cartCount}</Text>
                 </View>
-              )}
-            </TouchableOpacity>
-            <NotificationBellButton style={styles.bellBtn} />
-            <TouchableOpacity style={styles.avatar} onPress={goToProfile} accessibilityLabel="Profile">
+              </TouchableOpacity>
+            )}
+            <NotificationBellButton color={INK} style={styles.iconBtn} />
+            <TouchableOpacity
+              style={styles.avatar}
+              onPress={goToProfile}
+              accessibilityRole="button"
+              accessibilityLabel="Profile"
+            >
               <Text style={styles.avatarText}>{firstName.charAt(0).toUpperCase()}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Search */}
-        <TouchableOpacity style={styles.search} activeOpacity={0.85} onPress={goToSearch}>
-          <Search size={18} color={Color.placeholder} />
-          <Text style={styles.searchText}>Search stores, salons, doctors…</Text>
+        {/* ── Greeting ─────────────────────────────────────────────────── */}
+        <Text style={styles.greeting}>Hi {firstName}</Text>
+        <Text style={styles.greetingSub}>What would you like to book today?</Text>
+
+        {/* ── Search ───────────────────────────────────────────────────── */}
+        <TouchableOpacity
+          style={styles.search}
+          activeOpacity={0.85}
+          onPress={goToSearch}
+          accessibilityRole="search"
+        >
+          <Search size={20} color={INK} strokeWidth={2} />
+          <Text style={styles.searchText}>Search services, stores or products</Text>
         </TouchableOpacity>
 
-        {/* Hero carousel — value-prop banners (swapped in for the old
-            "Trusted by thousands" stat banner until real numbers are worth showing) */}
+        {/* Hero carousel — value-prop banners (unchanged from the original design) */}
         <ScrollView
           horizontal
           pagingEnabled
@@ -127,10 +233,17 @@ export default function HomeScreen() {
           style={styles.heroScroll}
         >
           {heroBanners.map((b) => (
-            <View key={b.id} style={[styles.heroCard, { width: HERO_WIDTH }]}>
+            <View key={b.id} style={[styles.heroCard, { width: heroW }]}>
               <Image source={b.image} style={styles.heroImage} resizeMode="cover" />
-              <View style={b.textPosition === 'bottom' ? styles.heroTextBottom : styles.heroTextLeft}>
-                <Text style={[styles.heroHeadline, b.textPosition === 'bottom' && styles.heroHeadlineDark]}>
+              <View
+                style={b.textPosition === 'bottom' ? styles.heroTextBottom : styles.heroTextLeft}
+              >
+                <Text
+                  style={[
+                    styles.heroHeadline,
+                    b.textPosition === 'bottom' && styles.heroHeadlineDark,
+                  ]}
+                >
                   {b.headline}
                 </Text>
                 <Text
@@ -153,279 +266,216 @@ export default function HomeScreen() {
           </View>
         )}
 
-        {/* Offers — only shown once there's a real, redeemable platform coupon */}
+        {/* ── Offers (two cards per screen width) ──────────────────────── */}
         {offers.length > 0 && (
           <>
-            <View style={styles.sectionHead}>
-              <Text style={styles.sectionTitle}>Offers for you</Text>
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hRow}>
-              {offers.map((o) => (
-                <TouchableOpacity
-                  key={o.id}
-                  activeOpacity={0.85}
-                  style={[styles.offerCard, { backgroundColor: o.bg }]}
-                  onPress={() => onOfferPress(o)}
-                >
-                  <Text style={styles.offerTitle}>{o.title}</Text>
-                  <Text style={styles.offerSub}>{o.subtitle}</Text>
-                  <View style={styles.offerTag}>
-                    <Text style={styles.offerTagText}>{o.tag}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
+            <SectionHead title="Offers for you" />
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.hRow}
+              style={styles.bleed}
+              snapToInterval={halfW + GAP}
+              decelerationRate="fast"
+            >
+              {offers.map((o, i) => {
+                const tint = TINT[o.tint];
+                const Icon = OFFER_ICONS[i % OFFER_ICONS.length];
+                return (
+                  <TouchableOpacity
+                    key={o.id}
+                    activeOpacity={0.85}
+                    style={[styles.offerCard, { width: halfW, borderColor: tint.border }]}
+                    onPress={() => onOfferPress(o)}
+                  >
+                    <GradientBackground colors={tint.colors} />
+                    <Icon size={30} color={tint.icon} strokeWidth={1.7} />
+                    <View style={styles.offerText}>
+                      <Text
+                        style={styles.offerTitle}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                        minimumFontScale={0.8}
+                      >
+                        {o.title}
+                      </Text>
+                      <Text style={styles.offerSub} numberOfLines={1}>
+                        {o.subtitle}
+                      </Text>
+                      <DashedLine color={tint.icon} />
+                      <View style={[styles.offerCode, { borderColor: tint.border }]}>
+                        <Text style={styles.offerCodeText} numberOfLines={1}>
+                          Code: {o.tag}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
             </ScrollView>
           </>
         )}
 
-        {/* Service categories (most-booked first) */}
-        <View style={styles.sectionHead}>
-          <Text style={styles.sectionTitle}>What service do you need?</Text>
-          {hasMoreServiceCategories && (
-            <TouchableOpacity
-              onPress={goToAllServiceCategories}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            >
-              <Text style={styles.sectionLink}>View all</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+        {/* ── Service categories (4 × 2 pastel grid) ───────────────────── */}
+        <SectionHead
+          title="What service do you need?"
+          onViewAll={hasMoreServiceCategories ? goToAllServiceCategories : undefined}
+        />
         {categoriesLoading ? (
-          <ActivityIndicator color={Color.primary} />
+          <ActivityIndicator color={LINK} />
         ) : (
           <View style={styles.grid}>
-            {serviceCategories.map((c) => (
-              <TouchableOpacity
-                key={c.id}
-                style={[styles.catCard, { width: catCardWidth }]}
-                activeOpacity={0.8}
-                onPress={() => onCategoryPress(c)}
-              >
-                <View style={styles.catTile}>
-                  <CategoryIcon slug={c.slug} size={26} />
-                </View>
-                <Text style={styles.catName} numberOfLines={2}>
-                  {c.name}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
-
-        {/* Product types — real-photo cards (the "Shop by Business" reference
-            pattern) pooling actual products across every store that sells
-            them, not a list of businesses. Shown before "Shop by business"
-            since it's the richer, image-led browsing mode. */}
-        {productTypes.length > 0 && (
-          <>
-            <View style={styles.sectionHead}>
-              <Text style={styles.sectionTitle}>Shop by product</Text>
-              {hasMoreProductTypes && (
-                <TouchableOpacity
-                  onPress={goToAllProductTypes}
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                >
-                  <Text style={styles.sectionLink}>View all</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hRow}>
-              {productTypes.map((t) => (
-                <TouchableOpacity
-                  key={t.id}
-                  style={styles.productCard}
-                  activeOpacity={0.85}
-                  onPress={() => onProductTypePress(t)}
-                >
-                  <View style={styles.productCardImageWrap}>
-                    {t.iconUrl ? (
-                      <Image source={{ uri: t.iconUrl }} style={styles.productCardImage} resizeMode="contain" />
-                    ) : (
-                      <ProductTypeIcon slug={t.slug} size={28} color={Color.primary} />
-                    )}
-                  </View>
-                  <Text style={styles.productCardName} numberOfLines={2}>
-                    {t.name}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </>
-        )}
-
-        {/* Store categories — "Shop by Business" image cards, each a real
-            photo of what that store sells, so it reads as a richer, more
-            visual browsing mode than the plain icon grid above it. */}
-        {!categoriesLoading && storeCategories.length > 0 && (
-          <>
-            <View style={styles.sectionHead}>
-              <View style={styles.sectionTitleGroup}>
-                <Text style={styles.sectionTitle}>Shop by business</Text>
-                <View style={styles.sectionTag}>
-                  <ShoppingBag size={12} color={Color.primaryDark} />
-                  <Text style={styles.sectionTagText}>Businesses</Text>
-                </View>
-              </View>
-              {hasMoreStoreCategories && (
-                <TouchableOpacity
-                  onPress={goToAllStoreCategories}
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                >
-                  <Text style={styles.sectionLink}>View all</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-            <View style={styles.grid}>
-              {storeCategories.map((c) => (
+            {serviceTiles.map((c, i) => {
+              const tint = TILE_CYCLE[i % TILE_CYCLE.length];
+              return (
                 <TouchableOpacity
                   key={c.id}
-                  style={[styles.catCard, { width: catCardWidth }]}
+                  style={[styles.catTile, { width: quarterW, borderColor: tint.border }]}
                   activeOpacity={0.8}
                   onPress={() => onCategoryPress(c)}
                 >
-                  <View style={styles.catTile}>
-                    <CategoryIcon slug={c.slug} size={26} />
-                  </View>
+                  <GradientBackground colors={tint.colors} />
+                  <CategoryIcon slug={c.slug} size={26} color={tint.icon} strokeWidth={1.7} />
+                  {/* Full size text; long names wrap to a second line instead of shrinking. */}
                   <Text style={styles.catName} numberOfLines={2}>
                     {c.name}
                   </Text>
                 </TouchableOpacity>
-              ))}
-            </View>
-          </>
+              );
+            })}
+            {hasMoreServiceCategories && (
+              <TouchableOpacity
+                style={[styles.catTile, { width: quarterW, borderColor: TINT.blue.border }]}
+                activeOpacity={0.8}
+                onPress={goToAllServiceCategories}
+                accessibilityLabel="More categories"
+              >
+                <GradientBackground colors={TINT.blue.colors} />
+                <LayoutGrid size={26} color={TINT.blue.icon} strokeWidth={1.7} />
+                <Text style={styles.catName}>More</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         )}
 
-        {/* Stores you can order from */}
-        {stores.length > 0 && (
+        {/* ── Shop by product (photo cards, label underneath) ──────────── */}
+        {productTiles.length > 0 && (
           <>
-            <View style={styles.sectionHead}>
-              <Text style={styles.sectionTitle}>Order from stores</Text>
-              <View style={styles.sectionTag}>
-                <ShoppingBag size={12} color={Color.primaryDark} />
-                <Text style={styles.sectionTagText}>Shop groceries & more</Text>
-              </View>
-            </View>
-            {!!storesBanner && (
-              <View style={styles.scopeBanner}>
-                <Text style={styles.scopeBannerText}>{storesBanner}</Text>
-              </View>
-            )}
+            <SectionHead
+              title="Shop by product"
+              onViewAll={hasMoreProductTypes ? goToAllProductTypes : undefined}
+            />
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.hRow}
+              style={styles.bleed}
+              snapToInterval={productW + GAP}
+              decelerationRate="fast"
             >
-              {stores.map((s) => (
-                <TouchableOpacity
-                  key={s.id}
-                  style={styles.storeCard}
-                  activeOpacity={0.85}
-                  onPress={() => onProviderPress(s)}
-                >
-                  <View style={styles.storeThumb}>
-                    {s.images.length > 0 ? (
-                      <Image style={styles.storeThumbImg} source={{ uri: s.images[0] }} />
-                    ) : (
-                      <CategoryIcon slug={s.category.slug} size={26} />
-                    )}
-                  </View>
-                  <Text style={styles.storeName} numberOfLines={1}>
-                    {s.businessName}
-                  </Text>
-                  <Text style={styles.storeMeta} numberOfLines={1}>
-                    {s.subcategory?.name ?? s.category.name}
-                  </Text>
-                  <View style={styles.storeFooter}>
-                    <View style={styles.storeRating}>
-                      <Star size={12} color={Color.warning} fill={Color.warning} />
-                      <Text style={styles.storeRatingText}>{s.ratingAvg.toFixed(1)}</Text>
-                    </View>
-                    <View style={styles.shopChip}>
-                      <Text style={styles.shopChipText}>Shop</Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
+              {productTiles.map((t, i) => (
+                <ProductTypeCard
+                  key={t.id}
+                  type={t}
+                  width={productW}
+                  index={i}
+                  onPress={onProductTypePress}
+                />
               ))}
             </ScrollView>
           </>
         )}
 
-        {/* Most booked businesses */}
-        {mostBooked.length > 0 && (
+        {/* ── Shop by business (photo cards, label on the photo) ───────── */}
+        {!categoriesLoading && businessTiles.length > 0 && (
           <>
-            <View style={styles.sectionHead}>
-              <Text style={styles.sectionTitle}>Popular services to book</Text>
-            </View>
-            {!!mostBookedBanner && (
-              <View style={styles.scopeBanner}>
-                <Text style={styles.scopeBannerText}>{mostBookedBanner}</Text>
-              </View>
-            )}
-            {mostBooked.map((p) => (
-              <TouchableOpacity
-                key={p.id}
-                style={styles.mbCard}
-                activeOpacity={0.85}
-                onPress={() => onProviderPress(p)}
-              >
-                <View style={styles.mbAvatar}>
-                  {p.images.length > 0 ? (
-                    <Image style={styles.mbAvatarImg} source={{ uri: p.images[0] }} />
-                  ) : (
-                    <CategoryIcon slug={p.category.slug} size={24} />
-                  )}
-                </View>
-                <View style={styles.mbInfo}>
-                  <Text style={styles.mbName} numberOfLines={1}>
-                    {p.businessName}
-                  </Text>
-                  <Text style={styles.mbMeta} numberOfLines={1}>
-                    {p.subcategory?.name ?? p.category.name}
-                    {p.city ? ` · ${p.city}` : ''}
-                  </Text>
-                  <View style={styles.mbRating}>
-                    <Star size={12} color={Color.warning} fill={Color.warning} />
-                    <Text style={styles.mbRatingText}>
-                      {p.ratingAvg.toFixed(1)} ({p.ratingCount})
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </>
-        )}
-
-        {/* Recently viewed */}
-        {recentlyViewed.length > 0 && (
-          <>
-            <View style={styles.sectionHead}>
-              <Text style={styles.sectionTitle}>Recently viewed</Text>
-            </View>
+            <SectionHead
+              title="Shop by business"
+              onViewAll={hasMoreStoreCategories ? goToAllStoreCategories : undefined}
+            />
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.hRow}
+              style={styles.bleed}
+              snapToInterval={cardW + GAP}
+              decelerationRate="fast"
             >
-              {recentlyViewed.map((p) => (
+              {businessTiles.map((c, i) => (
+                <StoreCategoryCard
+                  key={c.id}
+                  category={c}
+                  width={cardW}
+                  index={i}
+                  onPress={onCategoryPress}
+                />
+              ))}
+            </ScrollView>
+          </>
+        )}
+
+        {/* ── Order from stores ────────────────────────────────────────── */}
+        {stores.length > 0 && (
+          <>
+            <SectionHead title="Order from stores" onViewAll={goToAllStores} />
+            {!!storesBanner && <Text style={styles.scopeText}>{storesBanner}</Text>}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.hRow}
+              style={styles.bleed}
+              snapToInterval={storeW + GAP}
+              decelerationRate="fast"
+            >
+              {stores.map((s, i) => (
+                <StoreCard
+                  key={s.id}
+                  store={s}
+                  width={storeW}
+                  index={i}
+                  onPress={onProviderPress}
+                />
+              ))}
+            </ScrollView>
+          </>
+        )}
+
+        {/* ── Popular services to book ─────────────────────────────────── */}
+        {mostBooked.length > 0 && (
+          <>
+            <SectionHead title="Popular services to book" onViewAll={goToAllServices} />
+            {!!mostBookedBanner && <Text style={styles.scopeText}>{mostBookedBanner}</Text>}
+            <View style={styles.list}>
+              {mostBooked.map((p, i) => (
+                <ServiceRow key={p.id} provider={p} index={i} onPress={onProviderPress} />
+              ))}
+            </View>
+          </>
+        )}
+
+        {/* ── Recently viewed ──────────────────────────────────────────── */}
+        {recentlyViewed.length > 0 && (
+          <>
+            <SectionHead title="Recently viewed" />
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.hRow}
+              style={styles.bleed}
+            >
+              {recentlyViewed.map((r) => (
                 <TouchableOpacity
-                  key={p.id}
-                  style={styles.recentCard}
+                  key={r.id}
+                  style={[styles.recentChip, { width: recentW }]}
                   activeOpacity={0.85}
-                  onPress={() => onRecentPress(p)}
+                  onPress={() => onRecentPress(r)}
                 >
-                  <View style={styles.recentIcon}>
-                    <CategoryIcon slug={p.categorySlug} size={20} />
-                  </View>
-                  <Text style={styles.recentName} numberOfLines={1}>
-                    {p.name}
+                  {/* Only the business's own photo here — never a stock placeholder.
+                      Without one, a neutral category icon stands in. */}
+                  <RecentThumb uri={r.image} categorySlug={r.categorySlug} />
+                  <Text style={styles.recentName} numberOfLines={2}>
+                    {r.name}
                   </Text>
-                  <Text style={styles.recentType} numberOfLines={1}>
-                    {p.type}
-                  </Text>
-                  <View style={styles.recentRating}>
-                    <Star size={12} color={Color.warning} fill={Color.warning} />
-                    <Text style={styles.recentRatingText}>{p.rating.toFixed(1)}</Text>
-                  </View>
                 </TouchableOpacity>
               ))}
             </ScrollView>

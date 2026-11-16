@@ -7,6 +7,14 @@ export const HERO_GRADIENT = ['#060B18', '#0A1730', '#0E2350', '#183E80'];
 
 let counter = 0;
 
+/** Splits "rgba(r, g, b, a)" into an rgb colour + opacity; SVG stops don't reliably accept rgba. */
+function splitColor(c: string): { color: string; opacity: number } {
+  const m = c.match(/^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$/i);
+  return m
+    ? { color: `rgb(${m[1]}, ${m[2]}, ${m[3]})`, opacity: Number(m[4]) }
+    : { color: c, opacity: 1 };
+}
+
 interface GradientBackgroundProps {
   colors?: string[];
   /** Gradient direction in 0..1 bounding-box units. Default: top-left → bottom-right. */
@@ -40,13 +48,17 @@ export function GradientBackground({
         <Svg width={size.w} height={size.h}>
           <Defs>
             <LinearGradient id={id} x1={start.x} y1={start.y} x2={end.x} y2={end.y}>
-              {colors.map((c, i) => (
-                <Stop
-                  key={i}
-                  offset={locations ? locations[i] : i / (colors.length - 1)}
-                  stopColor={c}
-                />
-              ))}
+              {colors.map((c, i) => {
+                const { color, opacity } = splitColor(c);
+                return (
+                  <Stop
+                    key={i}
+                    offset={locations ? locations[i] : i / (colors.length - 1)}
+                    stopColor={color}
+                    stopOpacity={opacity}
+                  />
+                );
+              })}
             </LinearGradient>
           </Defs>
           <Rect x={0} y={0} width={size.w} height={size.h} fill={`url(#${id})`} />

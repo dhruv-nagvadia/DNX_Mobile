@@ -1,33 +1,73 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Theme';
 
+import { Color, FontWeight } from '@/utils/Theme';
+import { CARD_SHADOW, INK, ModernSize, PAGE_BG } from '@/utils/modernTheme';
+
+/** Same gap as Home's grids. */
+export const GAP = 10;
+
+/** Card styles mirror Home (HomeScreen/styles.ts) so both screens match. */
 export const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Color.background },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  content: { padding: Spacing.lg, paddingBottom: Spacing.xl },
-
+  container: {
+    flex: 1,
+    backgroundColor: PAGE_BG,
+  },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  content: {
+    paddingHorizontal: ModernSize.gutter,
+    paddingTop: 8,
+    paddingBottom: 32,
+  },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    rowGap: Spacing.lg,
-    columnGap: Spacing.sm,
+    gap: GAP,
   },
-  catCard: { alignItems: 'center' },
+  fill: {
+    width: '100%',
+    height: '100%',
+  },
+
+  // Service tiles — Home's "What service do you need?"
   catTile: {
-    width: 64,
-    height: 64,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
+    minHeight: 84,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
-    ...Shadow.card,
+    gap: 6,
+    paddingHorizontal: 4,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+    ...CARD_SHADOW,
   },
   catName: {
-    fontSize: FontSize.xs,
+    fontSize: 14,
+    lineHeight: 17,
     fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
     textAlign: 'center',
+    color: INK,
+  },
+
+  // Store-category photo cards — Home's "Shop by business"
+  bizCard: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#CBD5E1',
+    ...CARD_SHADOW,
+  },
+  bizName: {
+    position: 'absolute',
+    left: 10,
+    right: 8,
+    bottom: 10,
+    fontSize: 17,
+    lineHeight: 21,
+    fontWeight: FontWeight.bold,
+    color: Color.white,
   },
 });

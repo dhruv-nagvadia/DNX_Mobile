@@ -1,45 +1,58 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Theme';
 
+import { Color, FontWeight } from '@/utils/Theme';
+import { CARD_SHADOW, INK, ModernSize, PAGE_BG } from '@/utils/modernTheme';
+
+/** Same gap as Home's grids. */
+export const GAP = 10;
+
+/** Mirrors Home's "Shop by product" card (HomeScreen/styles.ts). */
 export const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Color.background },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  content: { padding: Spacing.lg, paddingBottom: Spacing.xl },
-
+  container: {
+    flex: 1,
+    backgroundColor: PAGE_BG,
+  },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  content: {
+    paddingHorizontal: ModernSize.gutter,
+    paddingTop: 8,
+    paddingBottom: 32,
+  },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    rowGap: Spacing.md,
-    columnGap: Spacing.sm,
+    gap: GAP,
   },
-
-  // Real-photo cards — same look as Home's row, so the teaser and full list
-  // match. Width is set per-card from useGridItemWidth (see the screen), so
-  // columns + gaps fill the row edge-to-edge instead of a fixed width
-  // leaving a ragged gap at the end of each row.
-  productCard: {
-    borderRadius: Radius.lg,
-    padding: Spacing.sm,
-    alignItems: 'center',
-    backgroundColor: Color.surface,
-    ...Shadow.card,
-  },
-  productCardImageWrap: {
-    width: 82,
-    height: 82,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 6,
-  },
-  productCardImage: {
+  fill: {
     width: '100%',
     height: '100%',
   },
-  productCardName: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
+  productCard: {
+    borderRadius: 14,
+    backgroundColor: Color.white,
+    overflow: 'hidden',
+    ...CARD_SHADOW,
+  },
+  imageWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  cutout: {
+    width: '84%',
+    height: '88%',
+  },
+  name: {
+    paddingHorizontal: 8,
+    paddingVertical: 12,
     textAlign: 'center',
+    fontSize: 15,
+    lineHeight: 19,
+    fontWeight: FontWeight.semibold,
+    color: INK,
   },
 });

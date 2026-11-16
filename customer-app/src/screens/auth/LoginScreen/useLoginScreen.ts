@@ -86,6 +86,14 @@ export function useLoginScreen() {
     navigation.navigate(ROUTES.FORGOT_PASSWORD);
   }, [navigation]);
 
+  const goToTerms = useCallback(() => {
+    navigation.navigate(ROUTES.TERMS);
+  }, [navigation]);
+
+  const goToPrivacy = useCallback(() => {
+    navigation.navigate(ROUTES.PRIVACY_POLICY);
+  }, [navigation]);
+
   return {
     form,
     errors,
@@ -96,5 +104,7 @@ export function useLoginScreen() {
     onSubmit,
     goToRegister,
     goToForgotPassword,
+    goToTerms,
+    goToPrivacy,
   };
 }

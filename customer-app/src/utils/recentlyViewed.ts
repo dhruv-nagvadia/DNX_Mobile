@@ -9,6 +9,8 @@ export interface RecentProvider {
   type: string;
   categorySlug: string;
   rating: number;
+  /** First business photo, for the Home "Recently viewed" chip (older entries lack it). */
+  image?: string | null;
 }
 
 const MAX_RECENT = 8;

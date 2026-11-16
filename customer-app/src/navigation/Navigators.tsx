@@ -2,12 +2,13 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Home, CalendarDays, Bell, User } from 'lucide-react-native';
+import { Home, CalendarDays, Bell, User, type LucideIcon } from 'lucide-react-native';
 
 import { ROUTES, RootStackParamList } from './routes';
 import { useOnboardingStatus } from './useOnboardingStatus';
 import { styles } from './styles';
 import { Color, FontWeight } from '@/utils/Theme';
+import { LINK, PILL } from '@/utils/modernTheme';
 import LoginScreen from '@/screens/auth/LoginScreen';
 import RegisterScreen from '@/screens/auth/RegisterScreen';
 import ForgotPasswordScreen from '@/screens/auth/ForgotPasswordScreen';
@@ -25,6 +26,7 @@ import CategoryScreen from '@/screens/category/CategoryScreen';
 import AllCategoriesScreen from '@/screens/category/AllCategoriesScreen';
 import ProductTypeScreen from '@/screens/category/ProductTypeScreen';
 import AllProductTypesScreen from '@/screens/category/AllProductTypesScreen';
+import AllBusinessesScreen from '@/screens/provider/AllBusinessesScreen';
 import ProviderListScreen from '@/screens/provider/ProviderListScreen';
 import ProviderDetailScreen from '@/screens/provider/ProviderDetailScreen';
 import BookingSummaryScreen from '@/screens/bookings/BookingSummaryScreen';
@@ -50,53 +52,70 @@ import AddAddressScreen from '@/screens/addresses/AddAddressScreen';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
+/** Tab icon with a soft blue pill behind it when active (Home mockup). */
+function tabIcon(Icon: LucideIcon) {
+  return ({ color, focused }: { color: string; focused: boolean }) => (
+    <View style={[styles.tabIconWrap, focused && { backgroundColor: PILL.blue.bg }]}>
+      <Icon color={color} size={22} strokeWidth={focused ? 2.2 : 1.9} />
+    </View>
+  );
+}
+
+// Built once so React sees a stable icon renderer per tab.
+const HomeTabIcon = tabIcon(Home);
+const BookingsTabIcon = tabIcon(CalendarDays);
+const RemindersTabIcon = tabIcon(Bell);
+const ProfileTabIcon = tabIcon(User);
+
 /** Bottom tabs for the signed-in customer: Home, Bookings, Reminders, Profile. */
 function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Color.primary,
+        tabBarActiveTintColor: LINK,
         tabBarInactiveTintColor: Color.textSecondary,
         tabBarStyle: {
           backgroundColor: Color.surface,
           borderTopColor: Color.border,
-          height: 88,
-          paddingTop: 8,
+          height: 90,
+          paddingTop: 6,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: FontWeight.semibold },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: FontWeight.semibold, marginTop: 4 },
       }}
     >
       <Tab.Screen
         name={ROUTES.HOME}
         component={HomeScreen}
-        options={{ tabBarLabel: 'Home', tabBarIcon: ({ color, size }) => <Home color={color} size={size} /> }}
+        options={{ tabBarLabel: 'Home', tabBarIcon: HomeTabIcon }}
       />
       <Tab.Screen
         name={ROUTES.BOOKINGS}
         component={BookingsScreen}
         options={{
-          // Two-line label so it isn't truncated ("Bookings &" / "Orders").
+          // One line, shrinking slightly on narrow phones rather than truncating.
           tabBarLabel: ({ color }) => (
             <Text
-              numberOfLines={2}
-              style={{ color, fontSize: 10, fontWeight: FontWeight.semibold, textAlign: 'center' }}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
+              style={[styles.tabLabel, { color }]}
             >
-              Bookings &{'\n'}Orders
+              Bookings & Orders
             </Text>
           ),
-          tabBarIcon: ({ color, size }) => <CalendarDays color={color} size={size} />,
+          tabBarIcon: BookingsTabIcon,
         }}
       />
       <Tab.Screen
         name={ROUTES.REMINDERS}
         component={RemindersScreen}
-        options={{ tabBarLabel: 'Reminders', tabBarIcon: ({ color, size }) => <Bell color={color} size={size} /> }}
+        options={{ tabBarLabel: 'Reminders', tabBarIcon: RemindersTabIcon }}
       />
       <Tab.Screen
         name={ROUTES.PROFILE}
         component={ProfileScreen}
-        options={{ tabBarLabel: 'Profile', tabBarIcon: ({ color, size }) => <User color={color} size={size} /> }}
+        options={{ tabBarLabel: 'Profile', tabBarIcon: ProfileTabIcon }}
       />
     </Tab.Navigator>
   );
@@ -147,6 +166,7 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.ALL_CATEGORIES} component={AllCategoriesScreen} />
       <Stack.Screen name={ROUTES.PRODUCT_TYPE} component={ProductTypeScreen} />
       <Stack.Screen name={ROUTES.ALL_PRODUCT_TYPES} component={AllProductTypesScreen} />
+      <Stack.Screen name={ROUTES.ALL_BUSINESSES} component={AllBusinessesScreen} />
       <Stack.Screen name={ROUTES.PROVIDER_LIST} component={ProviderListScreen} />
       <Stack.Screen name={ROUTES.PROVIDER_DETAILS} component={ProviderDetailScreen} />
       <Stack.Screen name={ROUTES.BOOKING_SUMMARY} component={BookingSummaryScreen} />
