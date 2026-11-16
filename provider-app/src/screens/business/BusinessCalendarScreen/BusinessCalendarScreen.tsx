@@ -283,11 +283,16 @@ export default function BusinessCalendarScreen() {
                 thumbColor={Color.white}
                 ios_backgroundColor={TRACK.false}
                 accessibilityLabel="Open on this date"
+                style={styles.switch}
               />
-              <Text style={styles.switchLabel}>{form.isOpen ? 'Open' : 'Closed'}</Text>
+              <Text style={styles.switchLabel} numberOfLines={1}>
+                {form.isOpen ? 'Open' : 'Closed'}
+              </Text>
             </View>
             <TimePill
               size="compact"
+              showIcon={false}
+              style={styles.timePill}
               label="Opens"
               value={form.openTime}
               disabled={!form.isOpen}
@@ -296,6 +301,8 @@ export default function BusinessCalendarScreen() {
             <Text style={styles.rangeDash}>–</Text>
             <TimePill
               size="compact"
+              showIcon={false}
+              style={styles.timePill}
               label="Closes"
               value={form.closeTime}
               disabled={!form.isOpen}

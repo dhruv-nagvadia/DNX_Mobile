@@ -16,6 +16,8 @@ interface TimePillProps {
   onChange: (value: string) => void;
   size?: 'regular' | 'compact';
   disabled?: boolean;
+  /** Hide the clock glyph where horizontal space is tight. */
+  showIcon?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -30,7 +32,7 @@ export function formatPill(value: string): string {
  * Same 12h + AM/PM three-column picker sheet as `TimeField` (`TimePickerSheet`),
  * just without the stacked label and boxed input.
  */
-export function TimePill({ label, value, onChange, size = 'regular', disabled, style }: TimePillProps) {
+export function TimePill({ label, value, onChange, size = 'regular', disabled, showIcon = true, style }: TimePillProps) {
   const [open, setOpen] = useState(false);
 
   const openPicker = () => {
@@ -55,7 +57,7 @@ export function TimePill({ label, value, onChange, size = 'regular', disabled, s
         accessibilityLabel={`${label}, ${formatPill(value)}`}
         activeOpacity={0.7}
       >
-        <Clock size={size === 'compact' ? 14 : 18} color={INK} strokeWidth={1.9} />
+        {showIcon && <Clock size={size === 'compact' ? 14 : 18} color={INK} strokeWidth={1.9} />}
         <Text
           style={[styles.text, size === 'compact' && styles.textCompact]}
           numberOfLines={1}
@@ -91,11 +93,14 @@ const styles = StyleSheet.create({
     borderColor: CARD_BORDER,
     backgroundColor: Color.white,
   },
+  // Compact pills hug their text instead of stretching to fill the row.
   pillCompact: {
+    flex: 0,
+    flexShrink: 1,
     justifyContent: 'center',
     gap: 5,
-    minHeight: 36,
-    paddingHorizontal: 6,
+    minHeight: 40,
+    paddingHorizontal: 11,
     borderRadius: 10,
   },
   pillDisabled: {
@@ -108,6 +113,6 @@ const styles = StyleSheet.create({
     color: INK,
   },
   textCompact: {
-    fontSize: ModernType.caption,
+    fontSize: ModernType.secondary,
   },
 });

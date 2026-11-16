@@ -387,15 +387,28 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.sm,
   },
+  // Toggle + label never shrink, so the time fields give way instead of
+  // squashing the label into the toggle.
   switchWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
-    minWidth: 104,
+    gap: Spacing.sm + 2,
+    flexShrink: 0,
   },
   switchLabel: {
+    width: 50,
     fontSize: ModernType.body,
     color: INK,
+  },
+  // Android's Switch can draw slightly wider than its layout box, so give
+  // it explicit breathing room on the right as well as the row gap.
+  switch: {
+    flexShrink: 0,
+    marginRight: 8,
+  },
+  timePill: {
+    flex: 1,
+    minWidth: 0,
   },
   rangeDash: {
     fontSize: ModernType.body,

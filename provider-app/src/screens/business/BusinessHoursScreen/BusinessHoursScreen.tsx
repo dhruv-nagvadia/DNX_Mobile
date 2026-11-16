@@ -208,45 +208,59 @@ export default function BusinessHoursScreen() {
                           <Text style={styles.dayName}>{SHORT_DAY_LABELS[d.dayOfWeek]}</Text>
                           {isToday && (
                             <View style={styles.todayTag}>
-                              <Text style={styles.todayTagText}>Today</Text>
+                              <Text style={styles.todayTagText} numberOfLines={1}>
+                                Today
+                              </Text>
                             </View>
                           )}
                         </View>
-                        <Switch
-                          value={d.isOpen}
-                          onValueChange={() => toggleDay(d.dayOfWeek)}
-                          trackColor={TRACK}
-                          thumbColor={Color.white}
-                          ios_backgroundColor={TRACK.false}
-                          accessibilityLabel={`${DAY_LABELS[d.dayOfWeek]} open`}
-                          style={styles.daySwitch}
-                        />
-                        {d.isOpen ? (
-                          <>
-                            <View style={styles.dayTimes}>
-                              <TimePill
-                                size="compact"
-                                label={`${DAY_LABELS[d.dayOfWeek]} opens`}
-                                value={d.openTime}
-                                onChange={(v) => setTime(d.dayOfWeek, 'openTime', v)}
-                              />
-                              <Text style={styles.rangeDashSmall}>–</Text>
-                              <TimePill
-                                size="compact"
-                                label={`${DAY_LABELS[d.dayOfWeek]} closes`}
-                                value={d.closeTime}
-                                onChange={(v) => setTime(d.dayOfWeek, 'closeTime', v)}
-                              />
-                            </View>
-                            <Text style={styles.duration} numberOfLines={1} adjustsFontSizeToFit>
-                              {span > 0 ? formatDuration(span) : '—'}
-                            </Text>
-                          </>
-                        ) : (
-                          <View style={styles.closedBar}>
-                            <Text style={styles.closedText}>Closed</Text>
+                        <View style={styles.daySwitchSlot}>
+                          <Switch
+                            value={d.isOpen}
+                            onValueChange={() => toggleDay(d.dayOfWeek)}
+                            trackColor={TRACK}
+                            thumbColor={Color.white}
+                            ios_backgroundColor={TRACK.false}
+                            accessibilityLabel={`${DAY_LABELS[d.dayOfWeek]} open`}
+                            style={styles.daySwitch}
+                          />
+                        </View>
+                        {/* Closed days keep the same columns (times hidden underneath)
+                            so the Closed bar lines up exactly with the time fields. */}
+                        <View style={styles.dayTimes}>
+                          <View
+                            style={[styles.dayTimesInner, !d.isOpen && styles.hidden]}
+                            pointerEvents={d.isOpen ? 'auto' : 'none'}
+                            accessibilityElementsHidden={!d.isOpen}
+                            importantForAccessibility={d.isOpen ? 'auto' : 'no-hide-descendants'}
+                          >
+                            <TimePill
+                              size="compact"
+                              showIcon={false}
+                              disabled={!d.isOpen}
+                              label={`${DAY_LABELS[d.dayOfWeek]} opens`}
+                              value={d.openTime}
+                              onChange={(v) => setTime(d.dayOfWeek, 'openTime', v)}
+                            />
+                            <Text style={styles.rangeDashSmall}>–</Text>
+                            <TimePill
+                              size="compact"
+                              showIcon={false}
+                              disabled={!d.isOpen}
+                              label={`${DAY_LABELS[d.dayOfWeek]} closes`}
+                              value={d.closeTime}
+                              onChange={(v) => setTime(d.dayOfWeek, 'closeTime', v)}
+                            />
                           </View>
-                        )}
+                          {!d.isOpen && (
+                            <View style={styles.closedBar}>
+                              <Text style={styles.closedText}>Closed</Text>
+                            </View>
+                          )}
+                        </View>
+                        <Text style={styles.duration} numberOfLines={1}>
+                          {d.isOpen ? (span > 0 ? formatDuration(span) : '—') : ''}
+                        </Text>
                       </View>
                       {i < orderedDays.length - 1 && !isToday && !nextIsToday && (
                         <View style={styles.dayDivider} />

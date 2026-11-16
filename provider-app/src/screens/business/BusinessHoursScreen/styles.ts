@@ -181,14 +181,16 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: ModernSize.rowMinHeight,
     paddingVertical: Spacing.sm + 2,
-    paddingHorizontal: Spacing.md,
-    gap: 6,
+    paddingHorizontal: Spacing.md - 4,
+    // Spread day / toggle / times / total evenly so every gap matches.
+    justifyContent: 'space-between',
+    gap: 4,
   },
   dayRowToday: {
     backgroundColor: TODAY_BG,
     borderLeftWidth: 3,
     borderLeftColor: BRAND_BLUE,
-    paddingLeft: Spacing.md - 3,
+    paddingLeft: Spacing.md - 7,
   },
   dayDivider: {
     height: 1,
@@ -196,7 +198,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.divider,
   },
   dayLabel: {
-    width: 40,
+    width: 44,
     alignItems: 'flex-start',
     gap: 3,
   },
@@ -206,35 +208,49 @@ export const styles = StyleSheet.create({
     color: INK,
   },
   todayTag: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 4,
     paddingVertical: 1,
     borderRadius: 6,
     backgroundColor: PILL.blue.bg,
   },
   todayTagText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: FontWeight.semibold,
     color: PILL.blue.fg,
   },
+  // Natural size + no shrinking, so the toggle is never clipped by the row.
   daySwitch: {
+    flexShrink: 0,
     transform: [{ scale: 0.8 }],
-    marginHorizontal: -4,
+  },
+  // Slot is the toggle's natural width (it's only scaled visually), so
+  // neighbours like the Closed bar can never overlap or clip it.
+  daySwitchSlot: {
+    width: 52,
+    flexShrink: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   dayTimes: {
-    flex: 1,
+    flexShrink: 1,
+  },
+  dayTimesInner: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 6,
+  },
+  hidden: {
+    opacity: 0,
   },
   rangeDashSmall: {
     fontSize: ModernType.secondary,
     fontWeight: FontWeight.bold,
     color: INK,
   },
+  // Overlays the (hidden) time fields: starts under the start time, ends under the end time.
   closedBar: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
-    minHeight: 36,
     paddingHorizontal: Spacing.sm + 4,
     borderRadius: 10,
     backgroundColor: '#E8ECF3',
@@ -243,8 +259,11 @@ export const styles = StyleSheet.create({
     fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
+  // Sits right after the times; sized to its text so there's no dead gap.
+  // Fixed width (fits "10h 30m") keeps every row's columns lined up.
   duration: {
-    width: 34,
+    flexShrink: 0,
+    width: 46,
     textAlign: 'right',
     fontSize: ModernType.caption,
     color: Color.textSecondary,
