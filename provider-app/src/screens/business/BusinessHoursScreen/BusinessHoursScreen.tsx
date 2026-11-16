@@ -104,7 +104,7 @@ export default function BusinessHoursScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+          <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title} numberOfLines={1}>
@@ -132,7 +132,7 @@ export default function BusinessHoursScreen() {
               <SummaryTile
                 tint={TINT.mint}
                 borderStyle={styles.tileMint}
-                icon={<Clock size={18} color={TINT.mint.icon} strokeWidth={2} />}
+                icon={<Clock size={16} color={TINT.mint.icon} strokeWidth={2} />}
                 label="Open now"
                 value={openNow?.label ?? 'Not set'}
                 detail={openNow?.detail}
@@ -140,14 +140,14 @@ export default function BusinessHoursScreen() {
               <SummaryTile
                 tint={TINT.blue}
                 borderStyle={styles.tileBlue}
-                icon={<Calendar size={18} color={TINT.blue.icon} strokeWidth={2} />}
+                icon={<Calendar size={16} color={TINT.blue.icon} strokeWidth={2} />}
                 label="Open days"
                 value={`${openDaysCount}/7`}
               />
               <SummaryTile
                 tint={TINT.lavender}
                 borderStyle={styles.tileLavender}
-                icon={<Timer size={18} color={TINT.lavender.icon} strokeWidth={2} />}
+                icon={<Timer size={16} color={TINT.lavender.icon} strokeWidth={2} />}
                 label="Per week"
                 value={formatDuration(weeklyMinutes)}
               />
@@ -156,7 +156,7 @@ export default function BusinessHoursScreen() {
             {/* ── Daily break ────────────────────────────────────────────── */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <Coffee size={26} color={INK} strokeWidth={1.9} />
+                <Coffee size={22} color={INK} strokeWidth={1.9} />
                 <View style={styles.cardHeaderText}>
                   <Text style={styles.cardTitle}>Daily break</Text>
                   <Text style={styles.cardHint}>Applied to all open days</Text>
@@ -180,7 +180,7 @@ export default function BusinessHoursScreen() {
             {/* ── Weekly schedule ────────────────────────────────────────── */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <Clock size={26} color={INK} strokeWidth={1.9} />
+                <Clock size={22} color={INK} strokeWidth={1.9} />
                 <Text style={[styles.cardTitle, styles.flex]} numberOfLines={1}>
                   Weekly schedule
                 </Text>
@@ -266,7 +266,7 @@ export default function BusinessHoursScreen() {
               activeOpacity={0.8}
             >
               <GradientBackground colors={TIP_COLORS} />
-              <Calendar size={30} color={TIP_ICON} strokeWidth={1.8} />
+              <Calendar size={24} color={TIP_ICON} strokeWidth={1.8} />
               <View style={styles.tipText}>
                 <Text style={styles.tipTitle}>Holiday or special hours?</Text>
                 <View style={styles.tipLinkRow}>

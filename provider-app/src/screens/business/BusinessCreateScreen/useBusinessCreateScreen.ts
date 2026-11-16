@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 
+import { useConfirm } from '@/components/ConfirmDialog';
 import { useCreateBusinessMutation, useUploadBusinessImagesMutation } from '@/redux/api/business/businessApi';
 import { useGetCategoriesQuery } from '@/redux/api/category/categoryApi';
 import { Business, BusinessType } from '@/redux/api/business/types';
@@ -53,6 +53,7 @@ export const MAX_PHOTOS = MAX_IMAGES;
  * then a "done" view with next steps once the business exists. */
 export function useBusinessCreateScreen() {
   const navigation = useNavigation<BusinessCreateNavigationProp>();
+  const { confirm, notify } = useConfirm();
   const { data: categories = [], isLoading: categoriesLoading } = useGetCategoriesQuery();
   const [createBusiness, { isLoading: creating }] = useCreateBusinessMutation();
   const [uploadImages, { isLoading: uploading }] = useUploadBusinessImagesMutation();
@@ -87,10 +88,11 @@ export function useBusinessCreateScreen() {
     const loc = await getDeviceLocation();
     setLocating(false);
     if (!loc) {
-      Alert.alert(
-        "Couldn't get your location",
-        'Allow location access for DNX in your phone settings, turn on GPS, then try again.',
-      );
+      notify({
+        title: "Couldn't get your location",
+        message: 'Allow location access for DNX in your phone settings, turn on GPS, then try again.',
+        tone: 'warning',
+      });
       return;
     }
     setCoords({ lat: loc.lat, lng: loc.lng });
@@ -106,7 +108,7 @@ export function useBusinessCreateScreen() {
       city: prev.city || (!cityRef.current.trim() && !!loc.city),
       state: prev.state || (!stateRef.current.trim() && !!loc.state),
     }));
-  }, []);
+  }, [notify]);
 
   const onChange = useCallback(<K extends keyof BusinessCreateForm>(key: K, value: BusinessCreateForm[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -178,7 +180,11 @@ export function useBusinessCreateScreen() {
   const addPhotos = useCallback(async () => {
     const remaining = MAX_PHOTOS - photos.length;
     if (remaining <= 0) {
-      Alert.alert('Photo limit reached', `Maximum of ${MAX_PHOTOS} photos — remove one to add another.`);
+      notify({
+        title: 'Photo limit reached',
+        message: `Maximum of ${MAX_PHOTOS} photos — remove one to add another.`,
+        tone: 'warning',
+      });
       return;
     }
     const result = await launchImageLibrary({ mediaType: 'photo', selectionLimit: remaining, quality: 0.8 });
@@ -197,13 +203,14 @@ export function useBusinessCreateScreen() {
       }
     });
     if (result.assets.length > remaining) {
-      Alert.alert(
-        'Too many photos',
-        `Only the first ${remaining} photo${remaining === 1 ? '' : 's'} were added (up to ${MAX_PHOTOS} in total).`,
-      );
+      notify({
+        title: 'Too many photos',
+        message: `Only the first ${remaining} photo${remaining === 1 ? '' : 's'} were added (up to ${MAX_PHOTOS} in total).`,
+        tone: 'warning',
+      });
     }
     setPhotos((prev) => [...prev, ...picked].slice(0, MAX_PHOTOS));
-  }, [photos.length]);
+  }, [photos.length, notify]);
 
   const removePhoto = useCallback((index: number) => {
     setPhotos((prev) => prev.filter((_, i) => i !== index));
@@ -268,11 +275,18 @@ export function useBusinessCreateScreen() {
       navigation.goBack();
       return;
     }
-    Alert.alert('Discard this business?', "What you've entered so far will be lost.", [
-      { text: 'Keep editing', style: 'cancel' },
-      { text: 'Discard', style: 'destructive', onPress: () => navigation.goBack() },
-    ]);
-  }, [isDirty, navigation]);
+    confirm({
+      title: 'Discard this business?',
+      message: "What you've entered so far will be lost.",
+      confirmText: 'Discard',
+      cancelText: 'Keep editing',
+      tone: 'danger',
+    }).then((ok) => {
+      if (ok) {
+        navigation.goBack();
+      }
+    });
+  }, [isDirty, navigation, confirm]);
 
   // ── Create (+ upload photos) ────────────────────────────────────────────
   const submit = useCallback(async () => {
@@ -324,14 +338,15 @@ export function useBusinessCreateScreen() {
           business = await uploadImages({ id: business.id, formData }).unwrap();
         }
       } catch {
-        Alert.alert(
-          'Photos not uploaded',
-          "Business created, but photos couldn't be uploaded — add them from the Photos screen.",
-        );
+        notify({
+          title: 'Photos not uploaded',
+          message: "Business created, but photos couldn't be uploaded — add them from the Photos screen.",
+          tone: 'warning',
+        });
       }
     }
     setCreated(business);
-  }, [form, photos, coords, createBusiness, uploadImages, validateStep]);
+  }, [form, photos, coords, createBusiness, uploadImages, validateStep, notify]);
 
   // ── Done view actions ───────────────────────────────────────────────────
   const goToBusiness = useCallback(() => {

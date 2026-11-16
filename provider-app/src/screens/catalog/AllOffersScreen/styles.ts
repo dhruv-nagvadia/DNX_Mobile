@@ -1,7 +1,18 @@
 import { StyleSheet } from 'react-native';
 
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG, PILL, SOFT_FILL, TINT } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import {
+  CARD_BORDER,
+  CARD_SHADOW,
+  INK,
+  ModernRadius,
+  ModernSize,
+  ModernType,
+  PAGE_BG,
+  PILL,
+  SOFT_FILL,
+  TINT,
+} from '@/utils/modernTheme';
 
 /** Mockup "Modern Offers Management UI Mockup.png": light header with a round
  * add button, search, business + status chips, pastel tiles, two-column
@@ -9,7 +20,6 @@ import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG, PILL, SOFT_FILL, 
 export const BRAND_BLUE = '#1D4ED8';
 export const SWITCH_OFF = '#D5DAE3';
 export const META_ICON = '#334155';
-export const BACKDROP = 'rgba(15,30,74,0.45)';
 const PROGRESS_TRACK = '#E2E7EF';
 const CODE_BORDER = '#A5B4FC';
 const STUB_BG = '#F1EEFD';
@@ -29,7 +39,7 @@ export const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
-    gap: Spacing.md - 2,
+    gap: ModernSize.gap,
   },
 
   // ── Header ──────────────────────────────────────────────────────────────
@@ -37,7 +47,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
@@ -51,19 +61,19 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   addBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: BRAND_BLUE,
@@ -75,7 +85,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    height: 46,
+    height: 44,
     paddingHorizontal: Spacing.md - 2,
     borderRadius: ModernRadius.box,
     borderWidth: 1,
@@ -85,7 +95,7 @@ export const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     paddingVertical: 0,
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   // Bleed chip rows to the screen edges so chips scroll off-screen.
@@ -116,7 +126,7 @@ export const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
   },
   chipText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -162,12 +172,12 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   tileLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
   tileValue: {
-    fontSize: FontSize.xxl,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -216,14 +226,14 @@ export const styles = StyleSheet.create({
     right: -STUB_NOTCH / 2,
   },
   discount: {
-    fontSize: FontSize.xl + 2,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: BRAND_BLUE,
     letterSpacing: -0.5,
     textAlign: 'center',
   },
   cap: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
     textAlign: 'center',
   },
@@ -239,7 +249,7 @@ export const styles = StyleSheet.create({
   },
   businessPillText: {
     flexShrink: 1,
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -274,7 +284,7 @@ export const styles = StyleSheet.create({
   },
   code: {
     flexShrink: 1,
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.extrabold,
     color: INK,
     letterSpacing: 0.3,
@@ -285,12 +295,12 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   copiedText: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: PILL.green.fg,
   },
   description: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   metaList: {
@@ -303,11 +313,11 @@ export const styles = StyleSheet.create({
   },
   metaText: {
     flex: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: INK,
   },
   usageText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: INK,
   },
   progressTrack: {
@@ -372,7 +382,7 @@ export const styles = StyleSheet.create({
   },
   toggleLabel: {
     flexShrink: 1,
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -381,8 +391,8 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm + 4,
   },
   editBtn: {
-    width: 42,
-    height: 42,
+    width: ModernSize.controlSm,
+    height: ModernSize.controlSm,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -391,8 +401,8 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   deleteBtn: {
-    width: 42,
-    height: 42,
+    width: ModernSize.controlSm,
+    height: ModernSize.controlSm,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -423,18 +433,18 @@ export const styles = StyleSheet.create({
     borderColor: TINT.lavender.border,
   },
   emptyTitle: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.bold,
     color: INK,
     textAlign: 'center',
   },
   emptyBody: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
     textAlign: 'center',
   },
   primaryBtn: {
-    height: 50,
+    height: ModernSize.control,
     alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'center',
@@ -442,129 +452,37 @@ export const styles = StyleSheet.create({
     borderRadius: ModernRadius.button,
     backgroundColor: BRAND_BLUE,
   },
-  primaryBtnDisabled: {
-    opacity: 0.45,
-  },
   primaryBtnText: {
-    fontSize: FontSize.md + 1,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.semibold,
     color: Color.white,
   },
   noMatch: {
     paddingVertical: Spacing.lg,
     textAlign: 'center',
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
 
-  // ── Choose-business sheet ───────────────────────────────────────────────
-  modalRoot: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: BACKDROP,
-  },
-  sheet: {
-    maxHeight: '85%',
-    paddingHorizontal: Spacing.md + 4,
-    paddingTop: Spacing.sm + 2,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    backgroundColor: PAGE_BG,
-  },
-  handle: {
-    alignSelf: 'center',
-    width: 44,
-    height: 5,
-    borderRadius: 3,
-    marginBottom: Spacing.md + 4,
-    backgroundColor: '#C9CFDA',
-  },
-  sheetTitle: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
-    color: INK,
-    letterSpacing: -0.5,
-  },
-  sheetSubtitle: {
-    marginTop: 2,
-    marginBottom: Spacing.md,
-    fontSize: FontSize.md,
-    color: Color.textSecondary,
-  },
-  sheetList: {
-    gap: Spacing.sm + 4,
-    paddingBottom: Spacing.sm,
-  },
-  bizRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-    padding: Spacing.sm + 4,
-    borderRadius: ModernRadius.card,
-    borderWidth: 1,
-    borderColor: CARD_BORDER,
-    backgroundColor: Color.white,
-  },
-  bizRowSelected: {
-    borderWidth: 2,
-    borderColor: BRAND_BLUE,
-    padding: Spacing.sm + 3,
-  },
+  // ── Choose-business sheet (shared BottomSheet) ──────────────────────────
   bizPhoto: {
-    width: 64,
-    height: 64,
-    borderRadius: 10,
+    width: 40,
+    height: 40,
+    borderRadius: ModernSize.controlRadius,
     backgroundColor: SOFT_FILL,
   },
   bizPhotoFallback: {
-    width: 64,
-    height: 64,
-    borderRadius: 10,
+    width: 40,
+    height: 40,
+    borderRadius: ModernSize.controlRadius,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: SOFT_FILL,
   },
-  bizText: {
-    flex: 1,
-    gap: 6,
-  },
-  bizName: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
-    color: INK,
-  },
   typePill: {
-    paddingHorizontal: Spacing.sm + 4,
-    paddingVertical: 5,
-  },
-  radio: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#B6BECC',
-  },
-  radioSelected: {
-    borderColor: BRAND_BLUE,
-  },
-  radioDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: BRAND_BLUE,
-  },
-  cancelBtn: {
-    alignItems: 'center',
-    paddingVertical: Spacing.md - 2,
-  },
-  cancelText: {
-    fontSize: FontSize.md + 1,
-    fontWeight: FontWeight.medium,
-    color: Color.textSecondary,
+    alignSelf: 'flex-start',
+    marginTop: 2,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 3,
   },
 });

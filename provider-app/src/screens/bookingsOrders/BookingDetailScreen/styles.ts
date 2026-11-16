@@ -1,11 +1,13 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
 import {
   CARD_BORDER,
   CARD_SHADOW,
   INK,
   LINK,
   ModernRadius,
+  ModernSize,
+  ModernType,
   PAGE_BG,
   PILL,
   SOFT_FILL,
@@ -34,8 +36,8 @@ export const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md,
+    gap: ModernSize.gap,
+    paddingHorizontal: ModernSize.gutter,
     paddingBottom: Spacing.sm,
   },
   backBtn: {
@@ -46,21 +48,21 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   statusPill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: ModernRadius.pill,
   },
   statusDot: {
@@ -69,7 +71,7 @@ export const styles = StyleSheet.create({
     borderRadius: 4,
   },
   statusPillText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
   },
 
@@ -77,7 +79,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.xs,
     paddingBottom: Spacing.md,
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
 
   // Cards
@@ -86,24 +88,24 @@ export const styles = StyleSheet.create({
     borderRadius: ModernRadius.card,
     borderWidth: 1,
     borderColor: CARD_BORDER,
-    padding: Spacing.md,
-    gap: Spacing.sm + 4,
+    padding: ModernSize.cardPad,
+    gap: ModernSize.gap,
     ...CARD_SHADOW,
   },
   cardTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
+    gap: Spacing.sm + 2,
   },
   cardTitle: {
     flexShrink: 1,
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   cardTitleSm: {
     flexShrink: 1,
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -112,12 +114,12 @@ export const styles = StyleSheet.create({
     backgroundColor: CARD_BORDER,
   },
   body: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
   muted: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   inlineRow: {
@@ -157,9 +159,9 @@ export const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   stepCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     borderWidth: 2,
     borderColor: STEP_GREY,
     backgroundColor: Color.white,
@@ -171,7 +173,7 @@ export const styles = StyleSheet.create({
     borderColor: PRIMARY_BLUE,
   },
   stepLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   stepLabelDone: {
@@ -182,7 +184,7 @@ export const styles = StyleSheet.create({
     fontWeight: FontWeight.bold,
   },
   stepCaption: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
     textAlign: 'center',
   },
@@ -191,8 +193,8 @@ export const styles = StyleSheet.create({
   closedNote: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: Spacing.sm + 4,
-    padding: Spacing.md,
+    gap: ModernSize.gap,
+    padding: ModernSize.cardPad,
     borderRadius: ModernRadius.card,
     borderWidth: 1,
   },
@@ -205,7 +207,7 @@ export const styles = StyleSheet.create({
     borderColor: Color.errorBorder,
   },
   closedTitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -214,7 +216,7 @@ export const styles = StyleSheet.create({
   },
   closedReason: {
     marginTop: 2,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
 
@@ -222,23 +224,23 @@ export const styles = StyleSheet.create({
   serviceRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
+    gap: ModernSize.gap,
   },
   serviceIconBox: {
-    width: 64,
-    height: 64,
+    width: 48,
+    height: 48,
     borderRadius: ModernRadius.box,
     backgroundColor: PILL.lavender.bg,
     alignItems: 'center',
     justifyContent: 'center',
   },
   serviceName: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   servicePrice: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -247,7 +249,7 @@ export const styles = StyleSheet.create({
   visitRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
   mapsBtn: {
     flexDirection: 'row',
@@ -255,13 +257,14 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
     gap: 6,
     paddingHorizontal: Spacing.sm + 4,
-    paddingVertical: Spacing.sm,
+    paddingVertical: 6,
     borderRadius: ModernRadius.button,
     borderWidth: 1.5,
     borderColor: PRIMARY_BLUE,
+    minHeight: ModernSize.controlSm,
   },
   mapsBtnText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: PRIMARY_BLUE,
   },
@@ -270,33 +273,33 @@ export const styles = StyleSheet.create({
   customerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: ModernSize.avatar,
+    height: ModernSize.avatar,
+    borderRadius: ModernSize.avatar / 2,
     backgroundColor: PILL.blue.bg,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: PRIMARY_BLUE,
   },
   customerName: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   customerPhone: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   contactBtn: {
-    width: 48,
-    height: 44,
+    width: 40,
+    height: ModernSize.controlSm,
     borderRadius: ModernRadius.button,
     borderWidth: 1.5,
     borderColor: INK,
@@ -312,12 +315,12 @@ export const styles = StyleSheet.create({
     backgroundColor: SOFT_FILL,
   },
   methodChipText: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
   payRows: {
-    marginLeft: 24 + Spacing.sm + 4,
+    marginLeft: 20 + Spacing.sm + 2,
   },
   payRow: {
     flexDirection: 'row',
@@ -327,11 +330,11 @@ export const styles = StyleSheet.create({
     borderTopColor: CARD_BORDER,
   },
   payLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: INK,
   },
   payValue: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
@@ -350,7 +353,7 @@ export const styles = StyleSheet.create({
     backgroundColor: DUE_FILL,
   },
   dueText: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: PRIMARY_BLUE,
   },
@@ -359,12 +362,12 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'flex-start',
     gap: 6,
-    paddingHorizontal: Spacing.sm + 4,
-    paddingVertical: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: ModernRadius.pill,
   },
   payPillText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.medium,
   },
 
@@ -374,16 +377,16 @@ export const styles = StyleSheet.create({
   },
   tlRow: {
     flexDirection: 'row',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
   tlRail: {
     width: 24,
     alignItems: 'center',
   },
   tlDot: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     borderWidth: 2,
     borderColor: STEP_GREY,
     backgroundColor: Color.white,
@@ -414,7 +417,7 @@ export const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   tlTitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -426,15 +429,15 @@ export const styles = StyleSheet.create({
     color: Color.error,
   },
   tlTime: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
 
   // Sticky action bar
   bar: {
     backgroundColor: Color.white,
-    paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.md,
+    paddingHorizontal: ModernSize.gutter,
+    paddingTop: ModernSize.gap,
     gap: Spacing.sm + 2,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -451,7 +454,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    minHeight: 50,
+    minHeight: ModernSize.control,
     paddingHorizontal: Spacing.sm + 4,
     borderRadius: ModernRadius.button,
     borderWidth: 1.5,
@@ -476,11 +479,11 @@ export const styles = StyleSheet.create({
     borderColor: CARD_BORDER,
   },
   btnText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.semibold,
   },
   barCaption: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
     textAlign: 'center',
   },

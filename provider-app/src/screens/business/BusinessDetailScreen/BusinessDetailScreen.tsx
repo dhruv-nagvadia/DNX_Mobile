@@ -152,7 +152,7 @@ function ManageTile({
       accessibilityRole="button"
     >
       <GradientBackground colors={tint.colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-      <Icon size={28} color={tint.icon} strokeWidth={2} />
+      <Icon size={22} color={tint.icon} strokeWidth={2} />
       <Text style={styles.tileText}>{label}</Text>
     </TouchableOpacity>
   );
@@ -234,7 +234,7 @@ export default function BusinessDetailScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Edit business"
               >
-                <Pencil size={20} color={INK} />
+                <Pencil size={18} color={INK} />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.headerBtn}
@@ -242,7 +242,7 @@ export default function BusinessDetailScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Delete business"
               >
-                <Trash2 size={20} color={Color.error} />
+                <Trash2 size={18} color={Color.error} />
               </TouchableOpacity>
             </View>
           )
@@ -272,7 +272,7 @@ export default function BusinessDetailScreen() {
                 <Text style={styles.name} numberOfLines={2}>
                   {business.businessName}
                 </Text>
-                {business.isVerified && <BadgeCheck size={24} color={Color.white} fill="#2563EB" />}
+                {business.isVerified && <BadgeCheck size={20} color={Color.white} fill="#2563EB" />}
               </View>
               <View style={styles.categoryPill}>
                 <Tag size={13} color="#4F5D8A" />
@@ -283,7 +283,7 @@ export default function BusinessDetailScreen() {
               </View>
               {business.ratingCount > 0 ? (
                 <TouchableOpacity style={styles.ratingRow} onPress={goToReviews} activeOpacity={0.7}>
-                  <Star size={20} color={STAR_COLOR} fill={STAR_COLOR} />
+                  <Star size={16} color={STAR_COLOR} fill={STAR_COLOR} />
                   <Text style={styles.ratingValue}>{business.ratingAvg.toFixed(1)}</Text>
                   <Text style={styles.ratingCount}>
                     ({business.ratingCount} review{business.ratingCount === 1 ? '' : 's'})
@@ -296,7 +296,7 @@ export default function BusinessDetailScreen() {
 
             {business.isBlocked && (
               <View style={styles.banner}>
-                <Ban size={24} color={Color.error} />
+                <Ban size={20} color={Color.error} />
                 <View style={styles.bannerMain}>
                   <Text style={styles.bannerTitle}>Business Blocked</Text>
                   <Text style={styles.bannerText}>
@@ -353,7 +353,7 @@ export default function BusinessDetailScreen() {
             <View style={styles.section}>
               <SectionHeader
                 title="About"
-                action={<LinkButton label="Edit" icon={<Pencil size={15} color={LINK} />} onPress={goToEdit} />}
+                action={<LinkButton label="Edit" icon={<Pencil size={14} color={LINK} />} onPress={goToEdit} />}
               />
               {business.description ? (
                 <AboutText text={business.description} />
@@ -369,11 +369,11 @@ export default function BusinessDetailScreen() {
             <View style={styles.section}>
               <SectionHeader
                 title="Contact & Location"
-                action={<LinkButton label="Edit" icon={<Pencil size={15} color={LINK} />} onPress={goToEdit} />}
+                action={<LinkButton label="Edit" icon={<Pencil size={14} color={LINK} />} onPress={goToEdit} />}
               />
-              <ContactRow icon={<Phone size={22} color={INK} />} label="Phone" value={business.phone} />
-              <ContactRow icon={<Mail size={22} color={INK} />} label="Email" value={business.email} />
-              <ContactRow icon={<MapPin size={22} color={INK} />} label="Address" value={address} last />
+              <ContactRow icon={<Phone size={20} color={INK} />} label="Phone" value={business.phone} />
+              <ContactRow icon={<Mail size={20} color={INK} />} label="Email" value={business.email} />
+              <ContactRow icon={<MapPin size={20} color={INK} />} label="Address" value={address} last />
             </View>
 
             <View style={styles.divider} />
@@ -387,7 +387,7 @@ export default function BusinessDetailScreen() {
               {business.ratingCount > 0 ? (
                 <TouchableOpacity style={styles.reviewSummary} onPress={goToReviews} activeOpacity={0.7}>
                   <Text style={styles.reviewSummaryValue}>{business.ratingAvg.toFixed(1)}</Text>
-                  <Stars rating={business.ratingAvg} size={20} />
+                  <Stars rating={business.ratingAvg} size={18} />
                   <Text style={styles.reviewSummaryCount}>
                     ({business.ratingCount} review{business.ratingCount === 1 ? '' : 's'})
                   </Text>
@@ -411,7 +411,7 @@ export default function BusinessDetailScreen() {
                         {r.user.fullName}
                       </Text>
                       <View style={styles.reviewMetaRow}>
-                        <Stars rating={r.rating} size={15} />
+                        <Stars rating={r.rating} size={14} />
                         <Text style={styles.reviewTime}>• {timeAgo(r.createdAt)}</Text>
                       </View>
                       {!!r.comment && (

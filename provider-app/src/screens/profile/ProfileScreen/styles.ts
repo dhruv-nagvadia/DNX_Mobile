@@ -1,16 +1,18 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
 import {
   CARD_BORDER,
   CARD_SHADOW,
   INK,
   LINK,
   ModernRadius,
+  ModernSize,
+  ModernType,
   PAGE_BG,
   SOFT_FILL,
 } from '@/utils/modernTheme';
 
-const AVATAR = 88;
+const AVATAR = 84;
 
 /** Profile — matches "DNX Provider Profile Dashboard.png" (modern light look). */
 export const styles = StyleSheet.create({
@@ -19,13 +21,13 @@ export const styles = StyleSheet.create({
     backgroundColor: PAGE_BG,
   },
   content: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: ModernSize.gutter,
     paddingBottom: Spacing.xl,
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
   pageTitle: {
-    fontSize: 30,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.largeTitle,
+    fontWeight: FontWeight.bold,
     color: INK,
     marginLeft: 2,
   },
@@ -36,8 +38,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.md,
     padding: Spacing.md,
-    paddingTop: Spacing.lg,
-    paddingBottom: Spacing.lg,
+    paddingTop: Spacing.md + 4,
+    paddingBottom: Spacing.md + 4,
     borderRadius: ModernRadius.card + 4,
     overflow: 'hidden',
     backgroundColor: '#0F2E7A',
@@ -58,7 +60,7 @@ export const styles = StyleSheet.create({
     zIndex: 1,
   },
   editBtnText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: Color.white,
   },
@@ -85,7 +87,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#DBEAFE',
   },
   avatarText: {
-    fontSize: FontSize.xl,
+    fontSize: 28,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -108,13 +110,13 @@ export const styles = StyleSheet.create({
     paddingTop: Spacing.md,
   },
   heroName: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: Color.white,
     paddingRight: 64,
   },
   heroContact: {
-    fontSize: FontSize.xs + 1,
+    fontSize: ModernType.secondary,
     color: 'rgba(248, 250, 252, 0.88)',
   },
   heroPills: {
@@ -124,7 +126,7 @@ export const styles = StyleSheet.create({
     marginTop: 4,
   },
   avatarErrorText: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.white,
     backgroundColor: 'rgba(239, 68, 68, 0.35)',
     paddingHorizontal: Spacing.sm,
@@ -152,11 +154,12 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: Color.surface,
     ...CARD_SHADOW,
+    minHeight: 76,
   },
   tileIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
@@ -165,7 +168,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   tileLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
@@ -175,7 +178,7 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   tileValue: {
-    fontSize: FontSize.xl,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -186,14 +189,14 @@ export const styles = StyleSheet.create({
     borderRadius: ModernRadius.card,
     borderWidth: 1,
     borderColor: CARD_BORDER,
-    paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.sm + 2,
+    paddingHorizontal: ModernSize.cardPad,
+    paddingTop: ModernSize.gap,
     paddingBottom: Spacing.xs,
     ...CARD_SHADOW,
   },
   cardTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.cardTitle,
+    fontWeight: FontWeight.bold,
     color: INK,
     marginBottom: 2,
   },
@@ -202,19 +205,19 @@ export const styles = StyleSheet.create({
     borderRadius: ModernRadius.card,
     borderWidth: 1,
     borderColor: CARD_BORDER,
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: ModernSize.cardPad,
     paddingVertical: 4,
     ...CARD_SHADOW,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 2,
+    gap: ModernSize.gap,
   },
   menuIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -223,7 +226,8 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    paddingVertical: Spacing.sm + 4,
+    paddingVertical: Spacing.sm,
+    minHeight: ModernSize.rowMinHeight,
   },
   menuBodyDivided: {
     borderTopWidth: 1,
@@ -231,8 +235,8 @@ export const styles = StyleSheet.create({
   },
   menuItemText: {
     flex: 1,
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
+    fontSize: ModernType.rowTitle,
+    fontWeight: FontWeight.semibold,
     color: INK,
   },
   menuItemTextDanger: {
@@ -242,30 +246,30 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   countBadge: {
-    minWidth: 30,
-    height: 26,
+    minWidth: 26,
+    height: 22,
     paddingHorizontal: 8,
-    borderRadius: 13,
+    borderRadius: 11,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: SOFT_FILL,
   },
   countBadgeText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   unreadBadge: {
-    minWidth: 24,
-    height: 24,
+    minWidth: 22,
+    height: 22,
     paddingHorizontal: 6,
-    borderRadius: 12,
+    borderRadius: 11,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Color.error,
   },
   unreadBadgeText: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.bold,
     color: Color.white,
   },
@@ -276,67 +280,27 @@ export const styles = StyleSheet.create({
     marginTop: 2,
   },
   deleteLinkText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
     textDecorationLine: 'underline',
   },
   version: {
     textAlign: 'center',
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
 
   // ── Modals (light sheet) ─────────────────────────────────────────────────
   errorText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.error,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: Color.overlay,
-    justifyContent: 'flex-end',
-  },
-  modalSheet: {
-    backgroundColor: Color.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: Spacing.lg,
-    paddingTop: Spacing.sm,
-    paddingBottom: Spacing.xl,
+  sheetForm: {
     gap: Spacing.sm,
-  },
-  modalHandle: {
-    alignSelf: 'center',
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: CARD_BORDER,
-    marginBottom: Spacing.sm,
-  },
-  modalTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.extrabold,
-    color: INK,
-    marginBottom: Spacing.xs,
   },
   modalBody: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     lineHeight: 20,
     color: Color.textSecondary,
-  },
-  modalActions: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    marginTop: Spacing.xs,
-  },
-  modalButton: {
-    flex: 1,
-    borderRadius: ModernRadius.button,
-  },
-  primaryButton: {
-    backgroundColor: LINK,
-  },
-  dangerButton: {
-    backgroundColor: Color.error,
   },
 });

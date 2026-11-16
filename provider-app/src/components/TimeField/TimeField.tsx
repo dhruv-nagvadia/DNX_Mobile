@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-
-import { AppButton } from '@/components/AppButton';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { TimeFieldProps } from './types';
-import { HOURS_12, MERIDIEMS, MINUTES_5, formatDisplay, parse24, to24 } from './utils';
+import { TimePickerSheet } from './TimePickerSheet';
+import { formatDisplay } from './utils';
 import { styles } from './styles';
 
 /**
@@ -14,16 +13,16 @@ import { styles } from './styles';
  */
 export function TimeField({ label, value, onChange, disabled }: TimeFieldProps) {
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState(() => parse24(value));
 
   const openPicker = () => {
-    if (disabled) return;
-    setDraft(parse24(value));
+    if (disabled) {
+      return;
+    }
     setOpen(true);
   };
 
-  const confirm = () => {
-    onChange(to24(draft.hour12, draft.minute, draft.meridiem));
+  const confirm = (next: string) => {
+    onChange(next);
     setOpen(false);
   };
 
@@ -39,65 +38,7 @@ export function TimeField({ label, value, onChange, disabled }: TimeFieldProps) 
         <Text style={styles.fieldText}>{formatDisplay(value)}</Text>
       </TouchableOpacity>
 
-      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-        <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={() => setOpen(false)}>
-          <TouchableOpacity activeOpacity={1} style={styles.sheet} onPress={(e) => e.stopPropagation()}>
-            <Text style={styles.sheetTitle}>{label}</Text>
-
-            <View style={styles.columns}>
-              <ScrollView style={styles.column} showsVerticalScrollIndicator={false}>
-                {HOURS_12.map((h) => (
-                  <TouchableOpacity
-                    key={h}
-                    style={[styles.option, h === draft.hour12 && styles.optionSelected]}
-                    onPress={() => setDraft((d) => ({ ...d, hour12: h }))}
-                  >
-                    <Text style={[styles.optionText, h === draft.hour12 && styles.optionTextSelected]}>{h}</Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-
-              <ScrollView style={[styles.column, styles.columnDivider]} showsVerticalScrollIndicator={false}>
-                {MINUTES_5.map((m) => (
-                  <TouchableOpacity
-                    key={m}
-                    style={[styles.option, m === draft.minute && styles.optionSelected]}
-                    onPress={() => setDraft((d) => ({ ...d, minute: m }))}
-                  >
-                    <Text style={[styles.optionText, m === draft.minute && styles.optionTextSelected]}>
-                      {String(m).padStart(2, '0')}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-
-              <ScrollView style={[styles.column, styles.columnDivider]} showsVerticalScrollIndicator={false}>
-                {MERIDIEMS.map((mer) => (
-                  <TouchableOpacity
-                    key={mer}
-                    style={[styles.option, mer === draft.meridiem && styles.optionSelected]}
-                    onPress={() => setDraft((d) => ({ ...d, meridiem: mer }))}
-                  >
-                    <Text style={[styles.optionText, mer === draft.meridiem && styles.optionTextSelected]}>
-                      {mer}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-
-            <View style={styles.actions}>
-              <AppButton
-                style={styles.actionButton}
-                title="Cancel"
-                variant="secondary"
-                onPress={() => setOpen(false)}
-              />
-              <AppButton style={styles.actionButton} title="Done" onPress={confirm} />
-            </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+      <TimePickerSheet visible={open} title={label} value={value} onClose={() => setOpen(false)} onDone={confirm} />
     </View>
   );
 }

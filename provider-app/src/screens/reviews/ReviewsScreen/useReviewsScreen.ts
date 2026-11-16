@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
+import { useConfirm } from '@/components/ConfirmDialog';
+import { Trash2 } from 'lucide-react-native';
 import {
   useGetAllProductReviewsQuery,
   useGetAllReviewsQuery,
@@ -53,6 +54,7 @@ function compare(sort: ReviewSort) {
  * optionally preselected to one business via `route.params.businessId`. */
 export function useReviewsScreen() {
   const navigation = useNavigation();
+  const { confirm } = useConfirm();
   const route = useRoute<ReviewsRouteProp>();
   const routeBusinessId = route.params?.businessId;
 
@@ -205,13 +207,19 @@ export function useReviewsScreen() {
   );
 
   const removeReply = useCallback(
-    (item: ReviewItem) => {
-      Alert.alert('Remove reply?', 'Your public reply will be deleted from this review.', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Remove', style: 'destructive', onPress: () => sendReply(item, null) },
-      ]);
+    async (item: ReviewItem) => {
+      const ok = await confirm({
+        title: 'Remove reply?',
+        message: 'Your public reply will be deleted from this review.',
+        confirmText: 'Remove',
+        tone: 'danger',
+        icon: Trash2,
+      });
+      if (ok) {
+        sendReply(item, null);
+      }
     },
-    [sendReply],
+    [sendReply, confirm],
   );
 
   const refresh = useCallback(() => {

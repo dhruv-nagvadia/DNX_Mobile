@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Alert,
   Image,
   RefreshControl,
   ScrollView,
@@ -27,6 +26,7 @@ import {
   TriangleAlert,
 } from 'lucide-react-native';
 
+import { useConfirm } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { GradientBackground } from '@/components/GradientBackground';
 import { Product } from '@/redux/api/business/types';
@@ -113,7 +113,7 @@ function ProductCard({
             <Image source={{ uri: p.imageUrl }} style={styles.thumb} />
           ) : (
             <View style={[styles.thumb, styles.thumbFallback]}>
-              <Package size={28} color={Color.placeholder} strokeWidth={1.6} />
+              <Package size={20} color={Color.placeholder} strokeWidth={1.6} />
             </View>
           )}
           <View style={styles.info}>
@@ -126,7 +126,7 @@ function ProductCard({
             <View style={styles.metaRow}>
               {ratingCount > 0 ? (
                 <>
-                  <Star size={15} color={STAR} fill={STAR} />
+                  <Star size={14} color={STAR} fill={STAR} />
                   <Text style={styles.ratingValue}>{(p.ratingAvg ?? 0).toFixed(1)}</Text>
                   <Text style={styles.meta}>({ratingCount})</Text>
                 </>
@@ -163,7 +163,7 @@ function ProductCard({
               accessibilityRole="button"
               accessibilityLabel={`Edit ${p.name}`}
             >
-              <Pencil size={18} color={BRAND_BLUE} />
+              <Pencil size={16} color={BRAND_BLUE} />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.deleteBtn}
@@ -173,7 +173,7 @@ function ProductCard({
               accessibilityRole="button"
               accessibilityLabel={`Delete ${p.name}`}
             >
-              <Trash2 size={18} color={PILL.red.fg} />
+              <Trash2 size={16} color={PILL.red.fg} />
             </TouchableOpacity>
           </View>
         </View>
@@ -183,7 +183,7 @@ function ProductCard({
 
       <View style={styles.bottomRow}>
         <View style={[styles.stockPill, { backgroundColor: pill.colors.bg }]}>
-          <PillIcon size={16} color={pill.colors.fg} strokeWidth={2.2} />
+          <PillIcon size={14} color={pill.colors.fg} strokeWidth={2.2} />
           <Text style={[styles.stockPillText, { color: pill.colors.fg }]} numberOfLines={1}>
             {pill.label}
           </Text>
@@ -229,15 +229,22 @@ export default function ProductsScreen() {
     openProduct,
     goToStock,
   } = useProductsScreen();
+  const { confirm } = useConfirm();
 
   const hasProducts = products.length > 0;
   const countLabel = `${products.length} product${products.length === 1 ? '' : 's'}`;
 
-  const confirmDelete = (productId: string, name: string) => {
-    Alert.alert('Delete product?', `"${name}" will be removed from your catalog.`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => remove(productId) },
-    ]);
+  const confirmDelete = async (productId: string, name: string) => {
+    const ok = await confirm({
+      title: 'Delete product?',
+      message: `"${name}" will be removed from your catalog.`,
+      confirmText: 'Delete',
+      tone: 'danger',
+      icon: Trash2,
+    });
+    if (ok) {
+      remove(productId);
+    }
   };
 
   const chips = [{ key: ALL_SECTIONS, label: 'All' }, ...sections.map((s) => ({ key: s, label: s }))];
@@ -253,7 +260,7 @@ export default function ProductsScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+          <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title} numberOfLines={1}>
@@ -269,7 +276,7 @@ export default function ProductsScreen() {
           accessibilityRole="button"
           accessibilityLabel="Add a product"
         >
-          <Plus size={28} color={Color.white} strokeWidth={2.4} />
+          <Plus size={22} color={Color.white} strokeWidth={2.4} />
         </TouchableOpacity>
       </View>
 
@@ -330,19 +337,19 @@ export default function ProductsScreen() {
                   label="Active"
                   value={counts.active}
                   theme={TINT.mint}
-                  icon={<CircleCheck size={30} color={TINT.mint.icon} strokeWidth={1.8} />}
+                  icon={<CircleCheck size={20} color={TINT.mint.icon} strokeWidth={1.8} />}
                 />
                 <SummaryTile
                   label="Low stock"
                   value={counts.low}
                   theme={TINT.peach}
-                  icon={<TriangleAlert size={30} color={TINT.peach.icon} strokeWidth={1.8} />}
+                  icon={<TriangleAlert size={20} color={TINT.peach.icon} strokeWidth={1.8} />}
                 />
                 <SummaryTile
                   label="Out of stock"
                   value={counts.out}
                   theme={TINT.pink}
-                  icon={<Ban size={30} color={TINT.pink.icon} strokeWidth={1.8} />}
+                  icon={<Ban size={20} color={TINT.pink.icon} strokeWidth={1.8} />}
                 />
               </View>
 
@@ -368,7 +375,7 @@ export default function ProductsScreen() {
 
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, Spacing.md) }]}>
         <TouchableOpacity style={styles.stockBtn} onPress={goToStock} activeOpacity={0.8} accessibilityRole="button">
-          <Box size={24} color={BRAND_BLUE} strokeWidth={1.8} />
+          <Box size={20} color={BRAND_BLUE} strokeWidth={1.8} />
           <Text style={styles.stockBtnText}>Manage Stock</Text>
         </TouchableOpacity>
       </View>

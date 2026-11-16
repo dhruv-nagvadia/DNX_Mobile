@@ -111,7 +111,7 @@ function Thumb({ product, large }: { product: Product; large?: boolean }) {
   }
   return (
     <View style={[style, styles.thumbFallback]}>
-      <Package size={large ? 30 : 20} color={Color.placeholder} strokeWidth={1.6} />
+      <Package size={large ? 22 : 18} color={Color.placeholder} strokeWidth={1.6} />
     </View>
   );
 }
@@ -268,7 +268,7 @@ export default function StockScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+          <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title} numberOfLines={1}>
@@ -303,26 +303,26 @@ export default function StockScreen() {
                   label="In stock"
                   value={counts.inStock}
                   theme={TINT.mint}
-                  icon={<CircleCheck size={28} color={TINT.mint.icon} strokeWidth={1.8} />}
+                  icon={<CircleCheck size={20} color={TINT.mint.icon} strokeWidth={1.8} />}
                 />
                 <SummaryTile
                   label="Low stock"
                   value={counts.low}
                   theme={TINT.peach}
-                  icon={<TriangleAlert size={28} color={TINT.peach.icon} strokeWidth={1.8} />}
+                  icon={<TriangleAlert size={20} color={TINT.peach.icon} strokeWidth={1.8} />}
                 />
                 <SummaryTile
                   label="Out of stock"
                   value={counts.out}
                   theme={TINT.pink}
-                  icon={<Ban size={28} color={TINT.pink.icon} strokeWidth={1.8} />}
+                  icon={<Ban size={20} color={TINT.pink.icon} strokeWidth={1.8} />}
                 />
               </View>
 
               {/* ── Select Product ─────────────────────────────────────── */}
               <View style={styles.card}>
                 <View style={styles.cardHeader}>
-                  <Box size={24} color={INK} strokeWidth={1.8} />
+                  <Box size={20} color={INK} strokeWidth={1.8} />
                   <Text style={styles.cardTitle}>Select Product</Text>
                 </View>
 
@@ -416,7 +416,7 @@ export default function StockScreen() {
               {!!selected && (
                 <View style={styles.card}>
                   <View style={styles.cardHeader}>
-                    <Layers size={24} color={BRAND_BLUE} strokeWidth={1.8} />
+                    <Layers size={20} color={BRAND_BLUE} strokeWidth={1.8} />
                     <Text style={styles.cardTitle}>Adjust Stock</Text>
                   </View>
 
@@ -481,7 +481,7 @@ export default function StockScreen() {
                               accessibilityRole="button"
                               accessibilityLabel="Decrease quantity"
                             >
-                              <Minus size={22} color={INK} />
+                              <Minus size={20} color={INK} />
                             </TouchableOpacity>
                             <TextInput
                               style={styles.stepInput}
@@ -498,7 +498,7 @@ export default function StockScreen() {
                               accessibilityRole="button"
                               accessibilityLabel="Increase quantity"
                             >
-                              <Plus size={22} color={INK} />
+                              <Plus size={20} color={INK} />
                             </TouchableOpacity>
                           </View>
                           <TouchableOpacity
@@ -617,7 +617,7 @@ export default function StockScreen() {
           {!isLoading && (
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <History size={24} color={INK} strokeWidth={1.8} />
+                <History size={20} color={INK} strokeWidth={1.8} />
                 <Text style={styles.cardTitle}>Recent changes</Text>
                 {(showAllHistory || adjustments.length >= 3) && (
                   <TouchableOpacity
@@ -671,7 +671,7 @@ export default function StockScreen() {
               activeOpacity={0.8}
               accessibilityRole="button"
             >
-              <Ban size={22} color={Color.error} strokeWidth={2} />
+              <Ban size={20} color={Color.error} strokeWidth={2} />
               <Text style={styles.dangerBtnText}>Mark as Out of Stock</Text>
             </TouchableOpacity>
           </View>

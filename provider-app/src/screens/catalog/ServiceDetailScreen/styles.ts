@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, LINK, ModernRadius, PAGE_BG, PILL, TINT } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, LINK, ModernRadius, ModernSize, ModernType, PAGE_BG, PILL, TINT } from '@/utils/modernTheme';
 
 /** Mockup "Salon Service Details App Screen.png": light header with
  * edit/delete, hero card, pastel stat tiles, performance, upcoming bookings,
@@ -12,7 +12,7 @@ export const SWITCH_OFF = '#D5DAE3';
 export const ICON_LAVENDER = '#4C1D95';
 export const MUTED = Color.textSecondary;
 export const ORANGE = '#EA580C';
-export const HERO_ICON = 72;
+export const HERO_ICON = 56;
 
 const box = {
   borderRadius: ModernRadius.box,
@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.lg,
-    gap: Spacing.md - 2,
+    gap: ModernSize.gap,
   },
 
   // ── Header (mirrors ServicesScreen) ─────────────────────────────────────
@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
@@ -50,8 +50,8 @@ export const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
@@ -61,16 +61,16 @@ export const styles = StyleSheet.create({
   },
   editBtn: {
     ...box,
-    width: 46,
-    height: 46,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
     borderWidth: 1,
     borderColor: BRAND_BLUE,
     backgroundColor: Color.white,
   },
   deleteBtn: {
     ...box,
-    width: 46,
-    height: 46,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
     borderWidth: 1,
     borderColor: '#F6C9C9',
     backgroundColor: PILL.red.bg,
@@ -78,8 +78,8 @@ export const styles = StyleSheet.create({
 
   // ── Cards ───────────────────────────────────────────────────────────────
   card: {
-    padding: Spacing.md,
-    gap: Spacing.sm + 4,
+    padding: ModernSize.cardPad,
+    gap: ModernSize.gap,
     borderRadius: ModernRadius.card,
     borderWidth: 1,
     borderColor: CARD_BORDER,
@@ -93,12 +93,12 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   cardTitle: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   cardHint: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: MUTED,
   },
   link: {
@@ -107,7 +107,7 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   linkText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: LINK,
   },
@@ -116,7 +116,7 @@ export const styles = StyleSheet.create({
   hero: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: Spacing.md - 2,
+    gap: ModernSize.gap,
   },
   heroIcon: {
     ...box,
@@ -138,12 +138,12 @@ export const styles = StyleSheet.create({
   },
   heroName: {
     flex: 1,
-    fontSize: FontSize.xl,
+    fontSize: ModernType.title,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   heroBusiness: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: MUTED,
   },
   switch: {
@@ -176,12 +176,12 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   tileLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   tileValue: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -194,12 +194,12 @@ export const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   aboutText: {
-    fontSize: FontSize.sm,
-    lineHeight: FontSize.sm * 1.45,
+    fontSize: ModernType.body,
+    lineHeight: 20,
     color: MUTED,
   },
   more: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: LINK,
   },
@@ -217,11 +217,11 @@ export const styles = StyleSheet.create({
     gap: 6,
   },
   legendText: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: INK,
   },
   legendSep: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: MUTED,
   },
   dotGreen: {
@@ -255,6 +255,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.sm + 4,
     paddingVertical: Spacing.sm,
+    minHeight: ModernSize.rowMinHeight,
   },
   rowDivider: {
     borderTopWidth: 1,
@@ -270,7 +271,7 @@ export const styles = StyleSheet.create({
     borderColor: TINT.blue.border,
   },
   timeText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: INK,
   },
   rowInfo: {
@@ -278,7 +279,7 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   customer: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -289,7 +290,7 @@ export const styles = StyleSheet.create({
   },
   payText: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: MUTED,
   },
   rowPill: {
@@ -297,7 +298,7 @@ export const styles = StyleSheet.create({
   },
   empty: {
     paddingVertical: Spacing.sm,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: MUTED,
   },
 
@@ -315,9 +316,9 @@ export const styles = StyleSheet.create({
   },
   offerIcon: {
     ...box,
-    width: 52,
+    width: 44,
     alignSelf: 'stretch',
-    minHeight: 54,
+    minHeight: 48,
     borderRadius: 0,
     borderRightWidth: 1,
     borderRightColor: TINT.lavender.border,
@@ -341,13 +342,13 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   codeText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: 0.3,
   },
   offerValue: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: INK,
   },
   emptyOffers: {
@@ -361,12 +362,12 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     paddingHorizontal: Spacing.sm + 4,
-    paddingVertical: Spacing.sm,
     borderRadius: ModernRadius.button,
     backgroundColor: PILL.blue.bg,
+    height: ModernSize.controlSm,
   },
   createText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: BRAND_BLUE,
   },
@@ -375,20 +376,21 @@ export const styles = StyleSheet.create({
   setting: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md - 2,
+    gap: ModernSize.gap,
     paddingVertical: Spacing.sm,
+    minHeight: ModernSize.rowMinHeight,
   },
   settingInfo: {
     flex: 1,
     gap: 2,
   },
   settingTitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   settingSub: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: MUTED,
   },
 
@@ -405,12 +407,12 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm + 2,
-    height: 54,
+    height: ModernSize.control,
     borderRadius: ModernRadius.button,
     backgroundColor: BRAND_BLUE,
   },
   primaryText: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: Color.white,
   },
@@ -424,20 +426,21 @@ export const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   notFoundTitle: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   notFoundBody: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: MUTED,
     textAlign: 'center',
   },
   notFoundBtn: {
     marginTop: Spacing.sm,
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm + 4,
     borderRadius: ModernRadius.button,
     backgroundColor: BRAND_BLUE,
+    height: ModernSize.control,
+    justifyContent: 'center',
   },
 });

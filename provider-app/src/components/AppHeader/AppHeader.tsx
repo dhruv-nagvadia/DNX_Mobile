@@ -56,7 +56,7 @@ export function AppHeader({
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          {light ? <ArrowLeft size={24} color={INK} /> : <ChevronLeft size={24} color={Color.white} />}
+          {light ? <ArrowLeft size={22} color={INK} /> : <ChevronLeft size={22} color={Color.white} />}
         </TouchableOpacity>
       ) : null}
 

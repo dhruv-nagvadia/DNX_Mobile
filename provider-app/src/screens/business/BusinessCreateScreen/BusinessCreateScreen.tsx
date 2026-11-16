@@ -75,14 +75,14 @@ function TypeCard({ icon: Icon, title, sub, selected, onPress }: TypeCardProps) 
       accessibilityRole="radio"
       accessibilityState={{ selected }}
     >
-      <Icon size={30} color={selected ? BRAND_BLUE : INK} strokeWidth={1.8} />
+      <Icon size={24} color={selected ? BRAND_BLUE : INK} strokeWidth={1.8} />
       <View style={styles.typeBody}>
         <Text style={styles.typeTitle}>{title}</Text>
         <Text style={styles.typeSub}>{sub}</Text>
       </View>
       {selected && (
         <View style={styles.checkBadge}>
-          <Check size={18} color={Color.white} strokeWidth={3} />
+          <Check size={14} color={Color.white} strokeWidth={3} />
         </View>
       )}
     </TouchableOpacity>
@@ -103,7 +103,7 @@ function PayCard({ icon: Icon, title, desc, value, onValueChange, alwaysOn, chil
   return (
     <View style={styles.payCard}>
       <View style={styles.payIcon}>
-        <Icon size={28} color={INK} strokeWidth={1.7} />
+        <Icon size={22} color={INK} strokeWidth={1.7} />
       </View>
       <View style={styles.payBody}>
         <View style={styles.payTitleRow}>
@@ -199,7 +199,7 @@ export default function BusinessCreateScreen() {
             accessibilityRole="button"
             accessibilityLabel="Back to My Businesses"
           >
-            <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+            <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
           </TouchableOpacity>
           <View style={styles.headerText}>
             <Text style={styles.title}>Add business</Text>
@@ -248,9 +248,9 @@ export default function BusinessCreateScreen() {
           accessibilityLabel={isFirstStep ? 'Close' : 'Previous step'}
         >
           {isFirstStep ? (
-            <X size={26} color={INK} strokeWidth={2.2} />
+            <X size={22} color={INK} strokeWidth={2.2} />
           ) : (
-            <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+            <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
           )}
         </TouchableOpacity>
         <View style={styles.headerText}>
@@ -315,13 +315,13 @@ export default function BusinessCreateScreen() {
                         accessibilityState={{ selected }}
                       >
                         <GradientBackground colors={tint.colors} />
-                        <Icon size={28} color={selected ? BRAND_BLUE : tint.icon} strokeWidth={1.8} />
+                        <Icon size={22} color={selected ? BRAND_BLUE : tint.icon} strokeWidth={1.8} />
                         <Text style={styles.tileLabel} numberOfLines={2}>
                           {c.name}
                         </Text>
                         {selected && (
                           <View style={styles.checkBadgeSmall}>
-                            <Check size={14} color={Color.white} strokeWidth={3} />
+                            <Check size={12} color={Color.white} strokeWidth={3} />
                           </View>
                         )}
                       </TouchableOpacity>
@@ -474,7 +474,7 @@ export default function BusinessCreateScreen() {
               )}
 
               <View style={styles.infoBox}>
-                <Info size={24} color={BRAND_BLUE} strokeWidth={2} />
+                <Info size={20} color={BRAND_BLUE} strokeWidth={2} />
                 <Text style={styles.infoText}>Change these any time from your business settings.</Text>
               </View>
             </>
@@ -493,7 +493,7 @@ export default function BusinessCreateScreen() {
               </Text>
 
               <View style={styles.usageStrip}>
-                <ImageIcon size={24} color={BRAND_BLUE} strokeWidth={1.9} />
+                <ImageIcon size={20} color={BRAND_BLUE} strokeWidth={1.9} />
                 <Text style={styles.usageText}>
                   {photos.length} / {MAX_PHOTOS} photos
                 </Text>
@@ -518,7 +518,7 @@ export default function BusinessCreateScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={`Remove photo ${i + 1}`}
                     >
-                      <X size={18} color={INK} strokeWidth={2.6} />
+                      <X size={16} color={INK} strokeWidth={2.6} />
                     </TouchableOpacity>
                   </View>
                 ))}
@@ -530,7 +530,7 @@ export default function BusinessCreateScreen() {
                     accessibilityRole="button"
                     accessibilityLabel="Add photos"
                   >
-                    <Plus size={34} color={BRAND_BLUE} strokeWidth={2} />
+                    <Plus size={28} color={BRAND_BLUE} strokeWidth={2} />
                     <Text style={styles.addText}>Add photos</Text>
                   </TouchableOpacity>
                 )}
@@ -583,7 +583,7 @@ export default function BusinessCreateScreen() {
               </View>
               <View style={styles.pinCard}>
                 <View style={styles.pinCardHead}>
-                  <MapPin size={22} color={INK} />
+                  <MapPin size={20} color={INK} />
                   <View style={styles.pinCardText}>
                     <Text style={styles.pinCardTitle}>Pin your location</Text>
                     <Text style={styles.pinCardSub}>Set the exact location on the map for better accuracy.</Text>

@@ -40,8 +40,8 @@ const timeFmt = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-d
 const PREVIEW_LIMIT = 3;
 
 // Money-card bars: last 4 months' collected amounts, scaled to the tallest bar.
-const HERO_BAR_MAX = 104;
-const HERO_BAR_MIN = 14;
+const HERO_BAR_MAX = 52;
+const HERO_BAR_MIN = 8;
 
 function heroBarHeight(value: number, all: number[]): number {
   const max = Math.max(...all, 0);
@@ -246,7 +246,7 @@ export default function HomeScreen() {
             accessibilityRole="button"
             accessibilityLabel="Notifications"
           >
-            <Bell size={22} color={INK} />
+            <Bell size={20} color={INK} />
             <View style={styles.bellDot} />
           </TouchableOpacity>
         </View>
@@ -343,28 +343,28 @@ export default function HomeScreen() {
             <View style={styles.statGrid}>
               <StatTile
                 theme={TILE_THEMES.today}
-                icon={<Calendar size={24} color={TILE_THEMES.today.icon} />}
+                icon={<Calendar size={20} color={TILE_THEMES.today.icon} />}
                 label="Today's Bookings"
                 value={todays.length}
                 onPress={() => navigation.navigate(ROUTES.BOOKINGS_ORDERS, { tab: 'bookings' })}
               />
               <StatTile
                 theme={TILE_THEMES.upcoming}
-                icon={<CalendarClock size={24} color={TILE_THEMES.upcoming.icon} />}
+                icon={<CalendarClock size={20} color={TILE_THEMES.upcoming.icon} />}
                 label="Upcoming"
                 value={upcomingCount}
                 onPress={() => navigation.navigate(ROUTES.BOOKINGS_ORDERS, { tab: 'bookings' })}
               />
               <StatTile
                 theme={TILE_THEMES.orders}
-                icon={<Package size={24} color={TILE_THEMES.orders.icon} />}
+                icon={<Package size={20} color={TILE_THEMES.orders.icon} />}
                 label="Open Orders"
                 value={openOrdersCount}
                 onPress={() => navigation.navigate(ROUTES.BOOKINGS_ORDERS, { tab: 'orders' })}
               />
               <StatTile
                 theme={TILE_THEMES.action}
-                icon={<CircleAlert size={24} color={TILE_THEMES.action.icon} />}
+                icon={<CircleAlert size={20} color={TILE_THEMES.action.icon} />}
                 label="Needs Action"
                 value={needsActionCount}
                 onPress={() => navigation.navigate(ROUTES.ATTENTION_LIST)}
@@ -374,7 +374,7 @@ export default function HomeScreen() {
             {/* 5. Today's schedule */}
             <View style={styles.card}>
               <SectionHeader
-                icon={<Calendar size={22} color={Color.primary} />}
+                icon={<Calendar size={20} color={Color.primary} />}
                 title="Today's Schedule"
                 count={todays.length}
                 onViewAll={todays.length > 0 ? () => navigation.navigate(ROUTES.TODAYS_SCHEDULE) : undefined}
@@ -406,7 +406,7 @@ export default function HomeScreen() {
                             </Text>
                           </View>
                         </View>
-                        <ChevronRight size={20} color={INK} />
+                        <ChevronRight size={18} color={INK} />
                       </TouchableOpacity>
                     </React.Fragment>
                   );
@@ -417,7 +417,7 @@ export default function HomeScreen() {
             {/* 6. Needs your attention */}
             <View style={styles.card}>
               <SectionHeader
-                icon={<CircleAlert size={22} color={Color.error} />}
+                icon={<CircleAlert size={20} color={Color.error} />}
                 title="Needs Your Attention"
                 count={attention.length}
                 onViewAll={attention.length > 0 ? () => navigation.navigate(ROUTES.ATTENTION_LIST) : undefined}
@@ -457,7 +457,7 @@ export default function HomeScreen() {
                           <Text style={styles.rowAmount}>{formatMoney(item.due, item.booking.currency)}</Text>
                         )}
                       </View>
-                      <ChevronRight size={20} color={INK} />
+                      <ChevronRight size={18} color={INK} />
                     </TouchableOpacity>
                   </React.Fragment>
                 ))
@@ -467,7 +467,7 @@ export default function HomeScreen() {
             {/* 7. Orders to fulfil */}
             <View style={styles.card}>
               <SectionHeader
-                icon={<Package size={22} color="#D97706" />}
+                icon={<Package size={20} color="#D97706" />}
                 title="Orders to Fulfil"
                 count={openOrders.length}
                 onViewAll={openOrders.length > 0 ? () => navigation.navigate(ROUTES.OPEN_ORDERS) : undefined}
@@ -504,7 +504,7 @@ export default function HomeScreen() {
                           <Pill label={statusInfo.label} colors={orderStatusColors(o.status)} />
                           <Pill label={paymentLineFor(o)} colors={paid ? PILL.green : PILL.grey} />
                         </View>
-                        <ChevronRight size={20} color={INK} />
+                        <ChevronRight size={18} color={INK} />
                       </TouchableOpacity>
                     </React.Fragment>
                   );
@@ -516,7 +516,7 @@ export default function HomeScreen() {
             {hasStore && lowStock.length > 0 && (
               <View style={styles.card}>
                 <SectionHeader
-                  icon={<Package size={22} color="#D97706" />}
+                  icon={<Package size={20} color="#D97706" />}
                   title="Low Stock"
                   count={lowStock.length}
                   onViewAll={() => navigation.navigate(ROUTES.LOW_STOCK_LIST)}
@@ -551,7 +551,7 @@ export default function HomeScreen() {
                         }
                         colors={PILL.red}
                       />
-                      <ChevronRight size={20} color={INK} />
+                      <ChevronRight size={18} color={INK} />
                     </TouchableOpacity>
                   </React.Fragment>
                 ))}

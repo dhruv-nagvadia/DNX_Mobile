@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 
+import { useConfirm } from '@/components/ConfirmDialog';
 import {
   useCollectBookingPaymentMutation,
   useCollectOrderPaymentMutation,
@@ -68,6 +68,7 @@ const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDat
 export function useBookingsOrdersScreen() {
   const route = useRoute<BookingsOrdersRouteProp>();
   const businessId = route.params?.businessId;
+  const { notify } = useConfirm();
   const scoped = !!businessId;
   const [tab, setTabState] = useState<ListTab>(route.params?.tab ?? 'bookings');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
@@ -197,14 +198,15 @@ export function useBookingsOrdersScreen() {
       try {
         await updateBookingStatus({ id: b.provider.id, bookingId: b.id, status }).unwrap();
       } catch (err) {
-        Alert.alert(
-          'Could not update booking',
-          serverMessage(err) ?? 'Something went wrong. Please try again.',
-        );
+        notify({
+          title: 'Could not update booking',
+          message: serverMessage(err) ?? 'Something went wrong. Please try again.',
+          tone: 'danger',
+        });
       }
       setActingId(null);
     },
-    [updateBookingStatus],
+    [updateBookingStatus, notify],
   );
 
   const advanceOrder = useCallback(

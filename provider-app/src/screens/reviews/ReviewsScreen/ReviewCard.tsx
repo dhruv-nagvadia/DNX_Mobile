@@ -106,7 +106,7 @@ export function ReviewCard({
                   <Image source={{ uri: item.product.imageUrl }} style={styles.productThumb} />
                 ) : (
                   <View style={[styles.productThumb, styles.productThumbEmpty]}>
-                    <Package size={18} color={Color.placeholder} />
+                    <Package size={16} color={Color.placeholder} />
                   </View>
                 )}
                 <Text style={styles.productName} numberOfLines={2}>
@@ -117,7 +117,7 @@ export function ReviewCard({
               showBusiness && businessPill
             )}
           </View>
-          <StarRow rating={item.rating} size={20} />
+          <StarRow rating={item.rating} size={16} />
         </View>
       </View>
 
@@ -126,7 +126,7 @@ export function ReviewCard({
 
         {hasReply && !editing && (
           <View style={styles.replyBox}>
-            <Reply size={20} color={Color.textSecondary} />
+            <Reply size={16} color={Color.textSecondary} />
             <View style={styles.replyContent}>
               <View style={styles.replyHeadRow}>
                 <Text style={styles.replyLabel} numberOfLines={1}>
@@ -162,7 +162,7 @@ export function ReviewCard({
                 accessibilityRole="button"
                 accessibilityLabel="Reply to review"
               >
-                <Reply size={18} color={LINK} />
+                <Reply size={16} color={LINK} />
                 <Text style={styles.replyBtnText}>Reply</Text>
               </TouchableOpacity>
             )}

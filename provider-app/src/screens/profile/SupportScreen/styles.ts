@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG, PILL } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, ModernSize, ModernType, PAGE_BG, PILL } from '@/utils/modernTheme';
 
 /** Mockup "Modern Help & Support App Screen.png". */
 export const BRAND_BLUE = '#1D4ED8';
@@ -26,37 +26,37 @@ export const styles = StyleSheet.create({
     backgroundColor: PAGE_BG,
   },
   content: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.sm,
-    gap: Spacing.sm + 2,
+    gap: ModernSize.gap,
   },
 
   // ── Header ──────────────────────────────────────────────────────────────
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    gap: ModernSize.gap,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
   },
   backBtn: {
     alignSelf: 'flex-start',
-    paddingTop: 6,
+    paddingTop: 2,
   },
   headerText: {
     flex: 1,
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
 
@@ -64,14 +64,14 @@ export const styles = StyleSheet.create({
   hero: {
     borderRadius: ModernRadius.card,
     overflow: 'hidden',
-    padding: Spacing.md,
-    gap: Spacing.md,
+    padding: ModernSize.cardPad,
+    gap: ModernSize.gap,
     ...CARD_SHADOW,
   },
   heroTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
   heroDivider: {
     width: 1,
@@ -84,20 +84,20 @@ export const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   heroTitle: {
-    fontSize: FontSize.xl,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.extrabold,
     color: Color.white,
   },
   heroBody: {
-    fontSize: FontSize.sm,
-    lineHeight: FontSize.sm * 1.4,
+    fontSize: ModernType.secondary,
+    lineHeight: 18,
     color: HERO_BODY,
   },
   search: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    height: 48,
+    height: 44,
     paddingHorizontal: Spacing.md - 2,
     borderRadius: ModernRadius.box,
     backgroundColor: Color.white,
@@ -105,7 +105,7 @@ export const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     paddingVertical: 0,
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
 
@@ -113,16 +113,17 @@ export const styles = StyleSheet.create({
   contactCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md - 2,
-    padding: Spacing.md - 4,
+    gap: ModernSize.gap,
+    padding: ModernSize.gap,
     borderRadius: ModernRadius.card,
     backgroundColor: Color.white,
     ...CARD_SHADOW,
+    minHeight: ModernSize.rowMinHeight + 8,
   },
   contactIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -140,25 +141,25 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   contactTitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   contactDetails: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
 
   // ── FAQ ─────────────────────────────────────────────────────────────────
   faqCard: {
-    padding: Spacing.md,
-    gap: Spacing.sm + 4,
+    padding: ModernSize.cardPad,
+    gap: ModernSize.gap,
     borderRadius: ModernRadius.card,
     backgroundColor: Color.white,
     ...CARD_SHADOW,
   },
   faqTitle: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -184,7 +185,7 @@ export const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
   },
   chipText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -208,26 +209,26 @@ export const styles = StyleSheet.create({
   faqHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md - 4,
-    paddingVertical: Spacing.sm + 4,
+    gap: ModernSize.gap,
+    paddingHorizontal: ModernSize.gap,
+    paddingVertical: ModernSize.gap,
   },
   faqHeaderOpen: {
     backgroundColor: OPEN_HEADER_BG,
   },
   faqQuestion: {
     flex: 1,
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.bold,
+    fontSize: ModernType.body,
+    fontWeight: FontWeight.semibold,
     color: INK,
   },
   faqAnswer: {
-    paddingLeft: Spacing.md - 4 + 22 + Spacing.sm + 4,
+    paddingLeft: ModernSize.gap + 20 + ModernSize.gap,
     paddingRight: Spacing.md,
     paddingTop: Spacing.sm + 2,
     paddingBottom: Spacing.md - 2,
-    fontSize: FontSize.sm,
-    lineHeight: FontSize.sm * 1.45,
+    fontSize: ModernType.body,
+    lineHeight: 20,
     color: Color.textPrimary,
   },
   faqLink: {
@@ -237,7 +238,7 @@ export const styles = StyleSheet.create({
   faqEmpty: {
     paddingVertical: Spacing.md,
     textAlign: 'center',
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
 
@@ -245,8 +246,8 @@ export const styles = StyleSheet.create({
   tipCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md - 2,
-    padding: Spacing.md,
+    gap: ModernSize.gap,
+    padding: ModernSize.cardPad,
     borderRadius: ModernRadius.card,
     backgroundColor: TIP_BG,
   },
@@ -260,12 +261,12 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   tipTitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   tipBody: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: INK,
   },
 });

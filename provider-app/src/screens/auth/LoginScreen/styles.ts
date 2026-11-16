@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { INK, LINK } from '@/utils/modernTheme';
+import { INK, LINK, ModernType } from '@/utils/modernTheme';
 import { FontWeight } from '@/utils/Theme';
 
 /** Login-only styles; the shared auth layout lives in ../shared/styles. */
@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 16,
   },
   keepRow: {
     flexDirection: 'row',
@@ -18,8 +18,8 @@ export const styles = StyleSheet.create({
     flexShrink: 1,
   },
   checkbox: {
-    width: 22,
-    height: 22,
+    width: 20,
+    height: 20,
     borderRadius: 6,
     borderWidth: 1.5,
     borderColor: INK,
@@ -31,11 +31,11 @@ export const styles = StyleSheet.create({
     backgroundColor: LINK,
   },
   keepText: {
-    fontSize: 15,
+    fontSize: ModernType.body,
     color: INK,
   },
   forgotText: {
-    fontSize: 15,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.medium,
     color: LINK,
   },

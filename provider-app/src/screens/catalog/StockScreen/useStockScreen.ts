@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import {
@@ -8,6 +7,8 @@ import {
   useGetStockAdjustmentsQuery,
   useSetProductStockStatusMutation,
 } from '@/redux/api/business/businessApi';
+import { PackageX } from 'lucide-react-native';
+import { useConfirm } from '@/components/ConfirmDialog';
 import { Product, StockAdjustmentReason } from '@/redux/api/business/types';
 import { measureUnits, stockLevel, toBase } from '@/utils/units';
 
@@ -33,6 +34,7 @@ export function isLow(p: Product): boolean {
 export function useStockScreen() {
   const route = useRoute<StockRouteProp>();
   const navigation = useNavigation();
+  const { confirm } = useConfirm();
   const { businessId } = route.params;
 
   const { data: business, isLoading, isFetching, refetch } = useGetMyBusinessQuery(businessId);
@@ -122,17 +124,19 @@ export function useStockScreen() {
   );
 
   const markOutOfStock = useCallback(
-    (product: Product) => {
-      Alert.alert('Mark out of stock?', `"${product.name}" will show as unavailable to customers.`, [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Mark out of stock',
-          style: 'destructive',
-          onPress: () => setStockStatus({ businessId, productId: product.id, inStock: false }).unwrap().catch(() => undefined),
-        },
-      ]);
+    async (product: Product) => {
+      const ok = await confirm({
+        title: 'Mark out of stock?',
+        message: `"${product.name}" will show as unavailable to customers.`,
+        confirmText: 'Mark out of stock',
+        tone: 'danger',
+        icon: PackageX,
+      });
+      if (ok) {
+        await setStockStatus({ businessId, productId: product.id, inStock: false }).unwrap().catch(() => undefined);
+      }
     },
-    [businessId, setStockStatus],
+    [businessId, setStockStatus, confirm],
   );
 
   const submitAdjustment = useCallback(async () => {

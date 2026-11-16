@@ -57,3 +57,47 @@ export const TINT = {
   mint: { colors: ['#EEFBF4', '#DDF3E7'], border: '#CDEBDB', icon: '#15803D' },
   pink: { colors: ['#FFF3F3', '#FCE1E1'], border: '#F8D4D4', icon: '#DC2626' },
 };
+
+/**
+ * Standard sizing scale — every redesigned screen uses these so text,
+ * controls and icons are the same size everywhere.
+ */
+export const ModernType = {
+  /** Tab-root large title ("Profile", "Bookings & Orders"). */
+  largeTitle: 26,
+  /** Pushed-screen header title. */
+  title: 20,
+  /** Card / section title. */
+  cardTitle: 17,
+  /** List row title. */
+  rowTitle: 15,
+  body: 14,
+  secondary: 13,
+  /** Captions, pills, labels. */
+  caption: 12,
+  /** Stat tile value. */
+  stat: 22,
+  /** One hero figure per screen (Home revenue, Earnings balance, Reviews average). */
+  hero: 30,
+  /** Auth hero title ("DNX Provider"). */
+  authHero: 30,
+  /** Auth card heading ("Welcome back"). */
+  authHeading: 26,
+} as const;
+
+export const ModernSize = {
+  /** Input / primary button height. */
+  control: 48,
+  /** Compact button height. */
+  controlSm: 36,
+  controlRadius: 12,
+  icon: 20,
+  iconSm: 16,
+  /** Round/square icon chip. */
+  iconBox: 40,
+  avatar: 40,
+  gutter: 16,
+  cardPad: 16,
+  gap: 12,
+  rowMinHeight: 56,
+} as const;

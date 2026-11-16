@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Alert,
   RefreshControl,
   ScrollView,
   StatusBar,
@@ -10,8 +9,9 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ArrowLeft, CircleCheck, Clock, Plus, Search, Store, Ticket, Users } from 'lucide-react-native';
+import { ArrowLeft, CircleCheck, Clock, Plus, Search, Store, Ticket, Trash2, Users } from 'lucide-react-native';
 
+import { useConfirm } from '@/components/ConfirmDialog';
 import { GradientBackground } from '@/components/GradientBackground';
 import { Coupon } from '@/redux/api/business/types';
 import { CouponFilter } from '@/screens/catalog/CouponsScreen/useCouponsScreen';
@@ -143,17 +143,24 @@ export default function AllOffersScreen() {
     goBack,
     goToBusinesses,
   } = useAllOffersScreen();
+  const { confirm } = useConfirm();
 
   const countLabel = `${scoped.length} offer${scoped.length === 1 ? '' : 's'}`;
   const noBusinesses = !isLoading && businesses.length === 0 && coupons.length === 0;
   const noCoupons = !isLoading && !noBusinesses && coupons.length === 0;
   const showList = coupons.length > 0;
 
-  const confirmDelete = (coupon: Coupon) => {
-    Alert.alert('Delete coupon?', `"${coupon.code}" will stop working immediately.`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => remove(coupon) },
-    ]);
+  const confirmDelete = async (coupon: Coupon) => {
+    const ok = await confirm({
+      title: 'Delete coupon?',
+      message: `"${coupon.code}" will stop working immediately.`,
+      confirmText: 'Delete',
+      tone: 'danger',
+      icon: Trash2,
+    });
+    if (ok) {
+      remove(coupon);
+    }
   };
 
   return (
@@ -167,7 +174,7 @@ export default function AllOffersScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+          <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title} numberOfLines={1}>
@@ -183,7 +190,7 @@ export default function AllOffersScreen() {
           accessibilityRole="button"
           accessibilityLabel="Create an offer"
         >
-          <Plus size={28} color={Color.white} strokeWidth={2.4} />
+          <Plus size={22} color={Color.white} strokeWidth={2.4} />
         </TouchableOpacity>
       </View>
 
@@ -269,19 +276,19 @@ export default function AllOffersScreen() {
                 label="Active"
                 value={counts.active}
                 theme={TINT.mint}
-                icon={<CircleCheck size={30} color={TINT.mint.icon} strokeWidth={1.8} />}
+                icon={<CircleCheck size={20} color={TINT.mint.icon} strokeWidth={1.8} />}
               />
               <SummaryTile
                 label="Expiring soon"
                 value={counts.expiringSoon}
                 theme={TINT.peach}
-                icon={<Clock size={30} color={TINT.peach.icon} strokeWidth={1.8} />}
+                icon={<Clock size={20} color={TINT.peach.icon} strokeWidth={1.8} />}
               />
               <SummaryTile
                 label="Times used"
                 value={counts.timesUsed}
                 theme={TINT.lavender}
-                icon={<Users size={30} color={TINT.lavender.icon} strokeWidth={1.8} />}
+                icon={<Users size={20} color={TINT.lavender.icon} strokeWidth={1.8} />}
               />
             </View>
 

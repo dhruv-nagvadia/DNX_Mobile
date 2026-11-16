@@ -270,7 +270,7 @@ function Activity({ order }: { order: BusinessOrder }) {
   return (
     <View style={styles.card}>
       <View style={styles.cardHeadRow}>
-        <Clock size={24} color={INK} strokeWidth={2} />
+        <Clock size={20} color={INK} strokeWidth={2} />
         <Text style={styles.cardTitle}>Activity</Text>
       </View>
       <View style={styles.timeline}>
@@ -281,11 +281,11 @@ function Activity({ order }: { order: BusinessOrder }) {
               <View style={styles.tlRail}>
                 {it.state === 'done' ? (
                   <View style={[styles.tlDot, styles.tlDotDone]}>
-                    <Check size={13} color={Color.white} strokeWidth={3.2} />
+                    <Check size={12} color={Color.white} strokeWidth={3.2} />
                   </View>
                 ) : it.state === 'failed' ? (
                   <View style={[styles.tlDot, styles.tlDotFailed]}>
-                    <X size={13} color={Color.white} strokeWidth={3.2} />
+                    <X size={12} color={Color.white} strokeWidth={3.2} />
                   </View>
                 ) : (
                   <View style={styles.tlDotPending} />
@@ -342,7 +342,7 @@ export default function OrderDetailScreen() {
       accessibilityRole="button"
       accessibilityLabel="Go back"
     >
-      <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+      <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
     </TouchableOpacity>
   );
 
@@ -443,7 +443,7 @@ export default function OrderDetailScreen() {
               accessibilityRole="button"
               accessibilityLabel={`Call ${order.user.fullName}`}
             >
-              <Phone size={22} color={LINK} strokeWidth={2.2} />
+              <Phone size={18} color={LINK} strokeWidth={2.2} />
             </TouchableOpacity>
           )}
         </View>
@@ -456,7 +456,7 @@ export default function OrderDetailScreen() {
                 <Image source={{ uri: item.product.imageUrl }} style={styles.itemImage} />
               ) : (
                 <View style={[styles.itemImage, styles.itemImageFallback]}>
-                  <Package size={22} color={Color.placeholder} />
+                  <Package size={20} color={Color.placeholder} />
                 </View>
               )}
               <View style={styles.itemMain}>
@@ -513,7 +513,7 @@ export default function OrderDetailScreen() {
         {!!order.note && (
           <View style={styles.card}>
             <View style={styles.noteBox}>
-              <MessageSquare size={24} color={INK} strokeWidth={1.8} />
+              <MessageSquare size={20} color={INK} strokeWidth={1.8} />
               <View style={styles.noteMain}>
                 <Text style={styles.noteTitle}>Customer note</Text>
                 <Text style={styles.noteText}>{order.note}</Text>
@@ -524,7 +524,7 @@ export default function OrderDetailScreen() {
 
         <View style={styles.card}>
           <View style={styles.cardHeadRow}>
-            <Wallet size={24} color={INK} strokeWidth={1.8} />
+            <Wallet size={20} color={INK} strokeWidth={1.8} />
             <Text style={styles.payMethod}>{method.label}</Text>
             <Pill label={method.chip} colors={PILL.grey} style={styles.methodChip} />
           </View>
@@ -532,7 +532,7 @@ export default function OrderDetailScreen() {
             label={payPill.label}
             colors={payPill.colors}
             style={styles.payPill}
-            icon={<CreditCard size={18} color={payPill.colors.fg} strokeWidth={1.8} />}
+            icon={<CreditCard size={16} color={payPill.colors.fg} strokeWidth={1.8} />}
           />
         </View>
 
@@ -552,7 +552,7 @@ export default function OrderDetailScreen() {
                 <ActivityIndicator color={Color.white} />
               ) : (
                 <>
-                  <primary.icon size={22} color={Color.white} strokeWidth={2.4} />
+                  <primary.icon size={20} color={Color.white} strokeWidth={2.4} />
                   <Text style={styles.primaryBtnText}>{primary.label}</Text>
                 </>
               )}

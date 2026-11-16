@@ -1,12 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
-  Animated,
   DimensionValue,
   Image,
-  Modal,
-  Pressable,
   RefreshControl,
   ScrollView,
   StatusBar,
@@ -27,13 +23,15 @@ import {
   Trash2,
 } from 'lucide-react-native';
 
+import { BottomSheet, SheetButton, SheetOption } from '@/components/BottomSheet';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { LoadingView } from '@/components/LoadingView';
 import { Pill } from '@/components/Pill';
 import { Color, Spacing } from '@/utils/Theme';
 import { INK, LINK, PAGE_BG } from '@/utils/modernTheme';
 
 import { MAX_IMAGES, useBusinessPhotosScreen } from './useBusinessPhotosScreen';
-import { COVER_PILL, DISABLED_ICON, REMOVE_RED, SHEET_SLIDE, styles } from './styles';
+import { COVER_PILL, styles } from './styles';
 
 const BACK_HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
 const MENU_HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
@@ -92,18 +90,16 @@ export default function BusinessPhotosScreen() {
     }
   }, [sheetOpen, selectedIndex]);
 
-  // Slide the sheet up from the bottom while the backdrop fades in.
-  const slide = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    if (sheetOpen) {
-      slide.setValue(0);
-      Animated.timing(slide, { toValue: 1, duration: 260, useNativeDriver: true }).start();
+  // "Remove this photo?" is shown inside the sheet's own modal — iOS can't
+  // present a second, sibling Modal on top of an open one.
+  const [confirmingRemove, setConfirmingRemove] = useState(false);
+  const onSheetClose = useCallback(() => {
+    if (confirmingRemove) {
+      setConfirmingRemove(false);
+      return;
     }
-  }, [sheetOpen, slide]);
-  const sheetMotion = useMemo(
-    () => ({ transform: [{ translateY: slide.interpolate({ inputRange: [0, 1], outputRange: [SHEET_SLIDE, 0] }) }] }),
-    [slide],
-  );
+    setSheetOpen(false);
+  }, [confirmingRemove]);
 
   const onSetCover = useCallback(() => {
     if (!selectedUrl) {
@@ -123,22 +119,20 @@ export default function BusinessPhotosScreen() {
   );
 
   const onRemove = useCallback(() => {
+    if (selectedUrl) {
+      setConfirmingRemove(true);
+    }
+  }, [selectedUrl]);
+
+  const onConfirmRemove = useCallback(() => {
+    setConfirmingRemove(false);
     if (!selectedUrl) {
       return;
     }
-    const url = selectedUrl;
-    Alert.alert('Remove this photo?', 'It will no longer be shown to customers.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Remove',
-        style: 'destructive',
-        onPress: () => {
-          setSheetOpen(false);
-          removeImage(url);
-        },
-      },
-    ]);
+    setSheetOpen(false);
+    removeImage(selectedUrl);
   }, [selectedUrl, removeImage]);
+  const onCancelRemove = useCallback(() => setConfirmingRemove(false), []);
 
   const usedPct: DimensionValue = `${Math.min(100, Math.round((count / MAX_IMAGES) * 100))}%`;
   const countLabel = `${count} of ${MAX_IMAGES} photos`;
@@ -146,6 +140,10 @@ export default function BusinessPhotosScreen() {
   const isCoverSelected = selectedIndex === 0;
   const canMoveUp = selectedIndex > 0;
   const canMoveDown = selectedIndex >= 0 && selectedIndex < count - 1;
+  let sheetSubtitle: string | undefined;
+  if (selectedIndex >= 0) {
+    sheetSubtitle = isCoverSelected ? `Cover • Position 1 of ${count}` : `Position ${selectedIndex + 1} of ${count}`;
+  }
 
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
@@ -160,7 +158,7 @@ export default function BusinessPhotosScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+          <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title} numberOfLines={1}>
@@ -181,7 +179,7 @@ export default function BusinessPhotosScreen() {
           {uploading ? (
             <ActivityIndicator size="small" color={Color.white} />
           ) : (
-            <Plus size={28} color={Color.white} strokeWidth={2.4} />
+            <Plus size={22} color={Color.white} strokeWidth={2.4} />
           )}
         </TouchableOpacity>
       </View>
@@ -197,7 +195,7 @@ export default function BusinessPhotosScreen() {
           {/* ── Usage ──────────────────────────────────────────────────── */}
           <View style={[styles.card, styles.usageCard]}>
             <View style={styles.usageIcon}>
-              <ImageIcon size={28} color={LINK} strokeWidth={1.8} />
+              <ImageIcon size={22} color={LINK} strokeWidth={1.8} />
             </View>
             <View style={styles.usageBody}>
               <Text style={styles.usageTitle}>
@@ -217,7 +215,7 @@ export default function BusinessPhotosScreen() {
           {/* ── Cover photo ────────────────────────────────────────────── */}
           <View style={styles.card}>
             <View style={styles.cardHeader}>
-              <Star size={22} color={INK} strokeWidth={1.8} />
+              <Star size={20} color={INK} strokeWidth={1.8} />
               <Text style={styles.cardTitle}>Cover photo</Text>
             </View>
             {count > 0 ? (
@@ -244,7 +242,7 @@ export default function BusinessPhotosScreen() {
                 {uploading ? (
                   <ActivityIndicator size="small" color={LINK} />
                 ) : (
-                  <ImagePlus size={30} color={LINK} strokeWidth={1.8} />
+                  <ImagePlus size={26} color={LINK} strokeWidth={1.8} />
                 )}
                 <Text style={styles.addText}>{uploading ? 'Uploading…' : 'Add photos'}</Text>
                 <Text style={styles.placeholderHint}>Businesses with photos get noticeably more bookings.</Text>
@@ -257,7 +255,7 @@ export default function BusinessPhotosScreen() {
           {count > 0 && (
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <ImageIcon size={22} color={INK} strokeWidth={1.8} />
+                <ImageIcon size={20} color={INK} strokeWidth={1.8} />
                 <Text style={[styles.cardTitle, styles.flex]} numberOfLines={1}>
                   Gallery ({count})
                 </Text>
@@ -324,77 +322,47 @@ export default function BusinessPhotosScreen() {
       )}
 
       {/* ── Photo action sheet ─────────────────────────────────────────── */}
-      <Modal visible={sheetOpen} transparent animationType="fade" statusBarTranslucent onRequestClose={closeSheet}>
-        <View style={styles.sheetRoot}>
-          <Pressable style={styles.backdrop} onPress={closeSheet} accessibilityLabel="Close" />
-          {selectedIndex >= 0 && selectedUrl && (
-            <Animated.View style={[styles.sheet, { paddingBottom: insets.bottom + Spacing.md }, sheetMotion]}>
-              <View style={styles.handle} />
-
-              <View style={styles.sheetHeader}>
-                <Image source={{ uri: selectedUrl }} style={styles.sheetThumb} />
-                <View style={styles.flex}>
-                  <Text style={styles.sheetTitle}>Photo #{selectedIndex + 1}</Text>
-                  <Text style={styles.sheetSubtitle}>
-                    {isCoverSelected
-                      ? `Cover • Position 1 of ${count}`
-                      : `Position ${selectedIndex + 1} of ${count}`}
-                  </Text>
-                </View>
-                {savingImages && <ActivityIndicator size="small" color={LINK} />}
-              </View>
-
-              {!isCoverSelected && (
-                <TouchableOpacity
-                  style={[styles.option, styles.optionCover]}
-                  onPress={onSetCover}
-                  disabled={savingImages}
-                  accessibilityRole="button"
-                >
-                  <Star size={24} color={LINK} strokeWidth={1.9} />
-                  <Text style={[styles.optionText, styles.optionTextBlue]}>Set as cover</Text>
-                </TouchableOpacity>
-              )}
-
-              <TouchableOpacity
-                style={[styles.option, !canMoveUp && styles.optionDisabled]}
-                onPress={() => onMove(-1)}
-                disabled={!canMoveUp || savingImages}
-                accessibilityRole="button"
-                accessibilityState={{ disabled: !canMoveUp }}
-              >
-                <ArrowUp size={24} color={canMoveUp ? INK : DISABLED_ICON} strokeWidth={1.9} />
-                <Text style={[styles.optionText, !canMoveUp && styles.optionTextDisabled]}>Move up</Text>
-              </TouchableOpacity>
-              <View style={styles.optionDivider} />
-              <TouchableOpacity
-                style={[styles.option, !canMoveDown && styles.optionDisabled]}
-                onPress={() => onMove(1)}
-                disabled={!canMoveDown || savingImages}
-                accessibilityRole="button"
-                accessibilityState={{ disabled: !canMoveDown }}
-              >
-                <ArrowDown size={24} color={canMoveDown ? INK : DISABLED_ICON} strokeWidth={1.9} />
-                <Text style={[styles.optionText, !canMoveDown && styles.optionTextDisabled]}>Move down</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.option, styles.optionRemove]}
-                onPress={onRemove}
-                disabled={savingImages}
-                accessibilityRole="button"
-              >
-                <Trash2 size={24} color={REMOVE_RED} strokeWidth={1.9} />
-                <Text style={[styles.optionText, styles.optionTextRed]}>Remove photo</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.cancelBtn} onPress={closeSheet} accessibilityRole="button">
-                <Text style={styles.cancelText}>Cancel</Text>
-              </TouchableOpacity>
-            </Animated.View>
-          )}
-        </View>
-      </Modal>
+      <BottomSheet
+        visible={sheetOpen && selectedIndex >= 0}
+        onClose={onSheetClose}
+        title={selectedIndex >= 0 ? `Photo #${selectedIndex + 1}` : undefined}
+        subtitle={sheetSubtitle}
+        leading={selectedUrl ? <Image source={{ uri: selectedUrl }} style={styles.sheetThumb} /> : undefined}
+        headerRight={savingImages ? <ActivityIndicator size="small" color={LINK} /> : undefined}
+        footer={<SheetButton title="Cancel" variant="secondary" onPress={closeSheet} />}
+        overlay={
+          <ConfirmDialog
+            inline
+            visible={confirmingRemove}
+            title="Remove this photo?"
+            message="It will no longer be shown to customers."
+            tone="danger"
+            icon={Trash2}
+            confirmText="Remove"
+            onConfirm={onConfirmRemove}
+            onCancel={onCancelRemove}
+          />
+        }
+      >
+        {!isCoverSelected && (
+          <SheetOption icon={Star} label="Set as cover" onPress={onSetCover} disabled={savingImages} />
+        )}
+        <SheetOption
+          icon={ArrowUp}
+          tone="grey"
+          label="Move up"
+          onPress={() => onMove(-1)}
+          disabled={!canMoveUp || savingImages}
+        />
+        <SheetOption
+          icon={ArrowDown}
+          tone="grey"
+          label="Move down"
+          onPress={() => onMove(1)}
+          disabled={!canMoveDown || savingImages}
+        />
+        <SheetOption icon={Trash2} label="Remove photo" destructive onPress={onRemove} disabled={savingImages} />
+      </BottomSheet>
     </View>
   );
 }

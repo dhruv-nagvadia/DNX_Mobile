@@ -1,14 +1,14 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, LINK, ModernRadius, PAGE_BG, PILL, SOFT_FILL } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, LINK, ModernRadius, ModernSize, ModernType, PAGE_BG, PILL, SOFT_FILL } from '@/utils/modernTheme';
 
 export const COLLECT_GREEN = PILL.green.fg;
 const AVATAR_BG = '#E6EDFB';
 const DUE_BG = '#DCE7FB';
 const PENDING_GREY = '#9AA4B5';
-const THUMB = 52;
-const STEP_DOT = 30;
-const TL_DOT = 22;
+const THUMB = 44;
+const STEP_DOT = 28;
+const TL_DOT = 20;
 
 export const styles = StyleSheet.create({
   root: {
@@ -23,38 +23,38 @@ export const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    gap: ModernSize.gap,
+    paddingHorizontal: ModernSize.gutter,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
   },
   backBtn: {
     alignSelf: 'flex-start',
-    paddingTop: 8,
+    paddingTop: 2,
   },
   headerText: {
     flex: 1,
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   statusPill: {
     alignSelf: 'flex-start',
     marginTop: 4,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: ModernRadius.pill,
   },
   statusPillText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
   },
 
@@ -62,7 +62,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.xs,
     paddingBottom: Spacing.md,
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
 
   card: {
@@ -70,17 +70,17 @@ export const styles = StyleSheet.create({
     borderRadius: ModernRadius.card,
     borderWidth: 1,
     borderColor: CARD_BORDER,
-    padding: Spacing.md,
+    padding: ModernSize.cardPad,
     gap: Spacing.sm,
     ...CARD_SHADOW,
   },
   cardHeadRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
+    gap: Spacing.sm + 2,
   },
   cardTitle: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -125,12 +125,12 @@ export const styles = StyleSheet.create({
     borderColor: LINK,
   },
   stepNum: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.bold,
     color: Color.white,
   },
   stepLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   stepLabelActive: {
@@ -138,7 +138,7 @@ export const styles = StyleSheet.create({
     fontWeight: FontWeight.bold,
   },
   stepCaption: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     color: INK,
     textAlign: 'center',
   },
@@ -154,7 +154,7 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   endedTitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -162,7 +162,7 @@ export const styles = StyleSheet.create({
     color: Color.error,
   },
   endedText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: INK,
   },
 
@@ -170,18 +170,18 @@ export const styles = StyleSheet.create({
   customerCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
+    gap: ModernSize.gap,
   },
   avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: ModernSize.avatar,
+    height: ModernSize.avatar,
+    borderRadius: ModernSize.avatar / 2,
     backgroundColor: AVATAR_BG,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
-    fontSize: FontSize.xl,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: LINK,
   },
@@ -190,17 +190,17 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   customerName: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   customerPhone: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   callBtn: {
-    width: 52,
-    height: 46,
+    width: 40,
+    height: ModernSize.controlSm,
     borderRadius: ModernRadius.box,
     borderWidth: 1.5,
     borderColor: LINK,
@@ -212,7 +212,7 @@ export const styles = StyleSheet.create({
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
     paddingVertical: Spacing.xs + 2,
   },
   itemRowDivided: {
@@ -234,16 +234,16 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   itemName: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   itemMeta: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   itemTotal: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -264,11 +264,11 @@ export const styles = StyleSheet.create({
     borderTopColor: Color.divider,
   },
   totalLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: INK,
   },
   totalValue: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -277,7 +277,7 @@ export const styles = StyleSheet.create({
     fontWeight: FontWeight.semibold,
   },
   grandLabel: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -293,7 +293,7 @@ export const styles = StyleSheet.create({
     backgroundColor: DUE_BG,
   },
   dueText: {
-    fontSize: FontSize.xl,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.bold,
     color: LINK,
   },
@@ -302,8 +302,8 @@ export const styles = StyleSheet.create({
   noteBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: Spacing.sm + 4,
-    padding: Spacing.sm + 4,
+    gap: ModernSize.gap,
+    padding: ModernSize.gap,
     borderRadius: ModernRadius.box,
     backgroundColor: SOFT_FILL,
   },
@@ -312,31 +312,31 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   noteTitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   noteText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
 
   // Payment
   payMethod: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
     flexShrink: 1,
   },
   methodChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
   },
   payPill: {
     marginLeft: Spacing.sm,
-    gap: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
 
   // Activity timeline
@@ -345,7 +345,7 @@ export const styles = StyleSheet.create({
   },
   tlRow: {
     flexDirection: 'row',
-    gap: Spacing.sm + 6,
+    gap: ModernSize.gap,
   },
   tlRail: {
     width: TL_DOT,
@@ -387,7 +387,7 @@ export const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   tlTitle: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.bold,
     color: INK,
     lineHeight: TL_DOT,
@@ -400,14 +400,14 @@ export const styles = StyleSheet.create({
     color: Color.error,
   },
   tlTime: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
 
   // Sticky actions
   actionBar: {
-    paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.sm + 4,
+    paddingHorizontal: ModernSize.gutter,
+    paddingTop: ModernSize.gap,
     gap: Spacing.sm + 2,
     backgroundColor: Color.white,
     borderTopLeftRadius: 20,
@@ -423,12 +423,12 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm + 2,
-    height: 52,
-    borderRadius: ModernRadius.button,
+    height: ModernSize.control,
+    borderRadius: ModernSize.controlRadius,
     backgroundColor: LINK,
   },
   primaryBtnText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.semibold,
     color: Color.white,
   },
@@ -442,9 +442,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    height: 50,
+    height: ModernSize.control,
     paddingHorizontal: Spacing.sm,
-    borderRadius: ModernRadius.button,
+    borderRadius: ModernSize.controlRadius,
     borderWidth: 1.5,
     backgroundColor: Color.white,
   },
@@ -455,7 +455,7 @@ export const styles = StyleSheet.create({
     borderColor: Color.error,
   },
   outlineBtnText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.semibold,
   },
   outlineBtnTextCollect: {

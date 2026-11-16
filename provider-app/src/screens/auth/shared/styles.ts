@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { INK, LINK, PAGE_BG } from '@/utils/modernTheme';
+import { INK, LINK, ModernSize, ModernType, PAGE_BG } from '@/utils/modernTheme';
 import { Color, FontWeight } from '@/utils/Theme';
 
 /** Auth-mockup values that have no shared token. */
@@ -11,6 +11,9 @@ const FIELD_BORDER = '#D6DEEA';
 export const MUTED = '#5B6478';
 /** How far the card rides up over the hero's bottom edge. */
 const CARD_OVERLAP = 64;
+/** Logo tile on the hero; BrandMark is drawn at LOGO_MARK inside it. */
+export const LOGO_TILE = 76;
+export const LOGO_MARK = 48;
 
 /** Styles shared by Login, Register and Forgot-password. */
 export const authStyles = StyleSheet.create({
@@ -30,12 +33,12 @@ export const authStyles = StyleSheet.create({
   hero: {
     alignItems: 'center',
     paddingHorizontal: 24,
-    paddingBottom: CARD_OVERLAP + 40,
+    paddingBottom: CARD_OVERLAP + 32,
   },
   logoTile: {
-    width: 92,
-    height: 92,
-    borderRadius: 24,
+    width: LOGO_TILE,
+    height: LOGO_TILE,
+    borderRadius: 20,
     backgroundColor: Color.white,
     alignItems: 'center',
     justifyContent: 'center',
@@ -46,16 +49,16 @@ export const authStyles = StyleSheet.create({
     elevation: 10,
   },
   heroTitle: {
-    marginTop: 22,
-    fontSize: 40,
-    lineHeight: 46,
+    marginTop: 18,
+    fontSize: ModernType.authHero,
+    lineHeight: 36,
     fontWeight: FontWeight.bold,
-    letterSpacing: -1,
+    letterSpacing: -0.6,
     color: Color.white,
   },
   heroSubtitle: {
-    marginTop: 6,
-    fontSize: 17,
+    marginTop: 4,
+    fontSize: ModernType.rowTitle,
     fontWeight: '300',
     color: 'rgba(255, 255, 255, 0.88)',
     textAlign: 'center',
@@ -64,9 +67,9 @@ export const authStyles = StyleSheet.create({
   // ── Card ──────────────────────────────────────────────────────────
   card: {
     marginTop: -CARD_OVERLAP,
-    marginHorizontal: 16,
-    padding: 24,
-    paddingTop: 28,
+    marginHorizontal: ModernSize.gutter,
+    padding: 20,
+    paddingTop: 24,
     borderRadius: 24,
     backgroundColor: Color.white,
     shadowColor: '#1E293B',
@@ -76,15 +79,15 @@ export const authStyles = StyleSheet.create({
     elevation: 6,
   },
   heading: {
-    fontSize: 34,
-    lineHeight: 40,
+    fontSize: ModernType.authHeading,
+    lineHeight: 32,
     fontWeight: FontWeight.bold,
-    letterSpacing: -0.8,
+    letterSpacing: -0.5,
     color: INK,
   },
   subheading: {
     marginTop: 4,
-    fontSize: 17,
+    fontSize: ModernType.rowTitle,
     color: MUTED,
   },
   subheadingStrong: {
@@ -97,38 +100,38 @@ export const authStyles = StyleSheet.create({
 
   // ── Field ─────────────────────────────────────────────────────────
   field: {
-    marginTop: 20,
+    marginTop: 16,
   },
   label: {
-    marginBottom: 8,
-    fontSize: 15,
-    fontWeight: FontWeight.bold,
+    marginBottom: 6,
+    fontSize: ModernType.body,
+    fontWeight: FontWeight.semibold,
     color: INK,
   },
   labelRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   labelInRow: {
-    fontSize: 15,
-    fontWeight: FontWeight.bold,
+    fontSize: ModernType.body,
+    fontWeight: FontWeight.semibold,
     color: INK,
   },
   labelHint: {
-    fontSize: 13,
+    fontSize: ModernType.secondary,
     color: MUTED,
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
-    height: 54,
-    paddingHorizontal: 16,
+    gap: 12,
+    height: ModernSize.control,
+    paddingHorizontal: 14,
     borderWidth: 1,
     borderColor: FIELD_BORDER,
-    borderRadius: 14,
+    borderRadius: ModernSize.controlRadius,
     backgroundColor: Color.white,
   },
   inputRowFocused: {
@@ -141,20 +144,20 @@ export const authStyles = StyleSheet.create({
     flex: 1,
     height: '100%',
     paddingVertical: 0,
-    fontSize: 16,
+    fontSize: ModernType.rowTitle,
     color: INK,
   },
   fieldError: {
     marginTop: 6,
-    fontSize: 13,
+    fontSize: ModernType.secondary,
     color: Color.error,
   },
 
   // ── Submit ────────────────────────────────────────────────────────
   submit: {
-    height: 56,
+    height: ModernSize.control,
     marginTop: 24,
-    borderRadius: 14,
+    borderRadius: ModernSize.controlRadius,
     backgroundColor: LINK,
     alignItems: 'center',
     justifyContent: 'center',
@@ -166,7 +169,7 @@ export const authStyles = StyleSheet.create({
     opacity: 0.8,
   },
   submitText: {
-    fontSize: 17,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: Color.white,
   },
@@ -176,14 +179,14 @@ export const authStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 28,
+    marginTop: 24,
   },
   switchText: {
-    fontSize: 16,
+    fontSize: ModernType.body,
     color: INK,
   },
   switchLink: {
-    fontSize: 16,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.bold,
     color: LINK,
   },
@@ -197,14 +200,14 @@ export const authStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
-    marginTop: 28,
+    marginTop: 24,
   },
   legalText: {
-    fontSize: 14,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   legalDot: {
-    fontSize: 14,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
 });

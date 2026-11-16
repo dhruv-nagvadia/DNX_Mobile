@@ -1,12 +1,12 @@
 import { StyleSheet } from 'react-native';
 
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG, PILL, SOFT_FILL } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, ModernSize, ModernType, PAGE_BG, PILL, SOFT_FILL } from '@/utils/modernTheme';
 
 /** Mockup "Product Inventory Management Screen.png": light header with a round
  * add button, search, section chips, pastel stock tiles, rich product cards
  * and a sticky outlined "Manage Stock" button. Mirrors BusinessesScreen. */
-export const THUMB = 76;
+export const THUMB = 64;
 export const BRAND_BLUE = '#1D4ED8';
 export const STAR = '#F5B301';
 export const SWITCH_OFF = '#D5DAE3';
@@ -23,7 +23,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.lg,
-    gap: Spacing.md - 2,
+    gap: ModernSize.gap,
   },
 
   // ── Header ──────────────────────────────────────────────────────────────
@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
@@ -45,19 +45,19 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   addBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: BRAND_BLUE,
@@ -69,7 +69,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    height: 46,
+    height: 44,
     paddingHorizontal: Spacing.md - 2,
     borderRadius: ModernRadius.box,
     borderWidth: 1,
@@ -79,7 +79,7 @@ export const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     paddingVertical: 0,
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   // Bleed the chip row to the screen edges so chips scroll off-screen.
@@ -107,7 +107,7 @@ export const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
   },
   chipText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -133,9 +133,9 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   tileIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(255,255,255,0.55)',
@@ -144,19 +144,19 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   tileLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
   tileValue: {
-    fontSize: FontSize.xxl,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
 
   // ── Product card ────────────────────────────────────────────────────────
   card: {
-    padding: Spacing.sm + 4,
+    padding: ModernSize.cardPad,
     gap: Spacing.sm + 2,
     borderRadius: ModernRadius.card,
     borderWidth: 1,
@@ -190,7 +190,7 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   name: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -201,15 +201,15 @@ export const styles = StyleSheet.create({
   },
   meta: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   dot: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   ratingValue: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -227,8 +227,8 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm + 2,
   },
   editBtn: {
-    width: 40,
-    height: 40,
+    width: ModernSize.controlSm,
+    height: ModernSize.controlSm,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -237,8 +237,8 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   deleteBtn: {
-    width: 40,
-    height: 40,
+    width: ModernSize.controlSm,
+    height: ModernSize.controlSm,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -271,7 +271,7 @@ export const styles = StyleSheet.create({
   },
   stockPillText: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
   },
   payChips: {
@@ -285,7 +285,7 @@ export const styles = StyleSheet.create({
     backgroundColor: PILL.grey.bg,
   },
   payChipText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -293,7 +293,7 @@ export const styles = StyleSheet.create({
   noMatch: {
     paddingVertical: Spacing.lg,
     textAlign: 'center',
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
 
@@ -308,14 +308,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm + 2,
-    paddingVertical: 14,
     borderRadius: ModernRadius.button,
     borderWidth: 1.5,
     borderColor: BRAND_BLUE,
     backgroundColor: Color.white,
+    height: ModernSize.control,
   },
   stockBtnText: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: BRAND_BLUE,
   },

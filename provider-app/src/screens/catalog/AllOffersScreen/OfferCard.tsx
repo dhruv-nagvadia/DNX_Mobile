@@ -208,7 +208,7 @@ export function OfferCard({ coupon: c, state, deleting, onToggle, onEdit, onDele
             accessibilityRole="button"
             accessibilityLabel={`Edit ${c.code}`}
           >
-            <Pencil size={19} color={BRAND_BLUE} />
+            <Pencil size={16} color={BRAND_BLUE} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.deleteBtn}
@@ -218,7 +218,7 @@ export function OfferCard({ coupon: c, state, deleting, onToggle, onEdit, onDele
             accessibilityRole="button"
             accessibilityLabel={`Delete ${c.code}`}
           >
-            <Trash2 size={19} color={PILL.red.fg} />
+            <Trash2 size={16} color={PILL.red.fg} />
           </TouchableOpacity>
         </View>
       </View>

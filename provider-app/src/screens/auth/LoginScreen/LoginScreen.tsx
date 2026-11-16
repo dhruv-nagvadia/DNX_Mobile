@@ -100,7 +100,7 @@ export default function LoginScreen() {
           accessibilityState={{ checked: keepSignedIn, disabled: isLoading }}
         >
           <View style={[styles.checkbox, keepSignedIn && styles.checkboxOn]}>
-            {keepSignedIn && <Check size={16} color="#FFFFFF" strokeWidth={3} />}
+            {keepSignedIn && <Check size={14} color="#FFFFFF" strokeWidth={3} />}
           </View>
           <Text style={styles.keepText}>Keep me signed in</Text>
         </Pressable>

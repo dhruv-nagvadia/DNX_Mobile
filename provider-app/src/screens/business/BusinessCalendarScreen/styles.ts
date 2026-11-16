@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG, PILL, SOFT_FILL } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, ModernSize, ModernType, PAGE_BG, PILL, SOFT_FILL } from '@/utils/modernTheme';
 
 /**
  * Mockup "Salon Calendar and Bookings UI.png": light header with a Today
@@ -53,51 +53,52 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.xl,
-    gap: Spacing.md,
+    gap: ModernSize.gap,
   },
 
   // ── Header ──────────────────────────────────────────────────────────────
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    gap: ModernSize.gap,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
   },
   backBtn: {
     alignSelf: 'flex-start',
-    paddingTop: 6,
+    paddingTop: 2,
   },
   headerText: {
     flex: 1,
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   todayBtn: {
     alignSelf: 'flex-start',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 14,
     borderRadius: ModernRadius.button,
     borderWidth: 1.5,
     borderColor: BRAND_BLUE,
     backgroundColor: Color.white,
+    height: ModernSize.controlSm,
+    justifyContent: 'center',
   },
   todayBtnText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: BRAND_BLUE,
   },
@@ -113,7 +114,7 @@ export const styles = StyleSheet.create({
   },
   segmentBtn: {
     flex: 1,
-    paddingVertical: Spacing.sm + 2,
+    paddingVertical: Spacing.sm,
     borderRadius: 10,
     alignItems: 'center',
   },
@@ -121,7 +122,7 @@ export const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
   },
   segmentText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
@@ -153,8 +154,8 @@ export const styles = StyleSheet.create({
   periodLabel: {
     flexShrink: 1,
     textAlign: 'center',
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.cardTitle,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.3,
   },
@@ -165,7 +166,7 @@ export const styles = StyleSheet.create({
   weekdayLabel: {
     flex: 1,
     textAlign: 'center',
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: Color.textSecondary,
     paddingBottom: 2,
@@ -174,7 +175,7 @@ export const styles = StyleSheet.create({
   // ── Day cell ────────────────────────────────────────────────────────────
   dayCell: {
     flex: 1,
-    minHeight: 62,
+    minHeight: 60,
     alignItems: 'center',
     paddingTop: 6,
     paddingBottom: 5,
@@ -185,7 +186,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   dayCellTall: {
-    minHeight: 74,
+    minHeight: 72,
   },
   dayCellOutside: {
     backgroundColor: Color.white,
@@ -231,7 +232,7 @@ export const styles = StyleSheet.create({
     borderColor: BRAND_BLUE,
   },
   dayNum: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -333,33 +334,33 @@ export const styles = StyleSheet.create({
     backgroundColor: LEGEND.custom,
   },
   legendText: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: INK,
   },
 
   // ── Cards (selected day / bookings) ─────────────────────────────────────
   section: {
     ...card,
-    padding: Spacing.md,
-    gap: Spacing.sm + 4,
+    padding: ModernSize.cardPad,
+    gap: ModernSize.gap,
   },
   dayHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 6,
+    gap: ModernSize.gap,
   },
   dayHeaderText: {
     flex: 1,
     gap: 2,
   },
   dayTitle: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.cardTitle,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.3,
   },
   daySubtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   divider: {
@@ -373,13 +374,13 @@ export const styles = StyleSheet.create({
   },
   hoursLabel: {
     flex: 1,
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   sourcePill: {
-    paddingHorizontal: Spacing.sm + 4,
-    paddingVertical: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
   },
   editRow: {
     flexDirection: 'row',
@@ -393,21 +394,21 @@ export const styles = StyleSheet.create({
     minWidth: 104,
   },
   switchLabel: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   rangeDash: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   errorText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.error,
   },
   actionsRow: {
     flexDirection: 'row',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
   primaryBtn: {
     flex: 1.7,
@@ -415,12 +416,12 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm + 2,
-    minHeight: 50,
+    minHeight: ModernSize.control,
     borderRadius: ModernRadius.button,
     backgroundColor: BRAND_BLUE,
   },
   primaryBtnText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.semibold,
     color: Color.white,
   },
@@ -430,7 +431,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    minHeight: 50,
+    minHeight: ModernSize.control,
     borderRadius: ModernRadius.button,
     borderWidth: 1.5,
     borderColor: BRAND_BLUE,
@@ -440,7 +441,7 @@ export const styles = StyleSheet.create({
     opacity: 0.45,
   },
   outlineBtnText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.semibold,
     color: BRAND_BLUE,
   },
@@ -449,12 +450,12 @@ export const styles = StyleSheet.create({
   listHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
   listTitle: {
     flex: 1,
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.cardTitle,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.3,
   },
@@ -464,28 +465,29 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   viewAllText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.medium,
     color: BRAND_BLUE,
   },
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
     paddingVertical: Spacing.sm + 2,
     borderTopWidth: 1,
     borderTopColor: Color.border,
+    minHeight: ModernSize.rowMinHeight,
   },
   timeBox: {
-    minWidth: 92,
+    minWidth: 84,
     alignItems: 'center',
-    paddingVertical: Spacing.sm + 2,
+    paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.sm,
     borderRadius: 10,
     backgroundColor: '#EDF1F8',
   },
   timeBoxText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
@@ -494,21 +496,21 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   itemTitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   itemSubtitle: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   statusPill: {
     alignSelf: 'center',
-    paddingHorizontal: Spacing.sm + 4,
-    paddingVertical: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
   },
   emptyText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
     paddingTop: Spacing.xs,
   },

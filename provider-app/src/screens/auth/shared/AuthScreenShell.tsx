@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BrandMark } from './BrandMark';
 import { HeroBackground } from './HeroBackground';
-import { HERO_NAVY, authStyles as styles } from './styles';
+import { HERO_NAVY, LOGO_MARK, authStyles as styles } from './styles';
 
 interface AuthScreenShellProps {
   /** Line under "DNX Provider" in the hero. */
@@ -48,11 +48,11 @@ export function AuthScreenShell({ subtitle, children, footer }: AuthScreenShellP
           bounces={false}
         >
           {/* ── Hero ─────────────────────────────────────────────── */}
-          <View style={[styles.hero, { paddingTop: insets.top + 36 }]}>
+          <View style={[styles.hero, { paddingTop: insets.top + 28 }]}>
             <HeroBackground />
 
             <View style={styles.logoTile}>
-              <BrandMark size={60} />
+              <BrandMark size={LOGO_MARK} />
             </View>
             <Text style={styles.heroTitle} accessibilityRole="header">
               DNX Provider

@@ -114,7 +114,7 @@ export default function ReviewsScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+          <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title} numberOfLines={1}>
@@ -130,7 +130,7 @@ export default function ReviewsScreen() {
           accessibilityRole="button"
           accessibilityLabel="Sort and filter"
         >
-          <SlidersHorizontal size={24} color={LINK} strokeWidth={2} />
+          <SlidersHorizontal size={20} color={LINK} strokeWidth={2} />
           {filtersActive && <View style={styles.filterDot} />}
         </TouchableOpacity>
       </View>
@@ -146,7 +146,7 @@ export default function ReviewsScreen() {
           <View style={styles.summaryCard}>
             <View style={styles.summaryLeft}>
               <Text style={styles.summaryAvg}>{summary.avg.toFixed(1)}</Text>
-              <StarRow rating={summary.avg} size={22} />
+              <StarRow rating={summary.avg} size={18} />
               <Text style={styles.summaryCount}>
                 {summary.count} review{summary.count === 1 ? '' : 's'}
               </Text>

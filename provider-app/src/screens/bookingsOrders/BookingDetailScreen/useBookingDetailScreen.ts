@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react';
-import { Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
+import { SHEET_CLOSE_MS } from '@/components/BottomSheet';
+import { notifyDialog } from '@/components/ConfirmDialog';
 import {
   useCollectBookingPaymentMutation,
   useGetAllMyBookingsQuery,
@@ -18,7 +19,7 @@ function serverMessage(err: unknown): string | undefined {
 }
 
 function alertFailure(title: string, err: unknown) {
-  Alert.alert(title, serverMessage(err) ?? 'Something went wrong. Please try again.');
+  notifyDialog({ title, message: serverMessage(err) ?? 'Something went wrong. Please try again.', tone: 'danger' });
 }
 
 /**
@@ -86,7 +87,8 @@ export function useBookingDetailScreen() {
         reason: reason.trim() || undefined,
       }).unwrap();
     } catch (err) {
-      alertFailure('Could not cancel booking', err);
+      // Let the sheet close first — iOS can't stack the dialog on an open Modal.
+      setTimeout(() => alertFailure('Could not cancel booking', err), SHEET_CLOSE_MS);
     }
     setActionLoading(false);
     setShowCancel(false);
@@ -102,7 +104,7 @@ export function useBookingDetailScreen() {
     try {
       await collectBookingPayment({ id: booking.provider.id, bookingId: booking.id }).unwrap();
     } catch (err) {
-      alertFailure('Could not record payment', err);
+      setTimeout(() => alertFailure('Could not record payment', err), SHEET_CLOSE_MS);
     }
     setActionLoading(false);
     setShowCollect(false);

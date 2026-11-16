@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, INK, LINK, ModernRadius, PAGE_BG, SOFT_FILL } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, INK, LINK, ModernRadius, ModernSize, ModernType, PAGE_BG, SOFT_FILL } from '@/utils/modernTheme';
 
 export const STAR_COLOR = '#F5B301';
 
@@ -16,9 +16,9 @@ export const styles = StyleSheet.create({
     backgroundColor: PAGE_BG,
   },
   scrollContent: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: ModernSize.gutter,
     paddingBottom: Spacing.xl,
-    gap: Spacing.md,
+    gap: ModernSize.gap + 4,
   },
 
   // Header actions
@@ -27,8 +27,8 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   headerBtn: {
-    width: 46,
-    height: 42,
+    width: ModernSize.controlSm,
+    height: ModernSize.controlSm,
     borderRadius: ModernRadius.box,
     alignItems: 'center',
     justifyContent: 'center',
@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
   // Cover + identity
   cover: {
     width: '100%',
-    height: 190,
+    height: 176,
     borderRadius: ModernRadius.card,
     backgroundColor: SOFT_FILL,
   },
@@ -51,12 +51,12 @@ export const styles = StyleSheet.create({
     borderColor: Color.border,
   },
   coverEmptyText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
   identity: {
     gap: Spacing.xs + 2,
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: Spacing.xs,
   },
   nameRow: {
     flexDirection: 'row',
@@ -65,8 +65,8 @@ export const styles = StyleSheet.create({
   },
   name: {
     flexShrink: 1,
-    fontSize: FontSize.xl + 2,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
   },
   categoryPill: {
@@ -80,7 +80,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#EEF1F8',
   },
   categoryText: {
-    fontSize: FontSize.xs + 1,
+    fontSize: ModernType.caption,
     color: '#4F5D8A',
   },
   ratingRow: {
@@ -89,24 +89,24 @@ export const styles = StyleSheet.create({
     gap: 6,
   },
   ratingValue: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   ratingCount: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   mutedText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
 
   // Blocked banner
   banner: {
     flexDirection: 'row',
-    gap: Spacing.sm + 4,
-    padding: Spacing.md,
+    gap: ModernSize.gap,
+    padding: ModernSize.cardPad,
     borderRadius: ModernRadius.box,
     backgroundColor: '#FDECEC',
     borderWidth: 1,
@@ -117,19 +117,19 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   bannerTitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: '#991B1B',
   },
   bannerText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: '#7F1D1D',
-    lineHeight: FontSize.sm * 1.4,
+    lineHeight: 20,
   },
 
   // Sections
   section: {
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
   divider: {
     height: 1,
@@ -141,8 +141,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   sectionTitle: {
-    fontSize: FontSize.lg + 2,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.cardTitle,
+    fontWeight: FontWeight.bold,
     color: INK,
   },
   linkBtn: {
@@ -151,7 +151,7 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   linkText: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: LINK,
   },
@@ -161,11 +161,11 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    rowGap: Spacing.sm + 4,
+    rowGap: ModernSize.gap,
   },
   tile: {
     width: '48.5%',
-    height: 96,
+    height: 84,
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
@@ -174,16 +174,16 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
   },
   tileText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.bold,
     color: INK,
   },
 
   // About
   aboutText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
-    lineHeight: FontSize.md * 1.45,
+    lineHeight: 20,
   },
   showMoreBtn: {
     flexDirection: 'row',
@@ -198,7 +198,7 @@ export const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   contactIcon: {
-    width: 28,
+    width: 24,
     paddingTop: Spacing.sm + 2,
     alignItems: 'center',
   },
@@ -212,14 +212,14 @@ export const styles = StyleSheet.create({
     borderBottomColor: CARD_BORDER,
   },
   contactLabel: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   contactValue: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
-    lineHeight: FontSize.md * 1.35,
+    lineHeight: 20,
   },
 
   // Reviews
@@ -243,12 +243,12 @@ export const styles = StyleSheet.create({
     borderBottomColor: CARD_BORDER,
   },
   reviewSummaryValue: {
-    fontSize: FontSize.xxl,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   reviewSummaryCount: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   reviewEmpty: {
@@ -258,23 +258,23 @@ export const styles = StyleSheet.create({
   },
   reviewRow: {
     flexDirection: 'row',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
     paddingVertical: Spacing.xs,
   },
   reviewRowDivider: {
     borderTopWidth: 1,
     borderTopColor: CARD_BORDER,
-    paddingTop: Spacing.sm + 4,
+    paddingTop: ModernSize.gap,
   },
   reviewAvatar: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: ModernSize.avatar,
+    height: ModernSize.avatar,
+    borderRadius: ModernSize.avatar / 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
   reviewAvatarText: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
   },
   reviewMain: {
@@ -282,7 +282,7 @@ export const styles = StyleSheet.create({
     gap: 3,
   },
   reviewAuthor: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -292,12 +292,12 @@ export const styles = StyleSheet.create({
     gap: 6,
   },
   reviewTime: {
-    fontSize: FontSize.xs + 1,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
   reviewComment: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.body,
     color: INK,
-    lineHeight: (FontSize.sm + 1) * 1.4,
+    lineHeight: 20,
   },
 });

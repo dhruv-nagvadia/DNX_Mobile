@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { ACTION, INK } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { ACTION, INK, ModernType } from '@/utils/modernTheme';
 
 // Only shown on the Business Detail screen (mockup look — sits directly on
 // the page background, no card).
@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
     backgroundColor: ACTION,
   },
   segmentText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
@@ -35,11 +35,11 @@ export const styles = StyleSheet.create({
     color: Color.white,
   },
   range: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   total: {
-    fontSize: FontSize.xxxl,
+    fontSize: ModernType.hero,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -63,7 +63,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.errorSoft,
   },
   trendText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.bold,
   },
   trendTextUp: {
@@ -73,7 +73,7 @@ export const styles = StyleSheet.create({
     color: Color.error,
   },
   trendLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   chart: {

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
-import { INK, PAGE_BG } from '@/utils/modernTheme';
+import { INK, ModernType, PAGE_BG } from '@/utils/modernTheme';
 
 export const styles = StyleSheet.create({
   header: {
@@ -15,8 +15,8 @@ export const styles = StyleSheet.create({
     paddingBottom: Spacing.sm + 4,
   },
   titleLight: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
   },
   subtitleLight: {
@@ -50,12 +50,12 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.title,
     fontWeight: FontWeight.bold,
     color: Color.white,
   },
   subtitle: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.onDarkMuted,
     marginTop: 1,
   },

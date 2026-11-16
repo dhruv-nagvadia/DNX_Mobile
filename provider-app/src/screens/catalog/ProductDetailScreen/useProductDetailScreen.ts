@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import {
@@ -10,6 +9,8 @@ import {
   useGetStockAdjustmentsQuery,
   useUpdateProductMutation,
 } from '@/redux/api/business/businessApi';
+import { Trash2 } from 'lucide-react-native';
+import { useConfirm } from '@/components/ConfirmDialog';
 import { ROUTES } from '@/navigation/routes';
 import { LOW_STOCK_FACTOR } from '@/utils/units';
 
@@ -34,6 +35,7 @@ export interface SalesStats {
 export function useProductDetailScreen() {
   const route = useRoute<ProductDetailRouteProp>();
   const navigation = useNavigation<ProductDetailNavigationProp>();
+  const { confirm, notify } = useConfirm();
   const { businessId, productId } = route.params;
 
   const businessQ = useGetMyBusinessQuery(businessId);
@@ -130,23 +132,24 @@ export function useProductDetailScreen() {
       .catch(() => undefined);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!product) {
       return;
     }
-    Alert.alert('Delete product?', `"${product.name}" will be removed from your catalog.`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          deleteProduct({ businessId, productId })
-            .unwrap()
-            .then(() => navigation.goBack())
-            .catch(() => Alert.alert('Could not delete', 'Please try again.'));
-        },
-      },
-    ]);
+    const ok = await confirm({
+      title: 'Delete product?',
+      message: `"${product.name}" will be removed from your catalog.`,
+      confirmText: 'Delete',
+      tone: 'danger',
+      icon: Trash2,
+    });
+    if (!ok) {
+      return;
+    }
+    deleteProduct({ businessId, productId })
+      .unwrap()
+      .then(() => navigation.goBack())
+      .catch(() => notify({ title: 'Could not delete', message: 'Please try again.', tone: 'danger' }));
   };
 
   return {

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Modal, Pressable, Text, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { Check } from 'lucide-react-native';
 
-import { Color, Spacing } from '@/utils/Theme';
+import { BottomSheet, SheetButton } from '@/components/BottomSheet';
+import { Color } from '@/utils/Theme';
 
 import { styles } from './styles';
 import { ReviewSort, ReviewTypeFilter } from './types';
@@ -40,7 +40,6 @@ interface FilterSheetProps {
 }
 
 export function FilterSheet({ visible, onClose, sort, onSort, type, onType, showProducts }: FilterSheetProps) {
-  const insets = useSafeAreaInsets();
   const types: { key: ReviewTypeFilter; label: string }[] = [
     { key: 'all', label: 'All' },
     { key: 'business', label: 'Business' },
@@ -48,31 +47,25 @@ export function FilterSheet({ visible, onClose, sort, onSort, type, onType, show
   ];
 
   return (
-    <Modal visible={visible} transparent animationType="fade" statusBarTranslucent onRequestClose={onClose}>
-      <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel="Close filters">
-        <Pressable style={[styles.sheet, { paddingBottom: insets.bottom + Spacing.lg }]}>
-          <View style={styles.sheetHandle} />
-          <Text style={styles.sheetTitle}>Sort & filter</Text>
+    <BottomSheet
+      visible={visible}
+      onClose={onClose}
+      title="Sort & filter"
+      footer={<SheetButton title="Done" onPress={onClose} />}
+    >
+      <Text style={styles.sheetLabel}>Sort</Text>
+      <View style={styles.sheetOptions}>
+        {SORTS.map((s) => (
+          <Option key={s.key} label={s.label} selected={sort === s.key} onPress={() => onSort(s.key)} />
+        ))}
+      </View>
 
-          <Text style={styles.sheetLabel}>Sort</Text>
-          <View style={styles.sheetOptions}>
-            {SORTS.map((s) => (
-              <Option key={s.key} label={s.label} selected={sort === s.key} onPress={() => onSort(s.key)} />
-            ))}
-          </View>
-
-          <Text style={styles.sheetLabel}>Type</Text>
-          <View style={styles.sheetOptions}>
-            {types.map((t) => (
-              <Option key={t.key} label={t.label} selected={type === t.key} onPress={() => onType(t.key)} />
-            ))}
-          </View>
-
-          <TouchableOpacity style={styles.sheetDone} onPress={onClose} accessibilityRole="button">
-            <Text style={styles.postText}>Done</Text>
-          </TouchableOpacity>
-        </Pressable>
-      </Pressable>
-    </Modal>
+      <Text style={styles.sheetLabel}>Type</Text>
+      <View style={styles.sheetOptions}>
+        {types.map((t) => (
+          <Option key={t.key} label={t.label} selected={type === t.key} onPress={() => onType(t.key)} />
+        ))}
+      </View>
+    </BottomSheet>
   );
 }

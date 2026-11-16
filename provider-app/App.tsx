@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import store from '@/redux/store';
+import { ConfirmProvider } from '@/components/ConfirmDialog';
 import RootNavigator from '@/navigation/RootNavigator';
 import { useSessionBootstrap } from '@/hooks/useSessionBootstrap';
 import { Color } from '@/utils/Theme';
@@ -21,8 +22,10 @@ export default function App() {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <StatusBar barStyle="light-content" />
-        <AppContent />
+        <ConfirmProvider>
+          <StatusBar barStyle="light-content" />
+          <AppContent />
+        </ConfirmProvider>
       </SafeAreaProvider>
     </Provider>
   );

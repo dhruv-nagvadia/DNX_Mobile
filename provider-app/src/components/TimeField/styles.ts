@@ -1,49 +1,32 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, INK, ModernSize, ModernType, PILL } from '@/utils/modernTheme';
 
 export const styles = StyleSheet.create({
   container: {
     gap: 6,
   },
   label: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: Color.textPrimary,
   },
   field: {
     borderWidth: 1,
     borderColor: Color.border,
-    borderRadius: Radius.md,
+    borderRadius: ModernSize.controlRadius,
     paddingHorizontal: Spacing.md,
-    paddingVertical: 12,
+    minHeight: ModernSize.control,
+    justifyContent: 'center',
     backgroundColor: Color.surface,
   },
   fieldDisabled: {
     opacity: 0.5,
   },
   fieldText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.semibold,
     color: Color.textPrimary,
-  },
-
-  overlay: {
-    flex: 1,
-    backgroundColor: Color.overlay,
-    justifyContent: 'flex-end',
-  },
-  sheet: {
-    backgroundColor: Color.surface,
-    borderTopLeftRadius: Radius.xl,
-    borderTopRightRadius: Radius.xl,
-    padding: Spacing.lg,
-    gap: Spacing.md,
-  },
-  sheetTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-    textAlign: 'center',
   },
 
   columns: {
@@ -55,30 +38,25 @@ export const styles = StyleSheet.create({
   },
   columnDivider: {
     borderLeftWidth: 1,
-    borderLeftColor: Color.border,
+    borderLeftColor: CARD_BORDER,
   },
   option: {
-    paddingVertical: 10,
+    minHeight: 44,
+    marginHorizontal: Spacing.xs,
     alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: ModernSize.controlRadius,
   },
   optionSelected: {
-    backgroundColor: Color.primarySoft,
-    borderRadius: Radius.sm,
+    backgroundColor: PILL.blue.bg,
   },
   optionText: {
-    fontSize: FontSize.md,
-    color: Color.textPrimary,
+    fontSize: ModernType.rowTitle,
+    fontWeight: FontWeight.medium,
+    color: INK,
   },
   optionTextSelected: {
-    color: Color.primary,
+    color: PILL.blue.fg,
     fontWeight: FontWeight.bold,
-  },
-
-  actions: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  actionButton: {
-    flex: 1,
   },
 });

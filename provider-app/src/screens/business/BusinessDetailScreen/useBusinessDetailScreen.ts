@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import {
@@ -7,6 +6,8 @@ import {
   useGetBusinessReviewsQuery,
   useGetMyBusinessQuery,
 } from '@/redux/api/business/businessApi';
+import { Trash2 } from 'lucide-react-native';
+import { useConfirm } from '@/components/ConfirmDialog';
 import { ROUTES } from '@/navigation/routes';
 
 import { BusinessDetailNavigationProp, BusinessDetailRouteProp } from './types';
@@ -16,6 +17,7 @@ const RECENT_REVIEWS_LIMIT = 2;
 export function useBusinessDetailScreen() {
   const route = useRoute<BusinessDetailRouteProp>();
   const navigation = useNavigation<BusinessDetailNavigationProp>();
+  const { confirm, notify } = useConfirm();
   const { businessId } = route.params;
 
   const { data: business, isLoading, isFetching, refetch } = useGetMyBusinessQuery(businessId);
@@ -33,29 +35,27 @@ export function useBusinessDetailScreen() {
   // Businesses with no `type` set behave as SERVICE (mirrors the web form's default).
   const isStore = business?.type === 'STORE';
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!business) {
       return;
     }
-    Alert.alert(
-      `Delete "${business.businessName}"?`,
-      'This permanently removes the business, its services or products, and its booking/order history. This cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteBusiness(businessId).unwrap();
-              navigation.goBack();
-            } catch {
-              Alert.alert('Could not delete the business', 'Please try again.');
-            }
-          },
-        },
-      ],
-    );
+    const ok = await confirm({
+      title: `Delete "${business.businessName}"?`,
+      message:
+        'This permanently removes the business, its services or products, and its booking/order history. This cannot be undone.',
+      confirmText: 'Delete',
+      tone: 'danger',
+      icon: Trash2,
+    });
+    if (!ok) {
+      return;
+    }
+    try {
+      await deleteBusiness(businessId).unwrap();
+      navigation.goBack();
+    } catch {
+      notify({ title: 'Could not delete the business', message: 'Please try again.', tone: 'danger' });
+    }
   };
 
   return {

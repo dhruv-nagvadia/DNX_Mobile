@@ -128,9 +128,9 @@ function BusinessCard({
         ) : (
           <View style={styles.thumbFallback}>
             {isStore ? (
-              <Store size={26} color={Color.placeholder} />
+              <Store size={22} color={Color.placeholder} />
             ) : (
-              <Briefcase size={26} color={Color.placeholder} />
+              <Briefcase size={22} color={Color.placeholder} />
             )}
           </View>
         )}
@@ -141,7 +141,7 @@ function BusinessCard({
               {b.businessName}
             </Text>
             {b.isVerified && !b.isBlocked && (
-              <BadgeCheck size={20} color={Color.white} fill={PROGRESS_BLUE} strokeWidth={2.2} />
+              <BadgeCheck size={16} color={Color.white} fill={PROGRESS_BLUE} strokeWidth={2.2} />
             )}
           </View>
           <View style={styles.metaRow}>
@@ -151,7 +151,7 @@ function BusinessCard({
             </Text>
           </View>
           <View style={styles.metaRow}>
-            <Star size={15} color={STAR} fill={STAR} />
+            <Star size={14} color={STAR} fill={STAR} />
             <Text style={styles.ratingValue}>{b.ratingAvg.toFixed(1)}</Text>
             <Text style={styles.meta}>({b.ratingCount})</Text>
             <Text style={styles.dot}>•</Text>
@@ -241,7 +241,7 @@ export default function BusinessesScreen() {
           accessibilityRole="button"
           accessibilityLabel="Add a business"
         >
-          <Plus size={28} color={Color.white} strokeWidth={2.4} />
+          <Plus size={22} color={Color.white} strokeWidth={2.4} />
         </TouchableOpacity>
       </View>
 
@@ -296,19 +296,19 @@ export default function BusinessesScreen() {
                   label="Verified"
                   value={counts.verified}
                   theme={TINT.mint}
-                  icon={<CircleCheck size={30} color={TINT.mint.icon} strokeWidth={1.8} />}
+                  icon={<CircleCheck size={20} color={TINT.mint.icon} strokeWidth={1.8} />}
                 />
                 <SummaryTile
                   label="Pending"
                   value={counts.pending}
                   theme={TINT.peach}
-                  icon={<Clock size={30} color={TINT.peach.icon} strokeWidth={1.8} />}
+                  icon={<Clock size={20} color={TINT.peach.icon} strokeWidth={1.8} />}
                 />
                 <SummaryTile
                   label="Blocked"
                   value={counts.blocked}
                   theme={TINT.pink}
-                  icon={<TriangleAlert size={30} color={TINT.pink.icon} strokeWidth={1.8} />}
+                  icon={<TriangleAlert size={20} color={TINT.pink.icon} strokeWidth={1.8} />}
                 />
               </View>
 
@@ -335,7 +335,7 @@ export default function BusinessesScreen() {
             accessibilityRole="button"
             accessibilityLabel="Add a new business"
           >
-            <Store size={34} color={PROGRESS_BLUE} strokeWidth={1.8} />
+            <Store size={26} color={PROGRESS_BLUE} strokeWidth={1.8} />
             <Text style={styles.addCardText}>+ Add a new business</Text>
           </TouchableOpacity>
         )}

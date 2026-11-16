@@ -19,12 +19,12 @@ interface NextRowProps {
 function NextRow({ icon: Icon, title, sub, onPress }: NextRowProps) {
   return (
     <TouchableOpacity style={styles.nextRow} activeOpacity={0.8} onPress={onPress} accessibilityRole="button">
-      <Icon size={28} color={INK} strokeWidth={1.8} />
+      <Icon size={22} color={INK} strokeWidth={1.8} />
       <View style={styles.nextBody}>
         <Text style={styles.nextTitle}>{title}</Text>
         <Text style={styles.nextSub}>{sub}</Text>
       </View>
-      <ChevronRight size={22} color={INK} strokeWidth={2.2} />
+      <ChevronRight size={20} color={INK} strokeWidth={2.2} />
     </TouchableOpacity>
   );
 }
@@ -50,7 +50,7 @@ export function DoneView({ business, isStore, onCatalog, onHours, onPhotos }: Do
         <View style={[styles.dash, styles.dashE]} />
         <View style={[styles.dash, styles.dashF]} />
         <View style={styles.checkCircle}>
-          <Check size={60} color={SUCCESS_GREEN} strokeWidth={3} />
+          <Check size={48} color={SUCCESS_GREEN} strokeWidth={3} />
         </View>
       </View>
 

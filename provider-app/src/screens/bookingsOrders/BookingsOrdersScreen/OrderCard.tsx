@@ -142,7 +142,7 @@ function OrderButton({
         <ActivityIndicator size="small" color={Color.white} />
       ) : (
         <>
-          <Icon size={20} color={fg} strokeWidth={2.2} />
+          <Icon size={16} color={fg} strokeWidth={2.2} />
           <Text style={[styles.oBtnText, text]} numberOfLines={1}>
             {label}
           </Text>
@@ -217,7 +217,7 @@ export function OrderCard({
 
         <View style={styles.oRow}>
           <View style={styles.oAvatar}>
-            <User size={22} color={INK} strokeWidth={1.8} />
+            <User size={20} color={INK} strokeWidth={1.8} />
           </View>
           <View style={styles.oRowText}>
             <Text style={styles.oName} numberOfLines={1}>
@@ -242,7 +242,7 @@ export function OrderCard({
               accessibilityRole="button"
               accessibilityLabel={`Call ${o.user.fullName}`}
             >
-              <Phone size={20} color={LINK} strokeWidth={2} />
+              <Phone size={18} color={LINK} strokeWidth={2} />
             </TouchableOpacity>
           )}
         </View>
@@ -259,7 +259,7 @@ export function OrderCard({
                       {uri ? (
                         <Image source={{ uri }} style={styles.oThumbImg} />
                       ) : (
-                        <Package size={20} color={Color.placeholder} strokeWidth={1.6} />
+                        <Package size={18} color={Color.placeholder} strokeWidth={1.6} />
                       )}
                     </View>
                   );

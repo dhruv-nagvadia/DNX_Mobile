@@ -16,14 +16,20 @@ function deriveLowStock(businesses: Business[]): LowStockItem[] {
   const items: LowStockItem[] = [];
   businesses.forEach((b) => {
     (b.products ?? []).forEach((p) => {
-      if (p.isActive === false) return;
+      if (p.isActive === false) {
+        return;
+      }
       const level = productStockLevel(p.stockQty, p.stepQty, p.unlimitedStock);
-      if (level === 'ok') return;
+      if (level === 'ok') {
+        return;
+      }
       items.push({ product: p, businessId: b.id, businessName: b.businessName, level });
     });
   });
   return items.sort((a, b) => {
-    if (a.level !== b.level) return a.level === 'out' ? -1 : 1;
+    if (a.level !== b.level) {
+      return a.level === 'out' ? -1 : 1;
+    }
     return a.product.stockQty - b.product.stockQty;
   });
 }

@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { ModernType } from '@/utils/modernTheme';
 
 export const styles = StyleSheet.create({
   center: {
@@ -9,12 +10,12 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   title: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.bold,
     color: Color.textPrimary,
   },
   body: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
     textAlign: 'center',
   },

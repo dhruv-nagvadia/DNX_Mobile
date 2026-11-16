@@ -1,11 +1,13 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
 import {
   CARD_BORDER,
   CARD_SHADOW,
   INK,
   LINK,
   ModernRadius,
+  ModernSize,
+  ModernType,
   PAGE_BG,
   PILL,
   SOFT_FILL,
@@ -15,7 +17,7 @@ import {
  * button blue matches the sibling catalog screens. */
 export const COLLECT_GREEN = PILL.green.fg;
 const AVATAR_BG = '#EEF1FB';
-const THUMB = 46;
+const THUMB = 40;
 
 /** Bookings "In progress" tile — mint gradient with a teal icon. */
 export const TEAL_TINT = {
@@ -60,7 +62,7 @@ export const styles = StyleSheet.create({
     elevation: 1,
   },
   segmentText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: Color.textSecondary,
   },
@@ -83,40 +85,40 @@ export const styles = StyleSheet.create({
   ordersHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    gap: ModernSize.gap,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
   },
   backBtn: {
     alignSelf: 'flex-start',
-    paddingTop: 6,
+    paddingTop: 2,
   },
   headerText: {
     flex: 1,
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   ordersContent: {
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
-    gap: Spacing.md - 2,
+    gap: ModernSize.gap,
   },
   search: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    height: 46,
+    height: 44,
     paddingHorizontal: Spacing.md - 2,
     borderRadius: ModernRadius.box,
     borderWidth: 1,
@@ -126,7 +128,7 @@ export const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     paddingVertical: 0,
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   // Bleed the chip row to the screen edges so chips scroll off-screen.
@@ -156,7 +158,7 @@ export const styles = StyleSheet.create({
     backgroundColor: LINK,
   },
   countChipText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -165,9 +167,9 @@ export const styles = StyleSheet.create({
     fontWeight: FontWeight.semibold,
   },
   countBadge: {
-    minWidth: 26,
+    minWidth: 22,
     alignItems: 'center',
-    paddingHorizontal: 7,
+    paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: ModernRadius.pill,
     backgroundColor: SOFT_FILL,
@@ -176,7 +178,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.28)',
   },
   countBadgeText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
@@ -186,7 +188,7 @@ export const styles = StyleSheet.create({
 
   tiles: {
     flexDirection: 'row',
-    gap: Spacing.sm + 2,
+    gap: Spacing.sm,
   },
   tile: {
     flex: 1,
@@ -194,15 +196,16 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.sm,
     paddingHorizontal: Spacing.sm + 2,
-    paddingVertical: Spacing.md - 2,
+    paddingVertical: ModernSize.gap,
     borderRadius: ModernRadius.box,
     borderWidth: 1,
     overflow: 'hidden',
+    minHeight: 76,
   },
   tileIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(255,255,255,0.55)',
@@ -211,19 +214,19 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   tileLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
   tileValue: {
-    fontSize: FontSize.xl,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   noMatch: {
     paddingVertical: Spacing.lg,
     textAlign: 'center',
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
 
@@ -231,9 +234,9 @@ export const styles = StyleSheet.create({
   oCard: {
     backgroundColor: Color.white,
     borderRadius: ModernRadius.card,
-    paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.sm + 4,
-    paddingBottom: Spacing.md,
+    paddingHorizontal: ModernSize.cardPad,
+    paddingTop: ModernSize.cardPad,
+    paddingBottom: ModernSize.cardPad,
     borderWidth: 1,
     borderColor: CARD_BORDER,
     ...CARD_SHADOW,
@@ -247,25 +250,25 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   oId: {
-    fontSize: FontSize.lg + 2,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   oWhen: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
     marginTop: 1,
   },
   oPill: {
-    paddingHorizontal: Spacing.sm + 4,
-    paddingVertical: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: ModernRadius.pill,
   },
   oPillShrink: {
     flexShrink: 1,
   },
   oPillText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
   },
   oDivider: {
@@ -277,36 +280,36 @@ export const styles = StyleSheet.create({
   oRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
   oRowText: {
     flex: 1,
     gap: 1,
   },
   oAvatar: {
-    width: 44,
-    height: 44,
+    width: ModernSize.avatar,
+    height: ModernSize.avatar,
     borderRadius: ModernRadius.box,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: AVATAR_BG,
   },
   oName: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   oMeta: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   oBusiness: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
   oCallBtn: {
-    width: 44,
-    height: 44,
+    width: ModernSize.controlSm,
+    height: ModernSize.controlSm,
     borderRadius: ModernRadius.box,
     alignItems: 'center',
     justifyContent: 'center',
@@ -336,7 +339,7 @@ export const styles = StyleSheet.create({
     height: '100%',
   },
   oItems: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -348,21 +351,21 @@ export const styles = StyleSheet.create({
   },
   oAmount: {
     flexShrink: 1,
-    fontSize: FontSize.xl,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   oActions: {
     gap: Spacing.sm,
-    marginTop: Spacing.md - 2,
+    marginTop: ModernSize.gap,
   },
   oBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.sm,
-    minHeight: 46,
+    gap: 6,
+    minHeight: ModernSize.controlSm,
     paddingHorizontal: Spacing.sm,
     borderRadius: 10,
     borderWidth: 1.5,
@@ -380,7 +383,7 @@ export const styles = StyleSheet.create({
     borderColor: COLLECT_GREEN,
   },
   oBtnText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
   },
   oBtnTextPrimary: {
@@ -399,7 +402,7 @@ export const styles = StyleSheet.create({
     marginTop: 2,
   },
   bWhen: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -409,7 +412,7 @@ export const styles = StyleSheet.create({
     maxWidth: '45%',
   },
   bStarted: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
   bPill: {
@@ -433,7 +436,7 @@ export const styles = StyleSheet.create({
     backgroundColor: PILL.lavender.bg,
   },
   bPrice: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },

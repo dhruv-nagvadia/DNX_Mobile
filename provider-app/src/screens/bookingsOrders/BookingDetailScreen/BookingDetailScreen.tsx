@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Linking,
   Platform,
   RefreshControl,
@@ -34,6 +33,7 @@ import {
 } from 'lucide-react-native';
 
 import { ActionModal } from '@/components/ActionModal';
+import { notifyDialog } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { BookingStatus, PaymentMethod } from '@/redux/api/business/types';
 import { Color, Spacing } from '@/utils/Theme';
@@ -187,7 +187,9 @@ function openMaps(b: BookingDetail) {
   } else {
     url = hasCoords ? `geo:${coords}?q=${coords}` : `geo:0,0?q=${query}`;
   }
-  Linking.openURL(url).catch(() => Alert.alert('Could not open Maps', 'No maps app is available.'));
+  Linking.openURL(url).catch(() =>
+    notifyDialog({ title: 'Could not open Maps', message: 'No maps app is available.', tone: 'warning' }),
+  );
 }
 
 // ── Small pieces ────────────────────────────────────────────────────────
@@ -238,7 +240,7 @@ function Stepper({ booking: b }: { booking: BookingDetail }) {
                   ]}
                 />
                 <View style={[styles.stepCircle, done && styles.stepCircleDone]}>
-                  {done && <Check size={16} color={Color.white} strokeWidth={3} />}
+                  {done && <Check size={14} color={Color.white} strokeWidth={3} />}
                 </View>
                 <View
                   style={[
@@ -268,9 +270,9 @@ function ClosedNote({ booking: b }: { booking: BookingDetail }) {
   return (
     <View style={[styles.closedNote, noShow ? styles.closedNoteRed : styles.closedNoteGrey]}>
       {noShow ? (
-        <CalendarX size={22} color={PILL.red.fg} strokeWidth={2} />
+        <CalendarX size={20} color={PILL.red.fg} strokeWidth={2} />
       ) : (
-        <X size={22} color={INK} strokeWidth={2.2} />
+        <X size={20} color={INK} strokeWidth={2.2} />
       )}
       <View style={styles.flex}>
         <Text style={[styles.closedTitle, noShow && styles.closedTitleRed]}>
@@ -347,7 +349,7 @@ function Activity({ booking }: { booking: BookingDetail }) {
   return (
     <View style={styles.card}>
       <View style={styles.cardTitleRow}>
-        <Clock size={24} color={INK} strokeWidth={1.8} />
+        <Clock size={20} color={INK} strokeWidth={1.8} />
         <Text style={styles.cardTitle}>Activity</Text>
       </View>
       <View style={styles.timeline}>
@@ -363,8 +365,8 @@ function Activity({ booking }: { booking: BookingDetail }) {
                     it.state === 'closed' && styles.tlDotClosed,
                   ]}
                 >
-                  {it.state === 'done' && <Check size={13} color={Color.white} strokeWidth={3} />}
-                  {it.state === 'closed' && <X size={13} color={Color.white} strokeWidth={3} />}
+                  {it.state === 'done' && <Check size={12} color={Color.white} strokeWidth={3} />}
+                  {it.state === 'closed' && <X size={12} color={Color.white} strokeWidth={3} />}
                 </View>
                 {!last && <View style={styles.tlLine} />}
               </View>
@@ -491,7 +493,7 @@ export default function BookingDetailScreen() {
       accessibilityRole="button"
       accessibilityLabel="Back"
     >
-      <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+      <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
     </TouchableOpacity>
   );
 
@@ -575,7 +577,7 @@ export default function BookingDetailScreen() {
         {/* Appointment */}
         <View style={styles.card}>
           <View style={styles.cardTitleRow}>
-            <CalendarDays size={24} color={INK} strokeWidth={1.8} />
+            <CalendarDays size={20} color={INK} strokeWidth={1.8} />
             <Text style={styles.cardTitle} numberOfLines={1}>
               {slotLabel(b.startTime, b.endTime)}
             </Text>
@@ -583,7 +585,7 @@ export default function BookingDetailScreen() {
           <View style={styles.divider} />
           <View style={styles.serviceRow}>
             <View style={styles.serviceIconBox}>
-              <ServiceIcon size={30} color={PILL.lavender.fg} strokeWidth={1.8} />
+              <ServiceIcon size={22} color={PILL.lavender.fg} strokeWidth={1.8} />
             </View>
             <View style={styles.flex}>
               <Text style={styles.serviceName} numberOfLines={2}>
@@ -607,7 +609,7 @@ export default function BookingDetailScreen() {
         {hasLocation && (
           <View style={styles.card}>
             <View style={styles.visitRow}>
-              <MapPin size={24} color={INK} strokeWidth={1.8} />
+              <MapPin size={20} color={INK} strokeWidth={1.8} />
               <View style={styles.flex}>
                 <Text style={styles.cardTitleSm}>Home visit</Text>
                 <Text style={styles.body}>{b.serviceAddressLine || 'Pinned location'}</Text>
@@ -621,7 +623,7 @@ export default function BookingDetailScreen() {
                 activeOpacity={0.8}
                 accessibilityRole="button"
               >
-                <MapIcon size={18} color={LINK} strokeWidth={2} />
+                <MapIcon size={16} color={LINK} strokeWidth={2} />
                 <Text style={styles.mapsBtnText}>Open in Maps</Text>
               </TouchableOpacity>
             </View>
@@ -648,7 +650,7 @@ export default function BookingDetailScreen() {
                   accessibilityRole="button"
                   accessibilityLabel="Call customer"
                 >
-                  <Phone size={22} color={INK} strokeWidth={1.9} />
+                  <Phone size={18} color={INK} strokeWidth={1.9} />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.contactBtn}
@@ -656,7 +658,7 @@ export default function BookingDetailScreen() {
                   accessibilityRole="button"
                   accessibilityLabel="Message customer"
                 >
-                  <MessageSquare size={22} color={INK} strokeWidth={1.9} />
+                  <MessageSquare size={18} color={INK} strokeWidth={1.9} />
                 </TouchableOpacity>
               </>
             )}
@@ -666,7 +668,7 @@ export default function BookingDetailScreen() {
         {/* Payment */}
         <View style={styles.card}>
           <View style={styles.cardTitleRow}>
-            <Wallet size={24} color={INK} strokeWidth={1.8} />
+            <Wallet size={20} color={INK} strokeWidth={1.8} />
             <Text style={styles.cardTitleSm} numberOfLines={1}>
               {method.title}
             </Text>
@@ -694,7 +696,7 @@ export default function BookingDetailScreen() {
             )}
           </View>
           <View style={[styles.payPill, { backgroundColor: pay.colors.bg }]}>
-            <CreditCard size={18} color={pay.colors.fg} strokeWidth={1.8} />
+            <CreditCard size={16} color={pay.colors.fg} strokeWidth={1.8} />
             <Text style={[styles.payPillText, { color: pay.colors.fg }]} numberOfLines={1}>
               {pay.label}
             </Text>

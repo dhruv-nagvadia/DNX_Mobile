@@ -49,9 +49,9 @@ export function useCouponFormScreen() {
   const itemScope: CouponScope = isStore ? 'PRODUCT' : 'SERVICE';
 
   useEffect(() => {
-    if (isNew || !coupons) return;
+    if (isNew || !coupons) {return;}
     const c = coupons.find((x) => x.id === couponId);
-    if (!c) return;
+    if (!c) {return;}
     setForm({
       code: c.code,
       description: c.description ?? '',
@@ -81,10 +81,10 @@ export function useCouponFormScreen() {
     const code = form.code.trim();
     const value = Number(form.discountValue);
 
-    if (code.length < 2) return setError('Enter a coupon code');
-    if (!/^[A-Za-z0-9_-]+$/.test(code)) return setError('Code can use letters, numbers, - or _');
-    if (!Number.isFinite(value) || value <= 0) return setError('Enter a valid discount');
-    if (form.discountType === 'PERCENT' && value > 100) return setError('A percentage can’t be over 100');
+    if (code.length < 2) {return setError('Enter a coupon code');}
+    if (!/^[A-Za-z0-9_-]+$/.test(code)) {return setError('Code can use letters, numbers, - or _');}
+    if (!Number.isFinite(value) || value <= 0) {return setError('Enter a valid discount');}
+    if (form.discountType === 'PERCENT' && value > 100) {return setError('A percentage can’t be over 100');}
     if (form.scope === itemScope && !(itemScope === 'SERVICE' ? form.serviceId : form.productId)) {
       return setError(`Pick a ${itemScope === 'SERVICE' ? 'service' : 'product'}`);
     }
@@ -120,6 +120,7 @@ export function useCouponFormScreen() {
 
   return {
     isNew,
+    businessName: business?.businessName,
     isStore,
     itemScope,
     services: business?.services ?? [],

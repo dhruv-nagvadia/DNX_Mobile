@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernType } from '@/utils/modernTheme';
 
 export const SERIES_BLUE = '#1D4ED8';
 export const SECONDARY_ORANGE = '#F97316';
@@ -25,12 +25,12 @@ export const styles = StyleSheet.create({
     ...CARD_SHADOW,
   },
   bubbleText: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   caption: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
     textAlign: 'center',
   },
@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
     backgroundColor: SECONDARY_ORANGE,
   },
   legendText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: INK,
   },
 });

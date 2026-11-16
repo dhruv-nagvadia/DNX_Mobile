@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {
-  Alert,
   DimensionValue,
   RefreshControl,
   ScrollView,
@@ -34,6 +33,7 @@ import {
   Users,
 } from 'lucide-react-native';
 
+import { useConfirm } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { GradientBackground } from '@/components/GradientBackground';
 import { Coupon } from '@/redux/api/business/types';
@@ -120,7 +120,7 @@ function statusPill(status: CouponStatus): { colors: PillColors; Icon: typeof Ch
 function StatusPill({ label, colors, Icon }: { label: string; colors: PillColors; Icon: typeof Check }) {
   return (
     <View style={[styles.pill, { backgroundColor: colors.bg }]}>
-      <Icon size={16} color={colors.fg} strokeWidth={2.2} />
+      <Icon size={14} color={colors.fg} strokeWidth={2.2} />
       <Text style={[styles.pillText, { color: colors.fg }]} numberOfLines={1}>
         {label}
       </Text>
@@ -202,19 +202,19 @@ function CouponCard({
 
         <View style={styles.metaList}>
           <View style={styles.metaRow}>
-            <ScopeIcon size={20} color={META_ICON} strokeWidth={1.8} />
+            <ScopeIcon size={16} color={META_ICON} strokeWidth={1.8} />
             <Text style={styles.metaText} numberOfLines={1}>
               {scope.label}
             </Text>
           </View>
           <View style={styles.metaRow}>
-            <Calendar size={20} color={META_ICON} strokeWidth={1.8} />
+            <Calendar size={16} color={META_ICON} strokeWidth={1.8} />
             <Text style={styles.metaText} numberOfLines={1}>
               {expiryLabel(c, status)}
             </Text>
           </View>
           <View style={styles.metaRow}>
-            <Users size={20} color={META_ICON} strokeWidth={1.8} />
+            <Users size={16} color={META_ICON} strokeWidth={1.8} />
             {limit != null ? (
               <>
                 <Text style={styles.usageText} numberOfLines={1}>
@@ -262,7 +262,7 @@ function CouponCard({
             accessibilityRole="button"
             accessibilityLabel={`Edit ${c.code}`}
           >
-            <Pencil size={20} color={BRAND_BLUE} />
+            <Pencil size={16} color={BRAND_BLUE} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.deleteBtn}
@@ -272,7 +272,7 @@ function CouponCard({
             accessibilityRole="button"
             accessibilityLabel={`Delete ${c.code}`}
           >
-            <Trash2 size={20} color={PILL.red.fg} />
+            <Trash2 size={16} color={PILL.red.fg} />
           </TouchableOpacity>
         </View>
       </View>
@@ -306,11 +306,11 @@ function CodeChip({ code }: { code: string }) {
       </Text>
       {copied ? (
         <View style={styles.copiedRow}>
-          <Check size={16} color={PILL.green.fg} />
+          <Check size={14} color={PILL.green.fg} />
           <Text style={styles.copiedText}>Copied</Text>
         </View>
       ) : (
-        <Copy size={18} color={INK} />
+        <Copy size={16} color={INK} />
       )}
     </TouchableOpacity>
   );
@@ -338,15 +338,22 @@ export default function CouponsScreen() {
     addCoupon,
     editCoupon,
   } = useCouponsScreen();
+  const { confirm } = useConfirm();
 
   const hasCoupons = coupons.length > 0;
   const countLabel = `${coupons.length} offer${coupons.length === 1 ? '' : 's'}`;
 
-  const confirmDelete = (couponId: string, code: string) => {
-    Alert.alert('Delete coupon?', `"${code}" will stop working immediately.`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => remove(couponId) },
-    ]);
+  const confirmDelete = async (couponId: string, code: string) => {
+    const ok = await confirm({
+      title: 'Delete coupon?',
+      message: `"${code}" will stop working immediately.`,
+      confirmText: 'Delete',
+      tone: 'danger',
+      icon: Trash2,
+    });
+    if (ok) {
+      remove(couponId);
+    }
   };
 
   return (
@@ -360,7 +367,7 @@ export default function CouponsScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+          <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title} numberOfLines={1}>
@@ -376,7 +383,7 @@ export default function CouponsScreen() {
           accessibilityRole="button"
           accessibilityLabel="Create an offer"
         >
-          <Plus size={28} color={Color.white} strokeWidth={2.4} />
+          <Plus size={22} color={Color.white} strokeWidth={2.4} />
         </TouchableOpacity>
       </View>
 
@@ -438,19 +445,19 @@ export default function CouponsScreen() {
                   label="Active"
                   value={counts.active}
                   theme={TINT.mint}
-                  icon={<CircleCheck size={30} color={TINT.mint.icon} strokeWidth={1.8} />}
+                  icon={<CircleCheck size={20} color={TINT.mint.icon} strokeWidth={1.8} />}
                 />
                 <SummaryTile
                   label="Expiring soon"
                   value={counts.expiringSoon}
                   theme={TINT.peach}
-                  icon={<Clock size={30} color={TINT.peach.icon} strokeWidth={1.8} />}
+                  icon={<Clock size={20} color={TINT.peach.icon} strokeWidth={1.8} />}
                 />
                 <SummaryTile
                   label="Times used"
                   value={counts.timesUsed}
                   theme={TINT.lavender}
-                  icon={<Users size={30} color={TINT.lavender.icon} strokeWidth={1.8} />}
+                  icon={<Users size={20} color={TINT.lavender.icon} strokeWidth={1.8} />}
                 />
               </View>
 

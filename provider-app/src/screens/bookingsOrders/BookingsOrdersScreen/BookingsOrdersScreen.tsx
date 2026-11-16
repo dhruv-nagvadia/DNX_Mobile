@@ -240,19 +240,19 @@ export default function BookingsOrdersScreen() {
                 label="New"
                 value={String(orderStats.counts.PENDING)}
                 theme={TINT.lavender}
-                icon={<Handbag size={24} color={TINT.lavender.icon} strokeWidth={1.8} />}
+                icon={<Handbag size={20} color={TINT.lavender.icon} strokeWidth={1.8} />}
               />
               <SummaryTile
                 label="Ready"
                 value={String(orderStats.counts.READY)}
                 theme={TINT.mint}
-                icon={<ShoppingBag size={24} color={TINT.mint.icon} strokeWidth={1.8} />}
+                icon={<ShoppingBag size={20} color={TINT.mint.icon} strokeWidth={1.8} />}
               />
               <SummaryTile
                 label="To collect"
                 value={formatMoney(orderStats.toCollectMinor, orderStats.currency)}
                 theme={TINT.peach}
-                icon={<Wallet size={24} color={TINT.peach.icon} strokeWidth={1.8} />}
+                icon={<Wallet size={20} color={TINT.peach.icon} strokeWidth={1.8} />}
               />
             </View>
 
@@ -313,19 +313,19 @@ export default function BookingsOrdersScreen() {
                 label="New"
                 value={String(bookingStats.counts.PENDING)}
                 theme={TINT.lavender}
-                icon={<Bell size={24} color={TINT.lavender.icon} strokeWidth={1.8} />}
+                icon={<Bell size={20} color={TINT.lavender.icon} strokeWidth={1.8} />}
               />
               <SummaryTile
                 label="In progress"
                 value={String(bookingStats.counts.IN_PROGRESS)}
                 theme={TEAL_TINT}
-                icon={<Command size={24} color={TEAL_TINT.icon} strokeWidth={1.8} />}
+                icon={<Command size={20} color={TEAL_TINT.icon} strokeWidth={1.8} />}
               />
               <SummaryTile
                 label="To collect"
                 value={formatMoney(bookingStats.toCollectMinor, bookingStats.currency)}
                 theme={TINT.peach}
-                icon={<Wallet size={24} color={TINT.peach.icon} strokeWidth={1.8} />}
+                icon={<Wallet size={20} color={TINT.peach.icon} strokeWidth={1.8} />}
               />
             </View>
 
@@ -370,7 +370,7 @@ export default function BookingsOrdersScreen() {
             accessibilityRole="button"
             accessibilityLabel="Go back"
           >
-            <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+            <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
           </TouchableOpacity>
           <View style={styles.headerText}>
             <Text style={styles.title} numberOfLines={1}>

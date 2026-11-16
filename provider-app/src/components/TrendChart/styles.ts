@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize } from '@/utils/Theme';
+import { Color } from '@/utils/Theme';
+import { ModernType } from '@/utils/modernTheme';
 
 export const styles = StyleSheet.create({
   row: {
@@ -11,7 +12,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   axisLabel: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
     textAlign: 'right',
   },
@@ -26,13 +27,13 @@ export const styles = StyleSheet.create({
   },
   xLabel: {
     flex: 1,
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
     textAlign: 'center',
   },
   emptyCaption: {
     marginTop: 6,
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
     textAlign: 'center',
   },

@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG, PILL, SOFT_FILL } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, ModernSize, ModernType, PAGE_BG, PILL, SOFT_FILL } from '@/utils/modernTheme';
 
 /** Mockup "Manage Stock Inventory Dashboard.png": light header, pastel stock
  * tiles, "Select Product" / "Adjust Stock" / "Recent changes" cards and a
@@ -10,7 +10,7 @@ export const BRAND_BLUE = '#1D4ED8';
 export const SWITCH_OFF = '#D5DAE3';
 const FIELD_BORDER = '#D5DBE5';
 const SEGMENT_TRACK = '#E9EDF3';
-const THUMB_LARGE = 80;
+const THUMB_LARGE = 64;
 const THUMB = 44;
 
 export const styles = StyleSheet.create({
@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.lg,
-    gap: Spacing.md - 2,
+    gap: ModernSize.gap,
   },
   loading: {
     paddingVertical: Spacing.xl,
@@ -36,7 +36,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
@@ -50,13 +50,13 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
 
@@ -77,9 +77,9 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   tileIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(255,255,255,0.55)',
@@ -88,20 +88,20 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   tileLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
   tileValue: {
-    fontSize: FontSize.xxl,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
 
   // ── Cards ───────────────────────────────────────────────────────────────
   card: {
-    padding: Spacing.md,
-    gap: Spacing.sm + 4,
+    padding: ModernSize.cardPad,
+    gap: ModernSize.gap,
     borderRadius: ModernRadius.card,
     borderWidth: 1,
     borderColor: CARD_BORDER,
@@ -115,7 +115,7 @@ export const styles = StyleSheet.create({
   },
   cardTitle: {
     flex: 1,
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
     letterSpacing: -0.3,
@@ -126,7 +126,7 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   linkText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: BRAND_BLUE,
   },
@@ -135,7 +135,7 @@ export const styles = StyleSheet.create({
     backgroundColor: CARD_BORDER,
   },
   mutedText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
 
@@ -144,7 +144,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    height: 46,
+    height: 44,
     paddingHorizontal: Spacing.md - 2,
     borderRadius: ModernRadius.box,
     borderWidth: 1,
@@ -154,7 +154,7 @@ export const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     paddingVertical: 0,
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   chips: {
@@ -176,7 +176,7 @@ export const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
   },
   chipText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -191,13 +191,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.sm + 4,
     paddingVertical: Spacing.sm + 2,
+    minHeight: ModernSize.rowMinHeight,
   },
   resultMain: {
     flex: 1,
     gap: 4,
   },
   resultName: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -233,7 +234,7 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   selectedName: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -258,14 +259,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    paddingVertical: 11,
+    height: 40,
   },
   segmentBtnActive: {
     backgroundColor: BRAND_BLUE,
     borderRadius: ModernRadius.box - 2,
   },
   segmentText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -279,7 +280,7 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm - 2,
   },
   label: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -298,21 +299,21 @@ export const styles = StyleSheet.create({
   stepper: {
     flex: 1,
     flexDirection: 'row',
-    height: 48,
-    borderRadius: ModernRadius.box - 2,
+    height: ModernSize.control,
+    borderRadius: ModernSize.controlRadius,
     borderWidth: 1,
     borderColor: FIELD_BORDER,
     backgroundColor: Color.white,
     overflow: 'hidden',
   },
   stepBtn: {
-    width: 56,
+    width: ModernSize.control,
     alignItems: 'center',
     justifyContent: 'center',
   },
   stepInput: {
     flex: 1,
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
     borderLeftWidth: 1,
@@ -322,12 +323,12 @@ export const styles = StyleSheet.create({
   },
   unitSelect: {
     width: 108,
-    height: 48,
+    height: ModernSize.control,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.md - 2,
-    borderRadius: ModernRadius.box - 2,
+    borderRadius: ModernSize.controlRadius,
     borderWidth: 1,
     borderColor: FIELD_BORDER,
     backgroundColor: Color.white,
@@ -340,12 +341,12 @@ export const styles = StyleSheet.create({
     width: 108,
   },
   helperOk: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.bold,
     color: PILL.green.fg,
   },
   helperWarn: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.bold,
     color: Color.error,
   },
@@ -354,19 +355,19 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 48,
+    height: ModernSize.control,
     paddingHorizontal: Spacing.md,
-    borderRadius: ModernRadius.box - 2,
+    borderRadius: ModernSize.controlRadius,
     borderWidth: 1,
     borderColor: FIELD_BORDER,
     backgroundColor: Color.white,
   },
   selectText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     color: INK,
   },
   dropdown: {
-    borderRadius: ModernRadius.box - 2,
+    borderRadius: ModernSize.controlRadius,
     borderWidth: 1,
     borderColor: FIELD_BORDER,
     backgroundColor: Color.white,
@@ -380,7 +381,7 @@ export const styles = StyleSheet.create({
     paddingVertical: Spacing.sm + 4,
   },
   optionText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     color: INK,
   },
   optionTextActive: {
@@ -392,15 +393,15 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm + 2,
     paddingBottom: Spacing.sm + 2,
-    borderRadius: ModernRadius.box - 2,
+    borderRadius: ModernSize.controlRadius,
     borderWidth: 1,
     borderColor: FIELD_BORDER,
     backgroundColor: Color.white,
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     color: INK,
   },
   errorText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.error,
   },
 
@@ -423,9 +424,9 @@ export const styles = StyleSheet.create({
     paddingVertical: Spacing.sm + 2,
   },
   changeIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -440,7 +441,7 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   changeName: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -449,12 +450,12 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   deltaUp: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.extrabold,
     color: PILL.green.fg,
   },
   deltaDown: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.extrabold,
     color: Color.error,
   },
@@ -469,7 +470,7 @@ export const styles = StyleSheet.create({
     backgroundColor: PAGE_BG,
   },
   primaryBtn: {
-    height: 52,
+    height: ModernSize.control,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: ModernRadius.button,
@@ -479,12 +480,12 @@ export const styles = StyleSheet.create({
     opacity: 0.6,
   },
   primaryBtnText: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: Color.white,
   },
   dangerBtn: {
-    height: 52,
+    height: ModernSize.control,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -495,7 +496,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   dangerBtnText: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: Color.error,
   },

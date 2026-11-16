@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { ACTION, CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { ACTION, CARD_BORDER, CARD_SHADOW, INK, ModernRadius, ModernSize, ModernType, PAGE_BG } from '@/utils/modernTheme';
 
 const INPUT_BORDER = '#E3E8F0';
 
@@ -13,13 +13,13 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.xl,
-    gap: Spacing.md,
+    gap: ModernSize.gap,
   },
   errorText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.error,
   },
 
@@ -28,13 +28,13 @@ export const styles = StyleSheet.create({
     borderRadius: ModernRadius.card,
     borderWidth: 1,
     borderColor: CARD_BORDER,
-    padding: Spacing.md,
+    padding: ModernSize.cardPad,
     gap: Spacing.md,
     ...CARD_SHADOW,
   },
   row: {
     flexDirection: 'row',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
   rowItem: {
     flex: 1,
@@ -45,8 +45,8 @@ export const styles = StyleSheet.create({
     gap: 6,
   },
   label: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.bold,
+    fontSize: ModernType.body,
+    fontWeight: FontWeight.semibold,
     color: INK,
   },
   required: {
@@ -58,7 +58,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.surface,
     borderWidth: 1,
     borderColor: INPUT_BORDER,
-    borderRadius: ModernRadius.box,
+    borderRadius: ModernSize.controlRadius,
     paddingHorizontal: Spacing.md - 2,
   },
   inputRowMultiline: {
@@ -70,8 +70,8 @@ export const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    minHeight: 48,
-    fontSize: FontSize.md,
+    minHeight: ModernSize.control,
+    fontSize: ModernType.rowTitle,
     color: INK,
     padding: 0,
   },
@@ -79,20 +79,20 @@ export const styles = StyleSheet.create({
     minHeight: 96,
   },
   address: {
-    minHeight: 52,
+    minHeight: ModernSize.control,
   },
   trailing: {
     paddingLeft: Spacing.sm,
     alignSelf: 'center',
   },
   hint: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
 
   saveBtn: {
-    height: 52,
-    borderRadius: ModernRadius.button,
+    height: ModernSize.control,
+    borderRadius: ModernSize.controlRadius,
     backgroundColor: ACTION,
     alignItems: 'center',
     justifyContent: 'center',
@@ -102,7 +102,7 @@ export const styles = StyleSheet.create({
     opacity: 0.7,
   },
   saveBtnText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: Color.white,
   },

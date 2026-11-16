@@ -3,6 +3,8 @@ import { Pressable, Text, TextInput, TextInputProps, View } from 'react-native';
 import { Eye, EyeOff } from 'lucide-react-native';
 import type { LucideIcon } from 'lucide-react-native';
 
+import { ModernSize } from '@/utils/modernTheme';
+
 import { FIELD_ICON, PLACEHOLDER, authStyles as styles } from './styles';
 
 interface AuthFieldProps extends Omit<TextInputProps, 'style'> {
@@ -49,7 +51,7 @@ export function AuthField({
           !!error && styles.inputRowError,
         ]}
       >
-        <Icon size={22} color={FIELD_ICON} strokeWidth={1.8} />
+        <Icon size={ModernSize.icon} color={FIELD_ICON} strokeWidth={1.8} />
         <TextInput
           ref={inputRef}
           style={styles.input}
@@ -73,7 +75,7 @@ export function AuthField({
             accessibilityRole="button"
             accessibilityLabel={hidden ? 'Show password' : 'Hide password'}
           >
-            <ToggleIcon size={22} color={FIELD_ICON} strokeWidth={1.8} />
+            <ToggleIcon size={ModernSize.icon} color={FIELD_ICON} strokeWidth={1.8} />
           </Pressable>
         )}
       </View>

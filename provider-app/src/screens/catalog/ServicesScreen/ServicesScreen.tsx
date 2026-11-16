@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Alert,
   RefreshControl,
   ScrollView,
   StatusBar,
@@ -27,6 +26,7 @@ import {
   Wrench,
 } from 'lucide-react-native';
 
+import { useConfirm } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { GradientBackground } from '@/components/GradientBackground';
 import { Service } from '@/redux/api/business/types';
@@ -104,7 +104,7 @@ function ServiceCard({
       <View style={styles.cardTop}>
         <View style={styles.cardMain}>
           <View style={styles.iconBox}>
-            <Icon size={30} color={ICON_LAVENDER} strokeWidth={1.6} />
+            <Icon size={20} color={ICON_LAVENDER} strokeWidth={1.6} />
           </View>
           <View style={styles.info}>
             <Text style={styles.name} numberOfLines={2}>
@@ -116,7 +116,7 @@ function ServiceCard({
               </Text>
             )}
             <View style={styles.metaRow}>
-              <Clock size={18} color={INK} strokeWidth={1.8} />
+              <Clock size={16} color={INK} strokeWidth={1.8} />
               <Text style={styles.duration}>{formatDuration(s.durationMin)}</Text>
               <Text style={styles.dot}>•</Text>
               <Text style={styles.price}>{formatMoney(s.priceMinor, s.currency)}</Text>
@@ -142,7 +142,7 @@ function ServiceCard({
               accessibilityRole="button"
               accessibilityLabel={`Edit ${s.name}`}
             >
-              <Pencil size={18} color={BRAND_BLUE} />
+              <Pencil size={16} color={BRAND_BLUE} />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.deleteBtn}
@@ -152,7 +152,7 @@ function ServiceCard({
               accessibilityRole="button"
               accessibilityLabel={`Delete ${s.name}`}
             >
-              <Trash2 size={18} color={PILL.red.fg} />
+              <Trash2 size={16} color={PILL.red.fg} />
             </TouchableOpacity>
           </View>
         </View>
@@ -162,7 +162,7 @@ function ServiceCard({
 
       <View style={styles.bottomRow}>
         <View style={styles.stats}>
-          <CalendarDays size={20} color={INK} strokeWidth={1.7} />
+          <CalendarDays size={16} color={INK} strokeWidth={1.7} />
           <Text style={styles.statsText} numberOfLines={1}>
             {`${bookingsLabel(stats.count)}  •  ${formatMoney(stats.revenueMinor, s.currency)}`}
           </Text>
@@ -211,15 +211,22 @@ export default function ServicesScreen() {
     editService,
     openService,
   } = useServicesScreen();
+  const { confirm } = useConfirm();
 
   const hasServices = services.length > 0;
   const countLabel = `${services.length} service${services.length === 1 ? '' : 's'}`;
 
-  const confirmDelete = (serviceId: string, name: string) => {
-    Alert.alert('Delete service?', `"${name}" will no longer be bookable.`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => remove(serviceId) },
-    ]);
+  const confirmDelete = async (serviceId: string, name: string) => {
+    const ok = await confirm({
+      title: 'Delete service?',
+      message: `"${name}" will no longer be bookable.`,
+      confirmText: 'Delete',
+      tone: 'danger',
+      icon: Trash2,
+    });
+    if (ok) {
+      remove(serviceId);
+    }
   };
 
   return (
@@ -233,7 +240,7 @@ export default function ServicesScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+          <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title} numberOfLines={1}>
@@ -249,7 +256,7 @@ export default function ServicesScreen() {
           accessibilityRole="button"
           accessibilityLabel="Add a service"
         >
-          <Plus size={28} color={Color.white} strokeWidth={2.4} />
+          <Plus size={22} color={Color.white} strokeWidth={2.4} />
         </TouchableOpacity>
       </View>
 
@@ -306,7 +313,7 @@ export default function ServicesScreen() {
               </ScrollView>
 
               <View style={styles.tiles}>
-                <SummaryTile theme={TINT.mint} icon={<Check size={24} color={TINT.mint.icon} strokeWidth={2.2} />}>
+                <SummaryTile theme={TINT.mint} icon={<Check size={20} color={TINT.mint.icon} strokeWidth={2.2} />}>
                   <Text style={styles.tileLabel} numberOfLines={1}>
                     Active
                   </Text>
@@ -315,7 +322,7 @@ export default function ServicesScreen() {
                 <SummaryTile
                   wide
                   theme={TINT.lavender}
-                  icon={<Flame size={24} color={FLAME} strokeWidth={1.8} />}
+                  icon={<Flame size={20} color={FLAME} strokeWidth={1.8} />}
                 >
                   <Text style={styles.tileLabel} numberOfLines={1}>
                     Most booked
@@ -333,7 +340,7 @@ export default function ServicesScreen() {
                     <Text style={styles.tileValue}>—</Text>
                   )}
                 </SummaryTile>
-                <SummaryTile theme={TINT.peach} icon={<Tag size={24} color={TAG} strokeWidth={1.8} />}>
+                <SummaryTile theme={TINT.peach} icon={<Tag size={20} color={TAG} strokeWidth={1.8} />}>
                   <Text style={styles.tileLabel} numberOfLines={1}>
                     Avg. price
                   </Text>

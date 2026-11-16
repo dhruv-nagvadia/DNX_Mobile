@@ -65,7 +65,7 @@ function ContactCard({
           {details}
         </Text>
       </View>
-      <ChevronRight size={22} color={INK} />
+      <ChevronRight size={18} color={INK} />
     </TouchableOpacity>
   );
 }
@@ -91,9 +91,9 @@ function FaqItem({
         accessibilityRole="button"
         accessibilityState={{ expanded: open }}
       >
-        <CircleHelp size={22} color={open ? BRAND_BLUE : INK} />
+        <CircleHelp size={20} color={open ? BRAND_BLUE : INK} />
         <Text style={styles.faqQuestion}>{faq.question}</Text>
-        <Chevron size={20} color={INK} />
+        <Chevron size={18} color={INK} />
       </TouchableOpacity>
       {open && (
         <Text style={styles.faqAnswer}>
@@ -156,7 +156,7 @@ export default function SupportScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ArrowLeft size={26} color={INK} />
+          <ArrowLeft size={22} color={INK} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title}>Help & support</Text>
@@ -198,21 +198,21 @@ export default function SupportScreen() {
 
         {/* Contact options */}
         <ContactCard
-          icon={<Phone size={24} color={CONTACT_TINT.call.fg} />}
+          icon={<Phone size={20} color={CONTACT_TINT.call.fg} />}
           tint={styles.tintCall}
           title="Call us"
           details={`${SUPPORT.phoneDisplay} • ${SUPPORT_HOURS}`}
           onPress={() => Linking.openURL(supportLinks.call)}
         />
         <ContactCard
-          icon={<MessageCircle size={24} color={CONTACT_TINT.whatsapp.fg} />}
+          icon={<MessageCircle size={20} color={CONTACT_TINT.whatsapp.fg} />}
           tint={styles.tintWhatsapp}
           title="WhatsApp us"
           details={WHATSAPP_REPLY_TIME}
           onPress={() => Linking.openURL(supportLinks.whatsapp)}
         />
         <ContactCard
-          icon={<Mail size={24} color={CONTACT_TINT.email.fg} />}
+          icon={<Mail size={20} color={CONTACT_TINT.email.fg} />}
           tint={styles.tintEmail}
           title="Email us"
           details={`${SUPPORT.email} • ${EMAIL_REPLY_TIME}`}
@@ -263,7 +263,7 @@ export default function SupportScreen() {
 
         {/* Tip */}
         <View style={styles.tipCard}>
-          <Lightbulb size={30} color={TIP_ICON} />
+          <Lightbulb size={22} color={TIP_ICON} />
           <View style={styles.tipDivider} />
           <View style={styles.tipText}>
             <Text style={styles.tipTitle}>Before contacting us:</Text>

@@ -1,112 +1,164 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, Switch, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { Car, FileText, IndianRupee, Wallet } from 'lucide-react-native';
 
-import { AppButton } from '@/components/AppButton';
-import { AppHeader } from '@/components/AppHeader';
-import { AppInput } from '@/components/AppInput';
-import { Color } from '@/utils/Theme';
+import { PILL } from '@/utils/modernTheme';
 
+import {
+  ActionBar,
+  Chip,
+  ChipRow,
+  Field,
+  FieldLabel,
+  FormHeader,
+  SectionCard,
+  ToggleRow,
+} from './formKit';
+import { kit } from './formKitStyles';
 import { useServiceFormScreen } from './useServiceFormScreen';
-import { styles } from './styles';
+
+/** Quick-pick durations (minutes). */
+const DURATION_PRESETS = [15, 30, 45, 60, 90, 120];
+
+function durationLabel(min: number): string {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  if (!h) {
+    return `${m} min`;
+  }
+  return m ? `${h} hr ${m}` : `${h} hr`;
+}
 
 export default function ServiceFormScreen() {
-  const { isNew, form, onChange, error, saving, partialPayLocked, submit } = useServiceFormScreen();
+  const { isNew, businessName, form, onChange, error, saving, partialPayLocked, submit } = useServiceFormScreen();
+
+  const totalMin = (Number(form.hours) || 0) * 60 + (Number(form.minutes) || 0);
+  const setDuration = (min: number) => {
+    onChange('hours', String(Math.floor(min / 60)));
+    onChange('minutes', String(min % 60));
+  };
 
   return (
-    <View style={styles.root}>
-      <AppHeader title={isNew ? 'Add a service' : 'Edit service'} />
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-          {!!error && <Text style={styles.errorText}>{error}</Text>}
+    <View style={kit.root}>
+      <FormHeader title={isNew ? 'Add service' : 'Edit service'} subtitle={businessName} />
+      <KeyboardAvoidingView style={kit.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView
+          style={kit.flex}
+          contentContainerStyle={kit.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <SectionCard title="Basic info" subtitle="What customers will see" Icon={FileText} tint={PILL.blue}>
+            <Field
+              label="Service name"
+              placeholder="e.g. Haircut & styling"
+              invalid={error === 'Enter a service name'}
+              value={form.name}
+              onChangeText={(v) => onChange('name', v)}
+            />
+            <Field
+              label="Description"
+              optional
+              multiline
+              placeholder="What's included, who it's for…"
+              value={form.description}
+              onChangeText={(v) => onChange('description', v)}
+            />
+          </SectionCard>
 
-          <AppInput label="Service name" value={form.name} onChangeText={(v) => onChange('name', v)} />
-          <AppInput
-            label="Description"
-            hint="Optional"
-            multiline
-            style={styles.description}
-            value={form.description}
-            onChangeText={(v) => onChange('description', v)}
-          />
-          <AppInput
-            label="Price"
-            prefix="₹"
-            keyboardType="decimal-pad"
-            value={form.price}
-            onChangeText={(v) => onChange('price', v)}
-          />
+          <SectionCard title="Pricing & duration" Icon={IndianRupee} tint={PILL.green}>
+            <Field
+              label="Price"
+              prefix="₹"
+              keyboardType="decimal-pad"
+              placeholder="0"
+              invalid={error === 'Enter a valid price'}
+              value={form.price}
+              onChangeText={(v) => onChange('price', v)}
+            />
+            <View style={kit.field}>
+              <FieldLabel label="Duration" />
+              <ChipRow>
+                {DURATION_PRESETS.map((min) => (
+                  <Chip
+                    key={min}
+                    label={durationLabel(min)}
+                    active={totalMin === min}
+                    onPress={() => setDuration(min)}
+                  />
+                ))}
+              </ChipRow>
+            </View>
+            <View style={kit.row}>
+              <View style={kit.rowItem}>
+                <Field
+                  label="Hours"
+                  suffix="hr"
+                  keyboardType="number-pad"
+                  invalid={error === 'Enter a duration'}
+                  value={form.hours}
+                  onChangeText={(v) => onChange('hours', v)}
+                />
+              </View>
+              <View style={kit.rowItem}>
+                <Field
+                  label="Minutes"
+                  suffix="min"
+                  keyboardType="number-pad"
+                  invalid={error === 'Enter a duration'}
+                  value={form.minutes}
+                  onChangeText={(v) => onChange('minutes', v)}
+                />
+              </View>
+            </View>
+          </SectionCard>
 
-          <View style={styles.row}>
-            <View style={styles.field}>
-              <AppInput
-                label="Duration — hours"
-                keyboardType="number-pad"
-                value={form.hours}
-                onChangeText={(v) => onChange('hours', v)}
-              />
-            </View>
-            <View style={styles.field}>
-              <AppInput
-                label="Duration — minutes"
-                keyboardType="number-pad"
-                value={form.minutes}
-                onChangeText={(v) => onChange('minutes', v)}
-              />
-            </View>
-          </View>
-
-          <View style={styles.toggleRow}>
-            <View>
-              <Text style={styles.toggleLabel}>On-location service</Text>
-              <Text style={styles.toggleHint}>You travel to the customer</Text>
-            </View>
-            <Switch
+          <SectionCard title="On-location" Icon={Car} tint={PILL.orange}>
+            <ToggleRow
+              title="On-location service"
+              hint="You travel to the customer"
               value={form.travelRequired}
               onValueChange={(v) => onChange('travelRequired', v)}
-              trackColor={{ true: Color.primary, false: Color.border }}
             />
-          </View>
-
-          {form.travelRequired && (
-            <View style={styles.row}>
-              <View style={styles.field}>
-                <AppInput
-                  label="Base travel fee"
-                  prefix="₹"
-                  hint="Optional"
-                  keyboardType="decimal-pad"
-                  value={form.travelBaseFee}
-                  onChangeText={(v) => onChange('travelBaseFee', v)}
-                />
+            {form.travelRequired && (
+              <View style={kit.row}>
+                <View style={kit.rowItem}>
+                  <Field
+                    label="Base travel fee"
+                    optional
+                    prefix="₹"
+                    keyboardType="decimal-pad"
+                    placeholder="0"
+                    value={form.travelBaseFee}
+                    onChangeText={(v) => onChange('travelBaseFee', v)}
+                  />
+                </View>
+                <View style={kit.rowItem}>
+                  <Field
+                    label="Fee per km"
+                    optional
+                    prefix="₹"
+                    keyboardType="decimal-pad"
+                    placeholder="0"
+                    value={form.travelPerKm}
+                    onChangeText={(v) => onChange('travelPerKm', v)}
+                  />
+                </View>
               </View>
-              <View style={styles.field}>
-                <AppInput
-                  label="Fee per km"
-                  prefix="₹"
-                  hint="Optional"
-                  keyboardType="decimal-pad"
-                  value={form.travelPerKm}
-                  onChangeText={(v) => onChange('travelPerKm', v)}
-                />
-              </View>
-            </View>
-          )}
+            )}
+          </SectionCard>
 
-          <View style={styles.toggleRow}>
-            <View>
-              <Text style={styles.toggleLabel}>Allow partial payment</Text>
-              {partialPayLocked && <Text style={styles.toggleHint}>Turned off at the business level</Text>}
-            </View>
-            <Switch
+          <SectionCard title="Payments" Icon={Wallet} tint={PILL.lavender}>
+            <ToggleRow
+              title="Allow partial payment"
+              hint={partialPayLocked ? 'Turned off at the business level' : 'Customers can pay part now, the rest later'}
               value={form.partialPayEnabled}
               onValueChange={(v) => onChange('partialPayEnabled', v)}
               disabled={partialPayLocked}
-              trackColor={{ true: Color.primary, false: Color.border }}
             />
-          </View>
-
-          <AppButton title={isNew ? 'Add service' : 'Save changes'} loading={saving} onPress={submit} />
+          </SectionCard>
         </ScrollView>
+        <ActionBar label={isNew ? 'Add service' : 'Save service'} loading={saving} onPress={submit} error={error} />
       </KeyboardAvoidingView>
     </View>
   );

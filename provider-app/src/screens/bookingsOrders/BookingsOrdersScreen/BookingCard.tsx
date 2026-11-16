@@ -186,7 +186,7 @@ function BookingButton({
         <ActivityIndicator size="small" color={Color.white} />
       ) : (
         <>
-          <Icon size={20} color={look.fg} strokeWidth={2.2} />
+          <Icon size={16} color={look.fg} strokeWidth={2.2} />
           <Text style={[styles.oBtnText, look.text]} numberOfLines={1}>
             {label}
           </Text>
@@ -235,7 +235,7 @@ export function BookingCard({
     <View style={styles.oCard}>
       <TouchableOpacity activeOpacity={0.7} onPress={onOpen} accessibilityRole="button">
         <View style={styles.oTop}>
-          <CalendarDays size={24} color={INK} strokeWidth={1.8} style={styles.bCalIcon} />
+          <CalendarDays size={20} color={INK} strokeWidth={1.8} style={styles.bCalIcon} />
           <View style={styles.oTopText}>
             <Text style={styles.bWhen} numberOfLines={1}>
               {formatBookingWhen(b.startTime)}
@@ -262,7 +262,7 @@ export function BookingCard({
 
         <View style={styles.oRow}>
           <View style={[styles.oAvatar, styles.bServiceBox]}>
-            <ServiceIcon size={22} color={PILL.lavender.fg} strokeWidth={1.8} />
+            <ServiceIcon size={20} color={PILL.lavender.fg} strokeWidth={1.8} />
           </View>
           <Text style={[styles.oName, styles.oRowText]} numberOfLines={1}>
             {b.service.name}
@@ -276,7 +276,7 @@ export function BookingCard({
 
         <View style={styles.oRow}>
           <View style={styles.oAvatar}>
-            <User size={22} color={INK} strokeWidth={1.8} />
+            <User size={20} color={INK} strokeWidth={1.8} />
           </View>
           <View style={styles.oRowText}>
             <Text style={styles.oName} numberOfLines={1}>
@@ -301,7 +301,7 @@ export function BookingCard({
               accessibilityRole="button"
               accessibilityLabel={`Call ${b.user.fullName}`}
             >
-              <Phone size={20} color={LINK} strokeWidth={2} />
+              <Phone size={18} color={LINK} strokeWidth={2} />
             </TouchableOpacity>
           )}
         </View>
@@ -314,9 +314,9 @@ export function BookingCard({
           style={styles.bPayPill}
           icon={
             pay.paid ? (
-              <CircleCheck size={18} color={pay.colors.fg} strokeWidth={2} />
+              <CircleCheck size={16} color={pay.colors.fg} strokeWidth={2} />
             ) : (
-              <CreditCard size={18} color={pay.colors.fg} strokeWidth={1.8} />
+              <CreditCard size={16} color={pay.colors.fg} strokeWidth={1.8} />
             )
           }
         />

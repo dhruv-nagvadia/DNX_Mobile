@@ -34,9 +34,9 @@ export function useServiceFormScreen() {
   const partialPayLocked = business?.partialPayEnabled === false;
 
   useEffect(() => {
-    if (isNew || !business) return;
+    if (isNew || !business) {return;}
     const s = business.services.find((x) => x.id === serviceId);
-    if (!s) return;
+    if (!s) {return;}
     setForm({
       name: s.name,
       description: s.description ?? '',
@@ -59,9 +59,9 @@ export function useServiceFormScreen() {
     const price = Number(form.price);
     const durationMin = (Number(form.hours) || 0) * 60 + (Number(form.minutes) || 0);
 
-    if (!form.name.trim()) return setError('Enter a service name');
-    if (!Number.isFinite(price) || price <= 0) return setError('Enter a valid price');
-    if (durationMin <= 0) return setError('Enter a duration');
+    if (!form.name.trim()) {return setError('Enter a service name');}
+    if (!Number.isFinite(price) || price <= 0) {return setError('Enter a valid price');}
+    if (durationMin <= 0) {return setError('Enter a duration');}
 
     const data = {
       name: form.name.trim(),
@@ -89,6 +89,7 @@ export function useServiceFormScreen() {
 
   return {
     isNew,
+    businessName: business?.businessName,
     form,
     onChange,
     error,

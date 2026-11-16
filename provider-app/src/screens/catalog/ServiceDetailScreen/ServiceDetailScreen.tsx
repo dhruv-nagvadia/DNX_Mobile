@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   NativeSyntheticEvent,
   RefreshControl,
   ScrollView,
@@ -32,6 +31,7 @@ import {
   Trash2,
 } from 'lucide-react-native';
 
+import { useConfirm } from '@/components/ConfirmDialog';
 import { GradientBackground } from '@/components/GradientBackground';
 import { Pill } from '@/components/Pill';
 import { BookingStatus } from '@/redux/api/business/types';
@@ -149,9 +149,9 @@ function SettingRow({
         <Text style={styles.settingSub}>{sub}</Text>
       </View>
       {on ? (
-        <CircleCheck size={28} color={PILL.green.fg} strokeWidth={1.8} />
+        <CircleCheck size={22} color={PILL.green.fg} strokeWidth={1.8} />
       ) : (
-        <CircleX size={28} color={Color.placeholder} strokeWidth={1.8} />
+        <CircleX size={22} color={Color.placeholder} strokeWidth={1.8} />
       )}
     </View>
   );
@@ -181,15 +181,22 @@ export default function ServiceDetailScreen() {
     openOffer,
     createOffer,
   } = useServiceDetailScreen();
+  const { confirm } = useConfirm();
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!service) {
       return;
     }
-    Alert.alert('Delete service?', `"${service.name}" will no longer be bookable.`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: remove },
-    ]);
+    const ok = await confirm({
+      title: 'Delete service?',
+      message: `"${service.name}" will no longer be bookable.`,
+      confirmText: 'Delete',
+      tone: 'danger',
+      icon: Trash2,
+    });
+    if (ok) {
+      remove();
+    }
   };
 
   const header = (
@@ -201,7 +208,7 @@ export default function ServiceDetailScreen() {
         accessibilityRole="button"
         accessibilityLabel="Go back"
       >
-        <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+        <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
       </TouchableOpacity>
       <Text style={styles.title} numberOfLines={1}>
         Service Details
@@ -214,7 +221,7 @@ export default function ServiceDetailScreen() {
             accessibilityRole="button"
             accessibilityLabel="Edit service"
           >
-            <Pencil size={22} color={BRAND_BLUE} strokeWidth={2} />
+            <Pencil size={18} color={BRAND_BLUE} strokeWidth={2} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.deleteBtn}
@@ -223,7 +230,7 @@ export default function ServiceDetailScreen() {
             accessibilityRole="button"
             accessibilityLabel="Delete service"
           >
-            <Trash2 size={22} color={PILL.red.fg} strokeWidth={2} />
+            <Trash2 size={18} color={PILL.red.fg} strokeWidth={2} />
           </TouchableOpacity>
         </View>
       )}
@@ -322,20 +329,20 @@ export default function ServiceDetailScreen() {
         <View style={styles.tiles}>
           <StatTile
             theme={TINT.blue}
-            icon={<Tag size={26} color={TINT.blue.icon} strokeWidth={1.8} />}
+            icon={<Tag size={20} color={TINT.blue.icon} strokeWidth={1.8} />}
             label="Price"
             value={money(service.priceMinor)}
           />
           <StatTile
             theme={TINT.lavender}
-            icon={<Clock size={26} color={TINT.lavender.icon} strokeWidth={1.8} />}
+            icon={<Clock size={20} color={TINT.lavender.icon} strokeWidth={1.8} />}
             label="Duration"
             value={formatDuration(service.durationMin)}
           />
           {homeVisit && (
             <StatTile
               theme={TINT.peach}
-              icon={<House size={26} color={TINT.peach.icon} strokeWidth={1.8} />}
+              icon={<House size={20} color={TINT.peach.icon} strokeWidth={1.8} />}
               label="Home visit"
               value={homeVisit.short}
             />
@@ -354,19 +361,19 @@ export default function ServiceDetailScreen() {
           <View style={styles.tiles}>
             <StatTile
               theme={TINT.blue}
-              icon={<CalendarDays size={24} color={TINT.blue.icon} strokeWidth={1.8} />}
+              icon={<CalendarDays size={20} color={TINT.blue.icon} strokeWidth={1.8} />}
               label="Bookings"
               value={performance.count.toLocaleString('en-IN')}
             />
             <StatTile
               theme={TINT.lavender}
-              icon={<Coins size={24} color={TINT.lavender.icon} strokeWidth={1.8} />}
+              icon={<Coins size={20} color={TINT.lavender.icon} strokeWidth={1.8} />}
               label="Revenue"
               value={money(performance.revenueMinor)}
             />
             <StatTile
               theme={TINT.mint}
-              icon={<ChartNoAxesColumnIncreasing size={24} color={TINT.mint.icon} strokeWidth={1.8} />}
+              icon={<ChartNoAxesColumnIncreasing size={20} color={TINT.mint.icon} strokeWidth={1.8} />}
               label="Last booked"
               value={performance.lastBooked}
             />
@@ -468,7 +475,7 @@ export default function ServiceDetailScreen() {
                   accessibilityRole="button"
                 >
                   <View style={styles.offerIcon}>
-                    <Percent size={22} color={ICON_LAVENDER} strokeWidth={2.2} />
+                    <Percent size={20} color={ICON_LAVENDER} strokeWidth={2.2} />
                   </View>
                   <View style={styles.offerBody}>
                     <View style={styles.codeChip}>
@@ -491,14 +498,14 @@ export default function ServiceDetailScreen() {
           <Text style={styles.cardTitle}>Payment settings</Text>
           <View>
             <SettingRow
-              icon={<CreditCard size={28} color={INK} strokeWidth={1.6} />}
+              icon={<CreditCard size={20} color={INK} strokeWidth={1.6} />}
               title="Partial payment allowed"
               sub={partialDetail}
               on={partialAllowed}
             />
             <SettingRow
               divider
-              icon={<House size={28} color={INK} strokeWidth={1.6} />}
+              icon={<House size={20} color={INK} strokeWidth={1.6} />}
               title="Home visit"
               sub={homeVisit ? homeVisit.detail : 'Not offered.'}
               on={!!homeVisit}
@@ -510,7 +517,7 @@ export default function ServiceDetailScreen() {
       {/* ── Sticky footer ── */}
       <View style={[styles.footer, { paddingBottom: insets.bottom + 10 }]}>
         <TouchableOpacity style={styles.primaryBtn} onPress={editService} accessibilityRole="button">
-          <Pencil size={22} color={Color.white} strokeWidth={2} />
+          <Pencil size={20} color={Color.white} strokeWidth={2} />
           <Text style={styles.primaryText}>Edit Service</Text>
         </TouchableOpacity>
       </View>

@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 
+import { useConfirm } from '@/components/ConfirmDialog';
 import {
   useGetMyBusinessQuery,
   useSetBusinessImagesMutation,
@@ -23,6 +23,7 @@ export const MAX_IMAGES = 12;
 export function useBusinessPhotosScreen() {
   const { businessId } = useRoute<BusinessPhotosRouteProp>().params;
   const navigation = useNavigation();
+  const { notify } = useConfirm();
 
   const { data: business, isLoading, isFetching, refetch } = useGetMyBusinessQuery(businessId);
   const [uploadImages, { isLoading: uploading }] = useUploadBusinessImagesMutation();
@@ -36,7 +37,11 @@ export function useBusinessPhotosScreen() {
   const addPhotos = useCallback(async () => {
     setError(null);
     if (remaining <= 0) {
-      Alert.alert('Photo limit reached', `Maximum of ${MAX_IMAGES} photos reached — remove one to add another.`);
+      notify({
+        title: 'Photo limit reached',
+        message: `Maximum of ${MAX_IMAGES} photos reached — remove one to add another.`,
+        tone: 'warning',
+      });
       return;
     }
     const result = await launchImageLibrary({ mediaType: 'photo', selectionLimit: remaining, quality: 0.8 });
@@ -44,10 +49,11 @@ export function useBusinessPhotosScreen() {
       return;
     }
     if (result.assets.length > remaining) {
-      Alert.alert(
-        'Too many photos',
-        `You can add ${remaining} more photo${remaining === 1 ? '' : 's'} (up to ${MAX_IMAGES} in total).`,
-      );
+      notify({
+        title: 'Too many photos',
+        message: `You can add ${remaining} more photo${remaining === 1 ? '' : 's'} (up to ${MAX_IMAGES} in total).`,
+        tone: 'warning',
+      });
       return;
     }
     // The server accepts at most 8 files per request — upload in batches.
@@ -67,7 +73,7 @@ export function useBusinessPhotosScreen() {
     } catch {
       setError('Could not upload those photos. Please try again.');
     }
-  }, [businessId, remaining, uploadImages]);
+  }, [businessId, remaining, uploadImages, notify]);
 
   const setCover = useCallback(
     async (url: string) => {

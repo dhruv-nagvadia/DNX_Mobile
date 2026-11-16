@@ -62,7 +62,7 @@ export function TopSellersPanel({ businessId, isStore, limit = DEFAULT_LIMIT }: 
 
       {!!data.busiestDay && (
         <View style={styles.busiestCard}>
-          <Calendar size={24} color="#3730A3" />
+          <Calendar size={20} color="#3730A3" />
           <View style={styles.busiestMain}>
             <Text style={styles.busiestTitle}>Busiest Day: {data.busiestDay.day}</Text>
             <Text style={styles.busiestSub}>

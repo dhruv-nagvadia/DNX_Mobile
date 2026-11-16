@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius } from '@/utils/Theme';
+import { Color, FontWeight, Radius } from '@/utils/Theme';
+import { ModernType } from '@/utils/modernTheme';
 
 export const styles = StyleSheet.create({
   badge: {
@@ -22,7 +23,7 @@ export const styles = StyleSheet.create({
     paddingRight: 8,
   },
   text: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
   },
 

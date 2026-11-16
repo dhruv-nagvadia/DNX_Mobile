@@ -1,10 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { launchImageLibrary } from 'react-native-image-picker';
 
+import { LogOut } from 'lucide-react-native';
+import { useConfirm } from '@/components/ConfirmDialog';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { clearCurrentUser, setCurrentUser } from '@/redux/slices/userSlice';
 import { resetAllApiCaches } from '@/redux/resetApiCaches';
@@ -36,6 +37,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'ProfileScreen'>;
 export function useProfileScreen() {
   const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
+  const { confirm } = useConfirm();
   const currentUser = useAppSelector((state) => state.user.currentUser);
 
   const { data: businesses = [] } = useGetMyBusinessesQuery();
@@ -207,17 +209,18 @@ export function useProfileScreen() {
   }, [dispatch]);
 
   const logout = useCallback(() => {
-    Alert.alert('Log out?', 'You will need to sign in again to manage your businesses.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Log out',
-        style: 'destructive',
-        onPress: () => {
-          clearSession();
-        },
-      },
-    ]);
-  }, [clearSession]);
+    confirm({
+      title: 'Log out?',
+      message: 'You will need to sign in again to manage your businesses.',
+      confirmText: 'Log out',
+      tone: 'danger',
+      icon: LogOut,
+    }).then((ok) => {
+      if (ok) {
+        clearSession();
+      }
+    });
+  }, [clearSession, confirm]);
 
   const openDeleteModal = useCallback(() => {
     setDeletePassword('');

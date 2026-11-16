@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG, PILL } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, ModernSize, ModernType, PAGE_BG, PILL } from '@/utils/modernTheme';
 
 /** Mockup "Polished Salon Offers Management App.png": light header with a
  * round add button, search, status chips, pastel summary tiles and coupon
@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.xl,
-    gap: Spacing.md - 2,
+    gap: ModernSize.gap,
   },
 
   // ── Header ──────────────────────────────────────────────────────────────
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
@@ -48,19 +48,19 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   addBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: BRAND_BLUE,
@@ -72,7 +72,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    height: 46,
+    height: 44,
     paddingHorizontal: Spacing.md - 2,
     borderRadius: ModernRadius.box,
     borderWidth: 1,
@@ -82,7 +82,7 @@ export const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     paddingVertical: 0,
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   // Bleed the chip row to the screen edges so chips scroll off-screen.
@@ -98,7 +98,7 @@ export const styles = StyleSheet.create({
   chip: {
     minWidth: 64,
     alignItems: 'center',
-    paddingHorizontal: Spacing.md + 2,
+    paddingHorizontal: Spacing.md - 2,
     paddingVertical: Spacing.sm,
     borderRadius: ModernRadius.pill,
     borderWidth: 1,
@@ -110,7 +110,7 @@ export const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
   },
   chipText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -147,12 +147,12 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   tileLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
   tileValue: {
-    fontSize: FontSize.xxl,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -180,13 +180,13 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   discount: {
-    fontSize: FontSize.xxl + 2,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: BRAND_BLUE,
     letterSpacing: -0.5,
   },
   cap: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   pills: {
@@ -198,12 +198,12 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: Spacing.sm + 4,
-    paddingVertical: 5,
+    paddingHorizontal: Spacing.sm + 2,
+    paddingVertical: 4,
     borderRadius: ModernRadius.pill,
   },
   pillText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
   },
 
@@ -214,7 +214,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm + 2,
-    paddingHorizontal: Spacing.md + 4,
+    paddingHorizontal: Spacing.md - 2,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1.2,
@@ -228,18 +228,18 @@ export const styles = StyleSheet.create({
     gap: 3,
   },
   copiedText: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: PILL.green.fg,
   },
   code: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.extrabold,
     color: INK,
     letterSpacing: 0.3,
   },
   description: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
 
@@ -249,28 +249,28 @@ export const styles = StyleSheet.create({
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
+    gap: Spacing.sm,
   },
   metaText: {
     flex: 1,
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: INK,
   },
   usageText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: INK,
   },
   progressTrack: {
     flex: 1,
-    height: 8,
+    height: 6,
     marginLeft: Spacing.sm,
-    borderRadius: 4,
+    borderRadius: 3,
     overflow: 'hidden',
     backgroundColor: PROGRESS_TRACK,
   },
   progressFill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: 3,
     backgroundColor: BRAND_BLUE,
   },
 
@@ -324,7 +324,7 @@ export const styles = StyleSheet.create({
   },
   toggleLabel: {
     flexShrink: 1,
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -333,8 +333,8 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm + 4,
   },
   editBtn: {
-    width: 44,
-    height: 44,
+    width: ModernSize.controlSm,
+    height: ModernSize.controlSm,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -343,8 +343,8 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   deleteBtn: {
-    width: 44,
-    height: 44,
+    width: ModernSize.controlSm,
+    height: ModernSize.controlSm,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -356,7 +356,7 @@ export const styles = StyleSheet.create({
   noMatch: {
     paddingVertical: Spacing.lg,
     textAlign: 'center',
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
 });

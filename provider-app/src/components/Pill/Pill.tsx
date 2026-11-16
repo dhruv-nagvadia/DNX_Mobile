@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
-import { FontSize, FontWeight } from '@/utils/Theme';
-import { PillColors } from '@/utils/modernTheme';
+import { FontWeight } from '@/utils/Theme';
+import { ModernType, PillColors } from '@/utils/modernTheme';
 
 interface PillProps {
   label: string;
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   text: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
   },
 });

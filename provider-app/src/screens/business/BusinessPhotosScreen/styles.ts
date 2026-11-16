@@ -1,15 +1,15 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
 import {
   CARD_BORDER,
   CARD_SHADOW,
   INK,
   LINK,
   ModernRadius,
+  ModernSize,
+  ModernType,
   PAGE_BG,
-  PILL,
   PillColors,
-  SOFT_FILL,
 } from '@/utils/modernTheme';
 
 /** Mockup "Salon Photos Action Sheet.png": light header with a round add
@@ -18,16 +18,11 @@ import {
 export const BRAND_BLUE = '#1D4ED8';
 /** Solid blue "★ Cover" tag (mockup), not the pastel PILL.blue. */
 export const COVER_PILL: PillColors = { bg: BRAND_BLUE, fg: Color.white };
-export const REMOVE_RED = PILL.red.fg;
-export const DISABLED_ICON = Color.placeholder;
-/** How far below its resting place the sheet starts its slide-up. */
-export const SHEET_SLIDE = 480;
 
 const PROGRESS_TRACK = '#E2E7EF';
 const ADD_BG = '#F5F8FE';
 const ADD_BORDER = '#BCD0F5';
 const SELECT_SOFT = '#EAF0FC';
-const REMOVE_SOFT = '#FDECEC';
 const BUSY_VEIL = 'rgba(255, 255, 255, 0.7)';
 const TILE_RATIO = 1.6; // ~16:10
 const COVER_RATIO = 1.9;
@@ -42,43 +37,43 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.sm,
-    gap: Spacing.md - 2,
+    gap: ModernSize.gap,
   },
 
   // ── Header ──────────────────────────────────────────────────────────────
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    gap: ModernSize.gap,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
   },
   backBtn: {
     alignSelf: 'flex-start',
-    paddingTop: 6,
+    paddingTop: 2,
   },
   headerText: {
     flex: 1,
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   addBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: BRAND_BLUE,
@@ -90,8 +85,8 @@ export const styles = StyleSheet.create({
 
   // ── Cards ───────────────────────────────────────────────────────────────
   card: {
-    padding: Spacing.md,
-    gap: Spacing.sm + 4,
+    padding: ModernSize.cardPad,
+    gap: ModernSize.gap,
     borderRadius: ModernRadius.card,
     borderWidth: 1,
     borderColor: CARD_BORDER,
@@ -104,21 +99,21 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm + 2,
   },
   cardTitle: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   cardHint: {
     marginTop: -2,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   reorderHint: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   errorText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.error,
   },
 
@@ -126,12 +121,12 @@ export const styles = StyleSheet.create({
   usageCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
+    gap: ModernSize.gap,
   },
   usageIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: SELECT_SOFT,
@@ -141,7 +136,7 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   usageTitle: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -157,7 +152,7 @@ export const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
   },
   usageMeta: {
-    fontSize: FontSize.xs + 1,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
 
@@ -189,12 +184,12 @@ export const styles = StyleSheet.create({
     backgroundColor: ADD_BG,
   },
   placeholderHint: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
     textAlign: 'center',
   },
   addText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: LINK,
   },
@@ -204,7 +199,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    rowGap: Spacing.sm + 4,
+    rowGap: ModernSize.gap,
   },
   tile: {
     width: '48.5%',
@@ -226,17 +221,17 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     left: Spacing.sm,
     bottom: Spacing.sm,
-    minWidth: 26,
-    height: 26,
+    minWidth: 24,
+    height: 24,
     paddingHorizontal: 6,
-    borderRadius: 13,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Color.white,
     ...CARD_SHADOW,
   },
   positionText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -270,106 +265,16 @@ export const styles = StyleSheet.create({
     backgroundColor: BUSY_VEIL,
   },
   busyText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
 
-  // ── Action sheet ────────────────────────────────────────────────────────
-  sheetRoot: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: Color.overlay,
-  },
-  sheet: {
-    paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.sm + 2,
-    gap: Spacing.xs,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    backgroundColor: Color.white,
-  },
-  handle: {
-    alignSelf: 'center',
-    width: 44,
-    height: 5,
-    borderRadius: 3,
-    marginBottom: Spacing.sm,
-    backgroundColor: CARD_BORDER,
-  },
-  sheetHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-    paddingHorizontal: Spacing.sm,
-    marginBottom: Spacing.sm + 4,
-  },
+  // ── Action sheet (shared BottomSheet) ───────────────────────────────────
   sheetThumb: {
-    width: 76,
-    height: 56,
+    width: 56,
+    height: 44,
     borderRadius: 10,
     backgroundColor: Color.divider,
-  },
-  sheetTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
-    color: INK,
-  },
-  sheetSubtitle: {
-    marginTop: 2,
-    fontSize: FontSize.md,
-    color: Color.textSecondary,
-  },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md + 2,
-    minHeight: 52,
-    paddingHorizontal: Spacing.md + 2,
-    borderRadius: ModernRadius.box,
-  },
-  optionCover: {
-    backgroundColor: SELECT_SOFT,
-  },
-  optionRemove: {
-    backgroundColor: REMOVE_SOFT,
-  },
-  optionDisabled: {
-    opacity: 0.6,
-  },
-  optionDivider: {
-    height: StyleSheet.hairlineWidth,
-    marginHorizontal: Spacing.md + 2,
-    backgroundColor: CARD_BORDER,
-  },
-  optionText: {
-    fontSize: FontSize.md + 1,
-    fontWeight: FontWeight.medium,
-    color: INK,
-  },
-  optionTextBlue: {
-    color: LINK,
-  },
-  optionTextRed: {
-    color: REMOVE_RED,
-  },
-  optionTextDisabled: {
-    color: DISABLED_ICON,
-  },
-  cancelBtn: {
-    height: 52,
-    marginTop: Spacing.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: ModernRadius.box,
-    backgroundColor: SOFT_FILL,
-  },
-  cancelText: {
-    fontSize: FontSize.md + 1,
-    fontWeight: FontWeight.semibold,
-    color: INK,
   },
 });

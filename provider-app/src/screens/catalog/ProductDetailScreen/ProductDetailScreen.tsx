@@ -248,19 +248,19 @@ function SalesCard({ sales, measure, currency }: { sales: SalesStats; measure: M
           label="Orders"
           value={`${sales.orders}`}
           theme={TINT.blue}
-          icon={<ShoppingBag size={26} color={TINT.blue.icon} strokeWidth={1.8} />}
+          icon={<ShoppingBag size={20} color={TINT.blue.icon} strokeWidth={1.8} />}
         />
         <StatTile
           label="Sold"
           value={formatAmount(sales.sold, measure)}
           theme={TINT.lavender}
-          icon={<Coins size={26} color={TINT.lavender.icon} strokeWidth={1.8} />}
+          icon={<Coins size={20} color={TINT.lavender.icon} strokeWidth={1.8} />}
         />
         <StatTile
           label="Revenue"
           value={formatMoney(sales.revenueMinor, currency)}
           theme={TINT.mint}
-          icon={<ChartColumn size={26} color={TINT.mint.icon} strokeWidth={1.8} />}
+          icon={<ChartColumn size={20} color={TINT.mint.icon} strokeWidth={1.8} />}
         />
       </View>
       <View style={styles.lastOrdered}>
@@ -314,7 +314,7 @@ export default function ProductDetailScreen() {
         accessibilityRole="button"
         accessibilityLabel="Go back"
       >
-        <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+        <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
       </TouchableOpacity>
       <Text style={styles.title} numberOfLines={1}>
         Product Details
@@ -327,7 +327,7 @@ export default function ProductDetailScreen() {
             accessibilityRole="button"
             accessibilityLabel="Edit product"
           >
-            <Pencil size={22} color={BRAND_BLUE} />
+            <Pencil size={18} color={BRAND_BLUE} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.deleteBtn}
@@ -336,7 +336,7 @@ export default function ProductDetailScreen() {
             accessibilityRole="button"
             accessibilityLabel="Delete product"
           >
-            <Trash2 size={22} color={PILL.red.fg} />
+            <Trash2 size={18} color={PILL.red.fg} />
           </TouchableOpacity>
         </View>
       )}
@@ -406,7 +406,7 @@ export default function ProductDetailScreen() {
               <Image source={{ uri: p.imageUrl }} style={styles.heroImage} />
             ) : (
               <View style={[styles.heroImage, styles.heroFallback]}>
-                <Package size={44} color={Color.placeholder} strokeWidth={1.4} />
+                <Package size={36} color={Color.placeholder} strokeWidth={1.4} />
               </View>
             )}
             <Pill
@@ -594,7 +594,7 @@ export default function ProductDetailScreen() {
 
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, Spacing.md) }]}>
         <TouchableOpacity style={styles.footerBtn} onPress={editProduct} activeOpacity={0.85} accessibilityRole="button">
-          <Pencil size={22} color={Color.white} strokeWidth={2} />
+          <Pencil size={20} color={Color.white} strokeWidth={2} />
           <Text style={styles.footerBtnText}>Edit Product</Text>
         </TouchableOpacity>
       </View>

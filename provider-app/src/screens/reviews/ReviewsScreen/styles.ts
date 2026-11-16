@@ -1,6 +1,17 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, LINK, ModernRadius, PAGE_BG, PILL, SOFT_FILL } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import {
+  CARD_BORDER,
+  CARD_SHADOW,
+  INK,
+  LINK,
+  ModernRadius,
+  ModernSize,
+  ModernType,
+  PAGE_BG,
+  PILL,
+  SOFT_FILL,
+} from '@/utils/modernTheme';
 
 /** Mockup "Mobile Reviews Dashboard Interface.png": light header with a round
  * filter button, summary card (average + 5→1 bars), business + rating chips,
@@ -10,12 +21,11 @@ export const STAR_EMPTY = '#E2E6EE';
 export const BRAND_BLUE = '#1D4ED8';
 export const NEEDS_DOT = '#F97316';
 const BAR_TRACK = '#E2E7EF';
-const BACKDROP = 'rgba(15,30,74,0.45)';
 
-const AVATAR = 52;
-const AVATAR_GAP = Spacing.sm + 6;
+const AVATAR = ModernSize.avatar;
+const AVATAR_GAP = ModernSize.gap;
 const DOT = 10;
-const THUMB = 40;
+const THUMB = 32;
 
 export const styles = StyleSheet.create({
   root: {
@@ -28,7 +38,7 @@ export const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
-    gap: Spacing.md - 2,
+    gap: ModernSize.gap,
   },
   loader: {
     marginTop: Spacing.xl,
@@ -39,7 +49,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
@@ -53,19 +63,19 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   filterBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Color.white,
@@ -73,8 +83,8 @@ export const styles = StyleSheet.create({
   },
   filterDot: {
     position: 'absolute',
-    top: 11,
-    right: 11,
+    top: 8,
+    right: 8,
     width: 9,
     height: 9,
     borderRadius: 5,
@@ -101,18 +111,18 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   summaryAvg: {
-    fontSize: FontSize.xxxl * 1.45,
+    fontSize: ModernType.hero,
     fontWeight: FontWeight.extrabold,
     color: INK,
     letterSpacing: -1,
   },
   summaryCount: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
     marginTop: 2,
   },
   summaryNote: {
-    fontSize: FontSize.xs - 1,
+    fontSize: 11,
     color: Color.placeholder,
   },
   summaryDivider: {
@@ -132,7 +142,7 @@ export const styles = StyleSheet.create({
   },
   distLabel: {
     width: 12,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -150,9 +160,9 @@ export const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
   },
   distPct: {
-    minWidth: 68,
+    minWidth: 60,
     textAlign: 'right',
-    fontSize: FontSize.xs + 1,
+    fontSize: ModernType.caption,
     color: INK,
   },
   distCount: {
@@ -201,7 +211,7 @@ export const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
   },
   chipText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -233,7 +243,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.22)',
   },
   countBadgeText: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
@@ -244,7 +254,7 @@ export const styles = StyleSheet.create({
     borderRadius: ModernRadius.card,
     borderWidth: 1,
     borderColor: CARD_BORDER,
-    padding: Spacing.md - 2,
+    padding: ModernSize.cardPad,
     ...CARD_SHADOW,
   },
   cardTop: {
@@ -259,7 +269,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatarText: {
-    fontSize: FontSize.xl,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
   },
   cardHead: {
@@ -275,12 +285,12 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: FontSize.md + 1,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   date: {
-    fontSize: FontSize.sm - 1,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
     marginTop: 1,
   },
@@ -289,13 +299,13 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: Spacing.sm + 4,
-    paddingVertical: 6,
+    paddingHorizontal: Spacing.sm + 2,
+    paddingVertical: 4,
     borderRadius: ModernRadius.pill,
   },
   businessPillText: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -323,7 +333,7 @@ export const styles = StyleSheet.create({
   },
   productName: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
@@ -334,9 +344,9 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm + 2,
   },
   comment: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.body,
     color: INK,
-    lineHeight: (FontSize.sm + 1) * 1.4,
+    lineHeight: ModernType.body * 1.4,
   },
   // Invisible full-length copy used only to count lines.
   measure: {
@@ -347,7 +357,7 @@ export const styles = StyleSheet.create({
   },
   moreText: {
     marginTop: 2,
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: LINK,
   },
@@ -371,19 +381,19 @@ export const styles = StyleSheet.create({
   },
   replyLabel: {
     flex: 1,
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   replyWhen: {
-    fontSize: FontSize.xs + 1,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.regular,
     color: Color.textSecondary,
   },
   replyText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: INK,
-    lineHeight: FontSize.sm * 1.4,
+    lineHeight: ModernType.body * 1.4,
   },
   editBtn: {
     flexDirection: 'row',
@@ -391,7 +401,7 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   editText: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: LINK,
   },
@@ -407,20 +417,21 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     paddingHorizontal: Spacing.sm + 4,
-    paddingVertical: Spacing.sm - 1,
+    paddingVertical: Spacing.xs + 2,
     borderRadius: ModernRadius.box - 2,
     backgroundColor: PILL.orange.bg,
   },
   needsPillText: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: PILL.orange.fg,
   },
   replyBtn: {
+    minHeight: ModernSize.controlSm,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: Spacing.md + 4,
+    paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm - 2,
     borderRadius: ModernRadius.box - 2,
     borderWidth: 1.5,
@@ -428,7 +439,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   replyBtnText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: LINK,
   },
@@ -452,7 +463,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm + 4,
     paddingTop: Spacing.sm + 4,
     paddingBottom: Spacing.sm + 4,
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.body,
     color: INK,
     textAlignVertical: 'top',
   },
@@ -469,10 +480,12 @@ export const styles = StyleSheet.create({
   },
   publicNoteText: {
     flexShrink: 1,
-    fontSize: FontSize.sm - 1,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
   cancelBtn: {
+    justifyContent: 'center',
+    minHeight: ModernSize.controlSm,
     paddingHorizontal: Spacing.md + 2,
     paddingVertical: Spacing.sm - 1,
     borderRadius: ModernRadius.box - 2,
@@ -481,11 +494,12 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   cancelText: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
   postBtn: {
+    minHeight: ModernSize.controlSm,
     minWidth: 84,
     alignItems: 'center',
     justifyContent: 'center',
@@ -500,7 +514,7 @@ export const styles = StyleSheet.create({
     opacity: 0.8,
   },
   postText: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: Color.white,
   },
@@ -508,12 +522,12 @@ export const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   removeText: {
-    fontSize: FontSize.xs + 1,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: Color.error,
   },
   errorText: {
-    fontSize: FontSize.xs + 1,
+    fontSize: ModernType.secondary,
     color: Color.error,
   },
 
@@ -539,46 +553,21 @@ export const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   emptyTitle: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   emptyBody: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
     textAlign: 'center',
   },
 
-  // ── Filter sheet ────────────────────────────────────────────────────────
-  backdrop: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: BACKDROP,
-  },
-  sheet: {
-    backgroundColor: Color.white,
-    borderTopLeftRadius: ModernRadius.card + 8,
-    borderTopRightRadius: ModernRadius.card + 8,
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.sm,
-    gap: Spacing.sm,
-  },
-  sheetHandle: {
-    alignSelf: 'center',
-    width: 40,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: CARD_BORDER,
-    marginBottom: Spacing.sm,
-  },
-  sheetTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
-    color: INK,
-  },
+  // ── Filter sheet (shared BottomSheet) ───────────────────────────────────
   sheetLabel: {
-    marginTop: Spacing.sm,
-    fontSize: FontSize.xs,
+    marginTop: Spacing.xs,
+    marginBottom: Spacing.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.bold,
     color: Color.textSecondary,
     letterSpacing: 0.5,
@@ -588,12 +577,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Spacing.sm,
-  },
-  sheetDone: {
-    marginTop: Spacing.md,
-    alignItems: 'center',
-    paddingVertical: Spacing.sm + 6,
-    borderRadius: ModernRadius.button,
-    backgroundColor: BRAND_BLUE,
+    marginBottom: Spacing.md,
   },
 });

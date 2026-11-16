@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG, PILL, SOFT_FILL } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, ModernSize, ModernType, PAGE_BG, PILL, SOFT_FILL } from '@/utils/modernTheme';
 
 /** Mockup "Hair Serum Product Details App UI.png": light header with outlined
  * edit / pink delete buttons, a photo hero card, stock / sales / history /
@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.lg,
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
 
   // ── Header ──────────────────────────────────────────────────────────────
@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
@@ -50,8 +50,8 @@ export const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
@@ -60,8 +60,8 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm + 2,
   },
   editBtn: {
-    width: 46,
-    height: 46,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
     borderRadius: ModernRadius.box,
     alignItems: 'center',
     justifyContent: 'center',
@@ -70,8 +70,8 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   deleteBtn: {
-    width: 46,
-    height: 46,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
     borderRadius: ModernRadius.box,
     alignItems: 'center',
     justifyContent: 'center',
@@ -80,7 +80,7 @@ export const styles = StyleSheet.create({
 
   // ── Cards (shared) ──────────────────────────────────────────────────────
   card: {
-    padding: Spacing.md - 2,
+    padding: ModernSize.cardPad,
     gap: Spacing.sm,
     borderRadius: ModernRadius.card,
     borderWidth: 1,
@@ -96,12 +96,12 @@ export const styles = StyleSheet.create({
   },
   cardTitle: {
     flexShrink: 1,
-    fontSize: FontSize.lg + 1,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   cardHint: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   cardPill: {
@@ -113,7 +113,7 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   linkText: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: BRAND_BLUE,
   },
@@ -123,7 +123,7 @@ export const styles = StyleSheet.create({
   },
   emptyText: {
     paddingVertical: Spacing.sm,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
 
@@ -176,17 +176,17 @@ export const styles = StyleSheet.create({
     paddingRight: Spacing.xs,
   },
   name: {
-    fontSize: FontSize.xl,
+    fontSize: ModernType.title,
     fontWeight: FontWeight.extrabold,
     color: INK,
     letterSpacing: -0.3,
   },
   subtitle: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   price: {
-    fontSize: FontSize.xl + 1,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: BRAND_BLUE,
   },
@@ -204,12 +204,12 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   ratingValue: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   ratingCount: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   payChips: {
@@ -228,14 +228,14 @@ export const styles = StyleSheet.create({
     backgroundColor: PILL.grey.bg,
   },
   payChipText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.medium,
     color: INK,
   },
 
   // ── Stock ───────────────────────────────────────────────────────────────
   stockValue: {
-    fontSize: FontSize.xxl,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -265,7 +265,7 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   barLabel: {
-    fontSize: FontSize.xs + 1,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
   stockActions: {
@@ -280,13 +280,13 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
-    height: 42,
-    borderRadius: ModernRadius.box - 2,
+    height: 40,
+    borderRadius: ModernSize.controlRadius,
     backgroundColor: BRAND_BLUE,
   },
   addStockText: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: Color.white,
   },
@@ -296,15 +296,15 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
-    height: 42,
-    borderRadius: ModernRadius.box - 2,
+    height: 40,
+    borderRadius: ModernSize.controlRadius,
     borderWidth: 1.5,
     borderColor: INK,
     backgroundColor: Color.white,
   },
   removeStockText: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
@@ -321,7 +321,7 @@ export const styles = StyleSheet.create({
   },
   madeToOrderText: {
     flex: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
 
@@ -345,12 +345,12 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   tileLabel: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
   tileValue: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -360,7 +360,7 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   lastOrderedText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: INK,
   },
 
@@ -386,7 +386,7 @@ export const styles = StyleSheet.create({
   },
   changeDelta: {
     minWidth: 64,
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
   },
   deltaUp: {
@@ -397,7 +397,7 @@ export const styles = StyleSheet.create({
   },
   changeMeta: {
     flex: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   changeAfter: {
@@ -406,7 +406,7 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   changeAfterText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -418,7 +418,7 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   ratingBig: {
-    fontSize: FontSize.xxl,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -434,18 +434,18 @@ export const styles = StyleSheet.create({
   reviewRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
     paddingVertical: Spacing.sm + 2,
   },
   avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: ModernSize.avatar,
+    height: ModernSize.avatar,
+    borderRadius: ModernSize.avatar / 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
   },
   reviewBody: {
@@ -461,18 +461,18 @@ export const styles = StyleSheet.create({
   },
   reviewName: {
     flexShrink: 1,
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   reviewWhen: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
   reviewComment: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: INK,
-    lineHeight: FontSize.sm * 1.4,
+    lineHeight: 20,
   },
 
   // ── Product details ─────────────────────────────────────────────────────
@@ -481,6 +481,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.sm + 4,
     paddingVertical: Spacing.sm + 2,
+    minHeight: ModernSize.rowMinHeight,
   },
   detailIcon: {
     width: 24,
@@ -488,12 +489,12 @@ export const styles = StyleSheet.create({
   },
   detailLabel: {
     width: 110,
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   detailValue: {
     flex: 1,
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   descRow: {
@@ -504,26 +505,27 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   descTitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   descText: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
-    lineHeight: (FontSize.sm + 1) * 1.4,
+    lineHeight: 18,
   },
 
   // ── Not found ───────────────────────────────────────────────────────────
   notFoundBtn: {
     marginTop: Spacing.md,
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm + 4,
     borderRadius: ModernRadius.button,
     backgroundColor: BRAND_BLUE,
+    height: ModernSize.control,
+    justifyContent: 'center',
   },
   notFoundBtnText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: Color.white,
   },
@@ -539,13 +541,13 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm + 2,
-    paddingVertical: 15,
     borderRadius: ModernRadius.button,
     backgroundColor: BRAND_BLUE,
     ...CARD_SHADOW,
+    height: ModernSize.control,
   },
   footerBtnText: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: Color.white,
   },

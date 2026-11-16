@@ -45,9 +45,9 @@ export function useProductFormScreen() {
   const partialPayLocked = business?.partialPayEnabled === false;
 
   useEffect(() => {
-    if (isNew || !business) return;
+    if (isNew || !business) {return;}
     const p = business.products?.find((x) => x.id === productId);
-    if (!p) return;
+    if (!p) {return;}
     const priceSplit = splitAmount(p.priceQty, p.measure);
     const factor = unitFactor(p.measure, priceSplit.unit);
     setForm({
@@ -79,9 +79,9 @@ export function useProductFormScreen() {
     const price = Number(form.price);
     const priceQty = Number(form.priceQty);
 
-    if (!form.name.trim()) return setError('Enter a product name');
-    if (!Number.isFinite(price) || price <= 0) return setError('Enter a valid price');
-    if (!Number.isFinite(priceQty) || priceQty <= 0) return setError('Enter a valid quantity');
+    if (!form.name.trim()) {return setError('Enter a product name');}
+    if (!Number.isFinite(price) || price <= 0) {return setError('Enter a valid price');}
+    if (!Number.isFinite(priceQty) || priceQty <= 0) {return setError('Enter a valid quantity');}
     if (form.trackStock && (!form.stockQty.trim() || Number(form.stockQty) < 0)) {
       return setError('Enter the stock you have');
     }
@@ -115,6 +115,7 @@ export function useProductFormScreen() {
 
   return {
     isNew,
+    businessName: business?.businessName,
     form,
     onChange,
     setMeasure,

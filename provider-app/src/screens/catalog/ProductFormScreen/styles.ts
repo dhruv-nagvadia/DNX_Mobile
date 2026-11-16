@@ -1,81 +1,20 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
 
+import { FontWeight, Spacing } from '@/utils/Theme';
+import { ModernSize, ModernType, PILL } from '@/utils/modernTheme';
+
+// Shared form look lives in ServiceFormScreen/formKitStyles.ts — only the
+// product-specific bits are here.
 export const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: Color.background,
+  preview: {
+    paddingHorizontal: ModernSize.gap,
+    paddingVertical: Spacing.sm + 2,
+    borderRadius: ModernSize.controlRadius,
+    backgroundColor: PILL.green.bg,
   },
-  flex: {
-    flex: 1,
-  },
-  content: {
-    padding: Spacing.lg,
-    gap: Spacing.sm,
-    paddingBottom: Spacing.xl,
-  },
-  errorText: {
-    fontSize: FontSize.sm,
-    color: Color.error,
-    marginBottom: Spacing.xs,
-  },
-  description: {
-    minHeight: 80,
-  },
-
-  label: {
-    fontSize: FontSize.sm,
+  previewText: {
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
-    marginBottom: 6,
-  },
-  segment: {
-    flexDirection: 'row',
-    gap: Spacing.xs,
-    marginBottom: Spacing.sm,
-  },
-  segmentBtn: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Color.border,
-    alignItems: 'center',
-  },
-  segmentBtnActive: {
-    backgroundColor: Color.primarySoft,
-    borderColor: Color.primary,
-  },
-  segmentText: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.textSecondary,
-  },
-  segmentTextActive: {
-    color: Color.primary,
-  },
-
-  row: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  field: {
-    flex: 1,
-  },
-
-  toggleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: Spacing.sm,
-  },
-  toggleLabel: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
-  },
-  toggleHint: {
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
+    color: PILL.green.fg,
   },
 });

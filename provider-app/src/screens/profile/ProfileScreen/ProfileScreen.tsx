@@ -2,7 +2,6 @@ import React from 'react';
 import {
   ActivityIndicator,
   Image,
-  Modal,
   ScrollView,
   StatusBar,
   Text,
@@ -29,8 +28,8 @@ import {
   Users,
 } from 'lucide-react-native';
 
-import { AppButton } from '@/components/AppButton';
 import { AppInput } from '@/components/AppInput';
+import { BottomSheet, SheetButton } from '@/components/BottomSheet';
 import { GradientBackground } from '@/components/GradientBackground';
 import { Pill } from '@/components/Pill';
 import { Color } from '@/utils/Theme';
@@ -89,14 +88,14 @@ function StatTile({
     >
       <GradientBackground colors={tint.colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
       <View style={styles.tileIcon}>
-        {React.cloneElement(icon, { size: 24, color: tint.icon })}
+        {React.cloneElement(icon, { size: 20, color: tint.icon })}
       </View>
       <View style={styles.tileText}>
         <Text style={styles.tileLabel} numberOfLines={1}>
           {label}
         </Text>
         <View style={styles.tileValueRow}>
-          {star && <Star size={18} color="#F5B301" fill="#F5B301" />}
+          {star && <Star size={16} color="#F5B301" fill="#F5B301" />}
           <Text style={styles.tileValue}>{value}</Text>
         </View>
       </View>
@@ -125,14 +124,14 @@ function MenuRow({
   return (
     <TouchableOpacity style={styles.menuItem} onPress={onPress} accessibilityRole="button">
       <View style={[styles.menuIcon, { backgroundColor: bg }]}>
-        {React.cloneElement(icon, { size: 18, color: fg })}
+        {React.cloneElement(icon, { size: 20, color: fg })}
       </View>
       <View style={[styles.menuBody, !first && styles.menuBodyDivided]}>
         <Text style={[styles.menuItemText, danger && styles.menuItemTextDanger]} numberOfLines={1}>
           {label}
         </Text>
         {trailing}
-        <ChevronRight size={20} color={INK} />
+        <ChevronRight size={18} color={INK} />
       </View>
     </TouchableOpacity>
   );
@@ -381,158 +380,108 @@ export default function ProfileScreen() {
       </ScrollView>
 
       {/* Edit profile */}
-      <Modal visible={editing} transparent animationType="fade" onRequestClose={cancelEdit}>
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={cancelEdit}>
-          <TouchableOpacity
-            activeOpacity={1}
-            style={styles.modalSheet}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View style={styles.modalHandle} />
-            <Text style={styles.modalTitle}>Edit profile</Text>
-            {!!error && <Text style={styles.errorText}>{error}</Text>}
-            <AppInput
-              label="Full name"
-              dense
-              value={form.fullName}
-              onChangeText={(v) => onChange('fullName', v)}
-            />
-            <AppInput
-              label="Email"
-              dense
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={form.email}
-              onChangeText={(v) => onChange('email', v)}
-            />
-            <AppInput
-              label="Phone"
-              dense
-              keyboardType="phone-pad"
-              value={form.phone}
-              onChangeText={(v) => onChange('phone', v)}
-            />
-            <View style={styles.modalActions}>
-              <AppButton
-                style={styles.modalButton}
-                title="Cancel"
-                variant="secondary"
-                onPress={cancelEdit}
-              />
-              <AppButton
-                style={[styles.modalButton, styles.primaryButton]}
-                title="Save"
-                loading={saving}
-                onPress={save}
-              />
-            </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+      <BottomSheet
+        visible={editing}
+        onClose={cancelEdit}
+        title="Edit profile"
+        scrollable
+        contentStyle={styles.sheetForm}
+        footer={
+          <>
+            <SheetButton title="Cancel" variant="secondary" onPress={cancelEdit} />
+            <SheetButton title="Save" loading={saving} onPress={save} />
+          </>
+        }
+      >
+        {!!error && <Text style={styles.errorText}>{error}</Text>}
+        <AppInput label="Full name" dense value={form.fullName} onChangeText={(v) => onChange('fullName', v)} />
+        <AppInput
+          label="Email"
+          dense
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={form.email}
+          onChangeText={(v) => onChange('email', v)}
+        />
+        <AppInput
+          label="Phone"
+          dense
+          keyboardType="phone-pad"
+          value={form.phone}
+          onChangeText={(v) => onChange('phone', v)}
+        />
+      </BottomSheet>
 
       {/* Change password */}
-      <Modal
+      <BottomSheet
         visible={changingPasswordModal}
-        transparent
-        animationType="fade"
-        onRequestClose={closePasswordModal}
+        onClose={closePasswordModal}
+        title="Change password"
+        scrollable
+        contentStyle={styles.sheetForm}
+        footer={
+          <>
+            <SheetButton title="Cancel" variant="secondary" onPress={closePasswordModal} />
+            <SheetButton title="Update" loading={changingPassword} onPress={submitPasswordChange} />
+          </>
+        }
       >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={closePasswordModal}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            style={styles.modalSheet}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View style={styles.modalHandle} />
-            <Text style={styles.modalTitle}>Change password</Text>
-            {!!passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
-            <AppInput
-              label="Current password"
-              dense
-              secureTextEntry
-              value={passwordForm.currentPassword}
-              onChangeText={(v) => onPasswordChange('currentPassword', v)}
-            />
-            <AppInput
-              label="New password"
-              dense
-              secureTextEntry
-              value={passwordForm.newPassword}
-              onChangeText={(v) => onPasswordChange('newPassword', v)}
-            />
-            <AppInput
-              label="Confirm new password"
-              dense
-              secureTextEntry
-              value={passwordForm.confirmPassword}
-              onChangeText={(v) => onPasswordChange('confirmPassword', v)}
-            />
-            <View style={styles.modalActions}>
-              <AppButton
-                style={styles.modalButton}
-                title="Cancel"
-                variant="secondary"
-                onPress={closePasswordModal}
-              />
-              <AppButton
-                style={[styles.modalButton, styles.primaryButton]}
-                title="Update"
-                loading={changingPassword}
-                onPress={submitPasswordChange}
-              />
-            </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+        {!!passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
+        <AppInput
+          label="Current password"
+          dense
+          secureTextEntry
+          value={passwordForm.currentPassword}
+          onChangeText={(v) => onPasswordChange('currentPassword', v)}
+        />
+        <AppInput
+          label="New password"
+          dense
+          secureTextEntry
+          value={passwordForm.newPassword}
+          onChangeText={(v) => onPasswordChange('newPassword', v)}
+        />
+        <AppInput
+          label="Confirm new password"
+          dense
+          secureTextEntry
+          value={passwordForm.confirmPassword}
+          onChangeText={(v) => onPasswordChange('confirmPassword', v)}
+        />
+      </BottomSheet>
 
       {/* Delete account */}
-      <Modal
+      <BottomSheet
         visible={deleteModal}
-        transparent
-        animationType="fade"
-        onRequestClose={closeDeleteModal}
-      >
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={closeDeleteModal}>
-          <TouchableOpacity
-            activeOpacity={1}
-            style={styles.modalSheet}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View style={styles.modalHandle} />
-            <Text style={styles.modalTitle}>Delete account</Text>
-            <Text style={styles.modalBody}>
-              This deactivates your provider account. You'll be signed out and won't be able to sign
-              in or manage your businesses again. Enter your password to confirm.
-            </Text>
-            <AppInput
-              label="Password"
-              dense
-              secureTextEntry
-              value={deletePassword}
-              onChangeText={onDeletePasswordChange}
-              error={deleteError ?? undefined}
+        onClose={closeDeleteModal}
+        title="Delete account"
+        scrollable
+        contentStyle={styles.sheetForm}
+        footer={
+          <>
+            <SheetButton title="Cancel" variant="secondary" onPress={closeDeleteModal} />
+            <SheetButton
+              title="Delete account"
+              variant="danger"
+              loading={deletingAccount}
+              onPress={submitDeleteAccount}
             />
-            <View style={styles.modalActions}>
-              <AppButton
-                style={styles.modalButton}
-                title="Cancel"
-                variant="secondary"
-                onPress={closeDeleteModal}
-              />
-              <AppButton
-                style={[styles.modalButton, styles.dangerButton]}
-                title="Delete account"
-                loading={deletingAccount}
-                onPress={submitDeleteAccount}
-              />
-            </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+          </>
+        }
+      >
+        <Text style={styles.modalBody}>
+          This deactivates your provider account. You'll be signed out and won't be able to sign in
+          or manage your businesses again. Enter your password to confirm.
+        </Text>
+        <AppInput
+          label="Password"
+          dense
+          secureTextEntry
+          value={deletePassword}
+          onChangeText={onDeletePasswordChange}
+          error={deleteError ?? undefined}
+        />
+      </BottomSheet>
     </View>
   );
 }

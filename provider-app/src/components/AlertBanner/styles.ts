@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
+import { Color, FontWeight, Radius, Spacing } from '@/utils/Theme';
+import { ModernType } from '@/utils/modernTheme';
 
 export const styles = StyleSheet.create({
   banner: {
@@ -34,9 +35,9 @@ export const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.medium,
-    lineHeight: FontSize.sm * 1.45,
+    lineHeight: 20,
   },
   textError: {
     color: '#B42318',

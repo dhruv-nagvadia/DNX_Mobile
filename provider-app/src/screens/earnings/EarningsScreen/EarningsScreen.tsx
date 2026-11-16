@@ -92,7 +92,7 @@ function SaleRow({ t, last }: { t: EarningsTransaction; last: boolean }) {
   return (
     <View style={[styles.listRow, !last && styles.listRowDivider]}>
       <View style={[styles.saleIcon, isBooking ? styles.saleIconBooking : styles.saleIconOrder]}>
-        <Icon size={22} color={isBooking ? PILL.lavender.fg : PILL.blue.fg} />
+        <Icon size={20} color={isBooking ? PILL.lavender.fg : PILL.blue.fg} />
       </View>
       <View style={styles.listMain}>
         <Text style={styles.listTitle} numberOfLines={1}>
@@ -319,7 +319,7 @@ export default function EarningsScreen() {
           <View style={styles.tileRow}>
             <Tile
               tint={TINT.blue}
-              icon={<ReceiptText size={22} color={TINT.blue.icon} />}
+              icon={<ReceiptText size={20} color={TINT.blue.icon} />}
               label="Sales"
               value={formatMoney(summary.grossMinor)}
               hint={
@@ -330,7 +330,7 @@ export default function EarningsScreen() {
             />
             <Tile
               tint={TINT.peach}
-              icon={<Percent size={22} color={COMMISSION_ORANGE} />}
+              icon={<Percent size={20} color={COMMISSION_ORANGE} />}
               label="Commission"
               value={formatMoney(summary.commissionMinor)}
               hint={<Text style={styles.tileHint}>{ratePct(Math.round(commissionBps))}</Text>}
@@ -339,16 +339,16 @@ export default function EarningsScreen() {
           <View style={styles.tileRow}>
             <Tile
               tint={TINT.mint}
-              icon={<Wallet size={22} color={TINT.mint.icon} />}
+              icon={<Wallet size={20} color={TINT.mint.icon} />}
               label="You earn"
               value={formatMoney(summary.netMinor)}
               hint={
                 earnTrendPct !== null ? (
                   <View style={styles.trendRow}>
                     {trendUp ? (
-                      <ArrowUp size={13} color={PILL.green.fg} />
+                      <ArrowUp size={14} color={PILL.green.fg} />
                     ) : (
-                      <ArrowDown size={13} color={Color.error} />
+                      <ArrowDown size={14} color={Color.error} />
                     )}
                     <Text style={[styles.tileTrend, !trendUp && styles.amountNegative]}>
                       {Math.abs(earnTrendPct).toFixed(0)}%
@@ -361,7 +361,7 @@ export default function EarningsScreen() {
             />
             <Tile
               tint={TINT.lavender}
-              icon={<Clock size={22} color={TINT.lavender.icon} />}
+              icon={<Clock size={20} color={TINT.lavender.icon} />}
               label="Coming up"
               value={formatMoney(upcoming.netMinor)}
               hint={<Text style={styles.tileHint}>{upcoming.count} open</Text>}
@@ -529,7 +529,7 @@ export default function EarningsScreen() {
               accessibilityLabel="Back"
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <ArrowLeft size={24} color={INK} />
+              <ArrowLeft size={22} color={INK} />
             </TouchableOpacity>
           )}
           <View style={styles.headerText}>
@@ -542,7 +542,7 @@ export default function EarningsScreen() {
             accessibilityRole="button"
             accessibilityLabel="Notifications"
           >
-            <Bell size={22} color={INK} />
+            <Bell size={20} color={INK} />
           </TouchableOpacity>
         </View>
 

@@ -1,10 +1,11 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { ModernSize, ModernType } from '@/utils/modernTheme';
 
 export const styles = StyleSheet.create({
   base: {
-    height: 52,
-    borderRadius: Radius.md,
+    height: ModernSize.control,
+    borderRadius: ModernSize.controlRadius,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
@@ -26,7 +27,7 @@ export const styles = StyleSheet.create({
     opacity: 0.6,
   },
   text: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.semibold,
   },
   primaryText: {

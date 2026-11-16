@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { ModernSize, ModernType } from '@/utils/modernTheme';
 
 export const styles = StyleSheet.create({
   container: {
@@ -10,7 +11,7 @@ export const styles = StyleSheet.create({
     marginBottom: 0,
   },
   label: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: Color.textPrimary,
     marginBottom: 6,
@@ -21,7 +22,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.surface,
     borderWidth: 1,
     borderColor: Color.border,
-    borderRadius: Radius.md,
+    borderRadius: ModernSize.controlRadius,
     paddingHorizontal: Spacing.md,
   },
   inputRowFocused: {
@@ -44,14 +45,16 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   prefixText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: Color.textSecondary,
   },
   input: {
     flex: 1,
-    height: 50,
-    fontSize: FontSize.md,
+    // The row's 1px border (2px focused, with padding compensating) wraps
+    // this, so the field's outer height lands on ModernSize.control.
+    height: ModernSize.control - 2,
+    fontSize: ModernType.rowTitle,
     color: Color.textPrimary,
     padding: 0,
   },
@@ -59,19 +62,19 @@ export const styles = StyleSheet.create({
     paddingLeft: Spacing.sm,
   },
   toggleText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
     color: Color.primary,
   },
   error: {
     marginTop: 5,
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.medium,
     color: Color.error,
   },
   hint: {
     marginTop: 5,
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
 });

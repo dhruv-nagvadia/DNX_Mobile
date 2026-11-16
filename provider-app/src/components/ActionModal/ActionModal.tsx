@@ -1,7 +1,7 @@
 import React from 'react';
-import { Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, TextInput } from 'react-native';
 
-import { AppButton } from '@/components/AppButton';
+import { BottomSheet, SheetButton } from '@/components/BottomSheet';
 import { Color } from '@/utils/Theme';
 
 import { ActionModalProps } from './types';
@@ -26,42 +26,35 @@ export function ActionModal({
   onCancel,
 }: ActionModalProps) {
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
-      <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={onCancel}>
-        <TouchableOpacity activeOpacity={1} style={styles.sheet} onPress={(e) => e.stopPropagation()}>
-          <Text style={styles.title}>{title}</Text>
-          {!!message && <Text style={styles.message}>{message}</Text>}
+    <BottomSheet
+      visible={visible}
+      title={title}
+      onClose={onCancel}
+      footer={
+        <>
+          <SheetButton title="Back" variant="secondary" onPress={onCancel} disabled={loading} />
+          <SheetButton
+            title={confirmLabel}
+            variant={confirmTone === 'danger' ? 'danger' : 'primary'}
+            loading={loading}
+            onPress={onConfirm}
+          />
+        </>
+      }
+    >
+      {!!message && <Text style={styles.message}>{message}</Text>}
 
-          {onReasonChange && (
-            <TextInput
-              style={styles.input}
-              value={reasonValue}
-              onChangeText={onReasonChange}
-              placeholder={reasonPlaceholder}
-              placeholderTextColor={Color.placeholder}
-              multiline
-              maxLength={500}
-            />
-          )}
-
-          <View style={styles.actions}>
-            <AppButton
-              style={styles.actionButton}
-              title="Back"
-              variant="secondary"
-              onPress={onCancel}
-              disabled={loading}
-            />
-            <AppButton
-              style={styles.actionButton}
-              title={confirmLabel}
-              variant={confirmTone === 'danger' ? 'secondary' : 'primary'}
-              loading={loading}
-              onPress={onConfirm}
-            />
-          </View>
-        </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
+      {onReasonChange && (
+        <TextInput
+          style={styles.input}
+          value={reasonValue}
+          onChangeText={onReasonChange}
+          placeholder={reasonPlaceholder}
+          placeholderTextColor={Color.placeholder}
+          multiline
+          maxLength={500}
+        />
+      )}
+    </BottomSheet>
   );
 }

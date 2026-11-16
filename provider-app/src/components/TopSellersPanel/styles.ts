@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, INK, ModernRadius, SOFT_FILL } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, INK, ModernRadius, ModernType, SOFT_FILL } from '@/utils/modernTheme';
 
 /** Rank badge colours: gold, silver, bronze, then neutral. */
 export const RANK_COLORS = [
@@ -29,12 +29,12 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   rankText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.extrabold,
   },
   thumb: {
-    width: 48,
-    height: 48,
+    width: 40,
+    height: 40,
     borderRadius: 10,
     backgroundColor: SOFT_FILL,
   },
@@ -52,16 +52,16 @@ export const styles = StyleSheet.create({
     borderBottomColor: CARD_BORDER,
   },
   rowName: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   rowMeta: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   empty: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
   busiestCard: {
@@ -81,12 +81,12 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   busiestTitle: {
-    fontSize: FontSize.sm + 1,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   busiestSub: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
 });

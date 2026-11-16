@@ -122,7 +122,7 @@ export default function BusinessCalendarScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <ArrowLeft size={26} color={INK} strokeWidth={2.2} />
+          <ArrowLeft size={22} color={INK} strokeWidth={2.2} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title} numberOfLines={1}>
@@ -174,7 +174,7 @@ export default function BusinessCalendarScreen() {
               accessibilityLabel={view === 'month' ? 'Previous month' : 'Previous week'}
               hitSlop={8}
             >
-              <ChevronLeft size={24} color={INK} strokeWidth={2.2} />
+              <ChevronLeft size={22} color={INK} strokeWidth={2.2} />
             </TouchableOpacity>
             <Text style={styles.periodLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
               {view === 'month' ? monthLabel : weekLabel}
@@ -186,7 +186,7 @@ export default function BusinessCalendarScreen() {
               accessibilityLabel={view === 'month' ? 'Next month' : 'Next week'}
               hitSlop={8}
             >
-              <ChevronRight size={24} color={INK} strokeWidth={2.2} />
+              <ChevronRight size={22} color={INK} strokeWidth={2.2} />
             </TouchableOpacity>
           </View>
 
@@ -259,7 +259,7 @@ export default function BusinessCalendarScreen() {
         {/* ── Selected day: hours editor ───────────────────────────────── */}
         <View style={styles.section}>
           <View style={styles.dayHeader}>
-            <CalendarDays size={30} color={INK} strokeWidth={1.8} />
+            <CalendarDays size={22} color={INK} strokeWidth={1.8} />
             <View style={styles.dayHeaderText}>
               <Text style={styles.dayTitle}>{dayTitleFmt.format(selectedDate)}</Text>
               <Text style={styles.daySubtitle}>{daySubtitle}</Text>
@@ -269,7 +269,7 @@ export default function BusinessCalendarScreen() {
           <View style={styles.divider} />
 
           <View style={styles.hoursRow}>
-            <Clock size={24} color={INK} strokeWidth={1.9} />
+            <Clock size={20} color={INK} strokeWidth={1.9} />
             <Text style={styles.hoursLabel}>Hours</Text>
             <Pill label={source.label} colors={source.colors} style={styles.sourcePill} />
           </View>
@@ -350,7 +350,7 @@ export default function BusinessCalendarScreen() {
         {/* ── That day's bookings / orders ─────────────────────────────── */}
         <View style={styles.section}>
           <View style={styles.listHeader}>
-            <CalendarDays size={26} color={INK} strokeWidth={1.9} />
+            <CalendarDays size={22} color={INK} strokeWidth={1.9} />
             <Text style={styles.listTitle} numberOfLines={1}>
               {titleWord} ({items.length})
             </Text>

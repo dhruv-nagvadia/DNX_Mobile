@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, PAGE_BG, PILL } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernSize, ModernType, PAGE_BG, PILL } from '@/utils/modernTheme';
 
 export { INK, PAGE_BG, PILL };
 
@@ -13,6 +13,8 @@ export { INK, PAGE_BG, PILL };
  */
 const CARD_RADIUS = 16;
 const BOX_RADIUS = 12;
+/** Header avatar — a step above the 40pt row avatar. */
+const HEADER_AVATAR = 48;
 
 
 // Money card — navy → deep navy, left to right.
@@ -38,7 +40,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.xl,
-    gap: Spacing.md,
+    gap: ModernSize.gap,
   },
 
   // ── 1. Header ───────────────────────────────────────────────────────────
@@ -49,21 +51,21 @@ export const styles = StyleSheet.create({
     paddingBottom: Spacing.xs,
   },
   avatarImage: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: HEADER_AVATAR,
+    height: HEADER_AVATAR,
+    borderRadius: HEADER_AVATAR / 2,
     backgroundColor: Color.border,
   },
   avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: HEADER_AVATAR,
+    height: HEADER_AVATAR,
+    borderRadius: HEADER_AVATAR / 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Color.primarySoft,
   },
   avatarText: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.bold,
     color: Color.primary,
   },
@@ -72,18 +74,18 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   headerGreeting: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
   },
   headerSubtitle: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   bellBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Color.white,
@@ -91,8 +93,8 @@ export const styles = StyleSheet.create({
   },
   bellDot: {
     position: 'absolute',
-    top: 10,
-    right: 11,
+    top: 8,
+    right: 9,
     width: 10,
     height: 10,
     borderRadius: 5,
@@ -104,7 +106,7 @@ export const styles = StyleSheet.create({
   // ── 2. Quick cards ──────────────────────────────────────────────────────
   quickRow: {
     flexDirection: 'row',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
   },
   quickCard: {
     flex: 1,
@@ -113,13 +115,13 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
     backgroundColor: Color.white,
     borderRadius: CARD_RADIUS,
-    paddingVertical: Spacing.sm + 6,
+    paddingVertical: Spacing.sm + 4,
     paddingHorizontal: Spacing.sm + 4,
     ...CARD_SHADOW,
   },
   quickIcon: {
-    width: 42,
-    height: 42,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
     borderRadius: BOX_RADIUS,
     alignItems: 'center',
     justifyContent: 'center',
@@ -130,12 +132,12 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   quickLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   quickSubtitle: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: Color.textSecondary,
   },
 
@@ -144,16 +146,16 @@ export const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
     borderRadius: CARD_RADIUS,
-    paddingVertical: Spacing.md + 4,
-    paddingHorizontal: Spacing.lg,
-    minHeight: 150,
+    paddingVertical: Spacing.md + 2,
+    paddingHorizontal: Spacing.md + 4,
+    minHeight: 136,
     justifyContent: 'center',
     ...CARD_SHADOW,
   },
   heroLeft: {
     gap: 6,
     // Leaves room for the bar chart on the right.
-    marginRight: 150,
+    marginRight: 96,
   },
   heroLabelRow: {
     flexDirection: 'row',
@@ -161,12 +163,12 @@ export const styles = StyleSheet.create({
     gap: 6,
   },
   heroLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: 'rgba(248, 250, 252, 0.85)',
   },
   heroValue: {
-    fontSize: FontSize.xxxl,
+    fontSize: ModernType.hero,
     fontWeight: FontWeight.extrabold,
     color: Color.onDark,
   },
@@ -176,7 +178,7 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   heroTrendText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.bold,
     color: '#4ADE80',
   },
@@ -184,21 +186,21 @@ export const styles = StyleSheet.create({
     color: '#F87171',
   },
   heroTrendLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: Color.onDarkMuted,
   },
   heroBars: {
     position: 'absolute',
-    right: Spacing.lg,
+    right: Spacing.md + 4,
     bottom: Spacing.md + 2,
     flexDirection: 'row',
     alignItems: 'flex-end',
-    gap: 10,
+    gap: 6,
   },
   heroBar: {
-    width: 32,
-    borderRadius: 8,
+    width: 16,
+    borderRadius: 5,
     backgroundColor: 'rgba(120, 150, 230, 0.35)',
   },
 
@@ -210,7 +212,8 @@ export const styles = StyleSheet.create({
   statTile: {
     flex: 1,
     minWidth: 0,
-    minHeight: 124,
+    // Grows past this when a label wraps to two lines.
+    minHeight: 84,
     overflow: 'hidden',
     justifyContent: 'space-between',
     borderRadius: CARD_RADIUS,
@@ -223,13 +226,13 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   statLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
-    lineHeight: FontSize.sm * 1.2,
+    lineHeight: 15,
   },
   statValue: {
-    fontSize: FontSize.xxl,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
   },
 
@@ -257,7 +260,7 @@ export const styles = StyleSheet.create({
   },
   sectionTitle: {
     flexShrink: 1,
-    fontSize: FontSize.lg,
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -267,7 +270,7 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   viewAllText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
     color: Color.info,
   },
@@ -277,13 +280,13 @@ export const styles = StyleSheet.create({
     backgroundColor: CARD_BORDER,
   },
   ctaLink: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.bold,
     color: Color.primary,
     marginTop: Spacing.xs,
   },
   emptyText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
@@ -293,13 +296,14 @@ export const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 4,
+    gap: ModernSize.gap,
+    minHeight: ModernSize.rowMinHeight,
     paddingVertical: Spacing.sm + 4,
     paddingHorizontal: Spacing.md,
   },
   rowIcon: {
-    width: 48,
-    height: 48,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
     borderRadius: BOX_RADIUS,
     alignItems: 'center',
     justifyContent: 'center',
@@ -312,30 +316,30 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FBF3E6',
   },
   rowThumb: {
-    width: 48,
-    height: 48,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
   },
   timeBox: {
-    width: 60,
-    height: 52,
+    width: 52,
+    height: 44,
     borderRadius: BOX_RADIUS,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#E6EEFB',
   },
   timeBoxText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
-    lineHeight: FontSize.sm * 1.25,
+    lineHeight: 16,
   },
   rowMain: {
     flex: 1,
     gap: 3,
   },
   rowTitle: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
+    fontSize: ModernType.rowTitle,
+    fontWeight: FontWeight.semibold,
     color: INK,
   },
   rowSubtitleRow: {
@@ -345,7 +349,7 @@ export const styles = StyleSheet.create({
   },
   rowSubtitle: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   rowRight: {
@@ -353,7 +357,7 @@ export const styles = StyleSheet.create({
     gap: 5,
   },
   rowAmount: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -363,7 +367,7 @@ export const styles = StyleSheet.create({
     borderRadius: 999,
   },
   pillText: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
   },
 });

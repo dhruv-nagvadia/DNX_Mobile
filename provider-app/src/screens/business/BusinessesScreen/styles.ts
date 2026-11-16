@@ -1,12 +1,21 @@
 import { StyleSheet } from 'react-native';
 
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG, SOFT_FILL } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import {
+  CARD_BORDER,
+  CARD_SHADOW,
+  INK,
+  ModernRadius,
+  ModernSize,
+  ModernType,
+  PAGE_BG,
+  SOFT_FILL,
+} from '@/utils/modernTheme';
 
 /** Mockup "My Businesses Marketplace Dashboard.png": light header, search,
  * filter chips, pastel status tiles and rich business cards. */
-export const THUMB_W = 78;
-export const THUMB_H = 64;
+export const THUMB_W = 64;
+export const THUMB_H = 56;
 export const PROGRESS_BLUE = '#1D4ED8';
 export const STAR = '#F5B301';
 
@@ -16,10 +25,10 @@ export const styles = StyleSheet.create({
     backgroundColor: PAGE_BG,
   },
   listContent: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.xl,
-    gap: Spacing.md - 2,
+    gap: ModernSize.gap,
   },
 
   // ── Header ──────────────────────────────────────────────────────────────
@@ -27,7 +36,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    paddingHorizontal: Spacing.md + 4,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
@@ -37,19 +46,19 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.largeTitle,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   addBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: PROGRESS_BLUE,
@@ -61,7 +70,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    height: 46,
+    height: 44,
     paddingHorizontal: Spacing.md - 2,
     borderRadius: ModernRadius.box,
     borderWidth: 1,
@@ -71,7 +80,7 @@ export const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     paddingVertical: 0,
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   chips: {
@@ -79,9 +88,9 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm + 2,
   },
   chip: {
-    minWidth: 76,
+    minWidth: 64,
     alignItems: 'center',
-    paddingHorizontal: Spacing.md + 4,
+    paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: ModernRadius.button,
     borderWidth: 1,
@@ -93,7 +102,7 @@ export const styles = StyleSheet.create({
     backgroundColor: PROGRESS_BLUE,
   },
   chipText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -112,29 +121,30 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    paddingHorizontal: Spacing.sm + 4,
-    paddingVertical: Spacing.md - 2,
+    paddingHorizontal: Spacing.sm + 2,
+    paddingVertical: Spacing.sm + 4,
     borderRadius: ModernRadius.box,
     borderWidth: 1,
     overflow: 'hidden',
+    minHeight: 76,
   },
   tileText: {
     flex: 1,
   },
   tileLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: INK,
   },
   tileValue: {
-    fontSize: FontSize.xxl,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
 
   // ── Business card ───────────────────────────────────────────────────────
   card: {
-    padding: Spacing.sm + 4,
+    padding: ModernSize.cardPad,
     gap: Spacing.sm + 2,
     borderRadius: ModernRadius.card,
     borderWidth: 1,
@@ -172,7 +182,7 @@ export const styles = StyleSheet.create({
   },
   name: {
     flexShrink: 1,
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -183,15 +193,15 @@ export const styles = StyleSheet.create({
   },
   meta: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   dot: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
   ratingValue: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -215,7 +225,7 @@ export const styles = StyleSheet.create({
   },
   progressText: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: INK,
   },
   progressTrack: {
@@ -246,7 +256,7 @@ export const styles = StyleSheet.create({
     borderRadius: ModernRadius.pill,
   },
   pillText: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
   },
 
@@ -262,7 +272,7 @@ export const styles = StyleSheet.create({
     borderColor: '#B9C3D3',
   },
   addCardText: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
     color: PROGRESS_BLUE,
   },
@@ -270,7 +280,7 @@ export const styles = StyleSheet.create({
   noMatch: {
     paddingVertical: Spacing.lg,
     textAlign: 'center',
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: Color.textSecondary,
   },
 });

@@ -1,12 +1,12 @@
 import { StyleSheet } from 'react-native';
 
-import { Color, FontSize, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, PAGE_BG, PILL, SOFT_FILL, TINT } from '@/utils/modernTheme';
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernRadius, ModernSize, ModernType, PAGE_BG, PILL, SOFT_FILL, TINT } from '@/utils/modernTheme';
 
 /** Mockup "Salon Services Management Dashboard.png": light header with a round
  * add button, search, filter chips, three pastel summary tiles and rich
  * service cards. Header/search/chips mirror ProductsScreen. */
-export const ICON_BOX = 56;
+export const ICON_BOX = ModernSize.iconBox;
 export const BRAND_BLUE = '#1D4ED8';
 export const SWITCH_OFF = '#D5DAE3';
 export const ICON_LAVENDER = '#4C1D95';
@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.xl,
-    gap: Spacing.md - 2,
+    gap: ModernSize.gap,
   },
 
   // ── Header ──────────────────────────────────────────────────────────────
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md + 4,
+    paddingHorizontal: ModernSize.gutter,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
     backgroundColor: PAGE_BG,
@@ -48,19 +48,19 @@ export const styles = StyleSheet.create({
     gap: 2,
   },
   title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.bold,
     color: INK,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     color: MUTED,
   },
   addBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: BRAND_BLUE,
@@ -72,7 +72,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    height: 46,
+    height: 44,
     paddingHorizontal: Spacing.md - 2,
     borderRadius: ModernRadius.box,
     borderWidth: 1,
@@ -82,7 +82,7 @@ export const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     paddingVertical: 0,
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   chipsScroll: {
@@ -109,7 +109,7 @@ export const styles = StyleSheet.create({
     backgroundColor: BRAND_BLUE,
   },
   chipText: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -138,9 +138,9 @@ export const styles = StyleSheet.create({
     flex: 1.25,
   },
   tileIcon: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(255,255,255,0.55)',
@@ -149,28 +149,28 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   tileLabel: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.bold,
     color: INK,
   },
   tileValue: {
-    fontSize: FontSize.xxl,
+    fontSize: ModernType.stat,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   tileName: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   tileSub: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     color: MUTED,
   },
 
   // ── Service card ────────────────────────────────────────────────────────
   card: {
-    padding: Spacing.sm + 4,
+    padding: ModernSize.cardPad,
     gap: Spacing.sm + 2,
     borderRadius: ModernRadius.card,
     borderWidth: 1,
@@ -204,12 +204,12 @@ export const styles = StyleSheet.create({
     gap: 3,
   },
   name: {
-    fontSize: FontSize.lg,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   desc: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: MUTED,
   },
   metaRow: {
@@ -219,15 +219,15 @@ export const styles = StyleSheet.create({
     marginTop: 2,
   },
   duration: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: INK,
   },
   dot: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     color: MUTED,
   },
   price: {
-    fontSize: FontSize.md,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
@@ -245,8 +245,8 @@ export const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   editBtn: {
-    width: 40,
-    height: 40,
+    width: ModernSize.controlSm,
+    height: ModernSize.controlSm,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -255,8 +255,8 @@ export const styles = StyleSheet.create({
     backgroundColor: Color.white,
   },
   deleteBtn: {
-    width: 40,
-    height: 40,
+    width: ModernSize.controlSm,
+    height: ModernSize.controlSm,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -285,7 +285,7 @@ export const styles = StyleSheet.create({
   },
   statsText: {
     flexShrink: 1,
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     color: INK,
   },
   featureChips: {
@@ -302,7 +302,7 @@ export const styles = StyleSheet.create({
     backgroundColor: PILL.blue.bg,
   },
   homeChipText: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.semibold,
     color: PILL.blue.fg,
   },
@@ -316,7 +316,7 @@ export const styles = StyleSheet.create({
     backgroundColor: SOFT_FILL,
   },
   partialChipText: {
-    fontSize: FontSize.xs,
+    fontSize: ModernType.caption,
     fontWeight: FontWeight.medium,
     color: INK,
   },
@@ -324,7 +324,7 @@ export const styles = StyleSheet.create({
   noMatch: {
     paddingVertical: Spacing.lg,
     textAlign: 'center',
-    fontSize: FontSize.sm,
+    fontSize: ModernType.body,
     color: MUTED,
   },
 });
