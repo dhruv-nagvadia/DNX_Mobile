@@ -1,274 +1,254 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing, Shadow } from '@/utils/Theme';
 
+import { Color, FontWeight } from '@/utils/Theme';
+import {
+  CARD_BORDER,
+  CARD_SHADOW,
+  INK,
+  LINK,
+  ModernSize,
+  ModernType,
+  PAGE_BG,
+  PILL,
+} from '@/utils/modernTheme';
+
+const MUTED = '#64748B';
+const BODY = '#334155';
+const HAIRLINE = '#E8ECF2';
+const G = ModernSize.gutter;
+
+/** Soft blue gradient behind the profile card. */
+export const PROFILE_CARD_GRADIENT = ['#F1F6FF', '#E1EBFD', '#D6E4FC'];
+
+/** Mockup "designs/customer/mobile/DNX Profile and Edit Profile Screens.png" (left frame). */
 export const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Color.background },
-  content: { paddingBottom: Spacing.xl },
+  container: { flex: 1, backgroundColor: PAGE_BG },
+  content: { paddingHorizontal: G, paddingBottom: 32 },
 
-  // ── Ink hero ──────────────────────────────────────────────────────
-  hero: {
-    overflow: 'hidden',
-    backgroundColor: Color.ink,
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.xl + Spacing.xl,
+  // ── Header ──────────────────────────────────────────────────────────────
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 10,
+    paddingBottom: 14,
   },
-  editBtn: {
-    position: 'absolute',
-    right: Spacing.lg,
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: Color.glassStrong,
-    borderWidth: 1,
-    borderColor: Color.glassBorder,
+  title: {
+    fontSize: 28,
+    fontWeight: FontWeight.extrabold,
+    letterSpacing: -0.6,
+    color: INK,
+  },
+  bellBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
-  identity: {
-    alignItems: 'center',
-    gap: Spacing.sm,
+
+  // ── Profile card ────────────────────────────────────────────────────────
+  profileCard: {
+    flexDirection: 'row',
+    gap: 14,
+    padding: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#D5E2FA',
+    overflow: 'hidden',
+    backgroundColor: '#E6EEFD',
   },
   avatar: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    backgroundColor: Color.accent,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 3,
+    borderColor: Color.white,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: PILL.blue.bg,
+    ...CARD_SHADOW,
   },
   avatarText: {
-    color: Color.ink,
-    fontSize: FontSize.xxxl,
+    fontSize: 30,
     fontWeight: FontWeight.extrabold,
+    color: LINK,
+  },
+  profileInfo: { flex: 1, gap: 3 },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   name: {
-    color: Color.onDark,
-    fontSize: FontSize.xl,
+    flex: 1,
+    fontSize: 22,
     fontWeight: FontWeight.extrabold,
-    letterSpacing: -0.3,
+    letterSpacing: -0.4,
+    color: INK,
   },
-  email: {
-    color: Color.onDarkMuted,
-    fontSize: FontSize.sm,
-  },
-  rolePill: {
-    marginTop: 4,
+  editPill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
+    height: 32,
     paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.glassStrong,
-    borderWidth: 1,
-    borderColor: Color.glassBorder,
+    borderRadius: 999,
+    borderWidth: 1.5,
+    borderColor: LINK,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
   },
-  rolePillText: {
-    color: Color.onDark,
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
+  editPillText: {
+    fontSize: ModernType.secondary,
+    fontWeight: FontWeight.semibold,
+    color: LINK,
+  },
+  contactText: { fontSize: ModernType.body, color: BODY },
+  locationChip: {
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    alignItems: 'center',
+    gap: 5,
+    marginTop: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+    backgroundColor: Color.white,
+  },
+  locationText: {
+    fontSize: ModernType.caption,
+    fontWeight: FontWeight.medium,
+    color: INK,
+  },
+  sinceText: {
+    marginTop: 6,
+    fontSize: ModernType.caption,
+    color: MUTED,
   },
 
-  // ── Stats (overlap the hero) ──────────────────────────────────────
+  // ── Stats ───────────────────────────────────────────────────────────────
   stats: {
     flexDirection: 'row',
-    marginHorizontal: Spacing.lg,
-    marginTop: -Spacing.xl,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-    ...Shadow.card,
+    gap: 10,
+    marginTop: 14,
   },
   stat: {
     flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.md,
+    gap: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
+    borderRadius: 16,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
-  statDivider: {
-    borderLeftWidth: 1,
-    borderLeftColor: Color.border,
+  statIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  statText: { flex: 1 },
   statValue: {
-    fontSize: FontSize.xl,
+    fontSize: 20,
     fontWeight: FontWeight.extrabold,
-    color: Color.textPrimary,
+    color: INK,
   },
-  statLabel: {
-    marginTop: 2,
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
-  },
+  statLabel: { fontSize: ModernType.caption, color: MUTED },
 
-  // ── Menu ──────────────────────────────────────────────────────────
+  // ── Sections ────────────────────────────────────────────────────────────
   sectionLabel: {
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.sm,
-    marginHorizontal: Spacing.lg,
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    letterSpacing: 0.4,
+    marginTop: 22,
+    marginBottom: 8,
+    marginLeft: 4,
+    fontSize: 13,
+    fontWeight: FontWeight.semibold,
+    letterSpacing: 1,
     textTransform: 'uppercase',
-    color: Color.textSecondary,
+    color: MUTED,
   },
   section: {
-    marginHorizontal: Spacing.lg,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-    overflow: 'hidden',
+    paddingHorizontal: 14,
+    borderRadius: 16,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 14,
+    gap: 12,
+    minHeight: 64,
+    paddingVertical: 10,
   },
   rowBorder: {
-    borderTopWidth: 1,
-    borderTopColor: Color.border,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: HAIRLINE,
   },
   rowIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  rowLabel: {
-    flex: 1,
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
+  rowText: { flex: 1, gap: 2 },
+  rowTitle: {
+    fontSize: ModernType.rowTitle,
+    fontWeight: FontWeight.bold,
+    color: INK,
   },
-  rowValue: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
+  rowSubtitle: { fontSize: ModernType.secondary, color: MUTED },
+  duePill: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: PILL.yellow.bg,
+  },
+  duePillText: {
+    fontSize: ModernType.caption,
+    fontWeight: FontWeight.semibold,
+    color: PILL.yellow.fg,
   },
 
-  // ── Logout ────────────────────────────────────────────────────────
+  // ── Footer actions ──────────────────────────────────────────────────────
   logout: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.sm,
-    marginHorizontal: Spacing.lg,
-    marginTop: Spacing.lg,
-    paddingVertical: 15,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.errorSoft,
+    gap: 10,
+    height: 52,
+    marginTop: 22,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: Color.error,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
   logoutText: {
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
     color: Color.error,
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-  },
-  version: {
-    marginTop: Spacing.lg,
-    textAlign: 'center',
-    fontSize: FontSize.xs,
-    color: Color.placeholder,
-  },
-
-  // ── Edit modal ────────────────────────────────────────────────────
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: Color.overlay,
-    justifyContent: 'center',
-    padding: Spacing.lg,
-  },
-  modalCard: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
-    gap: Spacing.md,
-  },
-  modalTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  inputLabel: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
-    marginBottom: 6,
-  },
-  input: {
-    height: 48,
-    paddingHorizontal: Spacing.md,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Color.border,
-    backgroundColor: Color.surface,
-    fontSize: FontSize.md,
-    color: Color.textPrimary,
-  },
-  errorText: {
-    fontSize: FontSize.sm,
-    color: Color.error,
-  },
-  inputHint: {
-    marginTop: 6,
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-  },
-  modalActions: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    marginTop: Spacing.xs,
-  },
-  modalBtn: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: Radius.md,
-    alignItems: 'center',
-    borderWidth: 1,
-  },
-  modalBtnGhost: {
-    backgroundColor: Color.surface,
-    borderColor: Color.border,
-  },
-  modalBtnGhostText: {
-    color: Color.textPrimary,
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.semibold,
-  },
-  modalBtnPrimary: {
-    backgroundColor: Color.primary,
-    borderColor: Color.primary,
-  },
-  modalBtnPrimaryText: {
-    color: Color.white,
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-  },
-  modalBtnDanger: {
-    backgroundColor: Color.error,
-    borderColor: Color.error,
-  },
-  modalBtnDangerText: {
-    color: Color.white,
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-  },
-  modalWarning: {
-    fontSize: FontSize.sm,
-    lineHeight: FontSize.sm * 1.5,
-    color: Color.textSecondary,
   },
   deleteAccount: {
-    alignItems: 'center',
-    marginTop: Spacing.md,
+    alignSelf: 'center',
+    marginTop: 18,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
   },
   deleteAccountText: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.error,
+    fontSize: ModernType.body,
+    fontWeight: FontWeight.medium,
+    color: '#B91C1C',
+    textDecorationLine: 'underline',
+  },
+  version: {
+    marginTop: 8,
+    textAlign: 'center',
+    fontSize: ModernType.caption,
+    color: MUTED,
   },
 });

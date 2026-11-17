@@ -1,91 +1,400 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
 
+import { Color, FontWeight } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernSize, PAGE_BG, PILL } from '@/utils/modernTheme';
+
+const BLUE = '#1D4ED8';
+const MUTED = '#64748B';
+const META = '#475569';
+const ORANGE = '#EA580C';
+
+/** Mockup "designs/customer/mobile/Dual mobile order success screens.png". */
 export const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Color.background },
+  container: {
+    flex: 1,
+    backgroundColor: PAGE_BG,
+  },
   content: {
-    flexGrow: 1,
-    padding: Spacing.lg,
-    paddingBottom: Spacing.xl,
-    gap: Spacing.lg,
+    paddingHorizontal: ModernSize.gutter,
+    paddingTop: 8,
+    paddingBottom: 24,
+  },
+  fill: {
+    width: '100%',
+    height: '100%',
+  },
+  closeBtn: {
+    position: 'absolute',
+    right: ModernSize.gutter,
+    zIndex: 2,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
 
-  badgeWrap: { alignItems: 'center', gap: Spacing.md },
-  badge: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: Color.successSoft,
+  // ── Celebration ─────────────────────────────────────────────────────────
+  badgeWrap: {
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  celebration: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: { fontSize: FontSize.xxl, fontWeight: FontWeight.extrabold, color: Color.textPrimary, textAlign: 'center' },
-  subtitle: {
-    fontSize: FontSize.md,
-    color: Color.textSecondary,
+  glow: {
+    position: 'absolute',
+    backgroundColor: 'rgba(34, 197, 94, 0.10)',
+  },
+  confetti: {
+    position: 'absolute',
+    width: 12,
+    height: 5,
+    borderRadius: 3,
+  },
+  check: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#16A34A',
+    shadowColor: '#16A34A',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  title: {
+    marginTop: 6,
+    fontSize: 30,
+    fontWeight: FontWeight.extrabold,
+    letterSpacing: -0.6,
     textAlign: 'center',
-    lineHeight: FontSize.md * 1.4,
-    paddingHorizontal: Spacing.md,
+    color: INK,
+  },
+  subtitle: {
+    marginTop: 8,
+    paddingHorizontal: 16,
+    fontSize: 15,
+    lineHeight: 21,
+    textAlign: 'center',
+    color: META,
   },
 
-  card: {
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-    paddingHorizontal: Spacing.md,
+  // ── Cards ───────────────────────────────────────────────────────────────
+  stack: {
+    marginTop: 20,
+    gap: 12,
   },
-  orderRow: {
+  sectionLabel: {
+    marginTop: 4,
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  card: {
+    padding: 14,
+    borderRadius: 16,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  orderHead: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Color.border,
+    gap: 12,
   },
-  orderRowLast: { borderBottomWidth: 0 },
-  orderIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
+  avatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#EAF1FF',
   },
-  orderMain: { flex: 1, minWidth: 0 },
-  orderName: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.textPrimary },
-  orderMeta: { marginTop: 2, fontSize: FontSize.xs, color: Color.textSecondary },
-  orderAmount: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
-
-  warningCard: {
-    borderRadius: Radius.lg,
-    backgroundColor: Color.warningSoft,
-    borderWidth: 1,
-    borderColor: Color.warning,
-    padding: Spacing.md,
+  orderHeadText: {
+    flex: 1,
+    minWidth: 0,
+    gap: 2,
+  },
+  storeName: {
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  orderMeta: {
+    fontSize: 14,
+    color: MUTED,
+  },
+  pill: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 999,
+  },
+  pillText: {
+    fontSize: 12.5,
+    fontWeight: FontWeight.semibold,
+  },
+  amounts: {
+    marginTop: 12,
+    paddingTop: 10,
     gap: 6,
+    borderTopWidth: 1,
+    borderTopColor: Color.border,
+  },
+  amountRow: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  warningTextWrap: { flex: 1, gap: 2 },
-  warningTitle: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
-  warningText: { fontSize: FontSize.xs, color: Color.textSecondary, lineHeight: FontSize.xs * 1.5 },
+  amountLabel: {
+    fontSize: 15,
+    color: META,
+  },
+  amountTotal: {
+    fontSize: 19,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  amountPaid: {
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: PILL.green.fg,
+  },
+  dueRow: {
+    marginTop: 2,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: '#FFEBDD',
+  },
+  dueText: {
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: '#C2410C',
+  },
+  compactFoot: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginTop: 10,
+    marginLeft: 68,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: Color.border,
+  },
+  compactTotal: {
+    fontSize: 16,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  compactPaid: {
+    fontSize: 15,
+    fontWeight: FontWeight.semibold,
+    color: PILL.green.fg,
+  },
+  compactDue: {
+    fontSize: 15,
+    fontWeight: FontWeight.semibold,
+    color: ORANGE,
+  },
 
-  actions: { gap: Spacing.sm },
+  // ── What happens next ───────────────────────────────────────────────────
+  stepRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 10,
+  },
+  stepRail: {
+    alignItems: 'center',
+    width: 22,
+  },
+  stepDot: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: '#94A3B8',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Color.white,
+  },
+  stepDotActive: {
+    borderColor: BLUE,
+    backgroundColor: BLUE,
+  },
+  stepLine: {
+    flex: 1,
+    width: 2,
+    minHeight: 14,
+    marginTop: 2,
+    backgroundColor: '#CBD5E1',
+  },
+  stepText: {
+    flex: 1,
+    paddingTop: 1,
+    paddingBottom: 6,
+    fontSize: 15,
+    lineHeight: 20,
+    color: META,
+  },
+  stepTextActive: {
+    fontWeight: FontWeight.semibold,
+    color: BLUE,
+  },
+
+  // ── Pickup ──────────────────────────────────────────────────────────────
+  pickup: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  pickupBody: {
+    flex: 1,
+    gap: 4,
+  },
+  pickupAddress: {
+    fontSize: 14,
+    lineHeight: 19,
+    color: META,
+  },
+  openPill: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: PILL.green.bg,
+  },
+  closedPill: {
+    backgroundColor: '#F1F5F9',
+  },
+  openDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#16A34A',
+  },
+  closedDot: {
+    backgroundColor: '#94A3B8',
+  },
+  openText: {
+    fontSize: 13,
+    fontWeight: FontWeight.semibold,
+    color: PILL.green.fg,
+  },
+  closedText: {
+    color: MUTED,
+  },
+  dirBtn: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    height: 38,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: BLUE,
+  },
+  dirText: {
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+    color: BLUE,
+  },
+
+  // ── Failed store ────────────────────────────────────────────────────────
+  failCard: {
+    flexDirection: 'row',
+    gap: 12,
+    padding: 16,
+    borderRadius: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: ORANGE,
+    backgroundColor: '#FFF2E8',
+    ...CARD_SHADOW,
+  },
+  failBody: {
+    flex: 1,
+    gap: 6,
+  },
+  failTitle: {
+    fontSize: 17,
+    fontWeight: FontWeight.bold,
+    color: '#C2410C',
+  },
+  failText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: META,
+  },
+  failBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 44,
+    marginTop: 6,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: '#F08A4B',
+    backgroundColor: Color.white,
+  },
+  failBtnText: {
+    fontSize: 15,
+    fontWeight: FontWeight.semibold,
+    color: '#C2410C',
+  },
+
+  // ── Actions ─────────────────────────────────────────────────────────────
+  actions: {
+    gap: 10,
+    paddingHorizontal: ModernSize.gutter,
+    paddingTop: 12,
+    backgroundColor: Color.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderTopWidth: 1,
+    borderTopColor: CARD_BORDER,
+    ...CARD_SHADOW,
+  },
   primaryBtn: {
-    paddingVertical: 15,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primary,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    height: 52,
+    borderRadius: 12,
+    backgroundColor: BLUE,
   },
-  primaryBtnText: { color: Color.white, fontSize: FontSize.md, fontWeight: FontWeight.bold },
+  primaryBtnText: {
+    fontSize: 17,
+    fontWeight: FontWeight.bold,
+    color: Color.white,
+  },
   secondaryBtn: {
-    paddingVertical: 15,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Color.border,
-    backgroundColor: Color.surface,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    height: 52,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: BLUE,
+    backgroundColor: Color.white,
   },
-  secondaryBtnText: { color: Color.textPrimary, fontSize: FontSize.md, fontWeight: FontWeight.semibold },
+  secondaryBtnText: {
+    fontSize: 17,
+    fontWeight: FontWeight.semibold,
+    color: BLUE,
+  },
 });

@@ -1,33 +1,37 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
-  Dimensions,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
+  Alert,
+  ScrollView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { Star, BadgeCheck, MapPin, Clock, Users, ChevronDown, ChevronUp } from 'lucide-react-native';
 import { useRoute } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ChevronDown, ChevronUp, Users } from 'lucide-react-native';
 
-import { AppHeader } from '@/components/AppHeader';
-import { CategoryIcon } from '@/components/CategoryIcon';
-import { AppButton } from '@/components/AppButton';
-import { BusinessContact } from '@/components/BusinessContact';
-import { ReviewItem } from '@/components/ReviewItem';
-import { Color } from '@/utils/Theme';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { useAppSelector } from '@/redux/hooks';
 import { useGetProviderByIdQuery } from '@/redux/api/provider/providerApi';
+import { LINK, PAGE_BG } from '@/utils/modernTheme';
 
 import { StoreDetail } from '../StoreDetailScreen/StoreDetailScreen';
 import { useProviderDetail } from './useProviderDetail';
 import { ProviderDetailRouteProp } from './types';
+import {
+  AboutCard,
+  LocationHoursCard,
+  OfferCard,
+  QuickActions,
+  ReviewsSection,
+  TopCard,
+} from './parts';
 import { styles } from './styles';
 
-const SCREEN_W = Dimensions.get('window').width;
+/** Slots shown per period before "Show more". */
+const SLOTS_PREVIEW = 10;
 
 function formatPrice(minor: number, currency: string): string {
   const amount = (minor / 100).toLocaleString('en-IN');
@@ -35,19 +39,22 @@ function formatPrice(minor: number, currency: string): string {
 }
 
 function formatDuration(min: number): string {
-  if (min < 60) return `${min} min`;
+  if (min < 60) {
+    return `${min} min`;
+  }
   const h = Math.floor(min / 60);
   const m = min % 60;
   return m ? `${h} hr ${m} min` : `${h} hr`;
 }
 
-function dayLabel(d: Date, i: number): string {
-  if (i === 0) return 'Today';
-  return `${d.toLocaleDateString(undefined, { weekday: 'short' })} ${d.getDate()}`;
+function timeLabel(d: Date): string {
+  return d
+    .toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true })
+    .toUpperCase();
 }
 
-function timeLabel(d: Date): string {
-  return d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+function weekday(d: Date): string {
+  return d.toLocaleDateString('en-IN', { weekday: 'short' });
 }
 
 /**
@@ -57,14 +64,17 @@ function timeLabel(d: Date): string {
 export default function ProviderDetailScreen() {
   const { params } = useRoute<ProviderDetailRouteProp>();
   const postalCode = useAppSelector((s) => s.location.current?.postalCode);
-  const { data: provider, isLoading } = useGetProviderByIdQuery({ id: params.providerId, postalCode });
+  const { data: provider, isLoading } = useGetProviderByIdQuery({
+    id: params.providerId,
+    postalCode,
+  });
 
   if (isLoading && !provider) {
     return (
       <View style={styles.container}>
-        <AppHeader title={params.name ?? 'Business'} />
+        <ScreenHeader title={params.name ?? 'Business'} />
         <View style={styles.center}>
-          <ActivityIndicator color={Color.primary} />
+          <ActivityIndicator color={LINK} />
         </View>
       </View>
     );
@@ -77,7 +87,10 @@ export default function ProviderDetailScreen() {
   return <ServiceDetail />;
 }
 
-/** Service (appointment) view — JSX only; logic comes from useProviderDetail. */
+/**
+ * Service (appointment) view — mockup "Aura Salon Booking App Interface.png".
+ * JSX only; logic comes from useProviderDetail.
+ */
 function ServiceDetail() {
   const {
     provider,
@@ -96,298 +109,316 @@ function ServiceDetail() {
     selectDay,
     slots,
     slotGroups,
-    expandedPeriod,
-    togglePeriod,
     dayOpen,
     selectedSlot,
     selectSlot,
     canBook,
     booking,
     onBook,
+    dayClosed,
+    offer,
+    ratingBreakdown,
+    hoursRows,
+    address,
+    depositPercent,
+    onCall,
+    onDirections,
+    onShare,
+    goBack,
   } = useProviderDetail();
 
-  const [activeImage, setActiveImage] = useState(0);
-  const onGalleryScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) =>
-    setActiveImage(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W));
+  const insets = useSafeAreaInsets();
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
   if (isLoading || !provider) {
     return (
       <View style={styles.container}>
-        <AppHeader title={headerTitle} />
+        <ScreenHeader title={headerTitle} />
         <View style={styles.center}>
-          <ActivityIndicator color={Color.primary} />
+          <ActivityIndicator color={LINK} />
         </View>
       </View>
     );
   }
 
-  const hint = !selectedServiceId ? 'Select a service' : !selectedSlot ? 'Select a time' : 'Ready to book';
+  const subline = [
+    provider.subcategory?.name ?? provider.category.name,
+    services
+      .slice(0, 3)
+      .map((s) => s.name)
+      .join(', '),
+  ]
+    .filter(Boolean)
+    .join(' • ');
+  const selectedTime = selectedSlot ? new Date(selectedSlot) : null;
+  const priceText = selectedService
+    ? formatPrice(selectedService.priceMinor, selectedService.currency)
+    : null;
+  const barHint = !selectedServiceId
+    ? 'Select a service'
+    : !selectedSlot
+      ? 'Pick a time slot'
+      : null;
+  // The code is redeemed on the booking summary; tell the customer how.
+  const onApplyOffer = () =>
+    offer &&
+    Alert.alert(
+      `Code ${offer.code}`,
+      'Pick a service and a time, then tap Book now — you can apply this code on the next screen.',
+    );
+  const visibleServices = isReschedule ? (selectedService ? [selectedService] : []) : services;
 
   return (
     <View style={styles.container}>
-      <AppHeader title={headerTitle} />
+      <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Gallery */}
-        {provider.images.length > 0 ? (
-          <View style={styles.galleryWrap}>
-            <ScrollView
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              onMomentumScrollEnd={onGalleryScroll}
-              style={styles.gallery}
-            >
-              {provider.images.map((url, i) => (
-                <TouchableOpacity key={url} activeOpacity={0.95} onPress={() => openGallery(i)}>
-                  <Image source={{ uri: url }} style={styles.galleryImg} />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-
-            <View style={styles.countBadge}>
-              <Text style={styles.countText}>
-                {activeImage + 1} / {provider.images.length}
-              </Text>
-            </View>
-
-            {provider.images.length > 1 && (
-              <View style={styles.dots}>
-                {provider.images.map((url, i) => (
-                  <View key={url} style={[styles.dot, i === activeImage && styles.dotActive]} />
-                ))}
-              </View>
-            )}
-          </View>
-        ) : (
-          <View style={styles.galleryFallback}>
-            <CategoryIcon slug={provider.category.slug} size={64} strokeWidth={1.4} />
-          </View>
-        )}
+        <TopCard
+          provider={provider}
+          subline={subline}
+          strip={
+            provider.areaCount
+              ? {
+                  icon: <Users size={16} color={LINK} strokeWidth={2} />,
+                  text:
+                    provider.areaCount === 1
+                      ? '1 person from your area booked here'
+                      : `${provider.areaCount} people from your area booked here`,
+                }
+              : null
+          }
+          onBack={goBack}
+          onShare={onShare}
+          onOpenImage={openGallery}
+        />
 
         <View style={styles.body}>
-          {/* Header */}
-          <Text style={styles.name}>{provider.businessName}</Text>
-          <View style={styles.badgeRow}>
-            <View style={styles.chip}>
-              <CategoryIcon slug={provider.category.slug} size={13} color={Color.primaryDark} />
-              <Text style={styles.chipText}>
-                {provider.subcategory?.name ?? provider.category.name}
-              </Text>
-            </View>
-            {provider.isVerified && (
-              <View style={styles.chip}>
-                <BadgeCheck size={13} color={Color.success} />
-                <Text style={styles.chipText}>Verified</Text>
-              </View>
-            )}
-          </View>
-          <View style={styles.metaRow}>
-            <Star size={14} color={Color.warning} fill={Color.warning} />
-            <Text style={styles.metaText}>
-              {provider.ratingAvg.toFixed(1)} ({provider.ratingCount} reviews)
-            </Text>
-          </View>
-          {!!provider.city && (
-            <View style={styles.metaRow}>
-              <MapPin size={14} color={Color.textSecondary} />
-              <Text style={styles.metaText}>{provider.city}</Text>
-            </View>
-          )}
-          {!!provider.areaCount && provider.areaCount > 0 && (
-            <View style={styles.metaRow}>
-              <Users size={14} color={Color.success} />
-              <Text style={[styles.metaText, { color: Color.success }]}>
-                {provider.areaCount === 1
-                  ? '1 person from your area used this'
-                  : `${provider.areaCount} people from your area used this`}
-              </Text>
-            </View>
-          )}
+          <QuickActions onCall={onCall} onDirections={onDirections} onShare={onShare} />
+          {!isReschedule && !!offer && <OfferCard offer={offer} onApply={onApplyOffer} />}
 
-          {/* About */}
-          <Text style={styles.sectionTitle}>About</Text>
-          {provider.description ? (
-            <Text style={styles.about}>{provider.description}</Text>
-          ) : (
-            <Text style={styles.muted}>No description added yet.</Text>
-          )}
-
-          {/* Contact */}
-          <Text style={styles.sectionTitle}>Contact & location</Text>
-          <BusinessContact
-            phone={provider.phone}
-            email={provider.email}
-            addressLine={provider.addressLine}
-            city={provider.city}
-            state={provider.state}
-            postalCode={provider.postalCode}
-            callLabel="Call the business"
-          />
-
-          {/* Services — locked to the original service when rescheduling. */}
-          <Text style={styles.sectionTitle}>{isReschedule ? 'Rescheduling' : 'Select a service'}</Text>
-          {isReschedule ? (
-            selectedService && (
-              <View style={[styles.serviceRow, styles.serviceRowActive]}>
-                <View style={styles.serviceInfo}>
-                  <Text style={styles.serviceName}>{selectedService.name}</Text>
-                  <Text style={styles.serviceMeta}>{formatDuration(selectedService.durationMin)}</Text>
-                </View>
-                <Text style={styles.servicePrice}>
-                  {formatPrice(selectedService.priceMinor, selectedService.currency)}
-                </Text>
-              </View>
-            )
-          ) : services.length === 0 ? (
+          {/* ── Services ────────────────────────────────────────────────── */}
+          <Text style={styles.sectionTitle}>
+            {isReschedule ? 'Rescheduling' : 'Select a service'}
+          </Text>
+          {visibleServices.length === 0 ? (
             <Text style={styles.muted}>No services listed yet.</Text>
           ) : (
-            services.map((s) => {
-              const active = s.id === selectedServiceId;
-              return (
-                <TouchableOpacity
-                  key={s.id}
-                  style={[styles.serviceRow, active && styles.serviceRowActive]}
-                  activeOpacity={0.85}
-                  onPress={() => selectService(s.id)}
-                >
-                  <View style={styles.serviceInfo}>
-                    <Text style={styles.serviceName}>{s.name}</Text>
-                    <Text style={styles.serviceMeta}>{formatDuration(s.durationMin)}</Text>
-                  </View>
-                  <Text style={styles.servicePrice}>{formatPrice(s.priceMinor, s.currency)}</Text>
-                  <View style={[styles.radio, active && styles.radioActive]}>
-                    {active && <View style={styles.radioDot} />}
-                  </View>
-                </TouchableOpacity>
-              );
-            })
+            <View style={styles.serviceCard}>
+              {visibleServices.map((s, i) => {
+                const active = s.id === selectedServiceId;
+                const partial = depositPercent > 0 && s.partialPayEnabled !== false;
+                return (
+                  <TouchableOpacity
+                    key={s.id}
+                    style={[
+                      styles.serviceRow,
+                      i > 0 && !active && styles.serviceRowDivider,
+                      active && styles.serviceRowActive,
+                    ]}
+                    activeOpacity={0.85}
+                    disabled={isReschedule}
+                    onPress={() => selectService(s.id)}
+                    accessibilityRole="radio"
+                    accessibilityState={{ selected: active }}
+                  >
+                    <View style={styles.serviceInfo}>
+                      <Text style={styles.serviceName}>{s.name}</Text>
+                      <Text style={styles.serviceMeta}>{formatDuration(s.durationMin)}</Text>
+                    </View>
+                    <View style={styles.servicePriceCol}>
+                      <Text style={styles.servicePrice}>
+                        {formatPrice(s.priceMinor, s.currency)}
+                      </Text>
+                      {active && partial && (
+                        <View style={styles.payPill}>
+                          <Text style={styles.payPillText}>Pay {depositPercent}% now</Text>
+                        </View>
+                      )}
+                    </View>
+                    {!isReschedule && (
+                      <View style={[styles.radio, active && styles.radioActive]}>
+                        {active && <View style={styles.radioDot} />}
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           )}
 
-          {/* Date */}
+          {/* ── Date ────────────────────────────────────────────────────── */}
           <Text style={styles.sectionTitle}>Select a date</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.dayRow}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.bleed}
+            contentContainerStyle={styles.dayRow}
+          >
             {days.map((d, i) => {
               const active = i === dayIndex;
+              const closed = dayClosed[i];
               return (
                 <TouchableOpacity
-                  key={i}
-                  style={[styles.dayChip, active && styles.dayChipActive]}
+                  key={d.toISOString()}
+                  style={[
+                    styles.dayPill,
+                    active && styles.dayPillActive,
+                    closed && !active && styles.dayPillClosed,
+                  ]}
                   activeOpacity={0.85}
                   onPress={() => selectDay(i)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: active }}
                 >
-                  <Text style={[styles.dayChipText, active && styles.dayChipTextActive]}>
-                    {dayLabel(d, i)}
+                  <Text
+                    style={[
+                      styles.dayWeek,
+                      active && styles.dayTextActive,
+                      closed && !active && styles.dayTextClosed,
+                    ]}
+                  >
+                    {i === 0 ? 'Today' : weekday(d)}
                   </Text>
+                  <Text
+                    style={[
+                      styles.dayNum,
+                      active && styles.dayTextActive,
+                      closed && !active && styles.dayTextClosed,
+                    ]}
+                  >
+                    {d.getDate()}
+                  </Text>
+                  {closed && (
+                    <Text style={[styles.dayClosed, active && styles.dayTextActive]}>Closed</Text>
+                  )}
                 </TouchableOpacity>
               );
             })}
           </ScrollView>
 
-          {/* Slots */}
+          {/* ── Slots ───────────────────────────────────────────────────── */}
           <Text style={styles.sectionTitle}>Available slots</Text>
           {slots.length === 0 ? (
-            <View style={styles.metaRow}>
-              <Clock size={14} color={Color.textSecondary} />
-              <Text style={styles.muted}>
-                {!dayOpen
-                  ? 'Closed on this day — try another date.'
-                  : selectedServiceId
-                    ? 'No open times for this service — try another day.'
-                    : 'Fully booked on this day — try another date.'}
-              </Text>
-            </View>
+            <Text style={styles.muted}>
+              {!dayOpen
+                ? 'Closed on this day — try another date.'
+                : selectedServiceId
+                  ? 'No open times for this service — try another day.'
+                  : 'Fully booked on this day — try another date.'}
+            </Text>
           ) : (
             slotGroups.map((group) => {
-              const open = expandedPeriod === group.period;
-              const availableCount = group.slots.filter((s) => !s.booked).length;
+              const expanded = !!expandedGroups[group.period];
+              const shown = expanded ? group.slots : group.slots.slice(0, SLOTS_PREVIEW);
+              const hidden = group.slots.length - shown.length;
               return (
-                <View key={group.period}>
-                  <TouchableOpacity
-                    style={[styles.periodHeader, open && styles.periodHeaderActive]}
-                    activeOpacity={0.85}
-                    onPress={() => togglePeriod(group.period)}
-                  >
-                    <View style={styles.periodHeaderLeft}>
-                      <Text style={styles.periodHeaderText}>{group.period}</Text>
-                      <Text style={styles.periodHeaderCount}>
-                        {availableCount > 0 ? `${availableCount} available` : 'Fully booked'}
-                      </Text>
-                    </View>
-                    {open ? (
-                      <ChevronUp size={18} color={Color.textSecondary} />
-                    ) : (
-                      <ChevronDown size={18} color={Color.textSecondary} />
-                    )}
-                  </TouchableOpacity>
-
-                  {open && (
-                    <View style={styles.slotWrap}>
-                      {group.slots.map(({ time, booked }) => {
-                        const iso = time.toISOString();
-
-                        if (booked) {
-                          return (
-                            <View key={iso} style={[styles.slot, styles.slotBooked]}>
-                              <Text numberOfLines={1} style={[styles.slotText, styles.slotTextBooked]}>
-                                {timeLabel(time)}
-                              </Text>
-                              <Text style={styles.slotBookedTag}>Booked</Text>
-                            </View>
-                          );
-                        }
-
-                        const active = iso === selectedSlot;
-                        return (
-                          <TouchableOpacity
-                            key={iso}
-                            style={[styles.slot, active && styles.slotActive]}
-                            activeOpacity={0.85}
-                            onPress={() => selectSlot(iso)}
+                <View key={group.period} style={styles.slotGroup}>
+                  <Text style={styles.periodLabel}>{group.period}</Text>
+                  <View style={styles.slotWrap}>
+                    {shown.map(({ time, booked }) => {
+                      const iso = time.toISOString();
+                      const active = iso === selectedSlot;
+                      return (
+                        <TouchableOpacity
+                          key={iso}
+                          style={[
+                            styles.slot,
+                            active && styles.slotActive,
+                            booked && styles.slotBooked,
+                          ]}
+                          activeOpacity={0.85}
+                          disabled={booked}
+                          onPress={() => selectSlot(iso)}
+                          accessibilityLabel={`${timeLabel(time)}${booked ? ', booked' : ''}`}
+                        >
+                          <Text
+                            numberOfLines={1}
+                            style={[
+                              styles.slotText,
+                              active && styles.slotTextActive,
+                              booked && styles.slotTextBooked,
+                            ]}
                           >
-                            <Text numberOfLines={1} style={[styles.slotText, active && styles.slotTextActive]}>
-                              {timeLabel(time)}
-                            </Text>
-                          </TouchableOpacity>
-                        );
-                      })}
-                    </View>
+                            {timeLabel(time)}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                  {(hidden > 0 || expanded) && group.slots.length > SLOTS_PREVIEW && (
+                    <TouchableOpacity
+                      style={styles.moreBtn}
+                      onPress={() =>
+                        setExpandedGroups((g) => ({ ...g, [group.period]: !expanded }))
+                      }
+                    >
+                      <Text style={styles.moreText}>
+                        {expanded ? 'Show less' : `Show ${hidden} more`}
+                      </Text>
+                      {expanded ? (
+                        <ChevronUp size={16} color={LINK} />
+                      ) : (
+                        <ChevronDown size={16} color={LINK} />
+                      )}
+                    </TouchableOpacity>
                   )}
                 </View>
               );
             })
           )}
 
-          {/* Reviews (preview) */}
-          {!isReschedule && reviews.length > 0 && (
-            <>
-              <Text style={styles.sectionTitle}>Reviews ({reviews.length})</Text>
-              {reviews.slice(0, 3).map((r) => (
-                <ReviewItem key={r.id} review={r} />
-              ))}
-              {reviews.length > 3 && (
-                <TouchableOpacity
-                  style={styles.viewAllBtn}
-                  activeOpacity={0.85}
-                  onPress={onViewAllReviews}
-                >
-                  <Text style={styles.viewAllBtnText}>View all {reviews.length} reviews</Text>
-                </TouchableOpacity>
-              )}
-            </>
+          {!!provider.description && (
+            <AboutCard name={provider.businessName} description={provider.description} />
+          )}
+          <LocationHoursCard
+            title="Location & Hours"
+            address={address}
+            hoursRows={hoursRows}
+            onDirections={onDirections}
+          />
+          {!isReschedule && (
+            <ReviewsSection
+              provider={provider}
+              reviews={reviews}
+              ratingBreakdown={ratingBreakdown}
+              onViewAll={onViewAllReviews}
+            />
           )}
         </View>
       </ScrollView>
 
-      {/* Sticky book bar */}
-      <View style={styles.bookBar}>
-        <Text style={styles.bookHint}>{hint}</Text>
-        <AppButton
-          style={styles.bookBtn}
-          title={isReschedule ? 'Reschedule' : 'Book now'}
+      {/* ── Sticky book bar ─────────────────────────────────────────────── */}
+      <View style={[styles.bookBar, { paddingBottom: Math.max(insets.bottom, 12) + 4 }]}>
+        <View style={styles.bookInfo}>
+          {barHint ? (
+            <Text style={styles.bookHint}>{barHint}</Text>
+          ) : (
+            <>
+              <Text style={styles.bookService} numberOfLines={1}>
+                {selectedService?.name}
+              </Text>
+              <Text style={styles.bookSummary} numberOfLines={1}>
+                {priceText} •{' '}
+                {selectedTime
+                  ? `${weekday(selectedTime)} ${selectedTime.getDate()}, ${timeLabel(selectedTime)}`
+                  : ''}
+              </Text>
+            </>
+          )}
+        </View>
+        <TouchableOpacity
+          style={[styles.bookBtn, !canBook && styles.bookBtnDisabled]}
           onPress={onBook}
-          loading={booking}
           disabled={!canBook}
-        />
+          activeOpacity={0.85}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !canBook, busy: booking }}
+        >
+          {booking ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text style={styles.bookBtnText}>{isReschedule ? 'Reschedule' : 'Book now'}</Text>
+          )}
+        </TouchableOpacity>
       </View>
     </View>
   );

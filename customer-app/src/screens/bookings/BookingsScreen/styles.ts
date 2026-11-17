@@ -1,281 +1,432 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
 
+import { Color, FontWeight } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernSize, PAGE_BG } from '@/utils/modernTheme';
+
+const BLUE = '#1D4ED8';
+const MUTED = '#64748B';
+const G = ModernSize.gutter;
+
+/** Mockup "designs/customer/mobile/Bookings & Orders App Dashboard.png". */
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.background,
+    backgroundColor: PAGE_BG,
   },
-  header: {
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.sm,
-  },
-  title: {
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.extrabold,
-    letterSpacing: -0.5,
-    color: Color.textPrimary,
-  },
-
-  // Mini header: Bookings / Orders
-  segmentBar: {
-    flexDirection: 'row',
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.sm,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-    borderRadius: Radius.md,
-    padding: 3,
-  },
-  seg: { flex: 1, alignItems: 'center', paddingVertical: 8, borderRadius: Radius.sm },
-  segActive: { backgroundColor: Color.primary },
-  segText: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textSecondary },
-  segTextActive: { color: Color.white },
-
-  content: {
-    padding: Spacing.lg,
-    paddingTop: Spacing.sm,
-  },
-
-  // Card
-  card: {
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-  },
-  cardTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-  },
-  icon: {
-    width: 50,
-    height: 50,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  iconImg: { width: '100%', height: '100%' },
-  info: { flex: 1, minWidth: 0 },
-  name: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  meta: {
-    marginTop: 2,
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-  },
-  pay: {
-    marginTop: 3,
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-  },
-
-  statusPill: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: Radius.pill,
-  },
-  statusText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-  },
-  orderRight: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-
-  // Section label between orders / appointments
-  sectionLabel: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    letterSpacing: 0.4,
-    textTransform: 'uppercase',
-    color: Color.textSecondary,
-    marginTop: Spacing.sm,
-    marginBottom: Spacing.sm,
-  },
-
-  // Order card lines
-  orderItems: {
-    marginTop: Spacing.sm,
-    paddingTop: Spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: Color.border,
-    gap: 2,
-  },
-  orderLine: {
-    fontSize: FontSize.sm,
-    color: Color.textPrimary,
-  },
-  orderMore: {
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
-    marginTop: 2,
-  },
-  orderFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: Spacing.sm,
-    paddingTop: Spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: Color.border,
-  },
-  orderFooterLabel: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-    fontWeight: FontWeight.semibold,
-  },
-  orderTotal: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.extrabold,
-    color: Color.textPrimary,
-  },
-
-  // Actions
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
-    marginTop: Spacing.md,
-  },
-  actionBtn: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 8,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-  },
-  actionPrimary: {
-    backgroundColor: Color.primary,
-    borderColor: Color.primary,
-  },
-  actionPrimaryText: {
-    color: Color.white,
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.bold,
-  },
-  actionGhost: {
-    backgroundColor: Color.surface,
-    borderColor: Color.border,
-  },
-  actionGhostText: {
-    color: Color.textPrimary,
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-  },
-  actionDanger: {
-    backgroundColor: Color.errorSoft,
-    borderColor: Color.error,
-  },
-  actionDangerText: {
-    color: Color.error,
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.bold,
-  },
-
-  reasonBox: {
-    marginTop: Spacing.md,
-    padding: Spacing.md,
-    borderRadius: Radius.md,
-    backgroundColor: Color.background,
-    borderWidth: 1,
-    borderColor: Color.border,
-  },
-  reasonLabel: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.textSecondary,
-    marginBottom: 2,
-  },
-  reasonText: {
-    fontSize: FontSize.sm,
-    color: Color.textPrimary,
-    lineHeight: FontSize.sm * 1.4,
-  },
-  reviewedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: Spacing.md,
-  },
-  reviewedText: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-    marginLeft: 4,
-  },
-
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: Spacing.xl,
-    gap: Spacing.sm,
+    gap: 8,
+    paddingHorizontal: 32,
+  },
+  content: {
+    paddingHorizontal: G,
+    paddingBottom: 32,
+    gap: 12,
+  },
+  fill: {
+    width: '100%',
+    height: '100%',
   },
   emptyTitle: {
-    fontSize: FontSize.lg,
+    marginTop: 4,
+    fontSize: 18,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
+    color: INK,
   },
   emptyText: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
+    fontSize: 14,
     textAlign: 'center',
+    color: MUTED,
   },
 
-  // Review modal
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: Color.overlay,
-    justifyContent: 'center',
-    padding: Spacing.lg,
-  },
-  modalCard: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
-    gap: Spacing.md,
-  },
-  modalTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  modalSub: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-  },
-  starsRow: {
+  // ── Header / search ─────────────────────────────────────────────────────
+  header: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    gap: Spacing.sm,
-    paddingVertical: Spacing.sm,
-  },
-  commentInput: {
-    borderWidth: 1,
-    borderColor: Color.border,
-    borderRadius: Radius.md,
-    padding: Spacing.md,
-    minHeight: 84,
-    textAlignVertical: 'top',
-    color: Color.textPrimary,
-    fontSize: FontSize.md,
-  },
-  modalActions: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    marginTop: Spacing.xs,
-  },
-  modalBtn: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: Radius.md,
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: G,
+    paddingTop: 10,
+    paddingBottom: 12,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: FontWeight.extrabold,
+    letterSpacing: -0.6,
+    color: INK,
+  },
+  searchBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    height: 44,
+    marginHorizontal: G,
+    marginBottom: 12,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
+  searchInput: {
+    flex: 1,
+    height: '100%',
+    paddingVertical: 0,
+    fontSize: 15,
+    color: INK,
+  },
+
+  // ── Segment + chips ─────────────────────────────────────────────────────
+  segmentBar: {
+    flexDirection: 'row',
+    marginHorizontal: G,
+    padding: 4,
+    borderRadius: 14,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
+  seg: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 42,
+    borderRadius: 11,
+  },
+  segActive: {
+    backgroundColor: BLUE,
+  },
+  segText: {
+    fontSize: 16,
+    fontWeight: FontWeight.semibold,
+    color: INK,
+  },
+  segTextActive: {
+    color: Color.white,
+  },
+  segBadge: {
+    minWidth: 24,
+    height: 24,
+    paddingHorizontal: 6,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EEF1F6',
+  },
+  segBadgeActive: {
+    backgroundColor: Color.white,
+  },
+  segBadgeText: {
+    fontSize: 13,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  segBadgeTextActive: {
+    color: BLUE,
+  },
+  chips: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: G,
+    paddingTop: 12,
+    paddingBottom: 4,
+  },
+  chip: {
+    height: 36,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
+  },
+  chipActive: {
+    borderColor: '#1E3A8A',
+    backgroundColor: '#1E3A8A',
+  },
+  chipText: {
+    fontSize: 14,
+    fontWeight: FontWeight.medium,
+    color: INK,
+  },
+  chipTextActive: {
+    color: Color.white,
+    fontWeight: FontWeight.semibold,
+  },
+  section: {
+    marginTop: 10,
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.3,
+    color: INK,
+  },
+
+  // ── Shared bits ─────────────────────────────────────────────────────────
+  pill: {
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 999,
+  },
+  pillText: {
+    fontSize: 12.5,
+    fontWeight: FontWeight.semibold,
+  },
+  meta: {
+    fontSize: 13.5,
+    color: MUTED,
+  },
+  payText: {
+    flexShrink: 1,
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+  },
+  linkText: {
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+    color: BLUE,
+  },
+  iconLine: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  iconLineText: {
+    fontSize: 14,
+    color: INK,
+  },
+
+  // ── Hero cards ──────────────────────────────────────────────────────────
+  hero: {
+    padding: 14,
+    gap: 12,
+    borderRadius: 18,
+    borderWidth: 1,
+    ...CARD_SHADOW,
+  },
+  heroBlue: {
+    borderColor: '#D5E2FA',
+    backgroundColor: '#EEF4FF',
+  },
+  heroGreen: {
+    borderColor: '#CDEBDB',
+    backgroundColor: '#ECFAF2',
+  },
+  heroTag: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+  },
+  heroTagBlue: {
+    backgroundColor: '#DBE7FD',
+  },
+  heroTagGreen: {
+    backgroundColor: '#D3F2E0',
+  },
+  heroTagText: {
+    fontSize: 13,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0.3,
+  },
+  heroTagTextBlue: {
+    color: BLUE,
+  },
+  heroTagTextGreen: {
+    color: '#15803D',
+  },
+  inkText: {
+    color: INK,
+  },
+  heroRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  heroPhoto: {
+    width: 104,
+    height: 116,
+    borderRadius: 14,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E2E8F0',
+  },
+  heroInfo: {
+    flex: 1,
+    minWidth: 0,
+    gap: 6,
+  },
+  heroName: {
+    fontSize: 19,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  whenBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: Color.white,
+  },
+  whenText: {
+    fontSize: 13.5,
+    fontWeight: FontWeight.medium,
+    color: INK,
+  },
+  flexText: {
+    flex: 1,
+  },
+  whenSep: {
+    width: 1,
+    height: 18,
+    marginHorizontal: 4,
+    backgroundColor: CARD_BORDER,
+  },
+  heroPayRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    flexWrap: 'wrap',
+  },
+  heroActions: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  outlineBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 42,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: BLUE,
+    backgroundColor: Color.white,
+  },
+  outlineBtnText: {
+    fontSize: 15,
+    fontWeight: FontWeight.semibold,
+    color: BLUE,
+  },
+  solidBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 42,
+    borderRadius: 10,
+    backgroundColor: BLUE,
+  },
+  solidBtnText: {
+    fontSize: 15,
+    fontWeight: FontWeight.semibold,
+    color: Color.white,
+  },
+
+  // ── Row cards ───────────────────────────────────────────────────────────
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 12,
+    borderRadius: 16,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
+  rowPhoto: {
+    width: 92,
+    height: 92,
+    borderRadius: 12,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E2E8F0',
+  },
+  // Lines below the title stop short of the arrow; the title row (with the
+  // status pill) runs to the card's right edge, above the arrow.
+  rowInfo: {
+    flex: 1,
+    minWidth: 0,
+    gap: 4,
+    paddingRight: 22,
+  },
+  rowTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginRight: -22,
+  },
+  chevron: {
+    position: 'absolute',
+    right: 10,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+  },
+  rowName: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  thumbs: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 2,
+  },
+  thumb: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EEF2F7',
+  },
+  thumbMore: {
+    height: 40,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    justifyContent: 'center',
+    backgroundColor: '#F1F3F7',
+  },
+  thumbMoreText: {
+    fontSize: 12,
+    fontWeight: FontWeight.semibold,
+    color: INK,
+  },
+  orderFoot: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+    marginTop: 2,
+  },
+  footAmount: {
+    fontSize: 16,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  reorder: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
   },
 });

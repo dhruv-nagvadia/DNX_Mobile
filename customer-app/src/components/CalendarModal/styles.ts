@@ -1,166 +1,196 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
 
+import { Color, FontWeight } from '@/utils/Theme';
+import { CARD_BORDER, INK } from '@/utils/modernTheme';
+
+const BLUE = '#1D4ED8';
+const MUTED = '#64748B';
+
+/** Bottom-sheet calendar — mockup "DNX Reminder App UI Trio.png" (right frame). */
 export const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: Color.overlay,
-    justifyContent: 'center',
-    padding: Spacing.lg,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
   },
-  card: {
-    backgroundColor: Color.surface,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
-    ...Platform_shadow(),
+  backdrop: {
+    flex: 1,
   },
-
+  sheet: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    backgroundColor: Color.white,
+  },
+  handle: {
+    alignSelf: 'center',
+    width: 44,
+    height: 5,
+    borderRadius: 3,
+    marginBottom: 14,
+    backgroundColor: '#CBD5E1',
+  },
+  sheetTitle: {
+    fontSize: 22,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: Spacing.md,
-  },
-  titleBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 6,
-    borderRadius: Radius.md,
-  },
-  titleText: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
+    marginTop: 12,
+    marginBottom: 8,
   },
   navBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: Radius.md,
-    backgroundColor: Color.background,
+    width: 36,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
   },
-
+  monthText: {
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
   weekRow: {
     flexDirection: 'row',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   weekday: {
-    width: `${100 / 7}%`,
+    flex: 1,
     textAlign: 'center',
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.textSecondary,
+    fontSize: 13,
+    fontWeight: FontWeight.medium,
+    color: MUTED,
   },
-
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
   cell: {
     width: `${100 / 7}%`,
-    height: 44,
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: 3,
   },
   dayBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  daySelected: {
-    backgroundColor: Color.primary,
   },
   dayToday: {
     borderWidth: 1.5,
-    borderColor: Color.primary,
+    borderColor: BLUE,
+    borderRadius: 10,
+  },
+  daySelected: {
+    backgroundColor: BLUE,
   },
   dayText: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.medium,
-    color: Color.textPrimary,
+    fontSize: 16,
+    color: INK,
   },
   dayTextMuted: {
-    color: Color.placeholder,
+    color: '#CBD5E1',
+  },
+  dayTextDisabled: {
+    color: '#CBD5E1',
   },
   dayTextSelected: {
     color: Color.white,
     fontWeight: FontWeight.bold,
   },
-  dayTextDisabled: {
-    color: Color.border,
-  },
-
-  // Year picker
   yearGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    paddingVertical: 6,
   },
   yearCell: {
-    width: `${100 / 3}%`,
+    width: '33.333%',
     padding: 5,
   },
   yearBtn: {
-    height: 46,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Color.border,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
   },
   yearBtnActive: {
-    backgroundColor: Color.primary,
-    borderColor: Color.primary,
+    borderColor: BLUE,
+    backgroundColor: BLUE,
   },
   yearText: {
-    fontSize: FontSize.md,
+    fontSize: 15,
     fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
+    color: INK,
   },
   yearTextActive: {
     color: Color.white,
   },
-
+  quickRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 14,
+  },
+  quick: {
+    flex: 1,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    backgroundColor: '#F1F5F9',
+  },
+  quickActive: {
+    backgroundColor: '#DBEAFE',
+  },
+  quickOff: {
+    opacity: 0.4,
+  },
+  quickText: {
+    fontSize: 14,
+    fontWeight: FontWeight.medium,
+    color: INK,
+  },
+  quickTextActive: {
+    color: BLUE,
+    fontWeight: FontWeight.semibold,
+  },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: Spacing.md,
-    paddingTop: Spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: Color.border,
+    gap: 12,
+    marginTop: 18,
   },
-  footerRight: {
-    flexDirection: 'row',
-    gap: Spacing.md,
+  cancelBtn: {
+    flex: 1,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  footerBtn: {
-    paddingVertical: 8,
-    paddingHorizontal: 4,
+  cancelText: {
+    fontSize: 16,
+    fontWeight: FontWeight.semibold,
+    color: BLUE,
   },
-  footerBtnText: {
-    fontSize: FontSize.sm,
+  setBtn: {
+    flex: 1.4,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+    backgroundColor: BLUE,
+  },
+  setBtnOff: {
+    backgroundColor: '#94A3B8',
+  },
+  setText: {
+    fontSize: 16,
     fontWeight: FontWeight.bold,
-    color: Color.primary,
-  },
-  clearText: {
-    color: Color.error,
-  },
-  todayText: {
-    color: Color.textSecondary,
+    color: Color.white,
   },
 });
-
-function Platform_shadow() {
-  return {
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.14,
-    shadowRadius: 24,
-    elevation: 8,
-  };
-}

@@ -1,55 +1,90 @@
-import { StyleSheet, Dimensions } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
+import { StyleSheet } from 'react-native';
 
-const SCREEN_W = Dimensions.get('window').width;
+import { Color, FontWeight } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernSize, PAGE_BG, PILL } from '@/utils/modernTheme';
 
+const BLUE = '#1D4ED8';
+const MUTED = '#64748B';
+const META = '#475569';
+const G = ModernSize.gutter;
+
+/** Mockup "designs/customer/mobile/Aura Salon Booking App Interface.png". */
 export const styles = StyleSheet.create({
-  viewAllBtn: {
-    marginTop: Spacing.md,
-    paddingVertical: 12,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Color.border,
-    backgroundColor: Color.surface,
-    alignItems: 'center',
-  },
-  viewAllBtnText: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.bold,
-    color: Color.primary,
-  },
   container: {
     flex: 1,
-    backgroundColor: Color.background,
-  },
-  content: {
-    paddingBottom: 110, // room for the sticky book bar
+    backgroundColor: PAGE_BG,
   },
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: Spacing.xl,
+  },
+  content: {
+    paddingBottom: 24,
+  },
+  fill: {
+    width: '100%',
+    height: '100%',
+  },
+  muted: {
+    fontSize: 14,
+    color: MUTED,
+  },
+  bleed: {
+    marginHorizontal: -G,
   },
 
-  // Gallery
-  gallery: {
-    height: 240,
+  // ── Hero (photo + header card share one rounded, inset card) ───────────
+  topCard: {
+    marginHorizontal: G,
+    borderRadius: 18,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
-  galleryImg: {
-    width: SCREEN_W,
-    height: 240,
+  hero: {
+    width: '100%',
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    backgroundColor: '#CBD5E1',
+    overflow: 'hidden',
   },
-  galleryFallback: {
-    width: SCREEN_W,
-    height: 240,
+  heroBtn: {
+    position: 'absolute',
+    top: 12,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.primarySoft,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    ...CARD_SHADOW,
+  },
+  heroBtnLeft: {
+    left: 12,
+  },
+  heroBtnRight: {
+    right: 12,
+  },
+  counter: {
+    position: 'absolute',
+    right: 12,
+    bottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+  },
+  counterText: {
+    fontSize: 12,
+    fontWeight: FontWeight.semibold,
+    color: Color.white,
   },
   dots: {
     position: 'absolute',
-    bottom: Spacing.md,
+    bottom: 16,
     left: 0,
     right: 0,
     flexDirection: 'row',
@@ -60,269 +95,685 @@ export const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
   },
   dotActive: {
-    backgroundColor: Color.white,
     width: 18,
+    backgroundColor: '#3B82F6',
   },
-  countBadge: {
-    position: 'absolute',
-    top: Spacing.md,
-    right: Spacing.md,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: Radius.pill,
-    backgroundColor: 'rgba(6, 11, 24, 0.6)',
+
+  // ── Header card ─────────────────────────────────────────────────────────
+  headerCard: {
+    padding: 16,
+    gap: 6,
   },
-  countText: {
-    color: Color.white,
-    fontSize: FontSize.xs,
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  nameWrap: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    minWidth: 0,
+  },
+  name: {
+    flexShrink: 1,
+    fontSize: 24,
+    fontWeight: FontWeight.extrabold,
+    letterSpacing: -0.5,
+    color: INK,
+  },
+  ratingPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 11,
+    paddingVertical: 5,
+    borderRadius: 999,
+    backgroundColor: '#FEF3C7',
+  },
+  ratingPillText: {
+    fontSize: 16,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  subline: {
+    fontSize: 14,
+    color: META,
+  },
+  infoChips: {
+    gap: 8,
+    paddingTop: 6,
+  },
+  infoChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    height: 32,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
+  },
+  infoChipOpen: {
+    borderColor: PILL.green.bg,
+    backgroundColor: PILL.green.bg,
+  },
+  infoChipClosed: {
+    backgroundColor: '#F1F5F9',
+  },
+  infoChipText: {
+    fontSize: 13,
+    fontWeight: FontWeight.medium,
+    color: INK,
+  },
+  infoChipOpenText: {
+    color: PILL.green.fg,
     fontWeight: FontWeight.semibold,
   },
-  galleryWrap: {
-    position: 'relative',
+  dotSmall: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  dotOpen: {
+    backgroundColor: '#22C55E',
+  },
+  dotClosed: {
+    backgroundColor: '#94A3B8',
+  },
+  areaStrip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderRadius: 10,
+    backgroundColor: '#EAF1FF',
+  },
+  areaText: {
+    flex: 1,
+    fontSize: 14,
+    color: INK,
   },
 
   body: {
-    padding: Spacing.lg,
+    paddingHorizontal: G,
   },
 
-  // Header
-  name: {
-    fontSize: FontSize.xxl,
+  // ── Quick actions ───────────────────────────────────────────────────────
+  actions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 14,
+  },
+  action: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    height: 66,
+    borderRadius: 14,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
+  actionText: {
+    fontSize: 14,
+    fontWeight: FontWeight.medium,
+    color: INK,
+  },
+
+  // ── Offer ───────────────────────────────────────────────────────────────
+  offer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#FDE2CC',
+    backgroundColor: '#FFF2E8',
+  },
+  offerText: {
+    flex: 1,
+    gap: 6,
+  },
+  offerTitle: {
+    fontSize: 16,
     fontWeight: FontWeight.extrabold,
-    letterSpacing: -0.5,
-    color: Color.textPrimary,
+    color: INK,
   },
-  badgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
-    marginTop: Spacing.sm,
-  },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
+  offerCode: {
+    alignSelf: 'flex-start',
     paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.primarySoft,
+    paddingVertical: 3,
+    borderRadius: 8,
+    backgroundColor: '#FDDCC6',
   },
-  chipText: {
-    fontSize: FontSize.xs,
+  offerCodeText: {
+    fontSize: 12,
     fontWeight: FontWeight.semibold,
-    color: Color.primaryDark,
+    color: '#C2410C',
   },
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    marginTop: Spacing.sm,
+  offerDivider: {
+    alignSelf: 'stretch',
+    justifyContent: 'space-between',
+    paddingVertical: 2,
   },
-  metaText: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
+  offerDash: {
+    width: 1.5,
+    height: 4,
+    borderRadius: 1,
+    backgroundColor: '#F5A26F',
   },
-
-  // Sections
-  sectionTitle: {
-    fontSize: FontSize.lg,
+  offerApply: {
+    paddingHorizontal: 4,
+    fontSize: 15,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-    marginTop: Spacing.xl,
-    marginBottom: Spacing.md,
-  },
-  about: {
-    fontSize: FontSize.md,
-    lineHeight: FontSize.md * 1.5,
-    color: Color.textPrimary,
-  },
-  muted: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
+    color: BLUE,
+    textDecorationLine: 'underline',
   },
 
-  // Service rows
+  // ── Section titles / cards ──────────────────────────────────────────────
+  sectionTitle: {
+    marginTop: 22,
+    marginBottom: 10,
+    fontSize: 19,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.3,
+    color: INK,
+  },
+  card: {
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
 
+  // ── Services ────────────────────────────────────────────────────────────
+  serviceCard: {
+    padding: 6,
+    borderRadius: 16,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
   serviceRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
+    gap: 12,
+    minHeight: 60,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: Color.border,
+    borderColor: 'transparent',
+  },
+  serviceRowDivider: {
+    borderTopColor: Color.border,
+    borderTopWidth: 1,
+    borderRadius: 0,
+    marginHorizontal: 0,
   },
   serviceRowActive: {
-    borderColor: Color.primary,
-    backgroundColor: Color.primarySoft,
+    borderColor: '#3B82F6',
+    backgroundColor: '#EEF4FF',
   },
-  serviceInfo: { flex: 1, minWidth: 0 },
+  serviceInfo: {
+    flex: 1,
+    gap: 2,
+  },
   serviceName: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: INK,
   },
   serviceMeta: {
-    marginTop: 2,
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
+    fontSize: 13,
+    color: META,
+  },
+  servicePriceCol: {
+    alignItems: 'flex-end',
+    gap: 4,
   },
   servicePrice: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    color: Color.primaryDark,
+    fontSize: 17,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  payPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+    backgroundColor: PILL.green.bg,
+  },
+  payPillText: {
+    fontSize: 11,
+    fontWeight: FontWeight.semibold,
+    color: PILL.green.fg,
   },
   radio: {
     width: 22,
     height: 22,
     borderRadius: 11,
     borderWidth: 2,
-    borderColor: Color.border,
+    borderColor: '#94A3B8',
     alignItems: 'center',
     justifyContent: 'center',
   },
   radioActive: {
-    borderColor: Color.primary,
+    borderColor: BLUE,
   },
   radioDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: Color.primary,
+    width: 11,
+    height: 11,
+    borderRadius: 6,
+    backgroundColor: BLUE,
   },
 
-  // Day chips
+  // ── Dates ───────────────────────────────────────────────────────────────
   dayRow: {
-    gap: Spacing.sm,
-    paddingRight: Spacing.lg,
+    paddingHorizontal: G,
+    gap: 8,
   },
-  dayChip: {
-    minWidth: 64,
+  dayPill: {
+    width: 64,
+    height: 74,
     alignItems: 'center',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 10,
-    borderRadius: Radius.md,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
+    justifyContent: 'center',
+    gap: 2,
+    borderRadius: 12,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
-  dayChipActive: {
-    backgroundColor: Color.primary,
-    borderColor: Color.primary,
+  dayPillActive: {
+    backgroundColor: BLUE,
   },
-  dayChipText: {
-    fontSize: FontSize.sm,
+  dayPillClosed: {
+    backgroundColor: '#F1F5F9',
+  },
+  dayWeek: {
+    fontSize: 13,
+    color: INK,
+  },
+  dayNum: {
+    fontSize: 21,
     fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
+    color: INK,
   },
-  dayChipTextActive: {
+  dayClosed: {
+    fontSize: 11,
+    color: MUTED,
+  },
+  dayTextActive: {
     color: Color.white,
   },
+  dayTextClosed: {
+    color: MUTED,
+  },
 
-  // Slots
-  periodHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    marginTop: Spacing.sm,
-    borderRadius: Radius.md,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
+  // ── Slots ───────────────────────────────────────────────────────────────
+  slotGroup: {
+    marginBottom: 10,
   },
-  periodHeaderActive: {
-    borderColor: Color.primary,
-  },
-  periodHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    gap: Spacing.sm,
-  },
-  periodHeaderText: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
-  },
-  periodHeaderCount: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
+  periodLabel: {
+    marginBottom: 6,
+    fontSize: 13,
+    color: META,
   },
   slotWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: Spacing.sm,
-    marginTop: Spacing.md,
-    marginBottom: Spacing.sm,
+    gap: 8,
   },
   slot: {
-    // ~3 even columns; every slot the same size so rows line up.
-    width: '31.5%',
-    height: 50,
+    minWidth: 92,
+    height: 34,
+    paddingHorizontal: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 4,
-    borderRadius: Radius.md,
-    backgroundColor: Color.surface,
+    borderRadius: 17,
     borderWidth: 1,
-    borderColor: Color.border,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
   },
   slotActive: {
-    backgroundColor: Color.primary,
-    borderColor: Color.primary,
+    borderColor: BLUE,
+    backgroundColor: BLUE,
   },
   slotBooked: {
-    backgroundColor: Color.background,
-    borderColor: Color.border,
+    backgroundColor: '#EEF1F6',
+    borderColor: '#EEF1F6',
   },
   slotText: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.textPrimary,
+    fontSize: 13.5,
+    fontWeight: FontWeight.medium,
+    color: INK,
   },
   slotTextActive: {
     color: Color.white,
+    fontWeight: FontWeight.semibold,
   },
   slotTextBooked: {
-    color: Color.placeholder,
+    color: '#94A3B8',
     textDecorationLine: 'line-through',
   },
-  slotBookedTag: {
-    marginTop: 2,
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.textSecondary,
-  },
-
-  // Sticky book bar
-  bookBar: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
+  moreBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.xl,
-    backgroundColor: Color.surface,
+    gap: 4,
+    marginTop: 8,
+    alignSelf: 'flex-start',
+  },
+  moreText: {
+    fontSize: 13,
+    fontWeight: FontWeight.semibold,
+    color: BLUE,
+  },
+
+  // ── About ───────────────────────────────────────────────────────────────
+  about: {
+    marginTop: 6,
+    fontSize: 14,
+    lineHeight: 20,
+    color: META,
+  },
+  readMore: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    marginTop: 6,
+  },
+  readMoreText: {
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+    color: BLUE,
+  },
+
+  // ── Location & hours ────────────────────────────────────────────────────
+  locRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+  },
+  locLeft: {
+    flex: 1,
+    gap: 10,
+  },
+  mapTile: {
+    height: 92,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    backgroundColor: '#E8EEF5',
+  },
+  mapRoad: {
+    position: 'absolute',
+    backgroundColor: Color.white,
+  },
+  mapRoadH: {
+    left: 0,
+    right: 0,
+    top: '58%',
+    height: 8,
+  },
+  mapRoadV: {
+    top: 0,
+    bottom: 0,
+    left: '34%',
+    width: 7,
+  },
+  mapRoadD: {
+    width: 220,
+    height: 5,
+    top: '30%',
+    left: -40,
+    transform: [{ rotate: '-24deg' }],
+  },
+  noteBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: PILL.green.bg,
+  },
+  noteText: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: FontWeight.semibold,
+    color: PILL.green.fg,
+  },
+  addressRow: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  address: {
+    flex: 1,
+    fontSize: 13,
+    lineHeight: 18,
+    color: INK,
+  },
+  hoursCol: {
+    flex: 1.15,
+    paddingLeft: 12,
+    gap: 4,
+    borderLeftWidth: 1,
+    borderLeftColor: Color.border,
+  },
+  hoursRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 6,
+  },
+  hoursDay: {
+    width: 30,
+    fontSize: 12.5,
+    color: META,
+  },
+  hoursTime: {
+    flex: 1,
+    textAlign: 'right',
+    fontSize: 12.5,
+    color: META,
+  },
+  hoursToday: {
+    color: BLUE,
+    fontWeight: FontWeight.bold,
+  },
+  hoursClosed: {
+    color: '#DC2626',
+    fontWeight: FontWeight.semibold,
+  },
+
+  // ── Reviews ─────────────────────────────────────────────────────────────
+  reviewsHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  viewAll: {
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+    color: BLUE,
+  },
+  summary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginTop: 12,
+  },
+  summaryLeft: {
+    alignItems: 'center',
+    gap: 4,
+    paddingRight: 16,
+    borderRightWidth: 1,
+    borderRightColor: Color.border,
+  },
+  summaryAvg: {
+    fontSize: 38,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  summaryCount: {
+    fontSize: 12,
+    color: MUTED,
+  },
+  stars: {
+    flexDirection: 'row',
+    gap: 2,
+  },
+  bars: {
+    flex: 1,
+    gap: 5,
+  },
+  barRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  barLabel: {
+    width: 26,
+    fontSize: 12,
+    color: INK,
+  },
+  barTrack: {
+    flex: 1,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#E5EAF2',
+    overflow: 'hidden',
+  },
+  barFill: {
+    height: '100%',
+    borderRadius: 3,
+    backgroundColor: BLUE,
+  },
+  barPct: {
+    width: 34,
+    textAlign: 'right',
+    fontSize: 12,
+    color: MUTED,
+  },
+  reviewCard: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: {
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+  },
+  reviewBody: {
+    flex: 1,
+    gap: 3,
+  },
+  reviewName: {
+    fontSize: 15,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  reviewAgo: {
+    fontSize: 12,
+    color: MUTED,
+  },
+  reviewText: {
+    marginTop: 4,
+    fontSize: 14,
+    lineHeight: 20,
+    color: INK,
+  },
+  reply: {
+    marginTop: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderLeftWidth: 3,
+    borderLeftColor: BLUE,
+    borderRadius: 8,
+    backgroundColor: '#F1F5FB',
+    gap: 2,
+  },
+  replyTitle: {
+    fontSize: 13,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  replyText: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: META,
+  },
+
+  // ── Sticky book bar ─────────────────────────────────────────────────────
+  bookBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: G,
+    paddingTop: 12,
+    backgroundColor: Color.white,
     borderTopWidth: 1,
-    borderTopColor: Color.border,
+    borderTopColor: CARD_BORDER,
+    ...CARD_SHADOW,
+  },
+  bookInfo: {
+    flex: 1,
+    gap: 2,
   },
   bookHint: {
-    flex: 1,
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
+    fontSize: 15,
+    fontWeight: FontWeight.semibold,
+    color: META,
+  },
+  bookService: {
+    fontSize: 13,
+    color: MUTED,
+  },
+  bookSummary: {
+    fontSize: 16,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
   },
   bookBtn: {
-    minWidth: 140,
+    height: 50,
+    paddingHorizontal: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+    backgroundColor: BLUE,
+  },
+  bookBtnDisabled: {
+    backgroundColor: '#94A3B8',
+  },
+  bookBtnText: {
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: Color.white,
   },
 });

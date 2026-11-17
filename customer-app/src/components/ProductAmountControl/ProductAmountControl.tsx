@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Plus, Minus } from 'lucide-react-native';
 
-import { Color, FontSize, FontWeight, Radius } from '@/utils/Theme';
+import { Color, FontWeight } from '@/utils/Theme';
+import { CARD_BORDER, INK } from '@/utils/modernTheme';
 import {
   amountUnits,
   formatAmount,
@@ -68,20 +69,25 @@ export function ProductAmountControl({
           codEnabled,
           partialPayEnabled,
         },
-        quantity: p.unlimitedStock ? Math.max(0, amount) : Math.max(0, Math.min(amount, p.stockQty)),
+        quantity: p.unlimitedStock
+          ? Math.max(0, amount)
+          : Math.max(0, Math.min(amount, p.stockQty)),
       }),
     );
 
   return (
     <View style={styles.wrap}>
-      {units.length > 1 && !out && (
+      {units.length > 1 && (
         <View style={styles.toggle}>
           {units.map((u, i) => (
             <TouchableOpacity
               key={u.label}
               style={[styles.seg, i === unitIdx && styles.segActive]}
               activeOpacity={0.85}
+              disabled={out}
               onPress={() => setUnitIdx(i)}
+              accessibilityRole="button"
+              accessibilityState={{ selected: i === unitIdx, disabled: out }}
             >
               <Text style={[styles.segText, i === unitIdx && styles.segTextActive]}>{u.label}</Text>
             </TouchableOpacity>
@@ -91,28 +97,37 @@ export function ProductAmountControl({
 
       {qty === 0 ? (
         <TouchableOpacity
-          style={[styles.addBtn, out && styles.disabled]}
+          style={[styles.addBtn, out && styles.addBtnOut]}
           activeOpacity={0.85}
           disabled={out}
           onPress={() => set(step)}
+          accessibilityRole="button"
         >
-          {!out && <Plus size={14} color={Color.white} />}
-          <Text style={styles.addText}>{out ? 'Out of stock' : `Add ${formatAmountIn(step, unit)}`}</Text>
+          <Text style={[styles.addText, out && styles.addTextOut]}>
+            {out ? 'Out of stock' : `Add ${formatAmountIn(step, unit)}`}
+          </Text>
         </TouchableOpacity>
       ) : (
         <>
           <View style={styles.stepper}>
-            <TouchableOpacity style={styles.stepBtn} activeOpacity={0.8} onPress={() => set(qty - step)}>
-              <Minus size={16} color={Color.primary} />
+            <TouchableOpacity
+              style={styles.stepBtn}
+              activeOpacity={0.8}
+              onPress={() => set(qty - step)}
+            >
+              <Minus size={18} color={Color.white} strokeWidth={2.6} />
             </TouchableOpacity>
             <Text style={styles.qtyText}>{formatAmountIn(qty, unit)}</Text>
             <TouchableOpacity
-              style={[styles.stepBtn, !p.unlimitedStock && qty + step > p.stockQty && styles.disabled]}
+              style={[
+                styles.stepBtn,
+                !p.unlimitedStock && qty + step > p.stockQty && styles.disabled,
+              ]}
               activeOpacity={0.8}
               disabled={!p.unlimitedStock && qty + step > p.stockQty}
               onPress={() => set(qty + step)}
             >
-              <Plus size={16} color={Color.primary} />
+              <Plus size={18} color={Color.white} strokeWidth={2.6} />
             </TouchableOpacity>
           </View>
           {belowMin ? (
@@ -129,44 +144,50 @@ export function ProductAmountControl({
   );
 }
 
+const BLUE = '#1D4ED8';
+
+/** Mockup "designs/customer/mobile/Grocery App Product States Grid.png". */
 const styles = StyleSheet.create({
-  wrap: { gap: 6, marginTop: 6 },
+  wrap: { gap: 8 },
   toggle: {
     flexDirection: 'row',
-    backgroundColor: Color.background,
-    borderRadius: Radius.md,
-    padding: 2,
+    height: 32,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: Color.border,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
+    overflow: 'hidden',
   },
-  seg: { flex: 1, alignItems: 'center', paddingVertical: 5, borderRadius: Radius.sm },
-  segActive: { backgroundColor: Color.primary },
-  segText: { fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Color.textSecondary },
+  seg: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  segActive: { backgroundColor: BLUE },
+  segText: { fontSize: 14, fontWeight: FontWeight.semibold, color: INK },
   segTextActive: { color: Color.white },
 
   addBtn: {
-    flexDirection: 'row',
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
-    paddingVertical: 9,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primary,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: BLUE,
+    backgroundColor: Color.white,
   },
-  addText: { color: Color.white, fontSize: FontSize.sm, fontWeight: FontWeight.bold },
+  addBtnOut: { borderColor: '#E2E8F0', backgroundColor: '#E2E8F0' },
+  addText: { fontSize: 15, fontWeight: FontWeight.bold, color: BLUE },
+  addTextOut: { color: '#94A3B8', fontWeight: FontWeight.semibold },
   disabled: { opacity: 0.45 },
 
   stepper: {
+    height: 40,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: Color.primary,
-    borderRadius: Radius.md,
+    borderRadius: 10,
+    backgroundColor: BLUE,
     overflow: 'hidden',
   },
-  stepBtn: { width: 42, height: 36, alignItems: 'center', justifyContent: 'center', backgroundColor: Color.primarySoft },
-  qtyText: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
-  linePrice: { textAlign: 'center', fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Color.primary },
-  minMsg: { textAlign: 'center', fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Color.error },
+  stepBtn: { width: 44, height: 40, alignItems: 'center', justifyContent: 'center' },
+  qtyText: { flexShrink: 1, fontSize: 15, fontWeight: FontWeight.bold, color: Color.white },
+  linePrice: { textAlign: 'center', fontSize: 13, color: '#64748B' },
+  minMsg: { textAlign: 'center', fontSize: 13, fontWeight: FontWeight.semibold, color: '#EA580C' },
 });

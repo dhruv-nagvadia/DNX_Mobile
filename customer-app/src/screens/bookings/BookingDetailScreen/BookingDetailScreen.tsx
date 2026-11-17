@@ -1,391 +1,229 @@
 import React from 'react';
-import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity, Modal, TextInput } from 'react-native';
-import { Star, BadgeCheck, ChevronRight, MapPin, Phone, RotateCcw } from 'lucide-react-native';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CalendarClock, CircleX, RotateCcw, Share2 } from 'lucide-react-native';
 
-import { AppHeader } from '@/components/AppHeader';
-import { CategoryIcon } from '@/components/CategoryIcon';
-import { Color, FontWeight } from '@/utils/Theme';
-import { STATUS_LABEL, statusColors, isUpcomingBooking, paymentSummary } from '@/utils/bookingStatus';
+import { ScreenHeader } from '@/components/ScreenHeader';
+import { isUpcomingBooking } from '@/utils/bookingStatus';
+import { Color } from '@/utils/Theme';
+import { INK, LINK } from '@/utils/modernTheme';
 
-import { useBookingDetail } from './useBookingDetail';
+import { bookingRef, useBookingDetail } from './useBookingDetail';
+import {
+  AddressCard,
+  AppointmentCard,
+  BookAgainCard,
+  BusinessCard,
+  InfoStrip,
+  NoteCard,
+  PaymentCard,
+  RateCard,
+  StatusHero,
+  YourReviewCard,
+} from './parts';
 import { styles } from './styles';
 
-function formatPrice(minor: number | null, currency: string | null): string {
-  if (minor == null) return '—';
-  const amount = (minor / 100).toLocaleString('en-IN');
-  return currency === 'INR' || !currency ? `₹${amount}` : `${amount} ${currency}`;
-}
-
-function formatDuration(min: number): string {
-  if (min < 60) return `${min} min`;
-  const h = Math.floor(min / 60);
-  const m = min % 60;
-  return m ? `${h} hr ${m} min` : `${h} hr`;
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
-
-function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
-}
+const RED = '#DC2626';
 
 /** Full detail of a single booking + its actions. */
 export default function BookingDetailScreen() {
+  const insets = useSafeAreaInsets();
   const {
     booking,
+    business,
     isLoading,
+    cancelling,
     onCancel,
     onReschedule,
     onBookAgain,
     onRemind,
     onCallProvider,
+    onDirections,
+    onShare,
     openProvider,
     onPay,
     paying,
-    reviewOpen,
-    openReview,
-    closeReview,
     rating,
     setRating,
     comment,
     setComment,
     submitReview,
     submittingReview,
+    reviewComment,
+    providerReply,
   } = useBookingDetail();
-
-  if (isLoading && !booking) {
-    return (
-      <View style={styles.container}>
-        <AppHeader title="Booking" />
-        <View style={styles.center}>
-          <ActivityIndicator color={Color.primary} />
-        </View>
-      </View>
-    );
-  }
 
   if (!booking) {
     return (
       <View style={styles.container}>
-        <AppHeader title="Booking" />
+        <ScreenHeader title="Booking details" />
         <View style={styles.center}>
-          <Text style={styles.notFound}>This booking is no longer available.</Text>
+          {isLoading ? (
+            <ActivityIndicator color={Color.primary} />
+          ) : (
+            <Text style={styles.notFound}>This booking is no longer available.</Text>
+          )}
         </View>
       </View>
     );
   }
 
-  const [pillBg, pillColor] = statusColors(booking.status);
   const upcoming = isUpcomingBooking(booking.status, booking.endTime);
   const canReview = booking.status === 'COMPLETED' && !booking.review;
   const canPay =
     booking.paymentStatus === 'PENDING' &&
     booking.paymentMethod !== 'CASH' &&
     booking.status !== 'CANCELLED';
-  const pay = paymentSummary(booking);
+  // Not once the service has started (the server rejects both then).
+  const canChange = upcoming && booking.status !== 'IN_PROGRESS';
+  // Server rule (cancelByCustomer): cancelling before the start time refunds
+  // whatever was paid; from the start time on, nothing is refunded.
+  const beforeStart = new Date(booking.startTime).getTime() > Date.now();
+  const cancelNote =
+    canChange && beforeStart
+      ? booking.amountPaidMinor > 0
+        ? 'Free cancellation until your slot starts — what you paid online is refunded.'
+        : 'Free cancellation until your slot starts.'
+      : null;
+
+  const noShowText =
+    booking.paymentMethod === 'CASH'
+      ? 'You were marked as a no-show. Repeated no-shows may lead to charges or your account being blocked.'
+      : booking.amountPaidMinor > 0
+        ? "You were marked as a no-show. Your payment isn't refundable — reschedule next time instead of risking a no-show."
+        : 'You were marked as a no-show.';
 
   return (
-    <View style={styles.container}>
-      <AppHeader title="Booking details" />
-
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Summary — tap to open the business */}
-        <TouchableOpacity style={styles.summary} activeOpacity={0.85} onPress={openProvider}>
-          <View style={styles.avatar}>
-            {booking.provider.images && booking.provider.images.length > 0 ? (
-              <Image source={{ uri: booking.provider.images[0] }} style={styles.avatarImg} />
-            ) : (
-              <CategoryIcon slug={booking.provider.category.slug} size={30} />
-            )}
-          </View>
-          <Text style={styles.bizName}>{booking.provider.businessName}</Text>
-          <View style={styles.chipRow}>
-            <View style={styles.chip}>
-              <BadgeCheck size={13} color={Color.primaryDark} />
-              <Text style={styles.chipText}>{booking.provider.category.name}</Text>
-            </View>
-            <View style={[styles.statusPill, { backgroundColor: pillBg }]}>
-              <Text style={[styles.statusText, { color: pillColor }]}>
-                {STATUS_LABEL[booking.status]}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.viewLink}>
-            <Text style={styles.viewLinkText}>View business</Text>
-            <ChevronRight size={14} color={Color.primary} />
-          </View>
-        </TouchableOpacity>
-
-        {/* Call the provider — useful while they're on the way or mid-job */}
-        {upcoming && (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScreenHeader
+        title="Booking details"
+        subtitle={`Booking #${bookingRef(booking.id)}`}
+        right={
           <TouchableOpacity
-            style={[styles.actionBtn, styles.actionOutline, styles.callBtn]}
+            style={styles.headerBtn}
+            onPress={onShare}
             activeOpacity={0.85}
-            onPress={onCallProvider}
+            accessibilityRole="button"
+            accessibilityLabel="Share booking"
           >
-            <Phone size={16} color={Color.primary} />
-            <Text style={styles.actionOutlineText}>Call provider</Text>
+            <Share2 size={19} color={INK} strokeWidth={2} />
           </TouchableOpacity>
-        )}
+        }
+      />
 
-        {/* Details */}
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Service</Text>
-            <Text style={styles.rowValue}>{booking.service.name}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Date</Text>
-            <Text style={styles.rowValue}>{formatDate(booking.startTime)}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Time</Text>
-            <Text style={styles.rowValue}>
-              {formatTime(booking.startTime)} – {formatTime(booking.endTime)}
-            </Text>
-          </View>
-          <View style={[styles.row, styles.rowLast]}>
-            <Text style={styles.rowLabel}>Duration</Text>
-            <Text style={styles.rowValue}>{formatDuration(booking.service.durationMin)}</Text>
-          </View>
-        </View>
+      <ScrollView
+        style={styles.flex}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <StatusHero booking={booking} upcoming={upcoming} />
+
+        <BusinessCard
+          booking={booking}
+          business={business}
+          onCall={onCallProvider}
+          onDirections={onDirections}
+          onView={openProvider}
+        />
+
+        <AppointmentCard booking={booking} />
 
         {/* On-location service — where the provider is coming to */}
-        {!!booking.serviceAddressLine && (
-          <View>
-            <Text style={styles.sectionTitle}>Address</Text>
-            <View style={[styles.card, styles.addressCard]}>
-              <View style={styles.addressIcon}>
-                <MapPin size={18} color={Color.primary} />
-              </View>
-              <Text style={styles.addressText}>{booking.serviceAddressLine}</Text>
-            </View>
-          </View>
-        )}
+        {!!booking.serviceAddressLine && <AddressCard address={booking.serviceAddressLine} />}
 
-        {/* Payment receipt */}
-        <View>
-          <Text style={styles.sectionTitle}>Payment</Text>
-          <View style={styles.card}>
-            <View style={styles.row}>
-              <Text style={styles.rowLabel}>Method</Text>
-              <Text style={styles.rowValue}>{pay.methodLabel}</Text>
-            </View>
-            {!!booking.travelFeeMinor && (
-              <View style={styles.row}>
-                <Text style={styles.rowLabel}>Travel fee</Text>
-                <Text style={styles.rowValue}>
-                  {formatPrice(booking.travelFeeMinor, booking.currency)}
-                </Text>
-              </View>
-            )}
-            <View style={styles.row}>
-              <Text style={styles.rowLabel}>Total</Text>
-              <Text style={styles.priceValue}>
-                {formatPrice(booking.amountMinor, booking.currency)}
-              </Text>
-            </View>
-            <View style={styles.row}>
-              <Text style={styles.rowLabel}>Paid</Text>
-              <Text style={styles.rowValue}>{formatPrice(pay.paid, booking.currency)}</Text>
-            </View>
-            {pay.due > 0 && (
-              <View style={styles.row}>
-                <Text style={styles.rowLabel}>Due</Text>
-                <Text style={[styles.rowValue, styles.dueValue]}>
-                  {formatPrice(pay.due, booking.currency)}
-                </Text>
-              </View>
-            )}
-            <View style={[styles.row, styles.rowLast]}>
-              <Text style={styles.rowLabel}>Status</Text>
-              <Text style={[styles.rowValue, { color: pay.color }]}>{pay.label}</Text>
-            </View>
-          </View>
-        </View>
+        <PaymentCard booking={booking} canPay={canPay} paying={paying} onPay={onPay} />
 
-        {/* Pay now */}
-        {canPay && (
-          <TouchableOpacity
-            style={[styles.actionBtn, styles.actionPrimary]}
-            activeOpacity={0.85}
-            onPress={onPay}
-            disabled={paying}
-          >
-            {paying ? (
-              <ActivityIndicator color={Color.white} />
-            ) : (
-              <Text style={styles.actionPrimaryText}>
-                {booking.paymentMethod === 'ONLINE'
-                  ? `Pay ${formatPrice(booking.amountMinor, booking.currency)} now`
-                  : 'Pay now'}
-              </Text>
-            )}
-          </TouchableOpacity>
-        )}
+        {!!cancelNote && <InfoStrip text={cancelNote} />}
 
         {/* No-show — no refund if paid, just a warning if it was cash */}
-        {booking.status === 'NO_SHOW' && (
-          <View>
-            <Text style={styles.sectionTitle}>No-show</Text>
-            <View style={styles.reasonBox}>
-              <Text style={styles.reasonText}>
-                {booking.paymentMethod === 'CASH'
-                  ? 'You were marked as a no-show. Repeated no-shows may lead to charges or your account being blocked.'
-                  : booking.amountPaidMinor > 0
-                    ? "You were marked as a no-show. Your payment isn't refundable — reschedule next time instead of risking a no-show."
-                    : 'You were marked as a no-show.'}
-              </Text>
-            </View>
-          </View>
-        )}
+        {booking.status === 'NO_SHOW' && <NoteCard title="No-show" text={noShowText} />}
 
-        {/* Provider's cancel/no-show note */}
-        {(booking.status === 'CANCELLED' || booking.status === 'NO_SHOW') && !!booking.cancelReason && (
-          <View>
-            <Text style={styles.sectionTitle}>Provider’s note</Text>
-            <View style={styles.reasonBox}>
-              <Text style={styles.reasonText}>{booking.cancelReason}</Text>
-            </View>
-          </View>
-        )}
-
-        {/* Your review */}
-        {booking.review && (
-          <View>
-            <Text style={styles.sectionTitle}>Your review</Text>
-            <View style={[styles.reasonBox, styles.ratingRow]}>
-              {[1, 2, 3, 4, 5].map((n) => (
-                <Star
-                  key={n}
-                  size={18}
-                  color={Color.warning}
-                  fill={n <= (booking.review?.rating ?? 0) ? Color.warning : 'transparent'}
-                />
-              ))}
-              <Text style={styles.ratingText}>{booking.review.rating}.0</Text>
-            </View>
-          </View>
-        )}
-
-        {/* Actions — not once the service has started (the server rejects both then). */}
-        {upcoming && booking.status !== 'IN_PROGRESS' && (
-          <View style={styles.actions}>
-            <TouchableOpacity
-              style={[styles.actionBtn, styles.actionGhost]}
-              activeOpacity={0.85}
-              onPress={onReschedule}
-            >
-              <Text style={styles.actionGhostText}>Reschedule</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.actionBtn, styles.actionDanger]}
-              activeOpacity={0.85}
-              onPress={onCancel}
-            >
-              <Text style={styles.actionDangerText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        {(booking.status === 'CANCELLED' || booking.status === 'NO_SHOW') &&
+          !!booking.cancelReason && (
+            <NoteCard title="Provider’s note" text={booking.cancelReason} />
+          )}
 
         {canReview && (
-          <TouchableOpacity
-            style={[styles.actionBtn, styles.actionPrimary]}
-            activeOpacity={0.85}
-            onPress={openReview}
-          >
-            <Text style={styles.actionPrimaryText}>Leave a review</Text>
-          </TouchableOpacity>
+          <RateCard
+            rating={rating}
+            setRating={setRating}
+            comment={comment}
+            setComment={setComment}
+            onSubmit={submitReview}
+            submitting={submittingReview}
+          />
         )}
 
-        {/* Rebook any booking that's finished — completed, cancelled, no-show or past. */}
-        {!upcoming && (
+        {booking.review && (
+          <YourReviewCard
+            rating={booking.review.rating}
+            comment={reviewComment}
+            reply={providerReply}
+            businessName={booking.provider.businessName}
+          />
+        )}
+
+        {booking.status === 'COMPLETED' && (
+          <BookAgainCard onRebook={onBookAgain} onRemind={onRemind} />
+        )}
+      </ScrollView>
+
+      {canChange ? (
+        <View style={[styles.bottomBar, { paddingBottom: insets.bottom + 12 }]}>
           <TouchableOpacity
-            style={[styles.actionBtn, styles.actionOutline, styles.actionInline]}
+            style={styles.outlineBtn}
+            activeOpacity={0.85}
+            onPress={onReschedule}
+            accessibilityRole="button"
+          >
+            <CalendarClock size={18} color={LINK} strokeWidth={2} />
+            <Text style={styles.outlineText}>Reschedule</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.outlineBtn, styles.outlineDanger, cancelling && styles.disabled]}
+            activeOpacity={0.85}
+            onPress={onCancel}
+            disabled={cancelling}
+            accessibilityRole="button"
+            accessibilityState={{ busy: cancelling, disabled: cancelling }}
+          >
+            {cancelling ? (
+              <ActivityIndicator color={RED} />
+            ) : (
+              <>
+                <CircleX size={18} color={RED} strokeWidth={2} />
+                <Text style={[styles.outlineText, styles.dangerText]}>Cancel booking</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
+      ) : !upcoming ? (
+        // Rebook any booking that's finished — completed, cancelled, no-show or past.
+        <View style={[styles.bottomBar, { paddingBottom: insets.bottom + 12 }]}>
+          <TouchableOpacity
+            style={[styles.primaryBtn, styles.flex]}
             activeOpacity={0.85}
             onPress={onBookAgain}
             accessibilityRole="button"
             accessibilityLabel={`Rebook ${booking.service.name}`}
           >
-            <RotateCcw size={16} color={Color.primary} />
-            <Text style={styles.actionOutlineText}>Rebook this service</Text>
+            <RotateCcw size={18} color={Color.white} strokeWidth={2} />
+            <Text style={styles.primaryText}>Rebook this service</Text>
           </TouchableOpacity>
-        )}
-
-        {booking.status === 'COMPLETED' && (
-          <TouchableOpacity
-            style={[styles.actionBtn, styles.actionPrimary]}
-            activeOpacity={0.85}
-            onPress={onRemind}
-          >
-            <Text style={styles.actionPrimaryText}>Remind me to book again later</Text>
-          </TouchableOpacity>
-        )}
-      </ScrollView>
-
-      {/* Review modal */}
-      <Modal visible={reviewOpen} transparent animationType="fade" onRequestClose={closeReview}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Rate your visit</Text>
-            <Text style={styles.modalSub}>{booking.provider.businessName}</Text>
-
-            <View style={styles.starsRow}>
-              {[1, 2, 3, 4, 5].map((n) => (
-                <TouchableOpacity key={n} onPress={() => setRating(n)} activeOpacity={0.7}>
-                  <Star
-                    size={34}
-                    color={Color.warning}
-                    fill={n <= rating ? Color.warning : 'transparent'}
-                  />
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <TextInput
-              style={styles.commentInput}
-              placeholder="Share a few words (optional)"
-              placeholderTextColor={Color.placeholder}
-              value={comment}
-              onChangeText={setComment}
-              multiline
-              maxLength={1000}
-            />
-
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                style={[styles.modalBtn, styles.actionGhost]}
-                activeOpacity={0.85}
-                onPress={closeReview}
-                disabled={submittingReview}
-              >
-                <Text style={styles.actionGhostText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalBtn, styles.actionPrimary]}
-                activeOpacity={0.85}
-                onPress={submitReview}
-                disabled={submittingReview}
-              >
-                {submittingReview ? (
-                  <ActivityIndicator color={Color.white} />
-                ) : (
-                  <Text style={[styles.actionPrimaryText, { fontWeight: FontWeight.bold }]}>
-                    Submit
-                  </Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
         </View>
-      </Modal>
-    </View>
+      ) : null}
+    </KeyboardAvoidingView>
   );
 }

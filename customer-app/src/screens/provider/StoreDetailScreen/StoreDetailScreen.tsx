@@ -1,42 +1,45 @@
 import React, { useMemo, useState } from 'react';
 import {
-  View,
-  Text,
-  Image,
+  Alert,
   ScrollView,
+  StatusBar,
+  Text,
+  TextInput,
   TouchableOpacity,
-  Dimensions,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
+  View,
+  useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ShoppingBag, Star, BadgeCheck, ChevronRight } from 'lucide-react-native';
+import { ChevronRight, Search, ShoppingBag, X } from 'lucide-react-native';
 
-import { AppHeader } from '@/components/AppHeader';
-import { CategoryIcon } from '@/components/CategoryIcon';
-import { ProductTypeIcon } from '@/components/ProductTypeIcon';
-import { StoreProductCard } from '@/components/StoreProductCard';
-import { BusinessContact } from '@/components/BusinessContact';
-import { CartHeaderButton } from '@/components/CartHeaderButton';
-import { ReviewItem } from '@/components/ReviewItem';
-import { Color } from '@/utils/Theme';
-import { amountPrice, formatMoney } from '@/utils/units';
+import { ProductTypeCard } from '@/components/BusinessCards';
+import { StoreItemCard } from '@/components/StoreItemCard';
 import { useAppSelector } from '@/redux/hooks';
 import { useGetProviderReviewsQuery } from '@/redux/api/provider/providerApi';
-import { ROUTES, RootStackParamList } from '@/navigation/routes';
 import { Product, Provider } from '@/redux/api/provider/types';
+import { ROUTES, RootStackParamList } from '@/navigation/routes';
+import { INK, LINK, ModernSize, PAGE_BG } from '@/utils/modernTheme';
+import { amountPrice, formatMoney } from '@/utils/units';
 
-// Shared look with the service detail page.
+import {
+  AboutCard,
+  LocationHoursCard,
+  OfferCard,
+  QuickActions,
+  ReviewsSection,
+  TopCard,
+} from '../ProviderDetailScreen/parts';
+import { useBusinessExtras } from '../ProviderDetailScreen/useBusinessExtras';
 import { styles as ds } from '../ProviderDetailScreen/styles';
 import { styles } from './styles';
 
-const SCREEN_W = Dimensions.get('window').width;
 const UNTAGGED_NAME = 'Other items';
-// A quick taste of each named section — "View all" opens the full section.
+/** Named sections shown on the page; "View all types" opens the rest. */
 const SECTION_PREVIEW_LIMIT = 3;
-const SECTION_TEASER_ITEMS = 2;
+/** Products per section rail before "View all". */
+const SECTION_RAIL_ITEMS = 8;
 
 interface CategoryTile {
   slug: string | null; // null = products with no product type tagged
@@ -50,22 +53,37 @@ interface SectionPreview {
   total: number;
   // At least one item in the FULL section (not just the teaser) has a coupon.
   hasCoupon: boolean;
+  /** True when grouped by product type because the store set no sections. */
+  byType: boolean;
+  typeSlug?: string | null;
 }
 
-/** Store detail — service-style header/gallery + "shop by category" tiles. */
+/**
+ * Store detail — mockup "designs/customer/mobile/FreshMart Kirana Grocery App
+ * UI.png". Shares the top card, quick actions, offer, about, location/hours and
+ * reviews with the service page (ProviderDetailScreen/parts).
+ */
 export function StoreDetail({ provider }: { provider: Provider }) {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const cartItems = useAppSelector((s) => s.cart.items);
   const { data: reviews = [] } = useGetProviderReviewsQuery(provider.id);
+  const { offer, ratingBreakdown, hoursRows, address, onCall, onDirections, onShare } =
+    useBusinessExtras(provider, reviews, 'ORDER');
+  const [query, setQuery] = useState('');
 
-  const [activeImage, setActiveImage] = useState(0);
+  const contentW = width - ModernSize.gutter * 2;
+  const railW = Math.floor(contentW * 0.47);
+  const typeW = Math.floor((contentW - 30) / 4) + 6;
+  const gridW = Math.floor((contentW - 10) / 2);
+  const products = useMemo(() => provider.products ?? [], [provider.products]);
 
   // Only the categories this store actually sells, in first-seen order.
   const categories = useMemo<CategoryTile[]>(() => {
     const seen = new Map<string, CategoryTile>();
     let hasUntagged = false;
-    for (const p of provider.products ?? []) {
+    for (const p of products) {
       if (p.productType) {
         if (!seen.has(p.productType.slug)) {
           seen.set(p.productType.slug, {
@@ -83,49 +101,82 @@ export function StoreDetail({ provider }: { provider: Provider }) {
       tiles.push({ slug: null, name: UNTAGGED_NAME });
     }
     return tiles;
-  }, [provider.products]);
+  }, [products]);
 
-  // Up to 3 of this store's own named sections, teasing 2 products each —
-  // only sections the provider actually set (blank/untagged ones are skipped
-  // here; they're still reachable via the category tiles below).
+  // The store's own named sections (or, if it set none, its product types) —
+  // a rail of products each, "View all" opens the full section.
   const { sectionPreviews, hasMoreSections } = useMemo(() => {
-    const map = new Map<string, Product[]>();
-    for (const p of provider.products ?? []) {
+    const named = new Map<string, Product[]>();
+    for (const p of products) {
       const key = p.section?.trim();
-      if (!key) {
-        continue;
+      if (key) {
+        named.set(key, [...(named.get(key) ?? []), p]);
       }
-      if (!map.has(key)) {
-        map.set(key, []);
-      }
-      map.get(key)!.push(p);
     }
-    const previews: SectionPreview[] = [...map.entries()]
-      .slice(0, SECTION_PREVIEW_LIMIT)
-      .map(([section, items]) => ({
+    let previews: SectionPreview[];
+    let total: number;
+    if (named.size > 0) {
+      total = named.size;
+      previews = [...named.entries()].slice(0, SECTION_PREVIEW_LIMIT).map(([section, items]) => ({
         section,
-        items: items.slice(0, SECTION_TEASER_ITEMS),
+        items: items.slice(0, SECTION_RAIL_ITEMS),
         total: items.length,
         hasCoupon: items.some((p) => !!p.coupon),
+        byType: false,
       }));
-    return { sectionPreviews: previews, hasMoreSections: map.size > SECTION_PREVIEW_LIMIT };
-  }, [provider.products]);
+    } else {
+      const byType = new Map<string, { slug: string | null; items: Product[] }>();
+      for (const p of products) {
+        const key = p.productType?.name ?? UNTAGGED_NAME;
+        const entry = byType.get(key) ?? { slug: p.productType?.slug ?? null, items: [] };
+        entry.items.push(p);
+        byType.set(key, entry);
+      }
+      total = byType.size;
+      previews = [...byType.entries()].slice(0, SECTION_PREVIEW_LIMIT).map(([section, e]) => ({
+        section,
+        items: e.items.slice(0, SECTION_RAIL_ITEMS),
+        total: e.items.length,
+        hasCoupon: e.items.some((p) => !!p.coupon),
+        byType: true,
+        typeSlug: e.slug,
+      }));
+    }
+    return { sectionPreviews: previews, hasMoreSections: total > SECTION_PREVIEW_LIMIT };
+  }, [products]);
 
-  const cartCount = cartItems.filter((i) => i.quantity > 0).length;
-  const cartTotal = cartItems.reduce((s, i) => s + amountPrice(i.quantity, i.priceQty, i.priceMinor), 0);
+  // In-store search over the catalog that's already loaded.
+  const q = query.trim().toLowerCase();
+  const results = useMemo(
+    () => (q ? products.filter((p) => p.name.toLowerCase().includes(q)) : []),
+    [products, q],
+  );
 
-  const onGalleryScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) =>
-    setActiveImage(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W));
+  // Cart bar: this store's lines when it has any, else the whole cart.
+  const liveItems = cartItems.filter((i) => i.quantity > 0);
+  const storeItems = liveItems.filter((i) => i.providerId === provider.id);
+  const barItems = storeItems.length > 0 ? storeItems : liveItems;
+  const barTotal = barItems.reduce(
+    (s, i) => s + amountPrice(i.quantity, i.priceQty, i.priceMinor),
+    0,
+  );
+  const barLabel = storeItems.length > 0 ? provider.businessName : 'Your cart';
 
   const openProduct = (productId: string) =>
     navigation.navigate(ROUTES.PRODUCT_DETAILS, { providerId: provider.id, productId });
 
-  const openSection = (section: string) =>
-    navigation.navigate(ROUTES.PROVIDER_PRODUCTS, {
-      providerId: provider.id,
-      businessName: provider.businessName,
-      section,
-    });
+  const openSection = (sp: SectionPreview) =>
+    navigation.navigate(
+      ROUTES.PROVIDER_PRODUCTS,
+      sp.byType
+        ? {
+            providerId: provider.id,
+            businessName: provider.businessName,
+            productTypeSlug: sp.typeSlug ?? null,
+            categoryName: sp.section,
+          }
+        : { providerId: provider.id, businessName: provider.businessName, section: sp.section },
+    );
 
   // No section filter — opens the full catalog, grouped by every section.
   const openAllSections = () =>
@@ -142,92 +193,139 @@ export function StoreDetail({ provider }: { provider: Provider }) {
       categoryName: c.name,
     });
 
+  const onApplyOffer = () =>
+    offer &&
+    Alert.alert(
+      `Code ${offer.code}`,
+      'Add items to your cart — you can apply this code at checkout.',
+    );
+
+  const subline = [
+    provider.subcategory?.name ?? provider.category.name,
+    categories
+      .filter((c) => c.slug)
+      .slice(0, 3)
+      .map((c) => c.name.split(/[,&]/)[0].trim())
+      .join(', '),
+  ]
+    .filter(Boolean)
+    .join(' • ');
+
+  const renderCard = (p: Product, w: number) => (
+    <StoreItemCard
+      key={p.id}
+      product={p}
+      providerId={provider.id}
+      providerName={provider.businessName}
+      depositPercent={provider.depositPercent}
+      width={w}
+      onPress={() => openProduct(p.id)}
+    />
+  );
+
   return (
     <View style={ds.container}>
-      <AppHeader title={provider.businessName} right={<CartHeaderButton />} />
-
+      <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
       <ScrollView
-        contentContainerStyle={[ds.content, { paddingBottom: cartCount > 0 ? 120 : 24 }]}
+        contentContainerStyle={[ds.content, barItems.length > 0 && styles.contentWithBar]}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
-        {/* Gallery */}
-        {provider.images.length > 0 ? (
-          <View style={ds.galleryWrap}>
-            <ScrollView
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              onMomentumScrollEnd={onGalleryScroll}
-              style={ds.gallery}
-            >
-              {provider.images.map((url, i) => (
-                <TouchableOpacity
-                  key={url}
-                  activeOpacity={0.95}
-                  onPress={() => navigation.navigate(ROUTES.GALLERY, { images: provider.images, index: i })}
-                >
-                  <Image source={{ uri: url }} style={ds.galleryImg} />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-            <View style={ds.countBadge}>
-              <Text style={ds.countText}>
-                {activeImage + 1} / {provider.images.length}
-              </Text>
-            </View>
-            {provider.images.length > 1 && (
-              <View style={ds.dots}>
-                {provider.images.map((url, i) => (
-                  <View key={url} style={[ds.dot, i === activeImage && ds.dotActive]} />
-                ))}
-              </View>
-            )}
-          </View>
-        ) : (
-          <View style={ds.galleryFallback}>
-            <CategoryIcon slug={provider.category.slug} size={64} strokeWidth={1.4} />
-          </View>
-        )}
+        <TopCard
+          provider={provider}
+          subline={subline}
+          strip={{
+            icon: <ShoppingBag size={16} color={LINK} strokeWidth={2} />,
+            text: 'Order online, pick up at the store',
+          }}
+          onBack={() => navigation.goBack()}
+          onShare={onShare}
+          onOpenImage={(i) =>
+            navigation.navigate(ROUTES.GALLERY, { images: provider.images, index: i })
+          }
+        />
 
         <View style={ds.body}>
-          {/* Header */}
-          <Text style={ds.name}>{provider.businessName}</Text>
-          <View style={ds.badgeRow}>
-            <View style={ds.chip}>
-              <CategoryIcon slug={provider.category.slug} size={13} color={Color.primaryDark} />
-              <Text style={ds.chipText}>{provider.subcategory?.name ?? provider.category.name}</Text>
-            </View>
-            {provider.isVerified && (
-              <View style={ds.chip}>
-                <BadgeCheck size={13} color={Color.success} />
-                <Text style={ds.chipText}>Verified</Text>
-              </View>
-            )}
-          </View>
-          <View style={ds.metaRow}>
-            <Star size={14} color={Color.warning} fill={Color.warning} />
-            <Text style={ds.metaText}>
-              {provider.ratingAvg.toFixed(1)} ({provider.ratingCount} reviews)
-            </Text>
-          </View>
+          <QuickActions onCall={onCall} onDirections={onDirections} onShare={onShare} />
+          {!!offer && <OfferCard offer={offer} onApply={onApplyOffer} />}
 
-          {/* About */}
-          {!!provider.description && (
-            <>
-              <Text style={ds.sectionTitle}>About</Text>
-              <Text style={ds.about}>{provider.description}</Text>
-            </>
+          {/* ── Search in store ─────────────────────────────────────────── */}
+          {products.length > 0 && (
+            <View style={styles.search}>
+              <Search size={20} color={INK} strokeWidth={2} />
+              <TextInput
+                style={styles.searchInput}
+                value={query}
+                onChangeText={setQuery}
+                placeholder={`Search in ${provider.businessName}`}
+                placeholderTextColor="#64748B"
+                returnKeyType="search"
+                autoCorrect={false}
+              />
+              {!!query && (
+                <TouchableOpacity
+                  onPress={() => setQuery('')}
+                  hitSlop={10}
+                  accessibilityLabel="Clear search"
+                >
+                  <X size={18} color="#64748B" />
+                </TouchableOpacity>
+              )}
+            </View>
           )}
 
-          {/* This store's own named sections — a 2-product taste of each,
-              "View all" opens the full section. */}
-          {sectionPreviews.length > 0 && (
-            <View style={styles.sectionPreviews}>
+          {q ? (
+            /* ── Search results ──────────────────────────────────────────── */
+            <>
+              <Text style={ds.sectionTitle}>
+                {results.length} {results.length === 1 ? 'result' : 'results'} for “{query.trim()}”
+              </Text>
+              {results.length === 0 ? (
+                <Text style={ds.muted}>No products match. Try another word.</Text>
+              ) : (
+                <View style={styles.grid}>{results.map((p) => renderCard(p, gridW))}</View>
+              )}
+            </>
+          ) : products.length === 0 ? (
+            <View style={styles.empty}>
+              <ShoppingBag size={40} color="#94A3B8" strokeWidth={1.4} />
+              <Text style={styles.emptyText}>This store hasn’t added any products yet.</Text>
+            </View>
+          ) : (
+            <>
+              {/* ── Shop by category ──────────────────────────────────────── */}
+              <Text style={ds.sectionTitle}>Shop by category</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={ds.bleed}
+                contentContainerStyle={styles.hRow}
+              >
+                {categories.map((c, i) => (
+                  <ProductTypeCard
+                    key={c.slug ?? UNTAGGED_NAME}
+                    type={{
+                      id: c.slug ?? UNTAGGED_NAME,
+                      slug: c.slug ?? '',
+                      name: c.name,
+                      sortOrder: i,
+                      iconUrl: c.iconUrl,
+                    }}
+                    width={typeW}
+                    index={i}
+                    onPress={() => openCategory(c)}
+                  />
+                ))}
+              </ScrollView>
+
+              {/* ── Product sections ──────────────────────────────────────── */}
               {sectionPreviews.map((sp) => (
-                <View key={sp.section} style={styles.sectionGroup}>
+                <View key={sp.section}>
                   <View style={styles.sectionHead}>
                     <View style={styles.sectionTitleGroup}>
-                      <Text style={styles.sectionGroupTitle}>{sp.section}</Text>
+                      <Text style={styles.sectionGroupTitle} numberOfLines={1}>
+                        {sp.section}
+                      </Text>
                       {sp.hasCoupon && (
                         <View style={styles.dealTag}>
                           <Text style={styles.dealTagText}>Deal</Text>
@@ -235,115 +333,82 @@ export function StoreDetail({ provider }: { provider: Provider }) {
                       )}
                     </View>
                     <TouchableOpacity
-                      onPress={() => openSection(sp.section)}
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      onPress={() => openSection(sp)}
+                      hitSlop={8}
+                      accessibilityRole="link"
                     >
                       <Text style={styles.sectionLink}>View all</Text>
                     </TouchableOpacity>
                   </View>
-                  <View style={styles.sectionRow}>
-                    {sp.items.map((p) => (
-                      <StoreProductCard
-                        key={p.id}
-                        product={p}
-                        providerId={provider.id}
-                        providerName={provider.businessName}
-                        categorySlug={provider.category.slug}
-                        depositPercent={provider.depositPercent}
-                        onPress={() => openProduct(p.id)}
-                      />
-                    ))}
-                  </View>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={ds.bleed}
+                    contentContainerStyle={styles.hRow}
+                  >
+                    {sp.items.map((p) => renderCard(p, railW))}
+                  </ScrollView>
                 </View>
               ))}
               {hasMoreSections && (
-                <TouchableOpacity style={styles.viewAllTypesBtn} activeOpacity={0.85} onPress={openAllSections}>
-                  <Text style={styles.viewAllTypesText}>View all types</Text>
-                  <ChevronRight size={16} color={Color.primary} />
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
-
-          {/* Products — shop by the categories this store actually sells */}
-          <Text style={ds.sectionTitle}>Shop by category</Text>
-          {categories.length === 0 ? (
-            <View style={styles.empty}>
-              <ShoppingBag size={40} color={Color.placeholder} strokeWidth={1.4} />
-              <Text style={styles.emptyText}>This store hasn’t added any products yet.</Text>
-            </View>
-          ) : (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hRow}>
-              {categories.map((c) => (
                 <TouchableOpacity
-                  key={c.slug ?? UNTAGGED_NAME}
-                  style={styles.productCard}
+                  style={styles.viewAllTypesBtn}
                   activeOpacity={0.85}
-                  onPress={() => openCategory(c)}
+                  onPress={openAllSections}
                 >
-                  <View style={styles.productCardImageWrap}>
-                    {c.iconUrl ? (
-                      <Image source={{ uri: c.iconUrl }} style={styles.productCardImage} resizeMode="contain" />
-                    ) : (
-                      <ProductTypeIcon slug={c.slug ?? ''} size={28} color={Color.primary} />
-                    )}
-                  </View>
-                  <Text style={styles.productCardName} numberOfLines={2}>
-                    {c.name}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          )}
-
-          {/* Reviews */}
-          {reviews.length > 0 && (
-            <>
-              <Text style={ds.sectionTitle}>Reviews ({reviews.length})</Text>
-              {reviews.slice(0, 3).map((r) => (
-                <ReviewItem key={r.id} review={r} />
-              ))}
-              {reviews.length > 3 && (
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate(ROUTES.REVIEWS, {
-                      providerId: provider.id,
-                      businessName: provider.businessName,
-                    })
-                  }
-                >
-                  <Text style={styles.viewAll}>View all {reviews.length} reviews</Text>
+                  <Text style={styles.viewAllTypesText}>View all products</Text>
+                  <ChevronRight size={16} color={LINK} />
                 </TouchableOpacity>
               )}
             </>
           )}
 
-          {/* Contact — at the bottom */}
-          <Text style={ds.sectionTitle}>Contact & pickup</Text>
-          <BusinessContact
-            phone={provider.phone}
-            email={provider.email}
-            addressLine={provider.addressLine}
-            city={provider.city}
-            state={provider.state}
-            postalCode={provider.postalCode}
-            callLabel="Call the store"
-            addressLabel="Pickup address"
+          {!!provider.description && (
+            <AboutCard name={provider.businessName} description={provider.description} />
+          )}
+          <LocationHoursCard
+            title="Location, Hours & Pickup"
+            address={address}
+            hoursRows={hoursRows}
+            onDirections={onDirections}
+            note={{
+              icon: <ShoppingBag size={16} color="#15803D" strokeWidth={2} />,
+              text: 'Pick up your order here',
+            }}
+          />
+          <ReviewsSection
+            provider={provider}
+            reviews={reviews}
+            ratingBreakdown={ratingBreakdown}
+            preview={1}
+            onViewAll={() =>
+              navigation.navigate(ROUTES.REVIEWS, {
+                providerId: provider.id,
+                businessName: provider.businessName,
+              })
+            }
           />
         </View>
       </ScrollView>
 
-      {/* Sticky cart bar — spans all shops */}
-      {cartCount > 0 && (
-        <View style={[styles.cartBar, { paddingBottom: insets.bottom + 12 }]}>
-          <View>
+      {/* ── Sticky cart bar ─────────────────────────────────────────────── */}
+      {barItems.length > 0 && (
+        <View style={[styles.cartBar, { paddingBottom: Math.max(insets.bottom, 12) + 4 }]}>
+          <View style={styles.cartInfo}>
             <Text style={styles.cartCount}>
-              {cartCount} item{cartCount > 1 ? 's' : ''} in cart
+              {barItems.length} item{barItems.length > 1 ? 's' : ''}
             </Text>
-            <Text style={styles.cartTotal}>{formatMoney(cartTotal)}</Text>
+            <Text style={styles.cartTotal} numberOfLines={1}>
+              {formatMoney(barTotal)} • {barLabel}
+            </Text>
           </View>
-          <TouchableOpacity style={styles.checkoutBtn} activeOpacity={0.9} onPress={() => navigation.navigate(ROUTES.CART)}>
-            <ShoppingBag size={18} color={Color.white} />
+          <TouchableOpacity
+            style={styles.checkoutBtn}
+            activeOpacity={0.9}
+            onPress={() => navigation.navigate(ROUTES.CART)}
+            accessibilityRole="button"
+          >
+            <ShoppingBag size={20} color="#FFFFFF" strokeWidth={2} />
             <Text style={styles.checkoutText}>View cart</Text>
           </TouchableOpacity>
         </View>

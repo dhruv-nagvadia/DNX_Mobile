@@ -1,91 +1,208 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Bell, CalendarClock, Package, XCircle } from 'lucide-react-native';
+import {
+  RefreshControl,
+  ScrollView,
+  SectionList,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  Bell,
+  CalendarDays,
+  LucideIcon,
+  PackageMinus,
+  ShoppingBag,
+  Star,
+  Wallet,
+  XCircle,
+} from 'lucide-react-native';
 
-import { AppHeader } from '@/components/AppHeader';
-import { Color } from '@/utils/Theme';
-import { NotificationType } from '@/redux/api/notification/types';
+import { INK, ModernSize, PAGE_BG } from '@/utils/modernTheme';
+import { AppNotification } from '@/redux/api/notification/types';
 
-import { useNotifications } from './useNotifications';
-import { styles } from './styles';
+import { useNotificationsScreen } from './useNotificationsScreen';
+import {
+  NotificationCategory,
+  NotificationSection,
+  categoryOf,
+  isCancelled,
+  timeAgo,
+} from './helpers';
+import { EMPTY_TINT, ICON_COLORS, iconBoxStyles, styles } from './styles';
 
-function iconFor(type: NotificationType, color: string) {
-  if (type === 'ORDER_CANCELLED' || type === 'BOOKING_CANCELLED') {
-    return <XCircle size={20} color={color} />;
-  }
-  if (type === 'BOOKING_PLACED' || type === 'BOOKING_STATUS') {
-    return <CalendarClock size={20} color={color} />;
-  }
-  return <Package size={20} color={color} />;
+const HIT_SLOP = { top: 10, bottom: 10, left: 10, right: 10 };
+const SKELETON_ROWS = [0, 1, 2, 3, 4];
+
+const ICON: Record<NotificationCategory, LucideIcon> = {
+  booking: CalendarDays,
+  order: ShoppingBag,
+  review: Star,
+  payment: Wallet,
+  stock: PackageMinus,
+  cancelled: XCircle,
+  generic: Bell,
+};
+
+function visualCategory(n: AppNotification): NotificationCategory {
+  return isCancelled(n) ? 'cancelled' : categoryOf(n);
 }
 
-/** Short relative time ("Just now", "5m ago", "3h ago", "2d ago"). */
-function timeAgo(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
-  const min = Math.floor(diff / 60_000);
-  if (min < 1) return 'Just now';
-  if (min < 60) return `${min}m ago`;
-  const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr}h ago`;
-  const day = Math.floor(hr / 24);
-  if (day < 7) return `${day}d ago`;
-  return new Date(iso).toLocaleDateString();
-}
-
-/** Customer's in-app notifications: order & booking updates. */
 export default function NotificationsScreen() {
-  const { notifications, unreadCount, isLoading, onPress, onMarkAll } = useNotifications();
+  const {
+    hasAny,
+    sections,
+    filters,
+    filter,
+    setFilter,
+    unreadCount,
+    isLoading,
+    refreshing,
+    refresh,
+    markingAll,
+    markAllRead,
+    onPressNotification,
+    goBack,
+  } = useNotificationsScreen();
+  const insets = useSafeAreaInsets();
 
-  return (
-    <View style={styles.container}>
-      <AppHeader
-        title="Notifications"
-        right={
-          unreadCount > 0 ? (
-            <TouchableOpacity onPress={onMarkAll} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-              <Text style={styles.markAll}>Mark all read</Text>
-            </TouchableOpacity>
-          ) : undefined
-        }
-      />
+  let subtitle = '';
+  if (!isLoading) {
+    subtitle = unreadCount > 0 ? `${unreadCount} unread` : "You're all caught up";
+  }
 
-      {isLoading ? (
-        <View style={styles.center}>
-          <ActivityIndicator color={Color.primary} />
+  const renderItem = ({ item: n }: { item: AppNotification }) => {
+    const cat = visualCategory(n);
+    const Icon = ICON[cat];
+    return (
+      <TouchableOpacity
+        style={[styles.card, !n.isRead && styles.cardUnread]}
+        activeOpacity={0.8}
+        onPress={() => onPressNotification(n)}
+        accessibilityRole="button"
+        accessibilityLabel={`${n.isRead ? '' : 'Unread. '}${n.title}`}
+      >
+        <View style={[styles.iconBox, iconBoxStyles[cat]]}>
+          <Icon size={ModernSize.icon} color={ICON_COLORS[cat].fg} />
         </View>
-      ) : notifications.length === 0 ? (
-        <View style={styles.center}>
-          <Bell size={48} color={Color.placeholder} strokeWidth={1.4} />
-          <Text style={styles.emptyTitle}>No notifications yet</Text>
-          <Text style={styles.emptyText}>
-            Updates about your orders and bookings will show up here.
+        <View style={styles.main}>
+          <View style={styles.topRow}>
+            <Text style={styles.rowTitle} numberOfLines={1}>
+              {n.title}
+            </Text>
+            <Text style={styles.time}>{timeAgo(n.createdAt)}</Text>
+          </View>
+          <Text style={styles.body} numberOfLines={2}>
+            {n.body}
           </Text>
         </View>
-      ) : (
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          {notifications.map((n) => {
-            const danger = n.type.endsWith('CANCELLED');
-            const iconColor = danger ? Color.error : Color.primary;
+        {!n.isRead && <View style={styles.dot} />}
+      </TouchableOpacity>
+    );
+  };
+
+  const renderSectionHeader = ({ section }: { section: NotificationSection }) => (
+    <Text style={styles.sectionLabel}>{section.title}</Text>
+  );
+
+  const emptyTitle = hasAny ? 'Nothing here' : 'No notifications yet';
+  const emptyBody = hasAny
+    ? 'No notifications match this filter.'
+    : 'Updates about your bookings and orders will show up here.';
+
+  return (
+    <View style={styles.root}>
+      <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
+      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
+        <TouchableOpacity
+          onPress={goBack}
+          style={styles.backBtn}
+          hitSlop={HIT_SLOP}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+        >
+          <ArrowLeft size={24} color={INK} />
+        </TouchableOpacity>
+        <View style={styles.headerText}>
+          <Text style={styles.title} numberOfLines={1}>
+            Notifications
+          </Text>
+          {!!subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+        </View>
+        {unreadCount > 0 && (
+          <TouchableOpacity
+            onPress={markAllRead}
+            disabled={markingAll}
+            hitSlop={HIT_SLOP}
+            accessibilityRole="button"
+            accessibilityLabel="Mark all notifications as read"
+          >
+            <Text style={[styles.markAll, markingAll && styles.markAllDisabled]}>
+              Mark all read
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {hasAny && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.chipsScroll}
+          contentContainerStyle={styles.chips}
+        >
+          {filters.map((f) => {
+            const active = filter === f.key;
             return (
               <TouchableOpacity
-                key={n.id}
-                style={[styles.card, !n.isRead && styles.cardUnread]}
-                activeOpacity={0.8}
-                onPress={() => onPress(n)}
+                key={f.key}
+                style={[styles.chip, active && styles.chipActive]}
+                onPress={() => setFilter(f.key)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: active }}
               >
-                <View style={[styles.icon, danger && styles.iconDanger]}>
-                  {iconFor(n.type, iconColor)}
-                </View>
-                <View style={styles.body}>
-                  <Text style={styles.title}>{n.title}</Text>
-                  <Text style={styles.text}>{n.body}</Text>
-                  <Text style={styles.time}>{timeAgo(n.createdAt)}</Text>
-                </View>
-                {!n.isRead && <View style={styles.dot} />}
+                <Text style={[styles.chipText, active && styles.chipTextActive]}>{f.label}</Text>
               </TouchableOpacity>
             );
           })}
         </ScrollView>
+      )}
+
+      {isLoading ? (
+        <View style={styles.listContent}>
+          {SKELETON_ROWS.map((i) => (
+            <View key={i} style={styles.card}>
+              <View style={styles.skelCircle} />
+              <View style={styles.main}>
+                <View style={styles.skelLineLong} />
+                <View style={styles.skelLineShort} />
+              </View>
+            </View>
+          ))}
+        </View>
+      ) : (
+        <SectionList
+          sections={sections}
+          keyExtractor={(n) => n.id}
+          renderItem={renderItem}
+          renderSectionHeader={renderSectionHeader}
+          stickySectionHeadersEnabled={false}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
+          ListEmptyComponent={
+            <View style={styles.empty}>
+              <View style={styles.emptyCircle}>
+                <Bell size={32} color={EMPTY_TINT.fg} strokeWidth={1.8} />
+              </View>
+              <Text style={styles.emptyTitle}>{emptyTitle}</Text>
+              <Text style={styles.emptyBody}>{emptyBody}</Text>
+            </View>
+          }
+        />
       )}
     </View>
   );

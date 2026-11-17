@@ -1,104 +1,48 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { ShoppingBag } from 'lucide-react-native';
+import { useWindowDimensions } from 'react-native';
 
-import { CategoryIcon } from '@/components/CategoryIcon';
-import { ProductAmountControl } from '@/components/ProductAmountControl';
-import { Color } from '@/utils/Theme';
-import { formatMoney, stockLabel, unitPriceLabel } from '@/utils/units';
+import { StoreItemCard } from '@/components/StoreItemCard';
 import { Product } from '@/redux/api/provider/types';
-
-import { styles } from './styles';
 
 interface StoreProductCardProps {
   product: Product;
   providerId: string;
   providerName: string;
   depositPercent?: number;
-  // Icon fallback when the product has no photo — omit when the caller has
-  // no single business category to fall back to (e.g. cross-store browsing).
+  /** Kept for callers; the card no longer shows category art for products. */
   categorySlug?: string;
   // Shown under the name — the selling store, for contexts spanning several
   // stores (e.g. "shop by category" from the home screen).
   storeLabel?: string;
+  /** Card width; defaults to two per row in a 24 pt-padded, 16 pt-gap grid. */
+  width?: number;
   onPress: () => void;
 }
 
-/** One product card for a store's catalog — image, price, stock, and the
- * add/stepper control. Shared across every product grid in the app (a single
- * store's catalog or products pooled across stores) so they never drift apart. */
+const GRID_PADDING = 24;
+const GRID_GAP = 16;
+
+/** Product grids (store catalogue, shop by product) — the shared StoreItemCard. */
 export function StoreProductCard({
-  product: p,
+  product,
   providerId,
   providerName,
   depositPercent,
-  categorySlug,
   storeLabel,
+  width,
   onPress,
 }: StoreProductCardProps) {
-  const out = p.stockQty <= 0;
+  const { width: screenW } = useWindowDimensions();
+  const cardW = width ?? Math.floor((screenW - GRID_PADDING * 2 - GRID_GAP) / 2);
   return (
-    <View style={styles.card}>
-      {/* Tap the image/details to open the full product page. */}
-      <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
-        <View style={styles.imageWrap}>
-          {p.imageUrl ? (
-            <Image source={{ uri: p.imageUrl }} style={styles.image} />
-          ) : categorySlug ? (
-            <CategoryIcon slug={categorySlug} size={32} />
-          ) : (
-            <ShoppingBag size={28} color={Color.primary} />
-          )}
-          {out && (
-            <View style={styles.outBadge}>
-              <Text style={styles.outText}>Out of stock</Text>
-            </View>
-          )}
-          {!out && !!p.coupon && (
-            <View style={styles.saveBadge}>
-              <Text style={styles.saveBadgeText}>SAVE {formatMoney(p.coupon.discountMinor, p.currency)}</Text>
-            </View>
-          )}
-        </View>
-        <View style={styles.info}>
-          <Text style={styles.name} numberOfLines={2}>
-            {p.name}
-          </Text>
-          {!!storeLabel && (
-            <Text style={styles.store} numberOfLines={1}>
-              {storeLabel}
-            </Text>
-          )}
-          <Text style={styles.price}>{unitPriceLabel(p.priceMinor, p.priceQty, p.measure, p.currency)}</Text>
-          <Text style={[styles.stock, out && styles.stockOut]}>
-            {stockLabel(p.stockQty, p.measure, p.unlimitedStock)}
-          </Text>
-
-          {/* Coupon — a preview; the code still has to be entered at checkout */}
-          {p.coupon && (
-            <View style={styles.couponBox}>
-              <Text style={styles.priceStrike}>
-                {unitPriceLabel(p.priceMinor, p.priceQty, p.measure, p.currency)}
-              </Text>
-              <Text style={styles.priceDiscounted}>
-                {unitPriceLabel(p.coupon.finalPriceMinor, p.priceQty, p.measure, p.currency)}
-              </Text>
-              <Text style={styles.couponPillText}>{p.coupon.code}</Text>
-            </View>
-          )}
-        </View>
-      </TouchableOpacity>
-
-      <View style={styles.control}>
-        <ProductAmountControl
-          product={p}
-          providerId={providerId}
-          providerName={providerName}
-          depositPercent={depositPercent ?? 20}
-          codEnabled={p.codEnabled}
-          partialPayEnabled={p.partialPayEnabled}
-        />
-      </View>
-    </View>
+    <StoreItemCard
+      product={product}
+      providerId={providerId}
+      providerName={providerName}
+      depositPercent={depositPercent}
+      width={cardW}
+      storeLabel={storeLabel}
+      onPress={onPress}
+    />
   );
 }

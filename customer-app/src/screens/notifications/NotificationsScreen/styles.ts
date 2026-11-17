@@ -1,82 +1,249 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
+
+import { Color, FontWeight, Spacing } from '@/utils/Theme';
+import {
+  CARD_BORDER,
+  CARD_SHADOW,
+  INK,
+  LINK,
+  ModernRadius,
+  ModernSize,
+  ModernType,
+  PAGE_BG,
+  PILL,
+  PillColors,
+  SOFT_FILL,
+  TINT,
+} from '@/utils/modernTheme';
+
+import { NotificationCategory } from './helpers';
+
+/** Pale circle + icon colour for the empty state. */
+export const EMPTY_TINT = PILL.blue;
+const CHIP_ACTIVE = '#1D4ED8';
+/** Very soft blue wash behind unread cards. */
+const UNREAD_BG = '#F3F7FF';
+const UNREAD_BORDER = '#DCE7FD';
+
+/** Pastel icon-box colours per notification category. */
+export const ICON_COLORS: Record<NotificationCategory, PillColors> = {
+  booking: PILL.blue,
+  order: { bg: TINT.peach.colors[1], fg: TINT.peach.icon },
+  review: PILL.lavender,
+  payment: { bg: TINT.mint.colors[1], fg: TINT.mint.icon },
+  stock: PILL.orange,
+  cancelled: PILL.red,
+  generic: PILL.grey,
+};
+
+export const iconBoxStyles = StyleSheet.create({
+  booking: { backgroundColor: ICON_COLORS.booking.bg },
+  order: { backgroundColor: ICON_COLORS.order.bg },
+  review: { backgroundColor: ICON_COLORS.review.bg },
+  payment: { backgroundColor: ICON_COLORS.payment.bg },
+  stock: { backgroundColor: ICON_COLORS.stock.bg },
+  cancelled: { backgroundColor: ICON_COLORS.cancelled.bg },
+  generic: { backgroundColor: ICON_COLORS.generic.bg },
+});
 
 export const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Color.background },
-  content: { padding: Spacing.md, paddingBottom: Spacing.xl, gap: Spacing.sm },
-
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl },
-  emptyTitle: {
-    marginTop: Spacing.md,
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
+  // ── Page + light header ─────────────────────────────────────────────────
+  root: {
+    flex: 1,
+    backgroundColor: PAGE_BG,
   },
-  emptyText: {
-    marginTop: Spacing.xs,
-    fontSize: FontSize.sm,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingHorizontal: ModernSize.gutter,
+    paddingBottom: ModernSize.gap,
+    backgroundColor: PAGE_BG,
+  },
+  backBtn: {
+    width: 36,
+    height: 36,
+    marginLeft: -6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerText: {
+    flex: 1,
+    gap: 2,
+  },
+  title: {
+    fontSize: ModernType.title,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+    letterSpacing: -0.3,
+  },
+  subtitle: {
+    fontSize: ModernType.secondary,
     color: Color.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
   },
-
   markAll: {
-    fontSize: FontSize.sm,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.semibold,
-    color: Color.primary,
+    color: LINK,
+  },
+  markAllDisabled: {
+    opacity: 0.5,
   },
 
-  // A single notification row.
+  // ── Filter chips ────────────────────────────────────────────────────────
+  chipsScroll: {
+    flexGrow: 0,
+    marginBottom: Spacing.xs,
+  },
+  chips: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    paddingHorizontal: ModernSize.gutter,
+    paddingBottom: Spacing.sm,
+  },
+  chip: {
+    minWidth: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.md - 2,
+    paddingVertical: 7,
+    borderRadius: ModernRadius.pill,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
+  },
+  chipActive: {
+    borderColor: CHIP_ACTIVE,
+    backgroundColor: CHIP_ACTIVE,
+  },
+  chipText: {
+    fontSize: ModernType.secondary,
+    fontWeight: FontWeight.medium,
+    color: INK,
+  },
+  chipTextActive: {
+    color: Color.white,
+    fontWeight: FontWeight.semibold,
+  },
+
+  // ── List + cards ────────────────────────────────────────────────────────
+  listContent: {
+    paddingHorizontal: ModernSize.gutter,
+    paddingBottom: Spacing.xl,
+    gap: Spacing.sm + 2,
+    flexGrow: 1,
+  },
+  sectionLabel: {
+    marginTop: Spacing.sm,
+    fontSize: ModernType.secondary,
+    fontWeight: FontWeight.semibold,
+    color: Color.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
   card: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: Spacing.sm,
-    padding: Spacing.md,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
+    gap: ModernSize.gap,
+    minHeight: ModernSize.rowMinHeight,
+    padding: ModernSize.cardPad - 2,
+    borderRadius: ModernRadius.card,
     borderWidth: 1,
-    borderColor: Color.border,
+    borderColor: Color.white,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
   cardUnread: {
-    backgroundColor: Color.primarySoft,
-    borderColor: Color.primarySoft,
+    backgroundColor: UNREAD_BG,
+    borderColor: UNREAD_BORDER,
   },
-
-  icon: {
-    width: 40,
-    height: 40,
-    borderRadius: Radius.md,
+  iconBox: {
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.primarySoft,
   },
-  iconDanger: {
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+  main: {
+    flex: 1,
+    gap: 3,
   },
-
-  body: { flex: 1, minWidth: 0 },
-  title: {
-    fontSize: FontSize.md,
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: Spacing.sm,
+  },
+  rowTitle: {
+    flex: 1,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  text: {
-    marginTop: 2,
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-    lineHeight: 19,
+    color: INK,
   },
   time: {
-    marginTop: 4,
-    fontSize: FontSize.xs,
-    color: Color.placeholder,
+    fontSize: ModernType.caption,
+    color: Color.textSecondary,
+  },
+  body: {
+    fontSize: ModernType.body,
+    lineHeight: 19,
+    color: Color.textSecondary,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginTop: 6,
+    backgroundColor: LINK,
   },
 
-  dot: {
-    width: 9,
-    height: 9,
+  // ── Empty state ─────────────────────────────────────────────────────────
+  empty: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: 64,
+    gap: Spacing.sm,
+  },
+  emptyCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.sm,
+    backgroundColor: EMPTY_TINT.bg,
+  },
+  emptyTitle: {
+    fontSize: ModernType.cardTitle,
+    fontWeight: FontWeight.bold,
+    color: INK,
+    textAlign: 'center',
+  },
+  emptyBody: {
+    fontSize: ModernType.body,
+    lineHeight: 20,
+    color: Color.textSecondary,
+    textAlign: 'center',
+  },
+
+  // ── Loading skeleton ────────────────────────────────────────────────────
+  skelCircle: {
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: ModernSize.iconBox / 2,
+    backgroundColor: SOFT_FILL,
+  },
+  skelLineLong: {
+    width: '70%',
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: SOFT_FILL,
+  },
+  skelLineShort: {
+    width: '45%',
+    height: 10,
     borderRadius: 5,
-    marginTop: 6,
-    backgroundColor: Color.primary,
+    backgroundColor: SOFT_FILL,
   },
 });

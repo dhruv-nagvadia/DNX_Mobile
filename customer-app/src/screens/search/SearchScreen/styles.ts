@@ -1,188 +1,449 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
 
+import { Color, FontWeight } from '@/utils/Theme';
+import {
+  CARD_BORDER,
+  CARD_SHADOW,
+  INK,
+  LINK,
+  ModernRadius,
+  ModernSize,
+  PAGE_BG,
+  PILL,
+  SOFT_FILL,
+} from '@/utils/modernTheme';
+
+const MUTED = '#64748B';
+const PLACEHOLDER = '#94A3B8';
+const HAIRLINE = '#E8ECF2';
+const G = ModernSize.gutter;
+
+/** Mockup "designs/customer/mobile/Modern Hair Search App Interface.png". */
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.background,
+    backgroundColor: PAGE_BG,
   },
-  searchBar: {
+  flex: {
+    flex: 1,
+  },
+  fill: {
+    width: '100%',
+    height: '100%',
+  },
+
+  // ── Top: back + search field ────────────────────────────────────────────
+  topBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
-    marginHorizontal: Spacing.lg,
-    marginTop: Spacing.md,
-    marginBottom: Spacing.sm,
-    paddingHorizontal: Spacing.md,
+    gap: 10,
+    paddingHorizontal: G,
+    paddingTop: 8,
+    paddingBottom: 12,
+  },
+  backBtn: {
+    width: 36,
     height: 48,
-    borderRadius: Radius.md,
-    backgroundColor: Color.surface,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+  searchBar: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    height: 48,
+    paddingLeft: 14,
+    paddingRight: 10,
+    borderRadius: 14,
+    backgroundColor: Color.white,
     borderWidth: 1,
-    borderColor: Color.border,
+    borderColor: HAIRLINE,
+    ...CARD_SHADOW,
   },
   searchInput: {
     flex: 1,
-    fontSize: FontSize.md,
-    color: Color.textPrimary,
+    height: '100%',
+    paddingVertical: 0,
+    fontSize: 16,
+    color: INK,
   },
+  clearBtn: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: PLACEHOLDER,
+  },
+
+  // ── Type chips ──────────────────────────────────────────────────────────
+  typeRow: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: G,
+    paddingBottom: 12,
+  },
+  typeChip: {
+    height: 38,
+    paddingHorizontal: 16,
+    borderRadius: ModernRadius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Color.white,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+  },
+  typeChipActive: {
+    backgroundColor: INK,
+    borderColor: INK,
+  },
+  typeChipText: {
+    fontSize: 15,
+    fontWeight: FontWeight.medium,
+    color: INK,
+  },
+  typeChipTextActive: {
+    color: Color.white,
+    fontWeight: FontWeight.semibold,
+  },
+
+  // ── Location ────────────────────────────────────────────────────────────
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.sm,
+    gap: 10,
+    paddingHorizontal: G,
+    paddingBottom: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: HAIRLINE,
   },
-  locationText: {
+  locationTextWrap: {
     flex: 1,
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.textSecondary,
+  },
+  locationLabel: {
+    fontSize: 13,
+    color: MUTED,
+  },
+  locationValue: {
+    fontSize: 15,
+    fontWeight: FontWeight.bold,
+    color: INK,
   },
   locationChange: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.primary,
+    fontSize: 15,
+    fontWeight: FontWeight.semibold,
+    color: LINK,
   },
 
-  // What to search for — the one always-visible filter
-  typeRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.md,
-    marginBottom: Spacing.xs,
-    borderBottomWidth: 1,
-    borderBottomColor: Color.border,
-  },
-  typeChip: {
-    flex: 1,
-    paddingVertical: 8,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Color.border,
-    backgroundColor: Color.surface,
-    alignItems: 'center',
-  },
-  typeChipActive: { backgroundColor: Color.primary, borderColor: Color.primary },
-  typeChipText: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.textSecondary },
-  typeChipTextActive: { color: Color.white },
-
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: Radius.pill,
-    borderWidth: 1,
-    borderColor: Color.border,
-    backgroundColor: Color.surface,
-  },
-  chipActive: { backgroundColor: Color.primarySoft, borderColor: Color.primary },
-  chipText: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.textSecondary },
-  chipTextActive: { color: Color.primary },
-
+  // ── Scroll content / sections ───────────────────────────────────────────
   content: {
-    padding: Spacing.lg,
-    paddingTop: Spacing.md,
+    paddingHorizontal: G,
+    paddingTop: 16,
+    paddingBottom: 40,
+    gap: 22,
   },
-
-  // Recent searches / recently viewed (shown before a search is typed)
-  historyHeader: {
+  section: {
+    gap: 12,
+  },
+  sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: Spacing.sm,
   },
   sectionTitle: {
-    fontSize: FontSize.sm,
+    fontSize: 19,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
+    letterSpacing: -0.3,
+    color: INK,
   },
-  clearLink: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.primary,
+  sectionLink: {
+    fontSize: 15,
+    fontWeight: FontWeight.semibold,
+    color: LINK,
   },
-  card: {
+  resultsTitle: {
+    fontSize: 22,
+    fontWeight: FontWeight.extrabold,
+    letterSpacing: -0.4,
+    color: INK,
+    marginBottom: -8,
+  },
+  hintText: {
+    fontSize: 13,
+    color: MUTED,
+  },
+
+  // ── Recent searches ─────────────────────────────────────────────────────
+  wrapRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  recentChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
+    gap: 8,
+    height: 40,
+    paddingHorizontal: 14,
+    borderRadius: ModernRadius.pill,
+    backgroundColor: '#E6EEFB',
   },
-  avatar: {
-    width: 52,
-    height: 52,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
+  recentChipText: {
+    fontSize: 15,
+    fontWeight: FontWeight.medium,
+    color: INK,
+  },
+
+  // ── Shared white list card ──────────────────────────────────────────────
+  listCard: {
+    borderRadius: ModernRadius.card,
+    backgroundColor: Color.white,
+    borderWidth: 1,
+    borderColor: HAIRLINE,
+    overflow: 'hidden',
+    ...CARD_SHADOW,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: CARD_BORDER,
+    marginLeft: 12,
+  },
+
+  // ── Recently viewed rows ────────────────────────────────────────────────
+  viewRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 14,
+    padding: 10,
+  },
+  viewThumb: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
     overflow: 'hidden',
   },
-  avatarImg: { width: '100%', height: '100%' },
-  info: { flex: 1, minWidth: 0 },
-  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  name: {
-    fontSize: FontSize.md,
+  rowInfo: {
+    flex: 1,
+    gap: 2,
+  },
+  rowTitle: {
+    fontSize: 16,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-    flexShrink: 1,
+    color: INK,
   },
-  meta: {
-    marginTop: 2,
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
+  rowSub: {
+    fontSize: 14,
+    color: MUTED,
   },
-  price: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.bold,
-    color: Color.primary,
+  iconTile: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: SOFT_FILL,
   },
-  // Used where `price` isn't already inside a marginTop'd row (e.g. metaRow).
-  standalonePrice: {
-    marginTop: 4,
+
+  // ── Popular tiles ───────────────────────────────────────────────────────
+  tileGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
   },
-  metaRow: {
+  tile: {
+    height: 96,
+    borderRadius: 14,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingHorizontal: 6,
+  },
+  tileLabel: {
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+    color: INK,
+    textAlign: 'center',
+  },
+
+  // ── Business result card ────────────────────────────────────────────────
+  bizCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
-    marginTop: 4,
+    gap: 14,
+    padding: 10,
+    borderRadius: ModernRadius.card,
+    backgroundColor: Color.white,
+    borderWidth: 1,
+    borderColor: HAIRLINE,
+    ...CARD_SHADOW,
   },
-  durationChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  bizThumb: {
+    width: 96,
+    height: 96,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  bizInfo: {
+    flex: 1,
     gap: 3,
   },
-  durationText: {
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
-  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
-  ratingText: { fontSize: FontSize.xs, color: Color.textSecondary },
+  bizName: {
+    flexShrink: 1,
+    fontSize: 17,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  bizServices: {
+    fontSize: 14,
+    color: '#334155',
+  },
+  bizMeta: {
+    fontSize: 13,
+    color: MUTED,
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 2,
+  },
+  ratingInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  ratingText: {
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  openPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: ModernRadius.pill,
+    backgroundColor: PILL.green.bg,
+  },
+  openPillText: {
+    fontSize: 12,
+    fontWeight: FontWeight.semibold,
+    color: PILL.green.fg,
+  },
+  strong: {
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  match: {
+    fontWeight: FontWeight.bold,
+    color: LINK,
+  },
+
+  // ── Service rows ────────────────────────────────────────────────────────
+  serviceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 10,
+  },
+  serviceThumb: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  serviceName: {
+    fontSize: 15,
+    fontWeight: FontWeight.semibold,
+    color: INK,
+  },
+  serviceMeta: {
+    fontSize: 13,
+    color: MUTED,
+  },
+  servicePrice: {
+    fontSize: 15,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  outlineBtn: {
+    height: 34,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    borderWidth: 1.2,
+    borderColor: LINK,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Color.white,
+  },
+  outlineBtnText: {
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+    color: LINK,
+  },
+
+  // ── Products ────────────────────────────────────────────────────────────
+  productRow: {
+    gap: 10,
+    paddingRight: G,
+  },
+  productScroll: {
+    marginRight: -G,
+  },
+  productGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+
+  // ── Footer hint ─────────────────────────────────────────────────────────
+  footerHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    backgroundColor: '#EAF0FA',
+  },
+  footerHintText: {
+    flexShrink: 1,
+    fontSize: 14,
+    color: INK,
+  },
+
+  // ── Empty / loading ─────────────────────────────────────────────────────
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: Spacing.xl,
-    gap: Spacing.sm,
+    gap: 8,
+    paddingHorizontal: 32,
+    paddingBottom: 60,
   },
-  hint: {
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
+  emptyIcon: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Color.white,
+    marginBottom: 6,
+    ...CARD_SHADOW,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: INK,
     textAlign: 'center',
   },
-
-  // Recent-search chip row
-  wrapRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
-    marginBottom: Spacing.lg,
+  emptyText: {
+    fontSize: 14,
+    color: MUTED,
+    textAlign: 'center',
   },
 });

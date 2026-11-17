@@ -107,3 +107,16 @@ export function isReminderOccurrence(date: Date, start: Date, repeat: ReminderRe
   }
   return true;
 }
+
+export type ReminderTint = { bg: string; border: string; icon: string };
+
+/** Pastel icon-tile colours per category (Reminders list + anywhere else that wants them). */
+export const TYPE_TINT: Record<ReminderType, ReminderTint> = {
+  vehicle: { bg: '#E3ECFD', border: '#D5E2FA', icon: '#2563EB' },
+  insurance: { bg: '#EDE9FE', border: '#E0DAF7', icon: '#5B21B6' },
+  health: { bg: '#FDE7E7', border: '#F8D4D4', icon: '#DC2626' },
+  document: { bg: '#FDEFD9', border: '#F7E6C8', icon: '#C2410C' },
+  home: { bg: '#E3F6EB', border: '#CDEBDB', icon: '#15803D' },
+  appointment: { bg: '#E0EEFC', border: '#CFE2F8', icon: '#1D4ED8' },
+  other: { bg: '#F1F3F7', border: '#E2E6EE', icon: '#475569' },
+};

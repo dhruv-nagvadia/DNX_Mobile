@@ -1,38 +1,60 @@
 import React from 'react';
-import { View, Text, Image, ScrollView, ActivityIndicator, Modal, TouchableOpacity } from 'react-native';
-import { MapPin, Plus } from 'lucide-react-native';
+import { View, Text, ScrollView, ActivityIndicator, Modal, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  ArrowRight,
+  CalendarDays,
+  Car,
+  Clock3,
+  House,
+  Info,
+  MapPin,
+  PartyPopper,
+  Plus,
+} from 'lucide-react-native';
 
-import { AppHeader } from '@/components/AppHeader';
-import { AppButton } from '@/components/AppButton';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { PaymentMethodModal } from '@/components/PaymentMethodModal';
-import { OffersSection } from '@/components/OffersSection';
 import { Color } from '@/utils/Theme';
+import { INK, LINK } from '@/utils/modernTheme';
 import { formatMoney } from '@/utils/units';
 import { formatAddress } from '@/utils/formatAddress';
 
 import { useBookingSummary } from './useBookingSummary';
+import {
+  BusinessCard,
+  DashedLine,
+  OffersStrip,
+  formatClock,
+  formatDay,
+  formatDuration,
+  formatKm,
+} from './parts';
 import { styles } from './styles';
 
-function formatDuration(min: number): string {
-  if (min < 60) return `${min} min`;
-  const h = Math.floor(min / 60);
-  const m = min % 60;
-  return m ? `${h} hr ${m} min` : `${h} hr`;
-}
+const MUTED_ICON = '#64748B';
 
-function formatWhen(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'short',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
+function Header() {
+  return (
+    <View>
+      <ScreenHeader title="Review & pay" subtitle="Step 2 of 2" />
+      <View
+        style={styles.progress}
+        accessible
+        accessibilityRole="progressbar"
+        accessibilityLabel="Step 2 of 2"
+      >
+        <View style={styles.progressSeg} />
+        <View style={styles.progressSeg} />
+      </View>
+    </View>
+  );
 }
 
 /** Review-and-pay step: booking details, cost breakdown, and offers — before choosing how to pay. */
 export default function BookingSummaryScreen() {
+  const insets = useSafeAreaInsets();
   const {
     provider,
     service,
@@ -44,6 +66,7 @@ export default function BookingSummaryScreen() {
     appliedCoupon,
     needsAddress,
     travelFeeMinor,
+    travelKm,
     addresses,
     selectedAddress,
     addressModalOpen,
@@ -51,6 +74,7 @@ export default function BookingSummaryScreen() {
     closeAddressModal,
     selectAddress,
     goToAddAddress,
+    changeAppointment,
     methodOpen,
     openPayment,
     closePayment,
@@ -60,7 +84,7 @@ export default function BookingSummaryScreen() {
   if (isLoading || !provider || !service) {
     return (
       <View style={styles.container}>
-        <AppHeader title="Booking summary" />
+        <Header />
         <View style={styles.center}>
           <ActivityIndicator color={Color.primary} />
         </View>
@@ -69,111 +93,174 @@ export default function BookingSummaryScreen() {
   }
 
   const discount = appliedCoupon?.discountMinor ?? 0;
+  const start = new Date(startTime);
+  const end = new Date(start.getTime() + service.durationMin * 60_000);
+  const km = travelKm != null ? formatKm(travelKm) : null;
 
   return (
     <View style={styles.container}>
-      <AppHeader title="Booking summary" />
+      <Header />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Business + service */}
+        <BusinessCard provider={provider} />
+
+        {/* ── Your appointment ─────────────────────────────────────────── */}
         <View style={styles.card}>
-          <View style={styles.bizRow}>
-            <View style={styles.avatar}>
-              {provider.images.length > 0 ? (
-                <Image source={{ uri: provider.images[0] }} style={styles.avatarImg} />
-              ) : (
-                <CategoryIcon slug={provider.category.slug} size={22} />
-              )}
-            </View>
-            <View style={styles.bizInfo}>
-              <Text style={styles.bizName} numberOfLines={1}>
-                {provider.businessName}
-              </Text>
-              <Text style={styles.bizMeta} numberOfLines={1}>
-                {provider.subcategory?.name ?? provider.category.name}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.divider} />
-
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Service</Text>
-            <Text style={styles.rowValue}>{service.name}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Duration</Text>
-            <Text style={styles.rowValue}>{formatDuration(service.durationMin)}</Text>
-          </View>
-          <View style={needsAddress ? styles.row : [styles.row, styles.rowLast]}>
-            <Text style={styles.rowLabel}>When</Text>
-            <Text style={styles.rowValue}>{formatWhen(startTime)}</Text>
-          </View>
-
-          {needsAddress && (
+          <View style={styles.cardHead}>
+            <Text style={styles.cardTitle}>Your appointment</Text>
             <TouchableOpacity
-              style={[styles.addressRow, styles.rowLast]}
-              activeOpacity={0.8}
-              onPress={openAddressModal}
+              onPress={changeAppointment}
+              hitSlop={10}
+              accessibilityRole="button"
+              accessibilityLabel="Change service or time"
             >
-              <View style={styles.addressIcon}>
-                <MapPin size={18} color={Color.primary} />
-              </View>
-              <View style={styles.addressInfo}>
-                {selectedAddress ? (
-                  <Text style={styles.addressLine}>{formatAddress(selectedAddress)}</Text>
-                ) : (
-                  <Text style={styles.addressPlaceholder}>Choose an address</Text>
-                )}
-              </View>
-              <Text style={styles.addressChange}>{selectedAddress ? 'Change' : 'Select'}</Text>
+              <Text style={styles.link}>Change</Text>
             </TouchableOpacity>
-          )}
+          </View>
+          <View style={styles.apptRow}>
+            <View style={styles.apptIcon}>
+              <CategoryIcon slug={provider.category.slug} size={18} color={INK} />
+            </View>
+            <View style={styles.apptText}>
+              <Text style={styles.apptTitle} numberOfLines={2}>
+                {service.name}
+              </Text>
+              <Text style={styles.apptSub}>{formatDuration(service.durationMin)}</Text>
+            </View>
+          </View>
+          <View style={[styles.apptRow, styles.apptDivider]}>
+            <View style={styles.apptIcon}>
+              <CalendarDays size={20} color={INK} strokeWidth={1.8} />
+            </View>
+            <Text style={styles.apptTitle}>{formatDay(start)}</Text>
+          </View>
+          <View style={[styles.apptRow, styles.apptDivider]}>
+            <View style={styles.apptIcon}>
+              <Clock3 size={20} color={INK} strokeWidth={1.8} />
+            </View>
+            <Text style={styles.apptTitle}>
+              {formatClock(start)} – {formatClock(end)}
+            </Text>
+          </View>
         </View>
 
-        {/* Offers */}
-        <Text style={styles.sectionTitle}>Offers</Text>
-        <OffersSection
-          groups={[
-            { providerId: provider.id, subtotalMinor: service.priceMinor, serviceId: service.id },
-          ]}
+        {/* ── Where should they come? (at-home services) ──────────────── */}
+        {needsAddress && (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Where should they come?</Text>
+            {selectedAddress ? (
+              <View style={styles.addrRow}>
+                <View style={styles.addrIcon}>
+                  <House size={20} color={INK} strokeWidth={1.8} />
+                </View>
+                <View style={styles.apptText}>
+                  <Text style={styles.addrLabel}>{selectedAddress.label || 'Address'}</Text>
+                  <Text style={styles.addrLine}>{formatAddress(selectedAddress)}</Text>
+                </View>
+                <TouchableOpacity
+                  onPress={openAddressModal}
+                  hitSlop={10}
+                  accessibilityRole="button"
+                  accessibilityLabel="Change address"
+                >
+                  <Text style={styles.link}>Change</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.addrRow}
+                activeOpacity={0.8}
+                onPress={openAddressModal}
+                accessibilityRole="button"
+                accessibilityLabel="Choose an address"
+              >
+                <View style={styles.addrIcon}>
+                  <MapPin size={20} color={LINK} strokeWidth={1.8} />
+                </View>
+                <View style={styles.apptText}>
+                  <Text style={styles.addrPlaceholder}>Choose an address</Text>
+                  <Text style={styles.addrLine}>Needed so the provider can come to you</Text>
+                </View>
+                <Text style={styles.link}>Select</Text>
+              </TouchableOpacity>
+            )}
+            {!!selectedAddress && km != null && (
+              <View style={styles.travelRow}>
+                <Car size={18} color={MUTED_ICON} strokeWidth={1.8} />
+                <Text style={styles.travelText}>They’ll travel ~{km} km to you</Text>
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* ── Offers ───────────────────────────────────────────────────── */}
+        <OffersStrip
+          providerId={provider.id}
+          serviceId={service.id}
+          subtotalMinor={service.priceMinor}
           currency={currency}
-          compact
         />
 
-        {/* Cost breakdown */}
-        <Text style={styles.sectionTitle}>Amount</Text>
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Service price</Text>
-            <Text style={styles.rowValue}>{formatMoney(service.priceMinor, currency)}</Text>
+        {/* ── Bill details ─────────────────────────────────────────────── */}
+        <View style={[styles.card, styles.billCard]}>
+          <Text style={styles.cardTitle}>Bill details</Text>
+          <View style={styles.billLine}>
+            <Text style={styles.billLabel}>Service price</Text>
+            <Text style={styles.billValue}>{formatMoney(service.priceMinor, currency)}</Text>
           </View>
+          {travelFeeMinor > 0 && (
+            <View style={styles.billLine}>
+              <Text style={styles.billLabel}>Travel fee{km != null ? ` (${km} km)` : ''}</Text>
+              <Text style={styles.billValue}>{formatMoney(travelFeeMinor, currency)}</Text>
+            </View>
+          )}
           {discount > 0 && (
-            <View style={styles.row}>
-              <Text style={styles.discountLabel}>Discount ({appliedCoupon?.code})</Text>
-              <Text style={styles.discountValue}>−{formatMoney(discount, currency)}</Text>
+            <View style={styles.billLine}>
+              <Text style={styles.discLabel}>Coupon {appliedCoupon?.code}</Text>
+              <Text style={styles.discLabel}>−{formatMoney(discount, currency)}</Text>
             </View>
           )}
-          {needsAddress && (
-            <View style={styles.row}>
-              <Text style={styles.rowLabel}>Travel fee</Text>
-              <Text style={styles.rowValue}>{formatMoney(travelFeeMinor, currency)}</Text>
-            </View>
-          )}
-          <View style={[styles.row, styles.rowLast]}>
+          <DashedLine />
+          <View style={styles.billLine}>
             <Text style={styles.totalLabel}>Total</Text>
             <Text style={styles.totalValue}>{formatMoney(total, currency)}</Text>
           </View>
+          {discount > 0 && (
+            <View style={styles.savePill}>
+              <PartyPopper size={16} color="#15803D" strokeWidth={2} />
+              <Text style={styles.saveText}>
+                You’re saving {formatMoney(discount, currency)} on this booking
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {/* ── Cancellation note ────────────────────────────────────────── */}
+        <View style={styles.infoStrip}>
+          <Info size={18} color={LINK} strokeWidth={2} />
+          <Text style={styles.infoText}>Free cancellation until your slot starts.</Text>
         </View>
       </ScrollView>
 
-      {/* Continue bar */}
-      <View style={styles.bar}>
-        <View>
+      {/* ── Sticky continue bar ────────────────────────────────────────── */}
+      <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom, 12) + 4 }]}>
+        <View style={styles.barInfo}>
           <Text style={styles.barLabel}>Total</Text>
           <Text style={styles.barTotal}>{formatMoney(total, currency)}</Text>
+          {discount > 0 && (
+            <Text style={styles.barSaved}>Saved {formatMoney(discount, currency)}</Text>
+          )}
         </View>
-        <AppButton style={styles.continueBtn} title="Continue to payment" onPress={openPayment} />
+        <TouchableOpacity
+          style={styles.payBtn}
+          activeOpacity={0.9}
+          onPress={openPayment}
+          accessibilityRole="button"
+          accessibilityLabel="Continue to payment"
+        >
+          <Text style={styles.payBtnText}>Continue to payment</Text>
+          <ArrowRight size={20} color={Color.white} strokeWidth={2.4} />
+        </TouchableOpacity>
       </View>
 
       <PaymentMethodModal
@@ -182,40 +269,60 @@ export default function BookingSummaryScreen() {
         currency={currency}
         depositPercent={depositPercent}
         serviceName={service.name}
+        context="visit"
         onSelect={chooseMethod}
         onClose={closePayment}
       />
 
       {needsAddress && (
-        <Modal visible={addressModalOpen} transparent animationType="slide" onRequestClose={closeAddressModal}>
-          <TouchableOpacity style={styles.sheetOverlay} activeOpacity={1} onPress={closeAddressModal}>
+        <Modal
+          visible={addressModalOpen}
+          transparent
+          animationType="slide"
+          onRequestClose={closeAddressModal}
+        >
+          <TouchableOpacity
+            style={styles.sheetOverlay}
+            activeOpacity={1}
+            onPress={closeAddressModal}
+          >
             <TouchableOpacity activeOpacity={1} style={styles.sheet}>
+              <View style={styles.sheetHandle} />
               <Text style={styles.sheetTitle}>Choose an address</Text>
-              <ScrollView style={styles.addressScrollArea} showsVerticalScrollIndicator nestedScrollEnabled>
-                {addresses.map((a) => (
-                  <TouchableOpacity
-                    key={a.id}
-                    style={styles.addressOption}
-                    activeOpacity={0.7}
-                    onPress={() => selectAddress(a)}
-                  >
-                    <View
-                      style={[
-                        styles.addressRadio,
-                        selectedAddress?.id === a.id && styles.addressRadioSelected,
-                      ]}
+              <ScrollView
+                style={styles.addressScrollArea}
+                showsVerticalScrollIndicator
+                nestedScrollEnabled
+              >
+                {addresses.map((a) => {
+                  const selected = selectedAddress?.id === a.id;
+                  return (
+                    <TouchableOpacity
+                      key={a.id}
+                      style={styles.addressOption}
+                      activeOpacity={0.7}
+                      onPress={() => selectAddress(a)}
+                      accessibilityRole="radio"
+                      accessibilityState={{ checked: selected }}
                     >
-                      {selectedAddress?.id === a.id && <View style={styles.addressRadioDot} />}
-                    </View>
-                    <View style={styles.addressInfo}>
-                      {!!a.label && <Text style={styles.addressLabel}>{a.label}</Text>}
-                      <Text style={styles.addressLine}>{formatAddress(a)}</Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
+                      <View style={[styles.addressRadio, selected && styles.addressRadioSelected]}>
+                        {selected && <View style={styles.addressRadioDot} />}
+                      </View>
+                      <View style={styles.apptText}>
+                        {!!a.label && <Text style={styles.addressLabel}>{a.label}</Text>}
+                        <Text style={styles.addrLine}>{formatAddress(a)}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
               </ScrollView>
-              <TouchableOpacity style={styles.addNewAddressBtn} activeOpacity={0.85} onPress={goToAddAddress}>
-                <Plus size={16} color={Color.primary} />
+              <TouchableOpacity
+                style={styles.addNewAddressBtn}
+                activeOpacity={0.85}
+                onPress={goToAddAddress}
+                accessibilityRole="button"
+              >
+                <Plus size={16} color={LINK} />
                 <Text style={styles.addNewAddressBtnText}>Add new address</Text>
               </TouchableOpacity>
             </TouchableOpacity>

@@ -15,6 +15,7 @@ import {
 import { addRecentlyViewed } from '@/utils/recentlyViewed';
 import { ROUTES } from '@/navigation/routes';
 import { ProviderDetailNavigationProp, ProviderDetailRouteProp } from './types';
+import { useBusinessExtras } from './useBusinessExtras';
 
 // Fallback only, used before a service is selected — once one is, slots step
 // by that service's own duration (see buildSlots).
@@ -55,7 +56,10 @@ function periodOf(hour: number): SlotPeriod {
 function groupSlots(slots: SlotInfo[]): SlotGroup[] {
   const order: SlotPeriod[] = ['Morning', 'Afternoon', 'Evening'];
   return order
-    .map((period) => ({ period, slots: slots.filter((s) => periodOf(s.time.getHours()) === period) }))
+    .map((period) => ({
+      period,
+      slots: slots.filter((s) => periodOf(s.time.getHours()) === period),
+    }))
     .filter((g) => g.slots.length > 0);
 }
 
@@ -88,7 +92,12 @@ function effectiveConfig(
   }
   const w = weekly.find((h) => h.dayOfWeek === day.getDay() && h.isOpen);
   return w
-    ? { openTime: w.openTime, closeTime: w.closeTime, breakStart: w.breakStart, breakEnd: w.breakEnd }
+    ? {
+        openTime: w.openTime,
+        closeTime: w.closeTime,
+        breakStart: w.breakStart,
+        breakEnd: w.breakEnd,
+      }
     : null;
 }
 
@@ -101,7 +110,12 @@ function effectiveConfig(
  * that overlaps the day's break window (if any) is dropped entirely —
  * unlike an already-booked slot, it was never offered in the first place.
  */
-function buildSlots(config: DayConfig, day: Date, booked: Interval[], durationMin: number): SlotInfo[] {
+function buildSlots(
+  config: DayConfig,
+  day: Date,
+  booked: Interval[],
+  durationMin: number,
+): SlotInfo[] {
   if (!config) return [];
 
   const [oh, om] = config.openTime.split(':').map(Number);
@@ -132,7 +146,8 @@ function buildSlots(config: DayConfig, day: Date, booked: Interval[], durationMi
   while (cursor < close) {
     const start = cursor.getTime();
     const end = start + durationMs;
-    const onBreak = breakStart !== null && breakEnd !== null && start < breakEnd && end > breakStart;
+    const onBreak =
+      breakStart !== null && breakEnd !== null && start < breakEnd && end > breakStart;
 
     if (start > now && end <= close.getTime() && !onBreak) {
       const isBooked = booked.some((b) => start < b.end && end > b.start);
@@ -152,7 +167,10 @@ export function useProviderDetail() {
 
   // For the "N people from your area used this provider" badge.
   const postalCode = useAppSelector((s) => s.location.current?.postalCode);
-  const { data: provider, isLoading } = useGetProviderByIdQuery({ id: params.providerId, postalCode });
+  const { data: provider, isLoading } = useGetProviderByIdQuery({
+    id: params.providerId,
+    postalCode,
+  });
   const { data: bookedSlots } = useGetBookedSlotsQuery(params.providerId);
   const { data: reviews = [] } = useGetProviderReviewsQuery(params.providerId);
   const [reschedule, { isLoading: rescheduling }] = useRescheduleBookingMutation();
@@ -180,7 +198,8 @@ export function useProviderDetail() {
   );
 
   const dayConfig = useMemo<DayConfig>(
-    () => (provider ? effectiveConfig(provider.businessHours, provider.dateHours, days[dayIndex]) : null),
+    () =>
+      provider ? effectiveConfig(provider.businessHours, provider.dateHours, days[dayIndex]) : null,
     [provider, days, dayIndex],
   );
 
@@ -292,11 +311,37 @@ export function useProviderDetail() {
       serviceId: selectedServiceId,
       startTime: selectedSlot,
     });
-  }, [provider, selectedServiceId, selectedSlot, isReschedule, params.rescheduleBookingId, reschedule, navigation]);
+  }, [
+    provider,
+    selectedServiceId,
+    selectedSlot,
+    isReschedule,
+    params.rescheduleBookingId,
+    reschedule,
+    navigation,
+  ]);
+
+  // ── Extras for the redesigned page ─────────────────────────────────────
+  // Days the business is closed (weekly hours or a date override).
+  const dayClosed = useMemo(
+    () =>
+      days.map((d) =>
+        provider ? effectiveConfig(provider.businessHours, provider.dateHours, d) === null : false,
+      ),
+    [days, provider],
+  );
+
+  const { offer, ratingBreakdown, hoursRows, address, onCall, onDirections, onShare } =
+    useBusinessExtras(provider, reviews, 'BOOKING');
+
+  const depositPercent =
+    (provider?.partialPayEnabled ?? true) && provider?.depositPercent ? provider.depositPercent : 0;
+
+  const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
   const headerTitle = isReschedule
     ? 'Reschedule'
-    : provider?.businessName ?? params.name ?? 'Business';
+    : (provider?.businessName ?? params.name ?? 'Business');
 
   return {
     provider,
@@ -323,5 +368,15 @@ export function useProviderDetail() {
     canBook,
     booking: submitting,
     onBook,
+    dayClosed,
+    offer,
+    ratingBreakdown,
+    hoursRows,
+    address,
+    depositPercent,
+    onCall,
+    onDirections,
+    onShare,
+    goBack,
   };
 }

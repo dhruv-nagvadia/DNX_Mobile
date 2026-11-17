@@ -26,28 +26,33 @@ export function useAddReminder() {
   const isEdit = !!params.id;
 
   const { data: reminders = [] } = useGetRemindersQuery();
-  const existing = params.id ? reminders.find((r) => r.id === params.id) ?? null : null;
+  const existing = params.id ? (reminders.find((r) => r.id === params.id) ?? null) : null;
 
   const [createReminder, { isLoading: creating }] = useCreateReminderMutation();
   const [updateReminder, { isLoading: updating }] = useUpdateReminderMutation();
   const [deleteReminder] = useDeleteReminderMutation();
 
-  const [title, setTitle] = useState(params.prefillTitle ?? '');
-  const [type, setType] = useState<ReminderType>((params.prefillType as ReminderType) ?? 'other');
+  const [title, setTitleState] = useState(params.prefillTitle ?? '');
+  // A new reminder starts with no category / date picked, so the customer
+  // chooses deliberately (inline errors explain what's missing on Save).
+  const [type, setTypeState] = useState<ReminderType | null>(
+    (params.prefillType as ReminderType) ?? null,
+  );
   const [repeat, setRepeat] = useState<ReminderRepeat>('NONE');
   const [note, setNote] = useState('');
-  const [startDate, setStartDate] = useState<Date>(todayAt9);
+  const [startDate, setStartDateState] = useState<Date | null>(isEdit ? todayAt9() : null);
+  const [errors, setErrors] = useState<{ title?: string; type?: string; startDate?: string }>({});
   const [endDate, setEndDate] = useState<Date | null>(null);
 
   const inited = useRef(false);
   useEffect(() => {
     if (existing && !inited.current) {
       inited.current = true;
-      setTitle(existing.title);
-      setType(existing.type);
+      setTitleState(existing.title);
+      setTypeState(existing.type);
       setRepeat(existing.repeat);
       setNote(existing.note ?? '');
-      setStartDate(new Date(existing.dueDate));
+      setStartDateState(new Date(existing.dueDate));
       setEndDate(existing.endDate ? new Date(existing.endDate) : null);
     }
   }, [existing]);
@@ -63,9 +68,30 @@ export function useAddReminder() {
     setEndDate(null);
   };
 
+  // Editing a field clears its error.
+  const setTitle = (v: string) => {
+    setTitleState(v);
+    if (errors.title && v.trim()) {
+      setErrors((e) => ({ ...e, title: undefined }));
+    }
+  };
+  const setType = (t: ReminderType) => {
+    setTypeState(t);
+    setErrors((e) => ({ ...e, type: undefined }));
+  };
+  const setStartDate = (d: Date) => {
+    setStartDateState(d);
+    setErrors((e) => ({ ...e, startDate: undefined }));
+  };
+
   const save = async () => {
-    if (!title.trim()) {
-      Alert.alert('Add a title', 'Give your reminder a name.');
+    const next = {
+      title: title.trim() ? undefined : 'Give your reminder a name.',
+      type: type ? undefined : 'Pick a category.',
+      startDate: startDate ? undefined : 'Pick a date.',
+    };
+    setErrors(next);
+    if (next.title || next.type || next.startDate || !type || !startDate) {
       return;
     }
     const hasEnd = repeat !== 'NONE' && !!endDate;
@@ -105,7 +131,9 @@ export function useAddReminder() {
   };
 
   const removeReminder = () => {
-    if (!params.id) return;
+    if (!params.id) {
+      return;
+    }
     Alert.alert('Delete reminder?', 'This can’t be undone.', [
       { text: 'Cancel', style: 'cancel' },
       {
@@ -123,8 +151,15 @@ export function useAddReminder() {
     ]);
   };
 
+  // The business this reminder belongs to (from a booking's "remind me to
+  // book again"), when there is one.
+  const linkedProviderId = params.providerId ?? existing?.providerId ?? null;
+
   return {
     isEdit,
+    errors,
+    linkedProviderId,
+    createdAt: existing?.createdAt ?? null,
     title,
     setTitle,
     type,

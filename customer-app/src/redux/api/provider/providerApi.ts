@@ -76,6 +76,7 @@ export const {
   useGetProvidersQuery,
   useLazyGetProvidersQuery,
   useGetProviderByIdQuery,
+  useLazyGetProviderByIdQuery,
   useGetProviderReviewsQuery,
   useGetProductReviewsQuery,
   useSearchProductsQuery,

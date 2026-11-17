@@ -39,20 +39,37 @@ export function useBookingSummary() {
 
   // Default to the customer's default address the first time addresses load.
   useEffect(() => {
-    if (!needsAddress || selectedAddress || addresses.length === 0) return;
+    if (!needsAddress || selectedAddress || addresses.length === 0) {
+      return;
+    }
     setSelectedAddress(addresses.find((a) => a.isDefault) ?? addresses[0]);
   }, [needsAddress, addresses, selectedAddress]);
 
-  const travelFeeMinor =
-    needsAddress && service && selectedAddress && provider?.latitude != null && provider?.longitude != null && selectedAddress.latitude != null && selectedAddress.longitude != null
-      ? service.travelBaseFeeMinor! +
-        Math.round(
-          service.travelPerKmMinor! *
-            haversineKm(provider.latitude, provider.longitude, selectedAddress.latitude, selectedAddress.longitude),
+  // Straight-line distance the provider travels (null until both ends have
+  // coordinates) — drives the per-km part of the travel fee and is shown as
+  // "They'll travel ~X km to you".
+  const travelKm =
+    needsAddress &&
+    service &&
+    selectedAddress &&
+    provider?.latitude != null &&
+    provider?.longitude != null &&
+    selectedAddress.latitude != null &&
+    selectedAddress.longitude != null
+      ? haversineKm(
+          provider.latitude,
+          provider.longitude,
+          selectedAddress.latitude,
+          selectedAddress.longitude,
         )
-      : needsAddress && service
-        ? service.travelBaseFeeMinor ?? 0
-        : 0;
+      : null;
+
+  const travelFeeMinor =
+    needsAddress && service
+      ? travelKm != null
+        ? service.travelBaseFeeMinor! + Math.round(service.travelPerKmMinor! * travelKm)
+        : (service.travelBaseFeeMinor ?? 0)
+      : 0;
 
   const total = (service?.priceMinor ?? 0) - (appliedCoupon?.discountMinor ?? 0) + travelFeeMinor;
 
@@ -86,7 +103,10 @@ export function useBookingSummary() {
       return;
     }
     if (needsAddress && !selectedAddress) {
-      Alert.alert('Choose an address', 'This service requires an address for the provider to visit.');
+      Alert.alert(
+        'Choose an address',
+        'This service requires an address for the provider to visit.',
+      );
       setAddressModalOpen(true);
       return;
     }
@@ -101,7 +121,9 @@ export function useBookingSummary() {
   // this modal.
   const chooseMethod = useCallback(
     (method: PaymentMethod) => {
-      if (!provider || !service) return;
+      if (!provider || !service) {
+        return;
+      }
       if (isSlotExpired()) {
         onSlotGone('This time has passed. Please pick another time.');
         return;
@@ -129,8 +151,20 @@ export function useBookingSummary() {
           : undefined,
       });
     },
-    [provider, service, params.startTime, appliedCoupon, selectedAddress, isSlotExpired, onSlotGone, navigation],
+    [
+      provider,
+      service,
+      params.startTime,
+      appliedCoupon,
+      selectedAddress,
+      isSlotExpired,
+      onSlotGone,
+      navigation,
+    ],
   );
+
+  // "Change" on the appointment card — back to the business/slot step.
+  const changeAppointment = useCallback(() => navigation.goBack(), [navigation]);
 
   const goToAddAddress = useCallback(() => {
     setAddressModalOpen(false);
@@ -152,6 +186,7 @@ export function useBookingSummary() {
     // On-location address
     needsAddress,
     travelFeeMinor,
+    travelKm,
     addresses,
     selectedAddress,
     addressModalOpen,
@@ -159,6 +194,7 @@ export function useBookingSummary() {
     closeAddressModal,
     selectAddress,
     goToAddAddress,
+    changeAppointment,
     // Payment method sheet
     methodOpen,
     openPayment,

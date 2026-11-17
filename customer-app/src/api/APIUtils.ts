@@ -26,12 +26,30 @@ const DEV_FALLBACK = `http://${DEV_HOST}:4000/api/v1`;
  * address is always the right one. Only private/local hosts are swapped.
  * Release builds are untouched.
  */
+/**
+ * Metro's address (e.g. "http://172.18.5.32:8081/"). The new architecture
+ * (bridgeless) only exposes it via getConstants(), so use React Native's own
+ * getDevServer() and fall back to the old bridge constant.
+ */
+function metroDevServerUrl(): string | undefined {
+  try {
+    const getDevServer = require('react-native/Libraries/Core/Devtools/getDevServer');
+    const info = getDevServer();
+    if (info?.bundleLoadedFromServer && info.url) {
+      return info.url;
+    }
+  } catch {
+    // Older RN without this module — fall through.
+  }
+  const sourceCode = NativeModules?.SourceCode;
+  return sourceCode?.getConstants?.().scriptURL ?? sourceCode?.scriptURL;
+}
+
 function withMetroHost(url: string): string {
   if (!__DEV__) {
     return url;
   }
-  const scriptURL: string | undefined = NativeModules?.SourceCode?.scriptURL;
-  const metroHost = scriptURL?.match(/^https?:\/\/([^/:]+)/)?.[1];
+  const metroHost = metroDevServerUrl()?.match(/^https?:\/\/([^/:]+)/)?.[1];
   const target = url.match(/^(https?:\/\/)([^/:]+)(.*)$/);
   if (!metroHost || !target) {
     return url;

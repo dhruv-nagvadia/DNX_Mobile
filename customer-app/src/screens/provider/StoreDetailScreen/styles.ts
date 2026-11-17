@@ -1,194 +1,109 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Shadow, Spacing } from '@/utils/Theme';
 
+import { Color, FontWeight } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernSize } from '@/utils/modernTheme';
+
+const BLUE = '#1D4ED8';
+
+/** Store-only styles; shared pieces use ProviderDetailScreen/styles. */
 export const styles = StyleSheet.create({
-  container: {
+  // Room for the sticky cart bar.
+  contentWithBar: {
+    paddingBottom: 110,
+  },
+  search: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    height: 48,
+    marginTop: 14,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
+  searchInput: {
     flex: 1,
-    backgroundColor: Color.background,
+    height: '100%',
+    paddingVertical: 0,
+    fontSize: 15,
+    color: INK,
   },
-  content: {
-    padding: Spacing.lg,
+  hRow: {
+    paddingHorizontal: ModernSize.gutter,
+    paddingBottom: 4,
+    gap: 10,
   },
-
-  // Store header
-  storeHead: {
+  grid: {
     flexDirection: 'row',
-    gap: Spacing.md,
-    alignItems: 'center',
-    padding: Spacing.md,
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-    marginBottom: Spacing.lg,
-  },
-  storeIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  storeInfo: { flex: 1, minWidth: 0 },
-  storeName: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.extrabold,
-    color: Color.textPrimary,
-  },
-  storeMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    marginTop: 6,
     flexWrap: 'wrap',
+    gap: 10,
   },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.primarySoft,
-  },
-  chipText: { fontSize: FontSize.xs, fontWeight: FontWeight.semibold, color: Color.primaryDark },
-  rating: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  ratingText: { fontSize: FontSize.xs, color: Color.textSecondary, fontWeight: FontWeight.semibold },
-
-  sectionTitle: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-    marginBottom: Spacing.sm,
-  },
-
-  // Contact card
-  contactCard: {
-    borderRadius: Radius.lg,
-    backgroundColor: Color.surface,
-    borderWidth: 1,
-    borderColor: Color.border,
-    paddingHorizontal: Spacing.md,
-    marginBottom: Spacing.lg,
-  },
-  contactRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Color.border,
-  },
-  contactRowLast: { borderBottomWidth: 0 },
-  contactIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  contactText: { flex: 1, minWidth: 0 },
-  contactLabel: { fontSize: FontSize.xs, color: Color.textSecondary },
-  contactValue: { marginTop: 2, fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Color.textPrimary },
-  callAction: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.primary },
-
-  empty: { alignItems: 'center', gap: Spacing.sm, paddingVertical: Spacing.xl },
-  emptyText: { fontSize: FontSize.sm, color: Color.textSecondary, textAlign: 'center' },
-
-  viewAll: {
-    marginTop: Spacing.sm,
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.primary,
-  },
-
-  // ── Section teasers — up to 3 of this store's own named sections, 2
-  // products each, with a "View all" link top-right of each one ──────────
-  sectionPreviews: { marginTop: Spacing.lg },
-  sectionGroup: { marginBottom: Spacing.lg },
   sectionHead: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: Spacing.sm,
+    gap: 12,
+    marginTop: 22,
+    marginBottom: 10,
   },
-  sectionGroupTitle: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-  },
-  // Groups the title with an optional "Deal" tag as one flex-shrinkable
-  // unit, so the sibling "View all" link stays pinned right.
   sectionTitleGroup: {
+    flexShrink: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  sectionGroupTitle: {
     flexShrink: 1,
+    fontSize: 19,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.3,
+    color: INK,
   },
   dealTag: {
     paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.successSoft,
+    paddingVertical: 2,
+    borderRadius: 999,
+    backgroundColor: '#EA580C',
   },
-  dealTagText: { fontSize: 10, fontWeight: FontWeight.bold, color: Color.success },
-  sectionRow: {
-    flexDirection: 'row',
-    gap: Spacing.md,
+  dealTagText: {
+    fontSize: 11,
+    fontWeight: FontWeight.bold,
+    color: Color.white,
   },
   sectionLink: {
-    fontSize: FontSize.sm,
+    fontSize: 14,
     fontWeight: FontWeight.semibold,
-    color: Color.primary,
+    color: BLUE,
   },
-  // A real tappable button (not just a text link) — the previous plain-text
-  // "View all" under the section teasers was too easy to miss.
   viewAllTypesBtn: {
-    alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 4,
-    marginTop: Spacing.sm,
-    paddingVertical: 10,
-    paddingHorizontal: Spacing.md,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.primarySoft,
+    height: 44,
+    marginTop: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
   },
   viewAllTypesText: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.bold,
-    color: Color.primary,
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+    color: BLUE,
+  },
+  empty: {
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 32,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: '#64748B',
   },
 
-  // ── "Shop by category" — this store's own product-type tiles (same look
-  // as the home screen's "Shop by product" row) ─────────────────────────
-  hRow: { gap: Spacing.md, paddingRight: Spacing.lg, paddingVertical: 2 },
-  productCard: {
-    width: 124,
-    borderRadius: Radius.lg,
-    padding: Spacing.sm,
-    alignItems: 'center',
-    backgroundColor: Color.surface,
-    ...Shadow.card,
-  },
-  productCardImageWrap: {
-    width: 82,
-    height: 82,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 6,
-  },
-  productCardImage: { width: '100%', height: '100%' },
-  productCardName: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-    textAlign: 'center',
-  },
-
-  // Cart bar
+  // ── Sticky cart bar ─────────────────────────────────────────────────────
   cartBar: {
     position: 'absolute',
     left: 0,
@@ -196,55 +111,39 @@ export const styles = StyleSheet.create({
     bottom: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
-    backgroundColor: Color.surface,
+    gap: 12,
+    paddingHorizontal: ModernSize.gutter,
+    paddingTop: 12,
+    backgroundColor: Color.white,
     borderTopWidth: 1,
-    borderTopColor: Color.border,
+    borderTopColor: CARD_BORDER,
+    ...CARD_SHADOW,
   },
-  cartCount: { fontSize: FontSize.xs, color: Color.textSecondary, fontWeight: FontWeight.semibold },
-  cartTotal: { fontSize: FontSize.lg, fontWeight: FontWeight.extrabold, color: Color.textPrimary },
+  cartInfo: {
+    flex: 1,
+    gap: 2,
+  },
+  cartCount: {
+    fontSize: 13,
+    color: '#64748B',
+  },
+  cartTotal: {
+    fontSize: 16,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
   checkoutBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: 14,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primary,
+    height: 50,
+    paddingHorizontal: 26,
+    borderRadius: 12,
+    backgroundColor: BLUE,
   },
-  checkoutText: { color: Color.white, fontSize: FontSize.md, fontWeight: FontWeight.bold },
-
-  // Checkout sheet
-  sheetOverlay: { flex: 1, backgroundColor: Color.overlay, justifyContent: 'flex-end' },
-  sheet: {
-    backgroundColor: Color.surface,
-    borderTopLeftRadius: Radius.lg,
-    borderTopRightRadius: Radius.lg,
-    padding: Spacing.lg,
-    gap: Spacing.sm,
+  checkoutText: {
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: Color.white,
   },
-  sheetTitle: { fontSize: FontSize.lg, fontWeight: FontWeight.bold, color: Color.textPrimary },
-  sheetSub: { fontSize: FontSize.sm, color: Color.textSecondary, marginBottom: Spacing.sm },
-  payOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: Spacing.md,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Color.border,
-    backgroundColor: Color.surface,
-  },
-  payOptionActive: { borderColor: Color.primary, backgroundColor: Color.primarySoft },
-  payText: { flex: 1, minWidth: 0 },
-  payTitle: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Color.textPrimary },
-  paySub: { marginTop: 2, fontSize: FontSize.xs, color: Color.textSecondary },
-  sheetActions: { flexDirection: 'row', gap: Spacing.sm, marginTop: Spacing.md },
-  sheetBtn: { flex: 1, paddingVertical: 14, borderRadius: Radius.md, alignItems: 'center' },
-  sheetGhost: { backgroundColor: Color.surface, borderWidth: 1, borderColor: Color.border },
-  sheetGhostText: { color: Color.textPrimary, fontSize: FontSize.md, fontWeight: FontWeight.semibold },
-  sheetPrimary: { backgroundColor: Color.primary, flex: 2 },
-  sheetPrimaryText: { color: Color.white, fontSize: FontSize.md, fontWeight: FontWeight.bold },
 });

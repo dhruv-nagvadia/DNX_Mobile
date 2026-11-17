@@ -1,111 +1,47 @@
 import React from 'react';
 import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
+  StatusBar,
+  Text,
   TextInput,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
 } from 'react-native';
-import { Clock, MapPin, Search, Star, BadgeCheck } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ArrowLeft, Clock, MapPin, Search, X } from 'lucide-react-native';
 
-import { AppHeader } from '@/components/AppHeader';
-import { CategoryIcon } from '@/components/CategoryIcon';
-import { ProductResultCard } from '@/components/ProductResultCard';
+import { StoreItemCard } from '@/components/StoreItemCard';
 import { Color } from '@/utils/Theme';
-import { formatMoney } from '@/utils/units';
-import { Provider, ServiceSearchResult } from '@/redux/api/provider/types';
+import { INK, LINK, ModernSize, PAGE_BG } from '@/utils/modernTheme';
+import { ProductSearchResult } from '@/redux/api/provider/types';
 
 import { useSearchScreen, TypeFilter } from './useSearchScreen';
+import {
+  BusinessResultCard,
+  PopularTile,
+  RecentViewRow,
+  SectionHeader,
+  ServiceResultRow,
+} from './parts';
 import { styles } from './styles';
 
 const TYPES: { key: TypeFilter; label: string }[] = [
   { key: 'ALL', label: 'All' },
-  { key: 'SERVICE', label: 'Service' },
-  { key: 'PRODUCT', label: 'Product' },
-  { key: 'BUSINESS', label: 'Business' },
+  { key: 'SERVICE', label: 'Services' },
+  { key: 'PRODUCT', label: 'Products' },
+  { key: 'BUSINESS', label: 'Businesses' },
 ];
 
-const PLACEHOLDER: Record<TypeFilter, string> = {
-  ALL: 'Search businesses, services, products…',
-  SERVICE: 'Search a service — haircut, AC repair…',
-  PRODUCT: 'Search a product — rice, shampoo…',
-  BUSINESS: 'Search a business by name…',
-};
+// How much of each type "All" previews before "See all".
+const PREVIEW = { BUSINESS: 3, SERVICE: 3, PRODUCT: 6 } as const;
 
-/** A business result — name, category, rating. */
-function ProviderCard({ provider: p, onPress }: { provider: Provider; onPress: () => void }) {
-  return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={onPress}>
-      <View style={styles.avatar}>
-        {p.images.length > 0 ? (
-          <Image source={{ uri: p.images[0] }} style={styles.avatarImg} />
-        ) : (
-          <CategoryIcon slug={p.category.slug} size={24} />
-        )}
-      </View>
-      <View style={styles.info}>
-        <View style={styles.nameRow}>
-          <Text style={styles.name} numberOfLines={1}>
-            {p.businessName}
-          </Text>
-          {p.isVerified && <BadgeCheck size={15} color={Color.success} />}
-        </View>
-        <Text style={styles.meta} numberOfLines={1}>
-          {p.subcategory?.name ?? p.category.name}
-          {p.city ? ` · ${p.city}` : ''}
-        </Text>
-        <View style={styles.ratingRow}>
-          <Star size={13} color={Color.warning} fill={Color.warning} />
-          <Text style={styles.ratingText}>
-            {p.ratingAvg.toFixed(1)} ({p.ratingCount})
-          </Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-}
+const PLACEHOLDER = '#94A3B8';
+const G = ModernSize.gutter;
+const GAP = 10;
 
-
-/** A service result — name, offering business, price/duration and the business's rating. */
-function ServiceCard({ service: s, onPress }: { service: ServiceSearchResult; onPress: () => void }) {
-  return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={onPress}>
-      <View style={styles.avatar}>
-        <CategoryIcon slug={s.category.slug} size={24} />
-      </View>
-      <View style={styles.info}>
-        <View style={styles.nameRow}>
-          <Text style={styles.name} numberOfLines={1}>
-            {s.name}
-          </Text>
-          {s.provider.isVerified && <BadgeCheck size={15} color={Color.success} />}
-        </View>
-        <Text style={styles.meta} numberOfLines={1}>
-          {s.provider.businessName}
-        </Text>
-        <View style={styles.metaRow}>
-          <Text style={styles.price}>{formatMoney(s.priceMinor, s.currency)}</Text>
-          <View style={styles.durationChip}>
-            <Clock size={11} color={Color.textSecondary} />
-            <Text style={styles.durationText}>{s.durationMin} min</Text>
-          </View>
-        </View>
-        {!!s.provider.ratingCount && (
-          <View style={styles.ratingRow}>
-            <Star size={13} color={Color.warning} fill={Color.warning} />
-            <Text style={styles.ratingText}>
-              {s.provider.ratingAvg.toFixed(1)} ({s.provider.ratingCount})
-            </Text>
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-}
-
-/** Provider/service/product search — a type toggle up top, nothing else in the way. */
+/** Provider/service/product search — mockup "Modern Hair Search App Interface.png". */
 export default function SearchScreen() {
   const {
     query,
@@ -114,6 +50,9 @@ export default function SearchScreen() {
     selectType,
     locationLabel,
     goToLocationPicker,
+    goBack,
+    popularCategories,
+    onCategoryPress,
     minQueryLength,
     hasActiveQuery,
     isProductSearch,
@@ -135,13 +74,264 @@ export default function SearchScreen() {
     clearRecentSearchViews,
   } = useSearchScreen();
 
+  const { width: screenW } = useWindowDimensions();
+  const tileW = Math.floor((screenW - G * 2 - GAP * 2) / 3);
+  const productW = Math.round(screenW * 0.36);
+  const productGridW = Math.floor((screenW - G * 2 - GAP) / 2);
+
   const trimmed = query.trim();
+  const showBusinesses = isAllSearch || type === 'BUSINESS';
+
+  // The business results double as a photo source for service rows, since a
+  // service hit only carries its business's id and name.
+  const providerPhoto = new Map(providers.map((p) => [p.id, p.images?.[0]]));
+
+  const shownProviders = isAllSearch ? providers.slice(0, PREVIEW.BUSINESS) : providers;
+  const shownServices = isAllSearch ? services.slice(0, PREVIEW.SERVICE) : services;
+  const shownProducts = isAllSearch ? products.slice(0, PREVIEW.PRODUCT) : products;
+
+  const renderProduct = (p: ProductSearchResult, width: number) => (
+    <StoreItemCard
+      key={p.id}
+      product={p}
+      providerId={p.provider.id}
+      providerName={p.provider.businessName}
+      storeLabel={p.provider.businessName}
+      width={width}
+      onPress={() => onProductPress(p)}
+    />
+  );
+
+  const renderBrowse = () => {
+    const nothing =
+      recentSearches.length === 0 &&
+      recentSearchViews.length === 0 &&
+      popularCategories.length === 0;
+    return (
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+      >
+        {trimmed.length > 0 && (
+          <Text style={styles.hintText}>Type at least {minQueryLength} characters to search.</Text>
+        )}
+
+        {recentSearches.length > 0 && (
+          <View style={styles.section}>
+            <SectionHeader title="Recent searches" action="Clear" onAction={clearRecentSearches} />
+            <View style={styles.wrapRow}>
+              {recentSearches.map((term) => (
+                <TouchableOpacity
+                  key={term}
+                  style={styles.recentChip}
+                  activeOpacity={0.85}
+                  onPress={() => onRecentSearchPress(term)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Search again for ${term}`}
+                >
+                  <Clock size={17} color={INK} strokeWidth={1.8} />
+                  <Text style={styles.recentChipText}>{term}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {recentSearchViews.length > 0 && (
+          <View style={styles.section}>
+            <SectionHeader
+              title="Recently viewed"
+              action="Clear"
+              onAction={clearRecentSearchViews}
+            />
+            <View style={styles.listCard}>
+              {recentSearchViews.map((entry, i) => (
+                <React.Fragment key={`${entry.kind}-${entry.item.id}`}>
+                  {i > 0 && <View style={styles.divider} />}
+                  <RecentViewRow entry={entry} onPress={() => onRecentViewPress(entry)} />
+                </React.Fragment>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {popularCategories.length > 0 && (
+          <View style={styles.section}>
+            <SectionHeader title="Popular near you" />
+            <View style={styles.tileGrid}>
+              {popularCategories.map((c, i) => (
+                <PopularTile
+                  key={c.id}
+                  category={c}
+                  index={i}
+                  width={tileW}
+                  onPress={() => onCategoryPress(c)}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
+        {nothing && trimmed.length === 0 && (
+          <View style={styles.center}>
+            <View style={styles.emptyIcon}>
+              <Search size={30} color={LINK} strokeWidth={1.8} />
+            </View>
+            <Text style={styles.emptyText}>Search for a business, service or product.</Text>
+          </View>
+        )}
+      </ScrollView>
+    );
+  };
+
+  const renderEmpty = () => (
+    <View style={styles.center}>
+      <View style={styles.emptyIcon}>
+        <Search size={30} color={LINK} strokeWidth={1.8} />
+      </View>
+      <Text style={styles.emptyTitle}>
+        {isProductSearch
+          ? 'No products match your search.'
+          : isServiceSearch
+            ? 'No services match your search.'
+            : isAllSearch
+              ? 'Nothing matches your search.'
+              : 'No businesses match your search.'}
+      </Text>
+      <Text style={styles.emptyText}>Try a shorter word or another area.</Text>
+    </View>
+  );
+
+  const renderResults = () => (
+    <ScrollView
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
+    >
+      <Text style={styles.resultsTitle} accessibilityRole="header">
+        {resultCount} {resultCount === 1 ? 'result' : 'results'} for “{trimmed}”
+      </Text>
+
+      {showBusinesses && providers.length > 0 && (
+        <View style={styles.section}>
+          <SectionHeader
+            title={`Businesses (${providers.length})`}
+            action={isAllSearch && providers.length > PREVIEW.BUSINESS ? 'See all' : undefined}
+            onAction={() => selectType('BUSINESS')}
+          />
+          {shownProviders.map((p) => (
+            <BusinessResultCard
+              key={p.id}
+              provider={p}
+              query={trimmed}
+              onPress={() => onProviderPress(p)}
+            />
+          ))}
+        </View>
+      )}
+
+      {(isAllSearch || isServiceSearch) && services.length > 0 && (
+        <View style={styles.section}>
+          <SectionHeader
+            title={`Services (${services.length})`}
+            action={isAllSearch && services.length > PREVIEW.SERVICE ? 'See all' : undefined}
+            onAction={() => selectType('SERVICE')}
+          />
+          <View style={styles.listCard}>
+            {shownServices.map((s, i) => (
+              <React.Fragment key={s.id}>
+                {i > 0 && <View style={styles.divider} />}
+                <ServiceResultRow
+                  service={s}
+                  query={trimmed}
+                  imageUri={providerPhoto.get(s.provider.id)}
+                  onPress={() => onServicePress(s)}
+                />
+              </React.Fragment>
+            ))}
+          </View>
+        </View>
+      )}
+
+      {(isAllSearch || isProductSearch) && products.length > 0 && (
+        <View style={styles.section}>
+          <SectionHeader
+            title={`Products (${products.length})`}
+            action={isAllSearch && products.length > PREVIEW.PRODUCT ? 'See all' : undefined}
+            onAction={() => selectType('PRODUCT')}
+          />
+          {isAllSearch ? (
+            <ScrollView
+              horizontal
+              style={styles.productScroll}
+              contentContainerStyle={styles.productRow}
+              showsHorizontalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
+              {shownProducts.map((p) => renderProduct(p, productW))}
+            </ScrollView>
+          ) : (
+            <View style={styles.productGrid}>
+              {shownProducts.map((p) => renderProduct(p, productGridW))}
+            </View>
+          )}
+        </View>
+      )}
+
+      <View style={styles.footerHint}>
+        <Search size={18} color={LINK} strokeWidth={2} />
+        <Text style={styles.footerHintText}>
+          Can’t find it? Try a shorter word or another area.
+        </Text>
+      </View>
+    </ScrollView>
+  );
 
   return (
-    <View style={styles.container}>
-      <AppHeader title="Search" />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
 
-      {/* What to search for — the one filter that's always visible */}
+      {/* Back + search field */}
+      <View style={styles.topBar}>
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={goBack}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+        >
+          <ArrowLeft size={26} color={INK} strokeWidth={2} />
+        </TouchableOpacity>
+        <View style={styles.searchBar}>
+          <Search size={22} color={INK} strokeWidth={2} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search services, stores or products"
+            placeholderTextColor={PLACEHOLDER}
+            value={query}
+            onChangeText={setQuery}
+            autoCorrect={false}
+            returnKeyType="search"
+            accessibilityLabel="Search"
+          />
+          {query.length > 0 && (
+            <TouchableOpacity
+              style={styles.clearBtn}
+              onPress={() => setQuery('')}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              accessibilityRole="button"
+              accessibilityLabel="Clear search"
+            >
+              <X size={14} color={Color.white} strokeWidth={3} />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+
+      {/* What to search for */}
       <View style={styles.typeRow}>
         {TYPES.map((t) => {
           const active = type === t.key;
@@ -151,6 +341,9 @@ export default function SearchScreen() {
               style={[styles.typeChip, active && styles.typeChipActive]}
               activeOpacity={0.85}
               onPress={() => selectType(t.key)}
+              accessibilityRole="button"
+              accessibilityState={{ selected: active }}
+              accessibilityLabel={`Search ${t.label.toLowerCase()}`}
             >
               <Text style={[styles.typeChipText, active && styles.typeChipTextActive]}>
                 {t.label}
@@ -160,167 +353,39 @@ export default function SearchScreen() {
         })}
       </View>
 
-      <View style={styles.searchBar}>
-        <Search size={18} color={Color.placeholder} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder={PLACEHOLDER[type]}
-          placeholderTextColor={Color.placeholder}
-          value={query}
-          onChangeText={setQuery}
-          autoCorrect={false}
-          returnKeyType="search"
-        />
-      </View>
-
       {/* Location */}
-      <TouchableOpacity style={styles.locationRow} activeOpacity={0.7} onPress={goToLocationPicker}>
-        <MapPin size={14} color={Color.primary} />
-        <Text style={styles.locationText} numberOfLines={1}>
-          {locationLabel ? `Near ${locationLabel}` : 'Set your location'}
-        </Text>
+      <TouchableOpacity
+        style={styles.locationRow}
+        activeOpacity={0.7}
+        onPress={goToLocationPicker}
+        accessibilityRole="button"
+        accessibilityLabel={
+          locationLabel ? `Searching near ${locationLabel}. Change location` : 'Set your location'
+        }
+      >
+        <MapPin size={22} color={INK} strokeWidth={1.8} />
+        <View style={styles.locationTextWrap}>
+          <Text style={styles.locationLabel}>
+            {locationLabel ? 'Searching near' : 'Location not set'}
+          </Text>
+          <Text style={styles.locationValue} numberOfLines={1}>
+            {locationLabel ?? 'Set your location'}
+          </Text>
+        </View>
         <Text style={styles.locationChange}>Change</Text>
       </TouchableOpacity>
 
-      {/* Nothing to browse without a search — show history instead */}
-      {trimmed.length === 0 ? (
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          {recentSearches.length === 0 && recentSearchViews.length === 0 ? (
-            <View style={styles.center}>
-              <Search size={44} color={Color.placeholder} strokeWidth={1.4} />
-              <Text style={styles.hint}>Search for a business, service or product.</Text>
-            </View>
-          ) : (
-            <>
-              {recentSearches.length > 0 && (
-                <View>
-                  <View style={styles.historyHeader}>
-                    <Text style={styles.sectionTitle}>Recent searches</Text>
-                    <TouchableOpacity onPress={clearRecentSearches}>
-                      <Text style={styles.clearLink}>Clear</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.wrapRow}>
-                    {recentSearches.map((term) => (
-                      <TouchableOpacity
-                        key={term}
-                        style={styles.chip}
-                        activeOpacity={0.85}
-                        onPress={() => onRecentSearchPress(term)}
-                      >
-                        <Clock size={12} color={Color.textSecondary} />
-                        <Text style={styles.chipText}>{term}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </View>
-              )}
-
-              {recentSearchViews.length > 0 && (
-                <View>
-                  <View style={styles.historyHeader}>
-                    <Text style={styles.sectionTitle}>Recently viewed</Text>
-                    <TouchableOpacity onPress={clearRecentSearchViews}>
-                      <Text style={styles.clearLink}>Clear</Text>
-                    </TouchableOpacity>
-                  </View>
-                  {recentSearchViews.map((entry) => {
-                    const key = `${entry.kind}-${entry.item.id}`;
-                    if (entry.kind === 'product') {
-                      return (
-                        <ProductResultCard
-                          key={key}
-                          product={entry.item}
-                          onPress={() => onRecentViewPress(entry)}
-                        />
-                      );
-                    }
-                    if (entry.kind === 'service') {
-                      return (
-                        <ServiceCard
-                          key={key}
-                          service={entry.item}
-                          onPress={() => onRecentViewPress(entry)}
-                        />
-                      );
-                    }
-                    return (
-                      <ProviderCard
-                        key={key}
-                        provider={entry.item}
-                        onPress={() => onRecentViewPress(entry)}
-                      />
-                    );
-                  })}
-                </View>
-              )}
-            </>
-          )}
-        </ScrollView>
-      ) : !hasActiveQuery ? (
-        <View style={styles.center}>
-          <Search size={44} color={Color.placeholder} strokeWidth={1.4} />
-          <Text style={styles.hint}>Type at least {minQueryLength} characters to search.</Text>
-        </View>
+      {!hasActiveQuery ? (
+        renderBrowse()
       ) : isFetching && resultCount === 0 ? (
         <View style={styles.center}>
-          <ActivityIndicator color={Color.primary} />
+          <ActivityIndicator color={LINK} />
         </View>
       ) : resultCount === 0 ? (
-        <View style={styles.center}>
-          <Search size={44} color={Color.placeholder} strokeWidth={1.4} />
-          <Text style={styles.hint}>
-            {isProductSearch
-              ? 'No products match your search.'
-              : isServiceSearch
-                ? 'No services match your search.'
-                : isAllSearch
-                  ? 'Nothing matches your search.'
-                  : 'No businesses match your search.'}
-          </Text>
-        </View>
+        renderEmpty()
       ) : (
-        <ScrollView
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          {isAllSearch ? (
-            <>
-              {providers.length > 0 && (
-                <View>
-                  <Text style={styles.sectionTitle}>Businesses</Text>
-                  {providers.map((p) => (
-                    <ProviderCard key={p.id} provider={p} onPress={() => onProviderPress(p)} />
-                  ))}
-                </View>
-              )}
-              {services.length > 0 && (
-                <View>
-                  <Text style={styles.sectionTitle}>Services</Text>
-                  {services.map((s) => (
-                    <ServiceCard key={s.id} service={s} onPress={() => onServicePress(s)} />
-                  ))}
-                </View>
-              )}
-              {products.length > 0 && (
-                <View>
-                  <Text style={styles.sectionTitle}>Products</Text>
-                  {products.map((p) => (
-                    <ProductResultCard key={p.id} product={p} onPress={() => onProductPress(p)} />
-                  ))}
-                </View>
-              )}
-            </>
-          ) : isServiceSearch ? (
-            services.map((s) => <ServiceCard key={s.id} service={s} onPress={() => onServicePress(s)} />)
-          ) : isProductSearch ? (
-            products.map((p) => <ProductResultCard key={p.id} product={p} onPress={() => onProductPress(p)} />)
-          ) : (
-            providers.map((p) => <ProviderCard key={p.id} provider={p} onPress={() => onProviderPress(p)} />)
-          )}
-        </ScrollView>
+        renderResults()
       )}
-    </View>
+    </SafeAreaView>
   );
 }

@@ -1,160 +1,349 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
 
+import { Color, FontWeight } from '@/utils/Theme';
+import {
+  CARD_BORDER,
+  CARD_SHADOW,
+  INK,
+  LINK,
+  ModernRadius,
+  ModernSize,
+  ModernType,
+  PAGE_BG,
+} from '@/utils/modernTheme';
+
+const MUTED = '#64748B';
+const META = '#475569';
+const SOFT_BLUE = '#E6EEFC';
+
+/** Mockup "designs/customer/mobile/DNX Reminders App Interface.png" (right frame). */
 export const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Color.background },
-  content: { padding: Spacing.lg, paddingBottom: Spacing.xl, gap: Spacing.lg },
+  container: {
+    flex: 1,
+    backgroundColor: PAGE_BG,
+  },
+  scroll: {
+    flex: 1,
+  },
+  content: {
+    paddingHorizontal: ModernSize.gutter,
+    paddingTop: 8,
+    paddingBottom: 24,
+    gap: 14,
+  },
 
-  label: {
-    fontSize: FontSize.sm,
+  // ── Card ────────────────────────────────────────────────────────────────
+  card: {
+    padding: ModernSize.cardPad,
+    gap: 12,
+    borderRadius: ModernRadius.card,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
+  cardTitle: {
+    fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.bold,
-    color: Color.textPrimary,
-    marginBottom: Spacing.sm,
+    color: INK,
   },
-  field: { gap: 0 },
 
+  // ── Title input ─────────────────────────────────────────────────────────
+  inputWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    height: ModernSize.control,
+    paddingHorizontal: 14,
+    borderRadius: ModernSize.controlRadius,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
+  },
   input: {
-    paddingHorizontal: Spacing.md,
-    height: 48,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Color.border,
-    backgroundColor: Color.surface,
-    fontSize: FontSize.md,
-    color: Color.textPrimary,
-  },
-  noteInput: {
-    padding: Spacing.md,
-    minHeight: 80,
-    textAlignVertical: 'top',
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Color.border,
-    backgroundColor: Color.surface,
-    fontSize: FontSize.md,
-    color: Color.textPrimary,
+    flex: 1,
+    height: '100%',
+    paddingVertical: 0,
+    fontSize: 15,
+    color: INK,
   },
 
+  // ── Category tiles ──────────────────────────────────────────────────────
+  tileGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    columnGap: 8,
+    rowGap: 10,
+  },
+  tile: {
+    width: '23%',
+    // A little taller than square so labels like "Appointment" have room.
+    aspectRatio: 0.86,
+    // Content sits a touch above centre.
+    paddingTop: 4,
+    paddingBottom: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingHorizontal: 4,
+    borderRadius: ModernRadius.box,
+    // Same border width selected or not, so picking a tile never shifts the
+    // icons/labels of the tiles around it — only the colour changes.
+    borderWidth: 2,
+    overflow: 'hidden',
+  },
+  tileActive: {},
+  // Fixed line box: a label that shrinks to fit ("Appointment") keeps the
+  // same height as the others, so every tile's icon + label line up.
+  tileText: {
+    alignSelf: 'stretch',
+    height: 16,
+    lineHeight: 16,
+    textAlign: 'center',
+    fontSize: ModernType.caption,
+    fontWeight: FontWeight.semibold,
+    color: INK,
+  },
+  tileTextActive: {
+    color: LINK,
+  },
+  checkBadge: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: LINK,
+  },
+
+  // ── When ────────────────────────────────────────────────────────────────
+  field: {
+    gap: 6,
+  },
+  fieldLabel: {
+    fontSize: ModernType.secondary,
+    fontWeight: FontWeight.medium,
+    color: META,
+  },
   dateField: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
-    height: 50,
-    paddingHorizontal: Spacing.md,
-    borderRadius: Radius.md,
+    gap: 10,
+    height: ModernSize.control,
+    paddingHorizontal: 14,
+    borderRadius: ModernSize.controlRadius,
     borderWidth: 1,
-    borderColor: Color.border,
-    backgroundColor: Color.surface,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
+  },
+  dateFieldTap: {
+    flex: 1,
+    height: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   dateFieldText: {
     flex: 1,
-    fontSize: FontSize.md,
-    color: Color.textPrimary,
+    fontSize: 15,
+    fontWeight: FontWeight.medium,
+    color: INK,
   },
   dateFieldPlaceholder: {
-    color: Color.placeholder,
+    fontWeight: FontWeight.regular,
+    color: MUTED,
   },
 
-  chipsRow: {
+  segment: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
+    padding: 3,
+    borderRadius: ModernSize.controlRadius,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
   },
-  chip: {
+  segmentBtn: {
+    flex: 1,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 2,
+    borderRadius: 9,
+  },
+  segmentBtnActive: {
+    backgroundColor: LINK,
+  },
+  segmentText: {
+    fontSize: ModernType.secondary,
+    fontWeight: FontWeight.medium,
+    color: INK,
+  },
+  segmentTextActive: {
+    fontWeight: FontWeight.bold,
+    color: Color.white,
+  },
+
+  // ── Note ────────────────────────────────────────────────────────────────
+  noteInput: {
+    minHeight: 92,
+    paddingHorizontal: 14,
+    paddingTop: 12,
+    paddingBottom: 12,
+    textAlignVertical: 'top',
+    borderRadius: ModernSize.controlRadius,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
+    fontSize: 15,
+    color: INK,
+  },
+  counter: {
+    marginTop: -6,
+    alignSelf: 'flex-end',
+    fontSize: ModernType.caption,
+    color: MUTED,
+  },
+
+  // ── Info strip ──────────────────────────────────────────────────────────
+  infoStrip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 9,
-    borderRadius: Radius.pill,
-    borderWidth: 1,
-    borderColor: Color.border,
-    backgroundColor: Color.surface,
+    gap: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    borderRadius: 12,
+    backgroundColor: SOFT_BLUE,
   },
-  chipActive: {
-    borderColor: Color.primary,
-    backgroundColor: Color.primarySoft,
-  },
-  chipText: {
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    color: Color.textSecondary,
-  },
-  chipTextActive: {
-    color: Color.primary,
-  },
-
-  dueText: {
-    marginTop: Spacing.sm,
-    fontSize: FontSize.sm,
-    color: Color.textSecondary,
-  },
-  dueValue: {
-    color: Color.textPrimary,
-    fontWeight: FontWeight.bold,
-  },
-  customRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  presetsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
-    marginTop: Spacing.sm,
-  },
-  hint: {
-    marginTop: Spacing.sm,
-    fontSize: FontSize.xs,
-    color: Color.textSecondary,
-    lineHeight: FontSize.xs * 1.5,
-  },
-  customInput: {
+  infoText: {
     flex: 1,
-    height: 48,
-    textAlign: 'center',
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Color.border,
-    backgroundColor: Color.surface,
-    fontSize: FontSize.md,
-    color: Color.textPrimary,
+    fontSize: ModernType.body,
+    fontWeight: FontWeight.medium,
+    color: INK,
   },
 
-  footer: {
+  // ── Sticky bar ──────────────────────────────────────────────────────────
+  bar: {
     flexDirection: 'row',
-    gap: Spacing.sm,
-    padding: Spacing.lg,
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: ModernSize.gutter,
+    paddingTop: 12,
+    backgroundColor: Color.white,
     borderTopWidth: 1,
-    borderTopColor: Color.border,
-    backgroundColor: Color.surface,
+    borderTopColor: CARD_BORDER,
+    ...CARD_SHADOW,
+    shadowOffset: { width: 0, height: -4 },
+  },
+  deleteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 52,
+    paddingHorizontal: 22,
+    borderRadius: ModernRadius.button,
+    borderWidth: 1.5,
+    borderColor: Color.error,
+    backgroundColor: Color.white,
+  },
+  deleteBtnText: {
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: Color.error,
   },
   saveBtn: {
     flex: 1,
-    height: 50,
-    borderRadius: Radius.md,
-    backgroundColor: Color.primary,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 10,
+    height: 52,
+    borderRadius: ModernRadius.button,
+    backgroundColor: LINK,
+  },
+  saveBtnBusy: {
+    opacity: 0.8,
   },
   saveBtnText: {
-    color: Color.white,
-    fontSize: FontSize.md,
+    fontSize: 16,
     fontWeight: FontWeight.bold,
+    color: Color.white,
   },
-  deleteBtn: {
-    width: 100,
-    height: 50,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Color.error,
-    backgroundColor: Color.errorSoft,
+  inputError: {
+    borderColor: '#DC2626',
+    backgroundColor: '#FFF7F7',
+  },
+  errorText: {
+    marginTop: 6,
+    fontSize: 13,
+    color: '#DC2626',
+  },
+  endRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  endField: {
+    flex: 1,
+  },
+  clearLink: {
+    fontSize: 15,
+    fontWeight: FontWeight.semibold,
+    color: LINK,
+  },
+  clearLinkOff: {
+    color: '#94A3B8',
+  },
+  fill: {
+    width: '100%',
+    height: '100%',
+  },
+  bizRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 10,
+  },
+  bizAvatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#EAF1FF',
   },
-  deleteBtnText: {
-    color: Color.error,
-    fontSize: FontSize.md,
+  bizText: {
+    flex: 1,
+    minWidth: 0,
+    gap: 2,
+  },
+  bizName: {
+    fontSize: 17,
     fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  bizMeta: {
+    fontSize: 13.5,
+    color: '#64748B',
+  },
+  bizCaption: {
+    marginTop: 2,
+    fontSize: 12,
+    color: '#64748B',
+  },
+  viewBtn: {
+    height: 36,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: LINK,
+  },
+  viewBtnText: {
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+    color: LINK,
   },
 });

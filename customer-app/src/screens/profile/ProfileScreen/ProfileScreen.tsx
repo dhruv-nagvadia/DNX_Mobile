@@ -1,40 +1,110 @@
 import React, { useCallback } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StatusBar,
-  Modal,
-  TextInput,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import {
-  CalendarDays,
-  ShoppingBag,
   Bell,
-  HelpCircle,
-  Info,
+  CalendarDays,
   ChevronRight,
+  FileText,
+  Headphones,
+  Info,
+  Lock,
   LogOut,
-  Pencil,
-  UserRound,
-  KeyRound,
   MapPin,
+  Pencil,
+  RefreshCw,
+  ShieldCheck,
+  ShoppingBag,
 } from 'lucide-react-native';
 
-import { Glow } from '@/components/AuthHero/Glow';
 import { GradientBackground } from '@/components/GradientBackground';
-import { PasswordStrength } from '@/components/PasswordStrength';
+import { NotificationBellButton } from '@/components/NotificationBellButton';
 import { Color } from '@/utils/Theme';
 import { AppConfig } from '@/utils/Constants';
+import { INK, LINK, PAGE_BG, PILL, PillColors } from '@/utils/modernTheme';
 
 import { useProfileScreen } from './useProfileScreen';
-import { styles } from './styles';
+import { EditProfileSheet, ChangePasswordSheet, DeleteAccountSheet } from './ProfileSheets';
+import { PROFILE_CARD_GRADIENT, styles } from './styles';
 
-/** Profile tab — identity, stats, quick links, edit + logout. */
+type IconType = typeof Bell;
+
+const CHEVRON = '#94A3B8';
+const MINT: PillColors = { bg: '#DCF5E7', fg: '#15803D' };
+
+interface RowProps {
+  icon: IconType;
+  tone: PillColors;
+  title: string;
+  subtitle?: string;
+  onPress: () => void;
+  first?: boolean;
+  trailing?: React.ReactNode;
+}
+
+/** One hairline-separated list row: pastel icon tile, title, grey subtitle, chevron. */
+function Row({ icon: Icon, tone, title, subtitle, onPress, first, trailing }: RowProps) {
+  return (
+    <TouchableOpacity
+      style={[styles.row, !first && styles.rowBorder]}
+      activeOpacity={0.7}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={subtitle ? `${title}, ${subtitle}` : title}
+    >
+      <View style={[styles.rowIcon, { backgroundColor: tone.bg }]}>
+        <Icon size={20} color={tone.fg} />
+      </View>
+      <View style={styles.rowText}>
+        <Text style={styles.rowTitle} numberOfLines={1}>
+          {title}
+        </Text>
+        {!!subtitle && (
+          <Text style={styles.rowSubtitle} numberOfLines={1}>
+            {subtitle}
+          </Text>
+        )}
+      </View>
+      {trailing}
+      <ChevronRight size={20} color={CHEVRON} />
+    </TouchableOpacity>
+  );
+}
+
+interface StatProps {
+  icon: IconType;
+  tone: PillColors;
+  value: number;
+  label: string;
+  onPress: () => void;
+}
+
+function Stat({ icon: Icon, tone, value, label, onPress }: StatProps) {
+  return (
+    <TouchableOpacity
+      style={styles.stat}
+      activeOpacity={0.7}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`${value} ${label}, open my ${label.toLowerCase()}`}
+    >
+      <View style={[styles.statIcon, { backgroundColor: tone.bg }]}>
+        <Icon size={19} color={tone.fg} />
+      </View>
+      <View style={styles.statText}>
+        <Text style={styles.statValue} numberOfLines={1}>
+          {value}
+        </Text>
+        <Text style={styles.statLabel} numberOfLines={1}>
+          {label}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+/** Profile tab — mockup "DNX Profile and Edit Profile Screens.png" (left frame). */
 export default function ProfileScreen() {
   const p = useProfileScreen();
   const insets = useSafeAreaInsets();
@@ -42,386 +112,194 @@ export default function ProfileScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      StatusBar.setBarStyle('light-content');
-      return () => StatusBar.setBarStyle('dark-content');
+      StatusBar.setBarStyle('dark-content');
     }, []),
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Ink hero */}
-        <View style={[styles.hero, { paddingTop: insets.top + 20 }]}>
-          <GradientBackground />
-          <Glow size={340} color={Color.heroBlue1} top={-150} left={-110} opacity={0.5} />
-          <Glow size={290} color={Color.heroBlue2} top={-80} right={-100} opacity={0.44} />
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title} accessibilityRole="header">
+            Profile
+          </Text>
+          <NotificationBellButton color={INK} style={styles.bellBtn} />
+        </View>
 
-          <TouchableOpacity
-            style={[styles.editBtn, { top: insets.top + 8 }]}
-            activeOpacity={0.8}
-            onPress={p.openEdit}
-          >
-            <Pencil size={16} color={Color.onDark} />
-          </TouchableOpacity>
-
-          <View style={styles.identity}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{initial}</Text>
+        {/* Profile card */}
+        <View style={styles.profileCard}>
+          <GradientBackground colors={PROFILE_CARD_GRADIENT} />
+          <View style={styles.avatar} accessibilityLabel={`Avatar, ${initial}`}>
+            <Text style={styles.avatarText}>{initial}</Text>
+          </View>
+          <View style={styles.profileInfo}>
+            <View style={styles.nameRow}>
+              <Text style={styles.name} numberOfLines={1}>
+                {p.fullName || 'Your account'}
+              </Text>
+              <TouchableOpacity
+                style={styles.editPill}
+                activeOpacity={0.8}
+                onPress={p.openEdit}
+                accessibilityRole="button"
+                accessibilityLabel="Edit profile"
+              >
+                <Pencil size={14} color={LINK} />
+                <Text style={styles.editPillText}>Edit profile</Text>
+              </TouchableOpacity>
             </View>
-            <Text style={styles.name}>{p.fullName || 'Your account'}</Text>
-            {!!p.email && <Text style={styles.email}>{p.email}</Text>}
-            <View style={styles.rolePill}>
-              <UserRound size={13} color={Color.onDark} />
-              <Text style={styles.rolePillText}>Customer</Text>
-            </View>
+            {!!p.email && (
+              <Text style={styles.contactText} numberOfLines={1}>
+                {p.email}
+              </Text>
+            )}
+            {!!p.phoneDisplay && <Text style={styles.contactText}>{p.phoneDisplay}</Text>}
+            {!!p.locationLine && (
+              <View style={styles.locationChip}>
+                <MapPin size={13} color={INK} />
+                <Text style={styles.locationText} numberOfLines={1}>
+                  {p.locationLine}
+                </Text>
+              </View>
+            )}
+            {!!p.customerSince && (
+              <Text style={styles.sinceText}>Customer since {p.customerSince}</Text>
+            )}
           </View>
         </View>
 
         {/* Stats */}
         <View style={styles.stats}>
-          <TouchableOpacity
-            style={styles.stat}
-            activeOpacity={0.7}
+          <Stat
+            icon={CalendarDays}
+            tone={PILL.blue}
+            value={p.stats.bookings}
+            label="Bookings"
             onPress={p.goToBookings}
-            accessibilityRole="button"
-            accessibilityLabel={`${p.stats.bookings} bookings, open my bookings`}
-          >
-            <Text style={styles.statValue}>{p.stats.bookings}</Text>
-            <Text style={styles.statLabel}>Bookings</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.stat, styles.statDivider]}
-            activeOpacity={0.7}
+          />
+          <Stat
+            icon={ShoppingBag}
+            tone={MINT}
+            value={p.stats.orders}
+            label="Orders"
             onPress={p.goToOrders}
-            accessibilityRole="button"
-            accessibilityLabel={`${p.stats.orders} orders, open my orders`}
-          >
-            <Text style={styles.statValue}>{p.stats.orders}</Text>
-            <Text style={styles.statLabel}>Orders</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.stat, styles.statDivider]}
-            activeOpacity={0.7}
+          />
+          <Stat
+            icon={Bell}
+            tone={PILL.lavender}
+            value={p.stats.reminders}
+            label="Reminders"
             onPress={p.goToReminders}
-            accessibilityRole="button"
-            accessibilityLabel={`${p.stats.reminders} reminders, open my reminders`}
-          >
-            <Text style={styles.statValue}>{p.stats.reminders}</Text>
-            <Text style={styles.statLabel}>Reminders</Text>
-          </TouchableOpacity>
+          />
         </View>
 
         {/* Activity */}
         <Text style={styles.sectionLabel}>Activity</Text>
         <View style={styles.section}>
-          <TouchableOpacity style={styles.row} activeOpacity={0.8} onPress={p.goToBookings}>
-            <View style={styles.rowIcon}>
-              <CalendarDays size={19} color={Color.primary} />
-            </View>
-            <Text style={styles.rowLabel}>My bookings</Text>
-            <Text style={styles.rowValue}>{p.stats.bookings}</Text>
-            <ChevronRight size={20} color={Color.placeholder} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.row, styles.rowBorder]}
-            activeOpacity={0.8}
+          <Row
+            first
+            icon={CalendarDays}
+            tone={PILL.blue}
+            title="My bookings"
+            subtitle="Upcoming, past and cancelled"
+            onPress={p.goToBookings}
+          />
+          <Row
+            icon={ShoppingBag}
+            tone={MINT}
+            title="My orders"
+            subtitle="Track pickups and reorder"
             onPress={p.goToOrders}
-          >
-            <View style={styles.rowIcon}>
-              <ShoppingBag size={19} color={Color.primary} />
-            </View>
-            <Text style={styles.rowLabel}>My orders</Text>
-            <Text style={styles.rowValue}>{p.stats.orders}</Text>
-            <ChevronRight size={20} color={Color.placeholder} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.row, styles.rowBorder]}
-            activeOpacity={0.8}
+          />
+          <Row
+            icon={Bell}
+            tone={PILL.lavender}
+            title="Reminders"
+            subtitle="Renewals and follow-ups"
             onPress={p.goToReminders}
-          >
-            <View style={styles.rowIcon}>
-              <Bell size={19} color={Color.primary} />
-            </View>
-            <Text style={styles.rowLabel}>Reminders</Text>
-            <Text style={styles.rowValue}>{p.stats.reminders}</Text>
-            <ChevronRight size={20} color={Color.placeholder} />
-          </TouchableOpacity>
+            trailing={
+              p.remindersDueToday > 0 ? (
+                <View style={styles.duePill}>
+                  <Text style={styles.duePillText}>{p.remindersDueToday} due today</Text>
+                </View>
+              ) : undefined
+            }
+          />
         </View>
 
         {/* Account */}
         <Text style={styles.sectionLabel}>Account</Text>
         <View style={styles.section}>
-          <TouchableOpacity style={styles.row} activeOpacity={0.8} onPress={p.openEdit}>
-            <View style={styles.rowIcon}>
-              <Pencil size={18} color={Color.primary} />
-            </View>
-            <Text style={styles.rowLabel}>Edit profile</Text>
-            <ChevronRight size={20} color={Color.placeholder} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.row, styles.rowBorder]}
-            activeOpacity={0.8}
-            onPress={p.openPasswordChange}
-          >
-            <View style={styles.rowIcon}>
-              <KeyRound size={18} color={Color.primary} />
-            </View>
-            <Text style={styles.rowLabel}>Change password</Text>
-            <ChevronRight size={20} color={Color.placeholder} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.row, styles.rowBorder]}
-            activeOpacity={0.8}
+          <Row
+            first
+            icon={MapPin}
+            tone={PILL.orange}
+            title="Saved addresses"
+            subtitle={p.addressesSummary}
             onPress={p.goToAddresses}
-          >
-            <View style={styles.rowIcon}>
-              <MapPin size={18} color={Color.primary} />
-            </View>
-            <Text style={styles.rowLabel}>Addresses</Text>
-            <ChevronRight size={20} color={Color.placeholder} />
-          </TouchableOpacity>
+          />
+          <Row
+            icon={Lock}
+            tone={PILL.lavender}
+            title="Change password"
+            subtitle="Update your password"
+            onPress={p.openPasswordChange}
+          />
+          <Row
+            icon={Bell}
+            tone={PILL.green}
+            title="Notifications"
+            subtitle="Bookings, orders and offers"
+            onPress={p.goToNotifications}
+          />
         </View>
 
-        {/* Support */}
-        <Text style={styles.sectionLabel}>Support</Text>
+        {/* Support & legal */}
+        <Text style={styles.sectionLabel}>Support & legal</Text>
         <View style={styles.section}>
-          <TouchableOpacity style={styles.row} activeOpacity={0.8} onPress={p.goToHelpSupport}>
-            <View style={styles.rowIcon}>
-              <HelpCircle size={19} color={Color.primary} />
-            </View>
-            <Text style={styles.rowLabel}>Help & support</Text>
-            <ChevronRight size={20} color={Color.placeholder} />
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row, styles.rowBorder]} activeOpacity={0.8} onPress={p.goToAbout}>
-            <View style={styles.rowIcon}>
-              <Info size={19} color={Color.primary} />
-            </View>
-            <Text style={styles.rowLabel}>About DNX</Text>
-            <ChevronRight size={20} color={Color.placeholder} />
-          </TouchableOpacity>
+          <Row
+            first
+            icon={Headphones}
+            tone={PILL.blue}
+            title="Help & support"
+            onPress={p.goToHelpSupport}
+          />
+          <Row icon={FileText} tone={PILL.lavender} title="Terms of service" onPress={p.goToTerms} />
+          <Row icon={ShieldCheck} tone={PILL.green} title="Privacy policy" onPress={p.goToPrivacy} />
+          <Row icon={RefreshCw} tone={PILL.orange} title="Refund policy" onPress={p.goToRefund} />
+          <Row icon={Info} tone={PILL.grey} title="About DNX" onPress={p.goToAbout} />
         </View>
 
-        {/* Logout */}
-        <TouchableOpacity style={styles.logout} activeOpacity={0.85} onPress={p.logout}>
-          <LogOut size={18} color={Color.error} />
+        {/* Log out */}
+        <TouchableOpacity
+          style={styles.logout}
+          activeOpacity={0.85}
+          onPress={p.logout}
+          accessibilityRole="button"
+          accessibilityLabel="Log out"
+        >
+          <LogOut size={20} color={Color.error} />
           <Text style={styles.logoutText}>Log out</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.deleteAccount} activeOpacity={0.7} onPress={p.openDelete}>
+        <TouchableOpacity
+          style={styles.deleteAccount}
+          activeOpacity={0.7}
+          onPress={p.openDelete}
+          accessibilityRole="button"
+          accessibilityLabel="Delete account"
+        >
           <Text style={styles.deleteAccountText}>Delete account</Text>
         </TouchableOpacity>
 
-        <Text style={styles.version}>DNX · v{AppConfig.version}</Text>
+        <Text style={styles.version}>DNX • v{AppConfig.version}</Text>
       </ScrollView>
 
-      {/* Edit profile modal */}
-      <Modal visible={p.editOpen} transparent animationType="fade" onRequestClose={p.closeEdit}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Edit profile</Text>
-
-            <View>
-              <Text style={styles.inputLabel}>Full name</Text>
-              <TextInput
-                style={styles.input}
-                value={p.form.fullName}
-                onChangeText={(v) => p.onField('fullName', v)}
-                placeholder="Your name"
-                placeholderTextColor={Color.placeholder}
-              />
-            </View>
-            <View>
-              <Text style={styles.inputLabel}>Email</Text>
-              <TextInput
-                style={styles.input}
-                value={p.form.email}
-                onChangeText={(v) => p.onField('email', v)}
-                placeholder="you@example.com"
-                placeholderTextColor={Color.placeholder}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
-            <View>
-              <Text style={styles.inputLabel}>Phone</Text>
-              <TextInput
-                style={styles.input}
-                value={p.form.phone}
-                onChangeText={(v) => p.onField('phone', v)}
-                placeholder="9876543210"
-                placeholderTextColor={Color.placeholder}
-                keyboardType="number-pad"
-                maxLength={10}
-              />
-            </View>
-            <View>
-              <Text style={styles.inputLabel}>PIN code</Text>
-              <TextInput
-                style={styles.input}
-                value={p.form.pincode}
-                onChangeText={(v) => p.onField('pincode', v)}
-                placeholder="380001"
-                placeholderTextColor={Color.placeholder}
-                keyboardType="number-pad"
-                maxLength={6}
-              />
-              {p.resolvingPincode ? (
-                <Text style={styles.inputHint}>Looking up your city…</Text>
-              ) : (
-                !!p.pincodeLocation.city && (
-                  <Text style={styles.inputHint}>
-                    {p.pincodeLocation.city}, {p.pincodeLocation.state}
-                  </Text>
-                )
-              )}
-            </View>
-
-            {!!p.error && <Text style={styles.errorText}>{p.error}</Text>}
-
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                style={[styles.modalBtn, styles.modalBtnGhost]}
-                activeOpacity={0.85}
-                onPress={p.closeEdit}
-                disabled={p.saving}
-              >
-                <Text style={styles.modalBtnGhostText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalBtn, styles.modalBtnPrimary]}
-                activeOpacity={0.85}
-                onPress={p.saveEdit}
-                disabled={p.saving}
-              >
-                {p.saving ? (
-                  <ActivityIndicator color={Color.white} />
-                ) : (
-                  <Text style={styles.modalBtnPrimaryText}>Save</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Change password modal */}
-      <Modal visible={p.pwOpen} transparent animationType="fade" onRequestClose={p.closePasswordChange}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Change password</Text>
-
-            <View>
-              <Text style={styles.inputLabel}>Current password</Text>
-              <TextInput
-                style={styles.input}
-                value={p.pwForm.currentPassword}
-                onChangeText={(v) => p.onPwField('currentPassword', v)}
-                placeholder="Current password"
-                placeholderTextColor={Color.placeholder}
-                secureTextEntry
-              />
-            </View>
-            <View>
-              <Text style={styles.inputLabel}>New password</Text>
-              <TextInput
-                style={styles.input}
-                value={p.pwForm.newPassword}
-                onChangeText={(v) => p.onPwField('newPassword', v)}
-                placeholder="At least 8 characters"
-                placeholderTextColor={Color.placeholder}
-                secureTextEntry
-              />
-              <PasswordStrength value={p.pwForm.newPassword} />
-            </View>
-            <View>
-              <Text style={styles.inputLabel}>Confirm new password</Text>
-              <TextInput
-                style={styles.input}
-                value={p.pwForm.confirmPassword}
-                onChangeText={(v) => p.onPwField('confirmPassword', v)}
-                placeholder="Re-enter new password"
-                placeholderTextColor={Color.placeholder}
-                secureTextEntry
-              />
-            </View>
-
-            {!!p.pwError && <Text style={styles.errorText}>{p.pwError}</Text>}
-
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                style={[styles.modalBtn, styles.modalBtnGhost]}
-                activeOpacity={0.85}
-                onPress={p.closePasswordChange}
-                disabled={p.changingPassword}
-              >
-                <Text style={styles.modalBtnGhostText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalBtn, styles.modalBtnPrimary]}
-                activeOpacity={0.85}
-                onPress={p.savePasswordChange}
-                disabled={p.changingPassword}
-              >
-                {p.changingPassword ? (
-                  <ActivityIndicator color={Color.white} />
-                ) : (
-                  <Text style={styles.modalBtnPrimaryText}>Save</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Delete account modal */}
-      <Modal visible={p.deleteOpen} transparent animationType="fade" onRequestClose={p.closeDelete}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Delete account?</Text>
-            <Text style={styles.modalWarning}>
-              This can't be undone. Your profile details will be removed and you'll be signed out —
-              enter your password to confirm.
-            </Text>
-
-            <View>
-              <Text style={styles.inputLabel}>Password</Text>
-              <TextInput
-                style={styles.input}
-                value={p.deleteForm.password}
-                onChangeText={p.onDeleteField}
-                placeholder="Your password"
-                placeholderTextColor={Color.placeholder}
-                secureTextEntry
-              />
-            </View>
-
-            {!!p.deleteError && <Text style={styles.errorText}>{p.deleteError}</Text>}
-
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                style={[styles.modalBtn, styles.modalBtnGhost]}
-                activeOpacity={0.85}
-                onPress={p.closeDelete}
-                disabled={p.deleting}
-              >
-                <Text style={styles.modalBtnGhostText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalBtn, styles.modalBtnDanger]}
-                activeOpacity={0.85}
-                onPress={p.confirmDelete}
-                disabled={p.deleting}
-              >
-                {p.deleting ? (
-                  <ActivityIndicator color={Color.white} />
-                ) : (
-                  <Text style={styles.modalBtnDangerText}>Delete</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <EditProfileSheet p={p} />
+      <ChangePasswordSheet p={p} />
+      <DeleteAccountSheet p={p} />
     </View>
   );
 }
