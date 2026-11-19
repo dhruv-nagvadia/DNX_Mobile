@@ -9,7 +9,8 @@ import {
   useMarkNotificationReadMutation,
 } from '@/redux/api/notification/notificationApi';
 import { AppNotification } from '@/redux/api/notification/types';
-import { ROUTES, RootStackParamList } from '@/navigation/routes';
+import { RootStackParamList } from '@/navigation/routes';
+import { openNotificationTarget } from '@/utils/notificationLinking';
 
 import { CATEGORY_LABEL, FilterKey, NotificationCategory, categoryOf, groupByDay } from './helpers';
 
@@ -59,11 +60,7 @@ export function useNotificationsScreen() {
       if (!n.isRead) {
         markRead(n.id).unwrap().catch(() => undefined);
       }
-      if (n.entityType === 'ORDER') {
-        navigation.navigate(ROUTES.BOOKINGS_ORDERS, { tab: 'orders' });
-      } else if (n.entityType === 'BOOKING') {
-        navigation.navigate(ROUTES.BOOKINGS_ORDERS, { tab: 'bookings' });
-      }
+      openNotificationTarget(navigation, n);
     },
     [markRead, navigation],
   );

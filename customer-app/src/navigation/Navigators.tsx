@@ -27,6 +27,7 @@ import AllCategoriesScreen from '@/screens/category/AllCategoriesScreen';
 import ProductTypeScreen from '@/screens/category/ProductTypeScreen';
 import AllProductTypesScreen from '@/screens/category/AllProductTypesScreen';
 import AllBusinessesScreen from '@/screens/provider/AllBusinessesScreen';
+import AllServicesScreen from '@/screens/services/AllServicesScreen';
 import ProviderListScreen from '@/screens/provider/ProviderListScreen';
 import ProviderDetailScreen from '@/screens/provider/ProviderDetailScreen';
 import BookingSummaryScreen from '@/screens/bookings/BookingSummaryScreen';
@@ -168,6 +169,7 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.PRODUCT_TYPE} component={ProductTypeScreen} />
       <Stack.Screen name={ROUTES.ALL_PRODUCT_TYPES} component={AllProductTypesScreen} />
       <Stack.Screen name={ROUTES.ALL_BUSINESSES} component={AllBusinessesScreen} />
+      <Stack.Screen name={ROUTES.ALL_SERVICES} component={AllServicesScreen} />
       <Stack.Screen name={ROUTES.PROVIDER_LIST} component={ProviderListScreen} />
       <Stack.Screen name={ROUTES.PROVIDER_DETAILS} component={ProviderDetailScreen} />
       <Stack.Screen name={ROUTES.BOOKING_SUMMARY} component={BookingSummaryScreen} />

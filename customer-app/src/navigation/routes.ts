@@ -17,6 +17,7 @@ export const ROUTES = {
   PRODUCT_TYPE: 'ProductTypeScreen',
   ALL_PRODUCT_TYPES: 'AllProductTypesScreen',
   ALL_BUSINESSES: 'AllBusinessesScreen',
+  ALL_SERVICES: 'AllServicesScreen',
   PROVIDER_LIST: 'ProviderListScreen',
   PROVIDER_DETAILS: 'ProviderDetailsScreen',
   BOOKING_SUMMARY: 'BookingSummaryScreen',
@@ -75,7 +76,11 @@ export type RootStackParamList = {
     categorySlug?: string;
     title?: string;
     sort?: 'rating';
+    // Only businesses open right now (Home "Open now near you" → View all).
+    openNow?: boolean;
   };
+  // Every service near the customer (Home "Popular services to book" → View all).
+  [ROUTES.ALL_SERVICES]: undefined;
   [ROUTES.PROVIDER_LIST]: { categorySlug?: string; subcategorySlug?: string; title: string };
   [ROUTES.PROVIDER_DETAILS]: {
     providerId: string;

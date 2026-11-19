@@ -6,6 +6,7 @@ import { AuthStack, MainStack } from './Navigators';
 import { useAppSelector } from '@/redux/hooks';
 import { CartSync } from '@/components/CartSync';
 import { LocationSync } from '@/components/LocationSync';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 /**
  * Chooses the stack based on auth state. In a real app the Splash screen
@@ -13,6 +14,7 @@ import { LocationSync } from '@/components/LocationSync';
  */
 export default function RootNavigator() {
   const isLoggedIn = useAppSelector((state) => state.user.isLoggedIn);
+  usePushNotifications(isLoggedIn);
 
   return (
     <>

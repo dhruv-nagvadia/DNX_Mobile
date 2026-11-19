@@ -8,7 +8,7 @@ import {
 } from '@/redux/api/provider/providerApi';
 import { useGetCategoriesQuery } from '@/redux/api/category/categoryApi';
 import { Category } from '@/redux/api/category/types';
-import { useAppSelector } from '@/redux/hooks';
+import { useLocationFilter } from '@/hooks/useLocationFilter';
 import { ProductSearchResult, Provider, ServiceSearchResult } from '@/redux/api/provider/types';
 import { ROUTES } from '@/navigation/routes';
 import {
@@ -64,8 +64,9 @@ export function useSearchScreen() {
   // searches/views instead of firing a query.
   const hasActiveQuery = trimmed.length >= MIN_QUERY_LENGTH;
 
-  // The customer's chosen search location narrows results to their area.
-  const location = useAppSelector((s) => s.location.current);
+  // Results come from the nearest distance ring around the customer (10 →
+  // 20 → 50 → 100 km), measured from their GPS point or PIN-code centre.
+  const { filter: locationFilter, location } = useLocationFilter();
 
   const isProductSearch = type === 'PRODUCT';
   const isServiceSearch = type === 'SERVICE';
@@ -83,8 +84,7 @@ export function useSearchScreen() {
     {
       search: trimmed,
       type: 'SERVICE', // SERVICES-ONLY: service businesses only for launch — remove this line to restore stores
-      city: location?.mode === 'manual' ? location.city : undefined,
-      postalCode: location?.mode === 'manual' ? location.postalCode : undefined,
+      ...locationFilter,
       limit: 30,
     },
     { skip: !runProviders },
@@ -93,8 +93,7 @@ export function useSearchScreen() {
   const { data: productData, isFetching: productsFetching } = useSearchProductsQuery(
     {
       search: trimmed,
-      city: location?.mode === 'manual' ? location.city : undefined,
-      postalCode: location?.mode === 'manual' ? location.postalCode : undefined,
+      ...locationFilter,
       limit: 30,
     },
     { skip: !runProducts },
@@ -103,8 +102,7 @@ export function useSearchScreen() {
   const { data: serviceData, isFetching: servicesFetching } = useSearchServicesQuery(
     {
       search: trimmed,
-      city: location?.mode === 'manual' ? location.city : undefined,
-      postalCode: location?.mode === 'manual' ? location.postalCode : undefined,
+      ...locationFilter,
       limit: 30,
     },
     { skip: !runServices },

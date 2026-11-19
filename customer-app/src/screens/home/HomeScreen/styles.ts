@@ -74,13 +74,7 @@ export const styles = StyleSheet.create({
     fontWeight: FontWeight.bold,
     color: INK,
   },
-  brand: {
-    fontSize: 22,
-    fontWeight: FontWeight.extrabold,
-    letterSpacing: -0.5,
-    color: '#1D4ED8',
-  },
-  // Hugs its content (DNX · bell · avatar) so the address gets the rest of the row.
+  // Hugs its content (bell · avatar) so the address gets the rest of the row.
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',

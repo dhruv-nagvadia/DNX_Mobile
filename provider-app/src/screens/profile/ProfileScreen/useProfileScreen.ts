@@ -11,6 +11,7 @@ import { clearCurrentUser, setCurrentUser } from '@/redux/slices/userSlice';
 import { resetAllApiCaches } from '@/redux/resetApiCaches';
 import { clearTokenCache } from '@/api/apiConfigs';
 import { StorageKeys } from '@/utils/Constants';
+import { unregisterPushToken } from '@/utils/push';
 import {
   useChangePasswordMutation,
   useDeleteAccountMutation,
@@ -215,8 +216,10 @@ export function useProfileScreen() {
       confirmText: 'Log out',
       tone: 'danger',
       icon: LogOut,
-    }).then((ok) => {
+    }).then(async (ok) => {
       if (ok) {
+        // Stop pushes to this device; needs the auth token, so before clearing it.
+        await unregisterPushToken();
         clearSession();
       }
     });

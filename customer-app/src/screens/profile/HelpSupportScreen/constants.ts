@@ -10,7 +10,7 @@ export type FaqTopic = 'all' | 'bookings' | 'orders' | 'payments' | 'account';
 export const FAQ_TOPICS: { key: FaqTopic; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'bookings', label: 'Bookings' },
-  { key: 'orders', label: 'Orders' },
+  // { key: 'orders', label: 'Orders' }, // SERVICES-ONLY: no orders at launch — uncomment to restore
   { key: 'payments', label: 'Payments & refunds' },
   { key: 'account', label: 'Account' },
 ];
@@ -41,7 +41,7 @@ export const FAQS: Faq[] = [
     question: 'How do I cancel or reschedule a booking?',
     answer: [
       'Open the booking under ',
-      { text: 'Bookings & Orders', route: ROUTES.BOOKINGS },
+      { text: 'Bookings', route: ROUTES.BOOKINGS }, // SERVICES-ONLY: was 'Bookings & Orders'
       ' and tap Cancel. You can cancel while it is pending or confirmed. If you only need a different time, reschedule it instead.',
     ],
   },
@@ -51,7 +51,7 @@ export const FAQS: Faq[] = [
     question: 'Where can I see my upcoming appointments?',
     answer: [
       'All your bookings — upcoming, past and cancelled — are listed under ',
-      { text: 'Bookings & Orders', route: ROUTES.BOOKINGS },
+      { text: 'Bookings', route: ROUTES.BOOKINGS }, // SERVICES-ONLY: was 'Bookings & Orders'
       '. Tap one to see its details and status.',
     ],
   },
@@ -65,30 +65,32 @@ export const FAQS: Faq[] = [
       ' and we’ll nudge you before it’s due.',
     ],
   },
-  {
-    id: 'cancel-order',
-    topic: 'orders',
-    question: 'How do I cancel an order?',
-    answer: [
-      'Open the order under ',
-      { text: 'Bookings & Orders', route: ROUTES.BOOKINGS },
-      ' and tap Cancel while it is still placed or confirmed. Once the store marks it ready for pickup, please contact the store or us.',
-    ],
-  },
-  {
-    id: 'pickup-window',
-    topic: 'orders',
-    question: 'How long do I have to collect a pickup order?',
-    answer: [
-      'Ready orders are held for 24 hours unless the store shows a different pickup window. After that the store can close it as a no-show.',
-    ],
-  },
+  // SERVICES-ONLY: order FAQs hidden for launch — uncomment to restore
+  // {
+  //   id: 'cancel-order',
+  //   topic: 'orders',
+  //   question: 'How do I cancel an order?',
+  //   answer: [
+  //     'Open the order under ',
+  //     { text: 'Bookings & Orders', route: ROUTES.BOOKINGS },
+  //     ' and tap Cancel while it is still placed or confirmed. Once the store marks it ready for pickup, please contact the store or us.',
+  //   ],
+  // },
+  // {
+  //   id: 'pickup-window',
+  //   topic: 'orders',
+  //   question: 'How long do I have to collect a pickup order?',
+  //   answer: [
+  //     'Ready orders are held for 24 hours unless the store shows a different pickup window. After that the store can close it as a no-show.',
+  //   ],
+  // },
   {
     id: 'refund-eligible',
     topic: 'payments',
     question: 'Will I get a refund if I cancel?',
     answer: [
-      'It depends on the booking or order and how far along it is. The full rules are in the ',
+      // SERVICES-ONLY: was 'It depends on the booking or order and how far along it is…'
+      'It depends on the booking and how far along it is. The full rules are in the ',
       { text: 'Refund & Cancellation Policy', route: ROUTES.REFUND_POLICY },
       '.',
     ],
@@ -104,9 +106,10 @@ export const FAQS: Faq[] = [
   {
     id: 'charged-twice',
     topic: 'payments',
-    question: 'I was charged but can’t see my booking or order',
+    question: 'I was charged but can’t see my booking', // SERVICES-ONLY: was '…my booking or order'
     answer: [
-      'Contact us above with the date, amount and your payment reference. We’ll complete the booking or order, or refund you.',
+      // SERVICES-ONLY: was '…We’ll complete the booking or order, or refund you.'
+      'Contact us above with the date, amount and your payment reference. We’ll complete the booking, or refund you.',
     ],
   },
   {

@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 
 import { useGetProvidersQuery } from '@/redux/api/provider/providerApi';
 import { Provider } from '@/redux/api/provider/types';
-import { useAppSelector } from '@/redux/hooks';
+import { locationNote, useLocationFilter } from '@/hooks/useLocationFilter';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
 type Nav = {
@@ -23,16 +23,10 @@ export function useAllBusinessesScreen() {
   const type = params?.type ?? 'SERVICE';
   const categorySlug = params?.categorySlug;
   const sort = params?.sort;
+  const openNow = params?.openNow;
 
-  const loc = useAppSelector((s) => s.location.current);
-  const locationFilter = useMemo(
-    () => ({
-      ...(loc?.postalCode ? { postalCode: loc.postalCode } : {}),
-      ...(loc?.city ? { city: loc.city } : {}),
-      ...(loc?.state ? { state: loc.state } : {}),
-    }),
-    [loc?.postalCode, loc?.city, loc?.state],
-  );
+  // GPS point / PIN code → backend searches 10 → 20 → 50 → 100 km rings.
+  const { filter: locationFilter, location: loc } = useLocationFilter();
 
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<Provider[]>([]);
@@ -42,6 +36,7 @@ export function useAllBusinessesScreen() {
     page,
     ...(categorySlug ? { categorySlug } : {}),
     ...(sort ? { sort } : {}),
+    ...(openNow ? { openNow } : {}),
     ...locationFilter,
   });
 
@@ -81,13 +76,7 @@ export function useAllBusinessesScreen() {
     }
   }, [page, refetch]);
 
-  const scope = data?.locationScope;
-  const scopeNote =
-    scope === 'city'
-      ? `Showing results across ${loc?.city ?? 'your city'}`
-      : scope === 'state'
-        ? `Showing results across ${loc?.state ?? 'your state'}`
-        : null;
+  const scopeNote = locationNote(data, loc);
 
   const onPress = useCallback(
     (p: Provider) =>

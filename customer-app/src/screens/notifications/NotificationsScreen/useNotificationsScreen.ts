@@ -8,13 +8,20 @@ import {
   useMarkNotificationReadMutation,
 } from '@/redux/api/notification/notificationApi';
 import { AppNotification } from '@/redux/api/notification/types';
-import { ROUTES, RootStackParamList } from '@/navigation/routes';
+import { RootStackParamList } from '@/navigation/routes';
+import { openNotificationTarget } from '@/utils/notificationLinking';
 
 import { CATEGORY_LABEL, FilterKey, NotificationCategory, categoryOf, groupByDay } from './helpers';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
-const CATEGORY_ORDER: NotificationCategory[] = ['booking', 'order', 'review', 'payment'];
+const CATEGORY_ORDER: NotificationCategory[] = [
+  'booking',
+  'reminder',
+  'order',
+  'review',
+  'payment',
+];
 
 /**
  * Same layout as the provider app's notifications screen (filters, day
@@ -69,11 +76,7 @@ export function useNotificationsScreen() {
           .unwrap()
           .catch(() => undefined);
       }
-      if (n.entityType === 'ORDER' && n.entityId) {
-        navigation.navigate(ROUTES.ORDER_DETAILS, { orderId: n.entityId });
-      } else if (n.entityType === 'BOOKING' && n.entityId) {
-        navigation.navigate(ROUTES.BOOKING_DETAILS, { bookingId: n.entityId });
-      }
+      openNotificationTarget(navigation, n);
     },
     [markRead, navigation],
   );

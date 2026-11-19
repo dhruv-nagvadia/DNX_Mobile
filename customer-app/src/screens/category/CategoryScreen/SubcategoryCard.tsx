@@ -14,7 +14,7 @@ interface SubcategoryCardProps {
   categorySlug: string;
   width: number;
   index: number;
-  locationFilter: Record<string, string>;
+  locationFilter: Record<string, string | number>;
   onPress: (sub: Subcategory) => void;
 }
 

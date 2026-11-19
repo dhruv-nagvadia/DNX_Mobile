@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ArrowLeft,
   Bell,
+  BellRing,
   CalendarDays,
   LucideIcon,
   PackageMinus,
@@ -44,6 +45,7 @@ const ICON: Record<NotificationCategory, LucideIcon> = {
   payment: Wallet,
   stock: PackageMinus,
   cancelled: XCircle,
+  reminder: BellRing,
   generic: Bell,
 };
 

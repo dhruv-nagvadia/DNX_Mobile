@@ -33,6 +33,7 @@ export const ICON_COLORS: Record<NotificationCategory, PillColors> = {
   payment: { bg: TINT.mint.colors[1], fg: TINT.mint.icon },
   stock: PILL.orange,
   cancelled: PILL.red,
+  reminder: PILL.yellow,
   generic: PILL.grey,
 };
 
@@ -43,6 +44,7 @@ export const iconBoxStyles = StyleSheet.create({
   payment: { backgroundColor: ICON_COLORS.payment.bg },
   stock: { backgroundColor: ICON_COLORS.stock.bg },
   cancelled: { backgroundColor: ICON_COLORS.cancelled.bg },
+  reminder: { backgroundColor: ICON_COLORS.reminder.bg },
   generic: { backgroundColor: ICON_COLORS.generic.bg },
 });
 

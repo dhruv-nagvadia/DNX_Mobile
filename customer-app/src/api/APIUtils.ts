@@ -85,6 +85,9 @@ export const endpoints = {
   notificationsReadAll: '/notifications/read-all',
   notificationRead: (id: string) => `/notifications/${id}/read`,
 
+  // Push notification device tokens (FCM) — POST to register, DELETE on logout
+  devices: '/devices',
+
   // Customer discovery
   providers: '/customer/providers',
   providerById: (id: string) => `/customer/providers/${id}`,

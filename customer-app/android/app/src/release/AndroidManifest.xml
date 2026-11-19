@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Release-only: allow plain http:// only while the active .env.<APP_ENV> API_BASE_URL is http://
+     (local staging/production testing). Set from app/build.gradle (allowCleartext). -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:usesCleartextTraffic="${usesCleartextTraffic}"
+        tools:targetApi="28" />
+</manifest>

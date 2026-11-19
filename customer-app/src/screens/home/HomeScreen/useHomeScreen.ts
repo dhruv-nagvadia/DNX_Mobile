@@ -1,10 +1,14 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { useGetCategoriesQuery } from '@/redux/api/category/categoryApi';
 import { useGetProductTypesQuery } from '@/redux/api/productType/productTypeApi';
-import { useGetProvidersQuery } from '@/redux/api/provider/providerApi';
+import { useGetProvidersQuery, useSearchServicesQuery } from '@/redux/api/provider/providerApi';
+import { useGetMyBookingsQuery } from '@/redux/api/booking/bookingApi';
+import { Booking } from '@/redux/api/booking/types';
+import { isUpcomingBooking } from '@/utils/bookingStatus';
+import { locationNote, useLocationFilter } from '@/hooks/useLocationFilter';
 import { useGetPlatformCouponsQuery } from '@/redux/api/order/orderApi';
 import { PlatformCoupon } from '@/redux/api/order/types';
 import { useAppSelector } from '@/redux/hooks';
@@ -12,7 +16,7 @@ import { getRecentlyViewed, RecentProvider } from '@/utils/recentlyViewed';
 import { ROUTES } from '@/navigation/routes';
 import { Category } from '@/redux/api/category/types';
 import { ProductType } from '@/redux/api/productType/types';
-import { Provider } from '@/redux/api/provider/types';
+import { Provider, ServiceSearchResult } from '@/redux/api/provider/types';
 import { HomeScreenNavigationProp, Offer } from './types';
 import { LOCATION, HERO_BANNERS } from './mock';
 
@@ -38,6 +42,11 @@ function toOffer(c: PlatformCoupon, i: number): Offer {
   };
 }
 
+// Home teases this many; "View all" opens the full list.
+const POPULAR_SERVICES_LIMIT = 3;
+const BOOK_AGAIN_LIMIT = 8;
+const OPEN_NOW_LIMIT = 8;
+
 // Each category grid (services, stores) only teases two rows — "View all"
 // opens the complete, type-specific list.
 const HOME_CATEGORY_LIMIT = 8;
@@ -51,21 +60,65 @@ export function useHomeScreen() {
   // SERVICES-ONLY: product types not fetched for launch — restore by removing the `{ skip: true }` arg
   const { data: productTypes = [] } = useGetProductTypesQuery(undefined, { skip: true });
   const { data: platformCoupons = [] } = useGetPlatformCouponsQuery();
-  const customerLocation = useAppSelector((s) => s.location.current);
-  // Send everything we know — the backend tries postal code first, then
-  // widens to city, then state, only as far as each tier comes up empty.
-  const locationFilter = {
-    ...(customerLocation?.postalCode ? { postalCode: customerLocation.postalCode } : {}),
-    ...(customerLocation?.city ? { city: customerLocation.city } : {}),
-    ...(customerLocation?.state ? { state: customerLocation.state } : {}),
-  };
+  // Customer's GPS point / PIN code — the backend searches 10 → 20 → 50 →
+  // 100 km rings around it, stopping at the first ring with results.
+  const { filter: locationFilter, location: customerLocation } = useLocationFilter();
 
-  // "Most booked" service businesses — top-ranked providers (booking-count sort later).
-  const { data: providersPage } = useGetProvidersQuery({
-    type: 'SERVICE',
-    limit: 3,
+  // "Popular services to book" — one service per business (its most-booked),
+  // ranked by the business's rating, then its number of reviews (backend order).
+  const { data: servicesPage } = useSearchServicesQuery({
+    limit: POPULAR_SERVICES_LIMIT,
+    sort: 'rating',
+    onePerProvider: true,
     ...locationFilter,
   });
+  const popularServices = servicesPage?.items ?? [];
+
+  // "Open now near you" — service businesses open right now, nearest first.
+  const { data: openNowPage } = useGetProvidersQuery({
+    type: 'SERVICE',
+    openNow: true,
+    sort: 'nearest',
+    limit: OPEN_NOW_LIMIT,
+    ...locationFilter,
+  });
+
+  // The customer's own bookings → "Your next booking" + "Book again".
+  // Refetch on focus so a booking made a moment ago shows straight away.
+  const { data: myBookings = [], refetch: refetchBookings } = useGetMyBookingsQuery(undefined, {
+    skip: !currentUser,
+  });
+  useFocusEffect(
+    useCallback(() => {
+      if (currentUser) {
+        refetchBookings();
+      }
+    }, [currentUser, refetchBookings]),
+  );
+  const upcomingBookings = useMemo(
+    () =>
+      myBookings
+        .filter((b) => isUpcomingBooking(b.status, b.endTime))
+        .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()),
+    [myBookings],
+  );
+  // Latest completed booking per service (the list is newest first) — the
+  // same service at two businesses shows twice, a repeat at one shows once.
+  const bookAgain = useMemo(() => {
+    const seen = new Set<string>();
+    const out: Booking[] = [];
+    for (const b of myBookings) {
+      if (b.status !== 'COMPLETED' || seen.has(`${b.provider.id}:${b.service.id}`)) {
+        continue;
+      }
+      seen.add(`${b.provider.id}:${b.service.id}`);
+      out.push(b);
+      if (out.length >= BOOK_AGAIN_LIMIT) {
+        break;
+      }
+    }
+    return out;
+  }, [myBookings]);
   // Nearby stores you can order products from.
   // SERVICES-ONLY: STORE providers not fetched for launch — restore by removing the `{ skip: true }` arg
   const { data: storesPage } = useGetProvidersQuery(
@@ -73,21 +126,9 @@ export function useHomeScreen() {
     { skip: true },
   );
 
-  // When the backend had to widen past an exact postal-code match, let the
-  // customer know these results cover a broader area.
-  const describeScope = useCallback(
-    (scope: 'postalCode' | 'city' | 'state' | null | undefined) => {
-      if (scope === 'city')
-        return `Showing results across ${customerLocation?.city ?? 'your city'}`;
-      if (scope === 'state')
-        return `Showing results across ${customerLocation?.state ?? 'your state'}`;
-      return null;
-    },
-    [customerLocation?.city, customerLocation?.state],
-  );
-
-  const mostBookedBanner = describeScope(providersPage?.locationScope);
-  const storesBanner = describeScope(storesPage?.locationScope);
+  // When nothing was close by and the search had to widen past 10 km, say how far.
+  const openNowBanner = locationNote(openNowPage, customerLocation);
+  const storesBanner = locationNote(storesPage, customerLocation);
 
   // Recently opened businesses (cached on-device); refresh each time Home focuses.
   const [recentlyViewed, setRecentlyViewed] = useState<RecentProvider[]>([]);
@@ -95,7 +136,9 @@ export function useHomeScreen() {
     useCallback(() => {
       let active = true;
       getRecentlyViewed().then((list) => {
-        if (active) setRecentlyViewed(list);
+        if (active) {
+          setRecentlyViewed(list);
+        }
       });
       return () => {
         active = false;
@@ -181,6 +224,42 @@ export function useHomeScreen() {
     [navigation],
   );
 
+  const onServicePress = useCallback(
+    (service: ServiceSearchResult) => {
+      navigation.navigate(ROUTES.PROVIDER_DETAILS, {
+        providerId: service.provider.id,
+        name: service.provider.businessName,
+      });
+    },
+    [navigation],
+  );
+
+  const onViewBooking = useCallback(
+    (b: Booking) => navigation.navigate(ROUTES.BOOKING_DETAILS, { bookingId: b.id }),
+    [navigation],
+  );
+
+  const onBookAgain = useCallback(
+    (b: Booking) =>
+      navigation.navigate(ROUTES.PROVIDER_DETAILS, {
+        providerId: b.provider.id,
+        name: b.provider.businessName,
+      }),
+    [navigation],
+  );
+
+  // Same Google Maps link the business page uses — coordinates when set, else the address.
+  const onDirections = useCallback((b: Booking) => {
+    const p = b.provider;
+    const destination =
+      p.latitude != null && p.longitude != null
+        ? `${p.latitude},${p.longitude}`
+        : encodeURIComponent([p.addressLine, p.city].filter(Boolean).join(', ') || p.businessName);
+    Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${destination}`);
+  }, []);
+
+  const goToBookings = useCallback(() => navigation.navigate(ROUTES.BOOKINGS), [navigation]);
+
   const onRecentPress = useCallback(
     (item: RecentProvider) => {
       navigation.navigate(ROUTES.PROVIDER_DETAILS, { providerId: item.id, name: item.name });
@@ -207,8 +286,15 @@ export function useHomeScreen() {
     () => navigation.navigate(ROUTES.ALL_BUSINESSES, { type: 'STORE' }),
     [navigation],
   );
-  const goToAllServices = useCallback(
-    () => navigation.navigate(ROUTES.ALL_BUSINESSES, { type: 'SERVICE' }),
+  // "Popular services" lists services, so View all opens the full services list.
+  const goToAllServices = useCallback(() => navigation.navigate(ROUTES.ALL_SERVICES), [navigation]);
+  const goToOpenNow = useCallback(
+    () =>
+      navigation.navigate(ROUTES.ALL_BUSINESSES, {
+        type: 'SERVICE',
+        openNow: true,
+        title: 'Open now near you',
+      }),
     [navigation],
   );
   const goToAllProductTypes = useCallback(
@@ -228,9 +314,13 @@ export function useHomeScreen() {
     hasMoreStoreCategories,
     hasMoreProductTypes,
     categoriesLoading,
-    mostBooked: providersPage?.items ?? [],
+    popularServices,
+    openNow: openNowPage?.items ?? [],
+    openNowBanner,
+    nextBooking: upcomingBookings[0] ?? null,
+    upcomingCount: upcomingBookings.length,
+    bookAgain,
     stores: storesPage?.items ?? [],
-    mostBookedBanner,
     storesBanner,
     recentlyViewed,
     onCategoryPress,
@@ -238,6 +328,12 @@ export function useHomeScreen() {
     onOfferPress,
     onProviderPress,
     onRecentPress,
+    onServicePress,
+    onViewBooking,
+    onBookAgain,
+    onDirections,
+    goToBookings,
+    goToOpenNow,
     goToProfile,
     goToSearch,
     goToCart,

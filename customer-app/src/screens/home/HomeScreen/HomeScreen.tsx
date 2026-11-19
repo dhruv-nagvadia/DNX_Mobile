@@ -24,8 +24,7 @@ import {
 
 import {
   // ProductTypeCard, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
-  ServiceRow,
-  // StoreCard, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
+  StoreCard,
   // StoreCategoryCard, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
   // useCardWidth, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
 } from '@/components/BusinessCards';
@@ -35,6 +34,7 @@ import { NotificationBellButton } from '@/components/NotificationBellButton';
 import { INK, LINK, ModernSize, PAGE_BG, TINT } from '@/utils/modernTheme';
 import { TILE_CYCLE } from '@/utils/homeTiles';
 
+import { BookAgainCard, PopularServiceRow, UpcomingBookingCard } from './HomeSections';
 import { useHomeScreen } from './useHomeScreen';
 import { GAP, styles } from './styles';
 
@@ -98,9 +98,13 @@ export default function HomeScreen() {
     firstName,
     location,
     offers,
-    mostBooked,
+    popularServices,
+    openNow,
+    openNowBanner,
+    nextBooking,
+    upcomingCount,
+    bookAgain,
     // stores, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
-    mostBookedBanner,
     // storesBanner, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
     recentlyViewed,
     heroBanners,
@@ -116,6 +120,12 @@ export default function HomeScreen() {
     onOfferPress,
     onProviderPress,
     onRecentPress,
+    onServicePress,
+    onViewBooking,
+    onBookAgain,
+    onDirections,
+    goToBookings,
+    goToOpenNow,
     goToProfile,
     goToSearch,
     // goToCart, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
@@ -141,6 +151,10 @@ export default function HomeScreen() {
   // "Order from stores" keeps its own wider card (~2 per screen).
   // const storeW = Math.floor(contentW * 0.48); // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
   const recentW = Math.floor(contentW * 0.5);
+  // "Book again" — about 2.4 cards per screen so the next one peeks in.
+  const againW = Math.floor(contentW * 0.4);
+  // "Open now near you" — same card as stores, a bit under two per screen.
+  const nearW = Math.floor(contentW * 0.6);
   const halfW = Math.floor((contentW - GAP) / 2);
   const heroW = contentW;
 
@@ -158,7 +172,7 @@ export default function HomeScreen() {
       <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* ── Header: location · DNX · bell/avatar ─────────────────────── */}
+        {/* ── Header: location · bell/avatar ─────────────────────────── */}
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.locationBtn}
@@ -180,9 +194,6 @@ export default function HomeScreen() {
           </TouchableOpacity>
 
           <View style={styles.headerRight}>
-            <Text style={styles.brand} accessibilityRole="header">
-              DNX
-            </Text>
             {/* SERVICES-ONLY: products/stores hidden for launch — uncomment to restore */}
             {/*
             {cartCount > 0 && (
@@ -227,6 +238,21 @@ export default function HomeScreen() {
           {/* SERVICES-ONLY: was "Search services, stores or products" — restore for products/stores */}
           <Text style={styles.searchText}>Search services</Text>
         </TouchableOpacity>
+
+        {/* ── Your next booking ─────────────────────────────────────────── */}
+        {!!nextBooking && (
+          <>
+            <SectionHead
+              title="Your next booking"
+              onViewAll={upcomingCount > 1 ? goToBookings : undefined}
+            />
+            <UpcomingBookingCard
+              booking={nextBooking}
+              onView={onViewBooking}
+              onDirections={onDirections}
+            />
+          </>
+        )}
 
         {/* Hero carousel — value-prop banners (unchanged from the original design) */}
         <ScrollView
@@ -453,14 +479,58 @@ export default function HomeScreen() {
         )}
         */}
 
-        {/* ── Popular services to book ─────────────────────────────────── */}
-        {mostBooked.length > 0 && (
+        {/* ── Book again — services the customer has completed before ── */}
+        {bookAgain.length > 0 && (
+          <>
+            <SectionHead title="Book again" />
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.hRow}
+              style={styles.bleed}
+              snapToInterval={againW + GAP}
+              decelerationRate="fast"
+            >
+              {bookAgain.map((b, i) => (
+                <BookAgainCard
+                  key={`${b.provider.id}:${b.service.id}`}
+                  booking={b}
+                  width={againW}
+                  index={i}
+                  onPress={onBookAgain}
+                />
+              ))}
+            </ScrollView>
+          </>
+        )}
+
+        {/* ── Open now near you ────────────────────────────────────────── */}
+        {openNow.length > 0 && (
+          <>
+            <SectionHead title="Open now near you" onViewAll={goToOpenNow} />
+            {!!openNowBanner && <Text style={styles.scopeText}>{openNowBanner}</Text>}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.hRow}
+              style={styles.bleed}
+              snapToInterval={nearW + GAP}
+              decelerationRate="fast"
+            >
+              {openNow.map((p, i) => (
+                <StoreCard key={p.id} store={p} width={nearW} index={i} onPress={onProviderPress} />
+              ))}
+            </ScrollView>
+          </>
+        )}
+
+        {/* ── Popular services to book — the service leads, not the business ── */}
+        {popularServices.length > 0 && (
           <>
             <SectionHead title="Popular services to book" onViewAll={goToAllServices} />
-            {!!mostBookedBanner && <Text style={styles.scopeText}>{mostBookedBanner}</Text>}
             <View style={styles.list}>
-              {mostBooked.map((p, i) => (
-                <ServiceRow key={p.id} provider={p} index={i} onPress={onProviderPress} />
+              {popularServices.map((svc, i) => (
+                <PopularServiceRow key={svc.id} service={svc} index={i} onPress={onServicePress} />
               ))}
             </View>
           </>

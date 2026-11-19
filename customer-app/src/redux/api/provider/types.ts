@@ -8,6 +8,8 @@ export interface Service {
   id: string;
   name: string;
   description?: string | null;
+  // The service's own photo (absolute URL); cards fall back to the business photo.
+  imageUrl?: string | null;
   priceMinor: number;
   currency: string;
   durationMin: number;
@@ -184,6 +186,9 @@ export interface ServiceSearchResult extends Service {
   provider: {
     id: string;
     businessName: string;
+    // Photo fallbacks for service cards: business photo → sub-category → category.
+    images?: string[];
+    subcategory?: { slug: string; name: string; imageUrl?: string | null } | null;
     city?: string | null;
     isVerified: boolean;
     ratingAvg: number;
@@ -206,11 +211,16 @@ export interface SearchServicesParams {
   sort?: ProviderSort;
   lat?: number;
   lng?: number;
+  // At most one service per business — its most-booked one.
+  onePerProvider?: boolean;
   page?: number;
   limit?: number;
 }
 
-export type ServiceSearchListResult = Paginated<ServiceSearchResult>;
+export interface ServiceSearchListResult extends Paginated<ServiceSearchResult> {
+  // Same distance ring as ProviderListResult.radiusKm.
+  radiusKm?: number | null;
+}
 export type ServiceSearchResponse = ApiEnvelope<ServiceSearchListResult>;
 
 export interface ListProvidersParams {
@@ -234,6 +244,9 @@ export interface ProviderListResult extends Paginated<Provider> {
   // null when no location filter was given at all (e.g. never fetched with
   // a postal/city/state param).
   locationScope: LocationScope;
+  // Distance ring the results came from (10 / 20 / 50 / 100 km) — null when
+  // the backend couldn't place the customer and matched by postal/city/state.
+  radiusKm?: number | null;
 }
 
 export type ProvidersResponse = ApiEnvelope<ProviderListResult>;

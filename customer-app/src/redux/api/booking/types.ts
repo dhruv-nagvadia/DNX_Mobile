@@ -1,6 +1,7 @@
 import { ApiEnvelope } from '../types';
 
-export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
+export type BookingStatus =
+  'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
 export type PaymentStatus = 'PENDING' | 'PARTIAL' | 'PAID' | 'FAILED' | 'REFUNDED';
 export type PaymentMethod = 'ONLINE' | 'CASH' | 'PARTIAL';
 
@@ -24,9 +25,20 @@ export interface Booking {
     businessName: string;
     images?: string[];
     phone: string;
+    // Business address — backs the "Directions" button on Home's upcoming booking card.
+    addressLine?: string | null;
+    city?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
     category: { slug: string; name: string };
   };
-  service: { id: string; name: string; durationMin: number; travelRequired?: boolean };
+  service: {
+    id: string;
+    name: string;
+    durationMin: number;
+    travelRequired?: boolean;
+    imageUrl?: string | null;
+  };
   review: { id: string; rating: number } | null;
 }
 

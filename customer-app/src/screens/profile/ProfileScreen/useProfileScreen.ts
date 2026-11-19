@@ -20,6 +20,7 @@ import { clearTokenCache } from '@/api/apiConfigs';
 import { StorageKeys } from '@/utils/Constants';
 import { ROUTES } from '@/navigation/routes';
 import { lookupByPincode } from '@/utils/locationApi';
+import { unregisterPushToken } from '@/utils/push';
 
 import { ProfileScreenNavigationProp } from './types';
 
@@ -233,6 +234,8 @@ export function useProfileScreen() {
   }, [dispatch]);
 
   const logout = useCallback(async () => {
+    // Stop pushes to this device; needs the auth token, so before endSession.
+    await unregisterPushToken();
     await endSession();
   }, [endSession]);
 

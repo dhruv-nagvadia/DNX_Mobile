@@ -2,6 +2,14 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+// Firebase (FCM push). Applied only once android/app/google-services.json exists, so the
+// app still builds without a Firebase project. Download the file from the Firebase console.
+if (file("google-services.json").exists()) {
+    apply plugin: "com.google.gms.google-services"
+} else {
+    logger.warn("google-services.json not found in android/app - Firebase/push notifications disabled for this build.")
+}
+
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -72,6 +80,35 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
 
+/**
+ * Release signing (Play Store upload key).
+ * Create the keystore once (keep it + passwords safe, outside the repo):
+ *   keytool -genkeypair -v -storetype PKCS12 -keystore dnx-upload.keystore \
+ *     -alias dnx-upload -keyalg RSA -keysize 2048 -validity 10000
+ * Then add to ~/.gradle/gradle.properties (preferred) or android/gradle.properties:
+ *   DNX_UPLOAD_STORE_FILE=/absolute/path/to/dnx-upload.keystore
+ *   DNX_UPLOAD_STORE_PASSWORD=*****
+ *   DNX_UPLOAD_KEY_ALIAS=dnx-upload
+ *   DNX_UPLOAD_KEY_PASSWORD=*****
+ * Without these, release builds fall back to the debug keystore (NOT uploadable to Play).
+ */
+def hasReleaseSigning = ["DNX_UPLOAD_STORE_FILE", "DNX_UPLOAD_STORE_PASSWORD", "DNX_UPLOAD_KEY_ALIAS", "DNX_UPLOAD_KEY_PASSWORD"]
+        .every { project.hasProperty(it) && project.property(it).toString().trim() }
+
+/**
+ * Plain-http API in release builds. Release builds block http:// by default, which is right
+ * for the real HTTPS domain but breaks local release testing (staging/production envs on this
+ * Mac use http://<LAN-IP>:4001/4002). Read the same .env.<APP_ENV> file the JS bundle uses
+ * (APP_ENV comes from the npm script, default production) and allow cleartext only while its
+ * API_BASE_URL is http://. Once production points at https://, cleartext is off automatically.
+ */
+def appEnv = System.getenv("APP_ENV") ?: "production"
+def envFile = rootProject.file("../.env.${appEnv}")
+def apiBaseUrl = envFile.exists()
+        ? (envFile.readLines().find { it.trim().startsWith("API_BASE_URL=") }?.split("=", 2)?.getAt(1)?.trim() ?: "")
+        : ""
+def allowCleartext = apiBaseUrl.startsWith("http://")
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -79,11 +116,13 @@ android {
 
     namespace "com.dnx"
     defaultConfig {
-        applicationId "com.dnx"
+        applicationId "com.dnx.customer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        // Used by src/release/AndroidManifest.xml — see allowCleartext above.
+        manifestPlaceholders = [usesCleartextTraffic: allowCleartext.toString()]
     }
     signingConfigs {
         debug {
@@ -92,15 +131,29 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        if (hasReleaseSigning) {
+            release {
+                storeFile file(DNX_UPLOAD_STORE_FILE)
+                storePassword DNX_UPLOAD_STORE_PASSWORD
+                keyAlias DNX_UPLOAD_KEY_ALIAS
+                keyPassword DNX_UPLOAD_KEY_PASSWORD
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            // Uses the DNX_UPLOAD_* keystore when configured (see comment above), else debug.
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            } else {
+                if (gradle.startParameter.taskNames.any { it.toLowerCase().contains("release") }) {
+                    logger.warn("DNX_UPLOAD_* gradle properties not set - release build will be signed with the DEBUG keystore (not uploadable to Play Store).")
+                }
+                signingConfig signingConfigs.debug
+            }
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

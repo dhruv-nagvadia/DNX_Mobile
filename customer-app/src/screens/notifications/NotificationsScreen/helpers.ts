@@ -1,7 +1,7 @@
 import { AppNotification } from '@/redux/api/notification/types';
 
 export type NotificationCategory =
-  'booking' | 'order' | 'review' | 'payment' | 'stock' | 'cancelled' | 'generic';
+  'booking' | 'order' | 'review' | 'payment' | 'stock' | 'cancelled' | 'reminder' | 'generic';
 
 export type FilterKey = 'all' | 'unread' | NotificationCategory;
 
@@ -12,6 +12,7 @@ export const CATEGORY_LABEL: Record<NotificationCategory, string> = {
   payment: 'Payments',
   stock: 'Low stock',
   cancelled: 'Cancelled',
+  reminder: 'Reminders',
   generic: 'Other',
 };
 
@@ -30,6 +31,9 @@ export function categoryOf(n: AppNotification): NotificationCategory {
   }
   if (/PAY|REFUND|EARNING/.test(type) || /payment|payout|refund|earning/.test(title)) {
     return 'payment';
+  }
+  if (type === 'REMINDER_DUE' || n.entityType === 'REMINDER') {
+    return 'reminder';
   }
   if (type.startsWith('BOOKING') || n.entityType === 'BOOKING') {
     return 'booking';
