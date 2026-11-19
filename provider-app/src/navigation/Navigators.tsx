@@ -83,7 +83,8 @@ function TabNavigator() {
         name={ROUTES.BOOKINGS_ORDERS}
         component={BookingsOrdersScreen}
         options={{
-          tabBarLabel: 'Bookings & Orders',
+          // SERVICES-ONLY: product businesses disabled for launch — label was 'Bookings & Orders'; restore when products return
+          tabBarLabel: 'Bookings',
           tabBarIcon: ({ color, size }) => <CalendarDays color={color} size={size} />,
         }}
       />

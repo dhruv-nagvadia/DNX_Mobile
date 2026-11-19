@@ -15,7 +15,7 @@ import {
   Pencil,
   RefreshCw,
   ShieldCheck,
-  ShoppingBag,
+  // ShoppingBag, // SERVICES-ONLY: unused while orders hidden — uncomment to restore
 } from 'lucide-react-native';
 
 import { GradientBackground } from '@/components/GradientBackground';
@@ -31,7 +31,7 @@ import { PROFILE_CARD_GRADIENT, styles } from './styles';
 type IconType = typeof Bell;
 
 const CHEVRON = '#94A3B8';
-const MINT: PillColors = { bg: '#DCF5E7', fg: '#15803D' };
+// const MINT: PillColors = { bg: '#DCF5E7', fg: '#15803D' }; // SERVICES-ONLY: unused while orders hidden — uncomment to restore
 
 interface RowProps {
   icon: IconType;
@@ -179,6 +179,8 @@ export default function ProfileScreen() {
             label="Bookings"
             onPress={p.goToBookings}
           />
+          {/* SERVICES-ONLY: orders hidden for launch — uncomment to restore */}
+          {/*
           <Stat
             icon={ShoppingBag}
             tone={MINT}
@@ -186,6 +188,7 @@ export default function ProfileScreen() {
             label="Orders"
             onPress={p.goToOrders}
           />
+          */}
           <Stat
             icon={Bell}
             tone={PILL.lavender}
@@ -206,6 +209,8 @@ export default function ProfileScreen() {
             subtitle="Upcoming, past and cancelled"
             onPress={p.goToBookings}
           />
+          {/* SERVICES-ONLY: orders hidden for launch — uncomment to restore */}
+          {/*
           <Row
             icon={ShoppingBag}
             tone={MINT}
@@ -213,6 +218,7 @@ export default function ProfileScreen() {
             subtitle="Track pickups and reorder"
             onPress={p.goToOrders}
           />
+          */}
           <Row
             icon={Bell}
             tone={PILL.lavender}
@@ -251,7 +257,8 @@ export default function ProfileScreen() {
             icon={Bell}
             tone={PILL.green}
             title="Notifications"
-            subtitle="Bookings, orders and offers"
+            // SERVICES-ONLY: was "Bookings, orders and offers" — restore when orders return
+            subtitle="Bookings and offers"
             onPress={p.goToNotifications}
           />
         </View>

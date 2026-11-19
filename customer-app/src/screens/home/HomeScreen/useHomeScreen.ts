@@ -48,7 +48,8 @@ export function useHomeScreen() {
   const currentUser = useAppSelector((state) => state.user.currentUser);
 
   const { data: categories = [], isLoading: categoriesLoading } = useGetCategoriesQuery();
-  const { data: productTypes = [] } = useGetProductTypesQuery();
+  // SERVICES-ONLY: product types not fetched for launch — restore by removing the `{ skip: true }` arg
+  const { data: productTypes = [] } = useGetProductTypesQuery(undefined, { skip: true });
   const { data: platformCoupons = [] } = useGetPlatformCouponsQuery();
   const customerLocation = useAppSelector((s) => s.location.current);
   // Send everything we know — the backend tries postal code first, then
@@ -66,7 +67,11 @@ export function useHomeScreen() {
     ...locationFilter,
   });
   // Nearby stores you can order products from.
-  const { data: storesPage } = useGetProvidersQuery({ type: 'STORE', limit: 6, ...locationFilter });
+  // SERVICES-ONLY: STORE providers not fetched for launch — restore by removing the `{ skip: true }` arg
+  const { data: storesPage } = useGetProvidersQuery(
+    { type: 'STORE', limit: 6, ...locationFilter },
+    { skip: true },
+  );
 
   // When the backend had to widen past an exact postal-code match, let the
   // customer know these results cover a broader area.

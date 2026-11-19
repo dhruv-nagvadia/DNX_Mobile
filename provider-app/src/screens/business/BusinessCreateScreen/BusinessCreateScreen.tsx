@@ -28,7 +28,8 @@ import {
   MapPin,
   Minus,
   Plus,
-  ShoppingBag,
+  // SERVICES-ONLY: product businesses disabled for launch — uncomment to restore (used by the Store type card)
+  // ShoppingBag,
   Star,
   X,
 } from 'lucide-react-native';
@@ -286,6 +287,7 @@ export default function BusinessCreateScreen() {
                 selected={form.type === 'SERVICE'}
                 onPress={() => setType('SERVICE')}
               />
+              {/* SERVICES-ONLY: product businesses disabled for launch — uncomment to restore the Store type card
               <TypeCard
                 icon={ShoppingBag}
                 title="Store"
@@ -293,6 +295,7 @@ export default function BusinessCreateScreen() {
                 selected={form.type === 'STORE'}
                 onPress={() => setType('STORE')}
               />
+              */}
 
               <Text style={styles.sectionTitle}>Category</Text>
               {categoriesForType.length === 0 ? (

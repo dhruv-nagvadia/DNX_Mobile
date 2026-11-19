@@ -38,6 +38,8 @@ type PillColors = { bg: string; fg: string };
 
 const timeFmt = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digit' });
 const PREVIEW_LIMIT = 3;
+// SERVICES-ONLY: product businesses disabled for launch — set to true to restore Open Orders / Orders to Fulfil / Low Stock
+const PRODUCTS_ENABLED = false;
 
 // Money-card bars: last 4 months' collected amounts, scaled to the tallest bar.
 const HERO_BAR_MAX = 52;
@@ -355,6 +357,8 @@ export default function HomeScreen() {
                 value={upcomingCount}
                 onPress={() => navigation.navigate(ROUTES.BOOKINGS_ORDERS, { tab: 'bookings' })}
               />
+              {/* SERVICES-ONLY: Open Orders tile hidden — set PRODUCTS_ENABLED to restore */}
+              {PRODUCTS_ENABLED && (
               <StatTile
                 theme={TILE_THEMES.orders}
                 icon={<Package size={20} color={TILE_THEMES.orders.icon} />}
@@ -362,6 +366,7 @@ export default function HomeScreen() {
                 value={openOrdersCount}
                 onPress={() => navigation.navigate(ROUTES.BOOKINGS_ORDERS, { tab: 'orders' })}
               />
+              )}
               <StatTile
                 theme={TILE_THEMES.action}
                 icon={<CircleAlert size={20} color={TILE_THEMES.action.icon} />}
@@ -464,7 +469,8 @@ export default function HomeScreen() {
               )}
             </View>
 
-            {/* 7. Orders to fulfil */}
+            {/* 7. Orders to fulfil — SERVICES-ONLY: hidden, set PRODUCTS_ENABLED to restore */}
+            {PRODUCTS_ENABLED && (
             <View style={styles.card}>
               <SectionHeader
                 icon={<Package size={20} color="#D97706" />}
@@ -511,9 +517,10 @@ export default function HomeScreen() {
                 })
               )}
             </View>
+            )}
 
-            {/* 8. Low stock */}
-            {hasStore && lowStock.length > 0 && (
+            {/* 8. Low stock — SERVICES-ONLY: PRODUCTS_ENABLED gate added, remove it to restore */}
+            {PRODUCTS_ENABLED && hasStore && lowStock.length > 0 && (
               <View style={styles.card}>
                 <SectionHeader
                   icon={<Package size={20} color="#D97706" />}

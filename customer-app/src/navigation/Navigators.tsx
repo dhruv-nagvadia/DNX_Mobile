@@ -101,7 +101,8 @@ function TabNavigator() {
               minimumFontScale={0.8}
               style={[styles.tabLabel, { color }]}
             >
-              Bookings & Orders
+              {/* SERVICES-ONLY: was "Bookings & Orders" — restore when orders return */}
+              Bookings
             </Text>
           ),
           tabBarIcon: BookingsTabIcon,

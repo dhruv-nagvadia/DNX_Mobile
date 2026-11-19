@@ -70,7 +70,9 @@ export function useBookingsOrdersScreen() {
   const businessId = route.params?.businessId;
   const { notify } = useConfirm();
   const scoped = !!businessId;
-  const [tab, setTabState] = useState<ListTab>(route.params?.tab ?? 'bookings');
+  // SERVICES-ONLY: product businesses disabled for launch — restore the line below and drop the forced 'bookings' one
+  // const [tab, setTabState] = useState<ListTab>(route.params?.tab ?? 'bookings');
+  const [tab, setTabState] = useState<ListTab>('bookings'); // SERVICES-ONLY
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const [search, setSearch] = useState('');
   const setTab = useCallback((next: ListTab) => {

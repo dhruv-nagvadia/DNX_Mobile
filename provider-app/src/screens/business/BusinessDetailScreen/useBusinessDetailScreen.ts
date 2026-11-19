@@ -33,7 +33,9 @@ export function useBusinessDetailScreen() {
   );
 
   // Businesses with no `type` set behave as SERVICE (mirrors the web form's default).
-  const isStore = business?.type === 'STORE';
+  // SERVICES-ONLY: product businesses disabled for launch — restore the line below and drop the `false` one
+  // const isStore = business?.type === 'STORE';
+  const isStore = false; // SERVICES-ONLY
 
   const confirmDelete = async () => {
     if (!business) {

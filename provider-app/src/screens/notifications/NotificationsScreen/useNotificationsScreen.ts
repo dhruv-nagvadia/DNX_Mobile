@@ -15,7 +15,9 @@ import { CATEGORY_LABEL, FilterKey, NotificationCategory, categoryOf, groupByDay
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'NotificationsScreen'>;
 
-const CATEGORY_ORDER: NotificationCategory[] = ['booking', 'order', 'review', 'payment', 'stock'];
+// SERVICES-ONLY: product businesses disabled for launch — restore the line below and drop the services-only one
+// const CATEGORY_ORDER: NotificationCategory[] = ['booking', 'order', 'review', 'payment', 'stock'];
+const CATEGORY_ORDER: NotificationCategory[] = ['booking', 'review', 'payment']; // SERVICES-ONLY
 
 /** Ports the customer app's `NotificationsScreen` read/tap flow. There's no
  * per-order/per-booking detail screen yet in provider-mobile, so a tap lands

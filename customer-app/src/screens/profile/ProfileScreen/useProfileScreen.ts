@@ -57,7 +57,8 @@ export function useProfileScreen() {
   const user = useAppSelector((s) => s.user.currentUser);
 
   const { data: bookings = [] } = useGetMyBookingsQuery();
-  const { data: orders = [] } = useGetMyOrdersQuery();
+  // SERVICES-ONLY: orders not fetched for launch — restore by removing the `{ skip: true }` arg
+  const { data: orders = [] } = useGetMyOrdersQuery(undefined, { skip: true });
   const { data: reminders = [] } = useGetRemindersQuery();
   const { data: addresses = [] } = useGetAddressesQuery();
   // `/auth/me` also returns createdAt (not kept on the stored user) — used

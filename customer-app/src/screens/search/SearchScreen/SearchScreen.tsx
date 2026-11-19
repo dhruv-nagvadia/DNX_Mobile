@@ -30,7 +30,7 @@ import { styles } from './styles';
 const TYPES: { key: TypeFilter; label: string }[] = [
   { key: 'ALL', label: 'All' },
   { key: 'SERVICE', label: 'Services' },
-  { key: 'PRODUCT', label: 'Products' },
+  // { key: 'PRODUCT', label: 'Products' }, // SERVICES-ONLY: products hidden for launch — uncomment to restore
   { key: 'BUSINESS', label: 'Businesses' },
 ];
 
@@ -179,7 +179,8 @@ export default function SearchScreen() {
             <View style={styles.emptyIcon}>
               <Search size={30} color={LINK} strokeWidth={1.8} />
             </View>
-            <Text style={styles.emptyText}>Search for a business, service or product.</Text>
+            {/* SERVICES-ONLY: was "Search for a business, service or product." — restore for products */}
+            <Text style={styles.emptyText}>Search for a business or service.</Text>
           </View>
         )}
       </ScrollView>
@@ -309,7 +310,8 @@ export default function SearchScreen() {
           <Search size={22} color={INK} strokeWidth={2} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search services, stores or products"
+            // SERVICES-ONLY: was "Search services, stores or products" — restore for products/stores
+            placeholder="Search services or businesses"
             placeholderTextColor={PLACEHOLDER}
             value={query}
             onChangeText={setQuery}

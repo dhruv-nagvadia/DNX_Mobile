@@ -43,6 +43,7 @@ export default function BookingsScreen() {
   const { bookings, isLoading: bookingsLoading, onOpen } = useBookingsScreen();
   const { data: orders = [], isLoading: ordersLoading } = useGetMyOrdersQuery(undefined, {
     refetchOnMountOrArgChange: true,
+    skip: true, // SERVICES-ONLY: orders not fetched for launch — remove this line to restore
   });
   const navigation = useNavigation<{
     navigate: (r: string, p?: object) => void;
@@ -56,7 +57,8 @@ export default function BookingsScreen() {
   // The request is cleared once applied, so asking for the same list again later works.
   const requestedTab = (route.params as { tab?: Tab } | undefined)?.tab;
   useEffect(() => {
-    if (requestedTab === 'bookings' || requestedTab === 'orders') {
+    // SERVICES-ONLY: Orders list can't be requested for launch — restore: `|| requestedTab === 'orders'`
+    if (requestedTab === 'bookings') {
       setTab(requestedTab);
       navigation.setParams({ tab: undefined });
     }
@@ -190,7 +192,8 @@ export default function BookingsScreen() {
   };
 
   const content = tab === 'bookings' ? renderBookings() : renderOrders();
-  const counts = { bookings: activeBookings.length, orders: activeOrders.length };
+  // SERVICES-ONLY: only used by the hidden Bookings/Orders switch — uncomment to restore
+  // const counts = { bookings: activeBookings.length, orders: activeOrders.length };
   const emptyCopy = q
     ? { title: 'Nothing matches', text: 'Try another name, or clear the search.' }
     : tab === 'bookings'
@@ -207,7 +210,8 @@ export default function BookingsScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
       <View style={styles.header}>
-        <Text style={styles.title}>Bookings & Orders</Text>
+        {/* SERVICES-ONLY: was "Bookings & Orders" — restore when orders return */}
+        <Text style={styles.title}>Bookings</Text>
         <TouchableOpacity
           style={styles.searchBtn}
           onPress={() => {
@@ -244,6 +248,8 @@ export default function BookingsScreen() {
         </View>
       )}
 
+      {/* SERVICES-ONLY: Bookings/Orders switch hidden for launch (Bookings only) — uncomment to restore */}
+      {/*
       <View style={styles.segmentBar}>
         {(['bookings', 'orders'] as Tab[]).map((t) => {
           const active = tab === t;
@@ -270,6 +276,7 @@ export default function BookingsScreen() {
           );
         })}
       </View>
+      */}
 
       <View style={styles.chips}>
         {FILTERS.map((f) => (

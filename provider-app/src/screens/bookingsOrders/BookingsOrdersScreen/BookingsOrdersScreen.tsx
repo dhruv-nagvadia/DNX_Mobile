@@ -59,6 +59,9 @@ const ORDER_CHIPS: { key: OrderChip; label: string }[] = [
   { key: 'CANCELLED', label: 'Cancelled' },
 ];
 
+// SERVICES-ONLY: product businesses disabled for launch — set to true to restore the Bookings/Orders segment
+const PRODUCTS_ENABLED = false;
+
 const BACK_HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
 
 function SummaryTile({
@@ -382,9 +385,15 @@ export default function BookingsOrdersScreen() {
           </View>
         </View>
       ) : (
-        <AppHeader variant="light" logo title="Bookings & Orders" />
+        <AppHeader
+          variant="light"
+          logo
+          // SERVICES-ONLY: title was "Bookings & Orders" — restore when products return
+          title="Bookings"
+        />
       )}
-      {!scoped && (
+      {/* SERVICES-ONLY: Orders segment hidden — remove `PRODUCTS_ENABLED &&` to restore */}
+      {PRODUCTS_ENABLED && !scoped && (
         <View style={styles.header}>
           <View style={styles.segment}>
             <TouchableOpacity

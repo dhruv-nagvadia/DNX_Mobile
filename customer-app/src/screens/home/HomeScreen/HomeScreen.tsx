@@ -18,16 +18,16 @@ import {
   LayoutGrid,
   MapPin,
   Search,
-  ShoppingCart,
+  // ShoppingCart, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
   TicketPercent,
 } from 'lucide-react-native';
 
 import {
-  ProductTypeCard,
+  // ProductTypeCard, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
   ServiceRow,
-  StoreCard,
-  StoreCategoryCard,
-  useCardWidth,
+  // StoreCard, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
+  // StoreCategoryCard, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
+  // useCardWidth, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
 } from '@/components/BusinessCards';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { GradientBackground } from '@/components/GradientBackground';
@@ -99,33 +99,33 @@ export default function HomeScreen() {
     location,
     offers,
     mostBooked,
-    stores,
+    // stores, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
     mostBookedBanner,
-    storesBanner,
+    // storesBanner, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
     recentlyViewed,
     heroBanners,
     serviceCategories,
-    storeCategories,
-    productTypes,
+    // storeCategories, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
+    // productTypes, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
     hasMoreServiceCategories,
-    hasMoreStoreCategories,
-    hasMoreProductTypes,
+    // hasMoreStoreCategories, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
+    // hasMoreProductTypes, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
     categoriesLoading,
     onCategoryPress,
-    onProductTypePress,
+    // onProductTypePress, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
     onOfferPress,
     onProviderPress,
     onRecentPress,
     goToProfile,
     goToSearch,
-    goToCart,
+    // goToCart, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
     goToLocationPicker,
     goToAllServiceCategories,
-    goToAllStoreCategories,
-    goToAllProductTypes,
-    goToAllStores,
+    // goToAllStoreCategories, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
+    // goToAllProductTypes, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
+    // goToAllStores, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
     goToAllServices,
-    cartCount,
+    // cartCount, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
   } = useHomeScreen();
 
   // Every rail is sized from the screen width so the mockup's 2 / 3 / 4-up
@@ -135,11 +135,11 @@ export default function HomeScreen() {
   const quarterW = Math.floor((contentW - GAP * 3) / 4);
   // Business cards use the same width as their "View all" grid (two per
   // screen width), so the card is identical in both places.
-  const cardW = useCardWidth();
+  // const cardW = useCardWidth(); // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
   // "Shop by product" matches its View all grid exactly (3 per screen width).
-  const productW = Math.floor((contentW - GAP * 2) / 3);
+  // const productW = Math.floor((contentW - GAP * 2) / 3); // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
   // "Order from stores" keeps its own wider card (~2 per screen).
-  const storeW = Math.floor(contentW * 0.48);
+  // const storeW = Math.floor(contentW * 0.48); // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
   const recentW = Math.floor(contentW * 0.5);
   const halfW = Math.floor((contentW - GAP) / 2);
   const heroW = contentW;
@@ -150,8 +150,8 @@ export default function HomeScreen() {
 
   // With more categories than fit, the 8th tile becomes "More" (like the mockup).
   const serviceTiles = hasMoreServiceCategories ? serviceCategories.slice(0, 7) : serviceCategories;
-  const productTiles = productTypes;
-  const businessTiles = storeCategories;
+  // const productTiles = productTypes; // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
+  // const businessTiles = storeCategories; // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -183,6 +183,8 @@ export default function HomeScreen() {
             <Text style={styles.brand} accessibilityRole="header">
               DNX
             </Text>
+            {/* SERVICES-ONLY: products/stores hidden for launch — uncomment to restore */}
+            {/*
             {cartCount > 0 && (
               <TouchableOpacity
                 style={styles.iconBtn}
@@ -197,6 +199,7 @@ export default function HomeScreen() {
                 </View>
               </TouchableOpacity>
             )}
+            */}
             <NotificationBellButton color={INK} style={styles.iconBtn} />
             <TouchableOpacity
               style={styles.avatar}
@@ -221,7 +224,8 @@ export default function HomeScreen() {
           accessibilityRole="search"
         >
           <Search size={20} color={INK} strokeWidth={2} />
-          <Text style={styles.searchText}>Search services, stores or products</Text>
+          {/* SERVICES-ONLY: was "Search services, stores or products" — restore for products/stores */}
+          <Text style={styles.searchText}>Search services</Text>
         </TouchableOpacity>
 
         {/* Hero carousel — value-prop banners (unchanged from the original design) */}
@@ -359,6 +363,8 @@ export default function HomeScreen() {
         )}
 
         {/* ── Shop by product (photo cards, label underneath) ──────────── */}
+        {/* SERVICES-ONLY: products/stores hidden for launch — uncomment to restore */}
+        {/*
         {productTiles.length > 0 && (
           <>
             <SectionHead
@@ -385,8 +391,11 @@ export default function HomeScreen() {
             </ScrollView>
           </>
         )}
+        */}
 
         {/* ── Shop by business (photo cards, label on the photo) ───────── */}
+        {/* SERVICES-ONLY: products/stores hidden for launch — uncomment to restore */}
+        {/*
         {!categoriesLoading && businessTiles.length > 0 && (
           <>
             <SectionHead
@@ -413,8 +422,11 @@ export default function HomeScreen() {
             </ScrollView>
           </>
         )}
+        */}
 
         {/* ── Order from stores ────────────────────────────────────────── */}
+        {/* SERVICES-ONLY: products/stores hidden for launch — uncomment to restore */}
+        {/*
         {stores.length > 0 && (
           <>
             <SectionHead title="Order from stores" onViewAll={goToAllStores} />
@@ -439,6 +451,7 @@ export default function HomeScreen() {
             </ScrollView>
           </>
         )}
+        */}
 
         {/* ── Popular services to book ─────────────────────────────────── */}
         {mostBooked.length > 0 && (

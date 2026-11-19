@@ -41,7 +41,8 @@ import { PROGRESS_BLUE, STAR, styles } from './styles';
 const FILTERS: { key: BusinessFilter; label: string }[] = [
   { key: 'ALL', label: 'All' },
   { key: 'SERVICE', label: 'Services' },
-  { key: 'STORE', label: 'Stores' },
+  // SERVICES-ONLY: product businesses disabled for launch — uncomment to restore
+  // { key: 'STORE', label: 'Stores' },
 ];
 
 /** A soft rounded pill — local (not the shared `Pill`) because the mockup's

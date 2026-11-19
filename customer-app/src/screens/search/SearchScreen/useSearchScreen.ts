@@ -75,12 +75,14 @@ export function useSearchScreen() {
   // result rather than a single broad match, so each hit renders exactly
   // like it would under its own dedicated type.
   const runProviders = (isAllSearch || type === 'BUSINESS') && hasActiveQuery;
-  const runProducts = (isAllSearch || isProductSearch) && hasActiveQuery;
+  // SERVICES-ONLY: product search off for launch — restore: `(isAllSearch || isProductSearch) && hasActiveQuery`
+  const runProducts = false;
   const runServices = (isAllSearch || isServiceSearch) && hasActiveQuery;
 
   const { data, isFetching: providersFetching } = useGetProvidersQuery(
     {
       search: trimmed,
+      type: 'SERVICE', // SERVICES-ONLY: service businesses only for launch — remove this line to restore stores
       city: location?.mode === 'manual' ? location.city : undefined,
       postalCode: location?.mode === 'manual' ? location.postalCode : undefined,
       limit: 30,
