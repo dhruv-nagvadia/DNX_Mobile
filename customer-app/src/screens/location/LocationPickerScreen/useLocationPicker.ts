@@ -18,6 +18,8 @@ export function useLocationPicker() {
   const current = useAppSelector((s) => s.location.current);
 
   const [locating, setLocating] = useState(false);
+  // Last GPS attempt failed (permission denied / no fix) — shown inline on the card.
+  const [gpsFailed, setGpsFailed] = useState(false);
   const [manualText, setManualText] = useState('');
   const [suggestions, setSuggestions] = useState<PostOffice[]>([]);
   const [searching, setSearching] = useState(false);
@@ -62,9 +64,11 @@ export function useLocationPicker() {
 
   const useCurrentLocation = useCallback(async () => {
     setLocating(true);
+    setGpsFailed(false);
     const loc = await resolveGpsLocation();
     setLocating(false);
     if (!loc) {
+      setGpsFailed(true);
       Alert.alert(
         'Could not get your location',
         'Allow location access in your device settings, or enter your city/PIN code instead.',
@@ -100,6 +104,7 @@ export function useLocationPicker() {
   return {
     current,
     locating,
+    gpsFailed,
     manualText,
     setManualText,
     suggestions,

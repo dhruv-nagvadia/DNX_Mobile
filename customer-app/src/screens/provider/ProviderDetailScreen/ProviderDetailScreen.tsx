@@ -121,7 +121,6 @@ function ServiceDetail() {
     hoursRows,
     address,
     depositPercent,
-    onCall,
     onDirections,
     onShare,
     goBack,
@@ -192,7 +191,8 @@ function ServiceDetail() {
         />
 
         <View style={styles.body}>
-          <QuickActions onCall={onCall} onDirections={onDirections} onShare={onShare} />
+          {/* No Call here: the business's number is only shown after a booking/order. */}
+          <QuickActions onDirections={onDirections} onShare={onShare} />
           {!isReschedule && !!offer && <OfferCard offer={offer} onApply={onApplyOffer} />}
 
           {/* ── Services ────────────────────────────────────────────────── */}

@@ -1,244 +1,295 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
 
-/** Badge tints for the category grid, so the set reads as variety. */
-export const categoryTints = [
-  { backgroundColor: '#DBEAFE', borderColor: '#BFDBFE' },
-  { backgroundColor: '#FCE7F3', borderColor: '#FBCFE8' },
-  { backgroundColor: '#DCFCE7', borderColor: '#BBF7D0' },
-  { backgroundColor: '#FEF3C7', borderColor: '#FDE68A' },
-  { backgroundColor: '#E0E7FF', borderColor: '#C7D2FE' },
-  { backgroundColor: '#CFFAFE', borderColor: '#A5F3FC' },
+import { Color, FontWeight } from '@/utils/Theme';
+import {
+  ACTION,
+  CARD_SHADOW,
+  INK,
+  LINK,
+  ModernRadius,
+  ModernSize,
+  ModernType,
+  PAGE_BG,
+  PILL,
+} from '@/utils/modernTheme';
+
+const MUTED = '#64748B';
+const DOT = '#CBD5E1';
+
+/** Icon-chip tones for the category grid; `tint` in slides.ts indexes this. */
+export const CATEGORY_TONES = [
+  PILL.blue,
+  { bg: '#FCE7F3', fg: '#BE185D' },
+  PILL.green,
+  PILL.yellow,
+  PILL.lavender,
+  PILL.teal,
 ];
 
 export const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Color.ink,
-    overflow: 'hidden',
+    backgroundColor: PAGE_BG,
   },
 
-  // ── Header ────────────────────────────────────────────────────────
+  // ── Header ──────────────────────────────────────────────────────────────
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.md,
+    paddingHorizontal: ModernSize.gutter + 4,
+    paddingBottom: 8,
   },
   logoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm + 2,
+    gap: 10,
   },
   mark: {
     width: 32,
     height: 32,
-    borderRadius: Radius.md,
-    backgroundColor: Color.accent,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: ACTION,
   },
   markText: {
-    color: Color.ink,
-    fontSize: FontSize.md,
+    color: Color.white,
+    fontSize: 16,
     fontWeight: FontWeight.extrabold,
   },
   wordmark: {
-    color: Color.onDark,
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
+    color: INK,
+    fontSize: 18,
+    fontWeight: FontWeight.extrabold,
     letterSpacing: 0.5,
   },
+  skipBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: ModernRadius.pill,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
   skip: {
-    color: Color.onDarkMuted,
-    fontSize: FontSize.sm,
+    color: LINK,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
   },
 
-  // ── Pager ─────────────────────────────────────────────────────────
+  // ── Pager ───────────────────────────────────────────────────────────────
   pager: {
     flex: 1,
   },
   slide: {
     flex: 1,
-    paddingHorizontal: Spacing.lg,
-    justifyContent: 'center',
+    paddingHorizontal: 24,
   },
   visual: {
+    flex: 1,
+    alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: Spacing.xl,
   },
   copy: {
-    gap: Spacing.md,
+    gap: 12,
+    paddingBottom: 8,
   },
   title: {
-    color: Color.onDark,
-    fontSize: FontSize.xxl,
-    fontWeight: FontWeight.bold,
-    lineHeight: FontSize.xxl * 1.22,
-    letterSpacing: -0.5,
+    color: INK,
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: FontWeight.extrabold,
+    letterSpacing: -0.6,
   },
   titleAccent: {
-    color: Color.accent,
+    color: LINK,
   },
   body: {
-    color: Color.onDarkMuted,
-    fontSize: FontSize.md,
-    lineHeight: FontSize.md * 1.55,
+    color: MUTED,
+    fontSize: 15,
+    lineHeight: 22,
   },
 
-  // ── Slide 1: category grid ────────────────────────────────────────
-  categoryWrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm + 2,
-  },
-  categoryCard: {
-    // Three per row, accounting for the two gaps between them.
-    width: '31%',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.sm,
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: Color.glassBorder,
-    backgroundColor: Color.glass,
-  },
-  categoryBadge: {
-    width: 42,
-    height: 42,
-    borderRadius: Radius.pill,
-    borderWidth: 1,
+  // ── Illustration stage ──────────────────────────────────────────────────
+  stage: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  categoryInitial: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.bold,
-    color: Color.primaryDark,
-  },
-  categoryName: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.semibold,
-    color: Color.onDark,
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    borderWidth: 1,
+    overflow: 'hidden',
   },
 
-  // ── Slide 2: assistant conversation ───────────────────────────────
-  assistant: {
-    gap: Spacing.xs,
+  // Slide 1 — category grid
+  categoryGrid: {
+    width: '86%',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 10,
   },
-  assistantLabel: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.bold,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    color: Color.onDarkFaint,
-    marginBottom: 2,
+  categoryCard: {
+    width: '30%',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    borderRadius: ModernRadius.card,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
-  assistantLabelRight: {
-    marginTop: Spacing.md,
-    color: Color.accent,
-    textAlign: 'right',
+  categoryIcon: {
+    width: ModernSize.iconBox,
+    height: ModernSize.iconBox,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryName: {
+    color: INK,
+    fontSize: ModernType.caption,
+    fontWeight: FontWeight.semibold,
+  },
+
+  // Slide 2 — assistant chat
+  chat: {
+    width: '88%',
+    gap: 12,
   },
   bubble: {
-    alignSelf: 'flex-start',
-    maxWidth: '88%',
-    paddingVertical: Spacing.sm + 4,
-    paddingHorizontal: Spacing.md,
-    borderRadius: Radius.lg,
-    borderTopLeftRadius: 6,
-    borderWidth: 1,
-    borderColor: Color.glassBorder,
-    backgroundColor: Color.glass,
+    maxWidth: '90%',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 18,
+    ...CARD_SHADOW,
+  },
+  bubbleMine: {
+    alignSelf: 'flex-end',
+    borderBottomRightRadius: 6,
+    backgroundColor: ACTION,
+  },
+  bubbleMineText: {
+    color: Color.white,
+    fontSize: ModernType.body,
+    lineHeight: 20,
   },
   bubbleReply: {
-    alignSelf: 'flex-end',
-    borderTopLeftRadius: Radius.lg,
-    borderTopRightRadius: 6,
-    borderColor: Color.accentSoft,
-    backgroundColor: Color.accentSoft,
-    gap: Spacing.sm,
+    alignSelf: 'flex-start',
+    gap: 6,
+    borderBottomLeftRadius: 6,
+    backgroundColor: Color.white,
+  },
+  replyHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  replyBadge: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: PILL.lavender.bg,
+  },
+  replyName: {
+    color: INK,
+    fontSize: ModernType.secondary,
+    fontWeight: FontWeight.bold,
   },
   bubbleText: {
-    fontSize: FontSize.md,
-    lineHeight: FontSize.md * 1.42,
-    fontWeight: FontWeight.medium,
-    color: Color.onDark,
+    color: INK,
+    fontSize: ModernType.body,
+    lineHeight: 20,
+    fontWeight: FontWeight.semibold,
   },
   replyMetaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  dot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: '#4ADE80',
+    gap: 6,
   },
   replyMeta: {
-    fontSize: FontSize.sm,
-    color: Color.onDarkMuted,
+    color: PILL.green.fg,
+    fontSize: ModernType.caption,
+    fontWeight: FontWeight.medium,
   },
 
-  // ── Slide 3: mixed-size tiles ─────────────────────────────────────
+  // Slide 3 — organised tiles
   tileWrap: {
+    width: '84%',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: Spacing.sm + 2,
+    gap: 10,
   },
   tile: {
-    gap: 6,
-    padding: Spacing.md,
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: Color.glassBorder,
-    backgroundColor: Color.glass,
+    gap: 4,
+    padding: 14,
+    borderRadius: ModernRadius.card,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
   tileWide: {
     width: '100%',
   },
   tileSmall: {
-    // Two per row, accounting for the gap between them.
-    width: '48%',
+    flexGrow: 1,
+    flexBasis: '40%',
+  },
+  tileIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    marginBottom: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   tileLabel: {
-    fontSize: FontSize.md,
+    color: INK,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.bold,
-    letterSpacing: -0.2,
-    color: Color.onDark,
   },
   tileBody: {
-    fontSize: FontSize.sm,
-    lineHeight: FontSize.sm * 1.4,
-    color: Color.onDarkMuted,
+    color: MUTED,
+    fontSize: ModernType.caption,
   },
 
-  // ── Footer ────────────────────────────────────────────────────────
+  // ── Footer ──────────────────────────────────────────────────────────────
   footer: {
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.lg,
-    gap: Spacing.lg,
+    gap: 20,
+    paddingHorizontal: 24,
+    paddingTop: 20,
   },
   dots: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.sm,
+    gap: 6,
   },
   dotBase: {
-    width: 7,
-    height: 7,
+    width: 8,
+    height: 8,
     borderRadius: 4,
-    backgroundColor: Color.glassBorder,
+    backgroundColor: DOT,
   },
   dotActive: {
-    width: 22,
-    backgroundColor: Color.accent,
+    width: 24,
+    backgroundColor: ACTION,
   },
   cta: {
-    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 52,
+    borderRadius: ModernRadius.button,
+    backgroundColor: ACTION,
+    ...CARD_SHADOW,
+  },
+  ctaText: {
+    color: Color.white,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
   },
 });

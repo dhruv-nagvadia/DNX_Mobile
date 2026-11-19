@@ -28,7 +28,9 @@ export function useAddressesScreen() {
 
   const makeDefault = useCallback(
     (address: Address) => {
-      if (address.isDefault) return;
+      if (address.isDefault) {
+        return;
+      }
       updateAddress({ id: address.id, data: { isDefault: true } })
         .unwrap()
         .catch(() => undefined);

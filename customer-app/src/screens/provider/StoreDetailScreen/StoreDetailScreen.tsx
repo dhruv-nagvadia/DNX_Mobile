@@ -69,7 +69,7 @@ export function StoreDetail({ provider }: { provider: Provider }) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const cartItems = useAppSelector((s) => s.cart.items);
   const { data: reviews = [] } = useGetProviderReviewsQuery(provider.id);
-  const { offer, ratingBreakdown, hoursRows, address, onCall, onDirections, onShare } =
+  const { offer, ratingBreakdown, hoursRows, address, onDirections, onShare } =
     useBusinessExtras(provider, reviews, 'ORDER');
   const [query, setQuery] = useState('');
 
@@ -246,7 +246,8 @@ export function StoreDetail({ provider }: { provider: Provider }) {
         />
 
         <View style={ds.body}>
-          <QuickActions onCall={onCall} onDirections={onDirections} onShare={onShare} />
+          {/* No Call here: the business's number is only shown after a booking/order. */}
+          <QuickActions onDirections={onDirections} onShare={onShare} />
           {!!offer && <OfferCard offer={offer} onApply={onApplyOffer} />}
 
           {/* ── Search in store ─────────────────────────────────────────── */}

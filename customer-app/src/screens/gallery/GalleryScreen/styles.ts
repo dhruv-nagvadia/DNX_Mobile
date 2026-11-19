@@ -1,62 +1,105 @@
-import { StyleSheet, Dimensions } from 'react-native';
-import { Color, FontSize, FontWeight, Radius, Spacing } from '@/utils/Theme';
+import { StyleSheet } from 'react-native';
 
-const SCREEN_W = Dimensions.get('window').width;
-const GAP = Spacing.sm;
-const COLS = 4;
-const THUMB = (SCREEN_W - Spacing.lg * 2 - GAP * (COLS - 1)) / COLS;
+import { Color, FontWeight } from '@/utils/Theme';
+import { ModernRadius, ModernSize, ModernType } from '@/utils/modernTheme';
+
+export const BLACK = '#000000';
+export const ICON_ON_DARK = Color.white;
+export const MUTED_ON_DARK = 'rgba(255, 255, 255, 0.6)';
+export const THUMB = 56;
+export const THUMB_GAP = 8;
+export const THUMB_PAD = ModernSize.gutter;
+export const CLOSE_HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
+
+const GLASS = 'rgba(255, 255, 255, 0.14)';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.ink,
+    backgroundColor: BLACK,
   },
-  hero: {
-    width: SCREEN_W,
-    height: SCREEN_W * 0.82,
-    backgroundColor: Color.ink2,
+
+  // ── Top bar ─────────────────────────────────────────────────────────────
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: ModernSize.gutter,
+    paddingBottom: 8,
+  },
+  closeBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: GLASS,
   },
   counter: {
-    alignSelf: 'center',
-    marginTop: Spacing.md,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 5,
-    borderRadius: Radius.pill,
-    backgroundColor: Color.glassStrong,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: ModernRadius.pill,
+    backgroundColor: GLASS,
   },
   counterText: {
-    color: Color.onDark,
-    fontSize: FontSize.sm,
+    color: Color.white,
+    fontSize: ModernType.body,
     fontWeight: FontWeight.semibold,
+    fontVariant: ['tabular-nums'],
   },
-  gridLabel: {
-    color: Color.onDarkMuted,
-    fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
-    paddingHorizontal: Spacing.lg,
-    marginTop: Spacing.xl,
-    marginBottom: Spacing.md,
+  // Balances the close button so the counter stays centred.
+  topSpacer: {
+    width: 40,
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: GAP,
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.xl,
+
+  // ── Pager ───────────────────────────────────────────────────────────────
+  pager: {
+    flex: 1,
+  },
+  page: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photo: {
+    width: '100%',
+    height: '100%',
+  },
+
+  empty: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  emptyText: {
+    color: MUTED_ON_DARK,
+    fontSize: ModernType.body,
+  },
+
+  // ── Thumbnails ──────────────────────────────────────────────────────────
+  thumbBar: {
+    paddingTop: 12,
+  },
+  thumbRow: {
+    paddingHorizontal: THUMB_PAD,
   },
   thumb: {
     width: THUMB,
     height: THUMB,
-    borderRadius: Radius.md,
-    overflow: 'hidden',
+    marginRight: THUMB_GAP,
+    borderRadius: 10,
     borderWidth: 2,
     borderColor: 'transparent',
+    overflow: 'hidden',
   },
   thumbActive: {
-    borderColor: Color.accent,
+    borderColor: Color.white,
   },
   thumbImg: {
     width: '100%',
     height: '100%',
+  },
+  thumbDim: {
+    opacity: 0.5,
   },
 });

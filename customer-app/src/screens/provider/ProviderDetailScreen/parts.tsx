@@ -224,12 +224,13 @@ export function QuickActions({
   onDirections,
   onShare,
 }: {
-  onCall: () => void;
+  /** Omitted on public business pages — the phone is only shared after a booking/order. */
+  onCall?: () => void;
   onDirections: () => void;
   onShare: () => void;
 }) {
   const items = [
-    { label: 'Call', Icon: Phone, onPress: onCall },
+    ...(onCall ? [{ label: 'Call', Icon: Phone, onPress: onCall }] : []),
     { label: 'Directions', Icon: Navigation, onPress: onDirections },
     { label: 'Share', Icon: ShareIcon, onPress: onShare },
   ];

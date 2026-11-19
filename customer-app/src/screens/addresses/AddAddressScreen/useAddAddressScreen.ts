@@ -3,12 +3,13 @@ import { Alert } from 'react-native';
 
 import {
   useCreateAddressMutation,
+  useDeleteAddressMutation,
   useGetAddressesQuery,
   useUpdateAddressMutation,
 } from '@/redux/api/address/addressApi';
 import { lookupByPincode, resolveGpsLocation } from '@/utils/locationApi';
 
-import { AddAddressScreenProps, AddressForm } from './types';
+import { AddAddressScreenProps, AddressForm, AddressFormErrors } from './types';
 
 const PIN_RE = /^\d{6}$/;
 
@@ -28,14 +29,20 @@ export function useAddAddressScreen({ route, navigation }: AddAddressScreenProps
   const id = route.params?.id;
   const isEdit = !!id;
 
-  const { data: addresses = [] } = useGetAddressesQuery();
+  const { data: addresses = [], isSuccess: addressesLoaded } = useGetAddressesQuery();
   const [createAddress, { isLoading: creating }] = useCreateAddressMutation();
   const [updateAddress, { isLoading: updating }] = useUpdateAddressMutation();
+  const [deleteAddress, { isLoading: deleting }] = useDeleteAddressMutation();
 
   const [form, setForm] = useState<AddressForm>(EMPTY);
   const [locating, setLocating] = useState(false);
   const [resolvingPincode, setResolvingPincode] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<AddressFormErrors>({});
+  // City/state the PIN auto-lookup resolved to — shown as "✓ City, State".
+  const [pinResolved, setPinResolved] = useState<string | null>(null);
+  // Opt-in "make this my default" — only ever sends `isDefault: true`, so the
+  // backend's own rules (first address becomes default) are left untouched.
+  const [makeDefault, setMakeDefault] = useState(false);
 
   // Only auto-lookup city/state when the customer types the PIN themselves —
   // not when "use current location" already set it directly (avoids an
@@ -43,40 +50,51 @@ export function useAddAddressScreen({ route, navigation }: AddAddressScreenProps
   // India Post's slightly different naming for the same pincode).
   const pincodeEditedByUser = useRef(false);
 
+  const existing = id ? addresses.find((a) => a.id === id) : undefined;
+  const alreadyDefault = !!existing?.isDefault;
+  // The backend makes a customer's first address the default automatically.
+  const firstAddress = !isEdit && addressesLoaded && addresses.length === 0;
+
   useEffect(() => {
-    if (!id) return;
-    const existing = addresses.find((a) => a.id === id);
-    if (existing) {
-      setForm({
-        label: existing.label ?? '',
-        houseFlat: existing.houseFlat ?? '',
-        areaStreet: existing.areaStreet,
-        postalCode: existing.postalCode ?? '',
-        city: existing.city ?? '',
-        state: existing.state ?? '',
-        latitude: existing.latitude,
-        longitude: existing.longitude,
-      });
+    if (!existing) {
+      return;
     }
-  }, [id, addresses]);
+    setForm({
+      label: existing.label ?? '',
+      houseFlat: existing.houseFlat ?? '',
+      areaStreet: existing.areaStreet,
+      postalCode: existing.postalCode ?? '',
+      city: existing.city ?? '',
+      state: existing.state ?? '',
+      latitude: existing.latitude,
+      longitude: existing.longitude,
+    });
+  }, [existing]);
 
   const onField = useCallback(
     (key: 'label' | 'houseFlat' | 'areaStreet' | 'city' | 'state', value: string) => {
       setForm((prev) => ({ ...prev, [key]: value }));
+      if (key === 'areaStreet') {
+        setErrors((prev) => ({ ...prev, areaStreet: undefined }));
+      }
     },
     [],
   );
 
   const onPostalCode = useCallback((value: string) => {
     pincodeEditedByUser.current = true;
+    setErrors((prev) => ({ ...prev, postalCode: undefined }));
     setForm((prev) => ({ ...prev, postalCode: value.replace(/\D/g, '').slice(0, 6) }));
   }, []);
 
   // Debounced PIN → city/state autofill (India Post) — same pattern as
   // signup/profile. The customer can still edit either field afterward.
   useEffect(() => {
-    if (!pincodeEditedByUser.current) return;
+    if (!pincodeEditedByUser.current) {
+      return;
+    }
     const pincode = form.postalCode.trim();
+    setPinResolved(null);
     if (!PIN_RE.test(pincode)) {
       setResolvingPincode(false);
       return;
@@ -87,7 +105,10 @@ export function useAddAddressScreen({ route, navigation }: AddAddressScreenProps
       const matches = await lookupByPincode(pincode);
       if (!cancelled) {
         const best = matches[0];
-        if (best) setForm((prev) => ({ ...prev, city: best.district, state: best.state }));
+        if (best) {
+          setForm((prev) => ({ ...prev, city: best.district, state: best.state }));
+          setPinResolved(`${best.district}, ${best.state}`);
+        }
         setResolvingPincode(false);
       }
     }, 350);
@@ -104,7 +125,7 @@ export function useAddAddressScreen({ route, navigation }: AddAddressScreenProps
   // from its postal code instead).
   const useCurrentLocation = useCallback(async () => {
     setLocating(true);
-    setError(null);
+    setErrors((prev) => ({ ...prev, submit: undefined }));
     const loc = await resolveGpsLocation();
     setLocating(false);
     if (!loc || loc.lat == null || loc.lng == null) {
@@ -123,16 +144,20 @@ export function useAddAddressScreen({ route, navigation }: AddAddressScreenProps
       latitude: loc.lat ?? null,
       longitude: loc.lng ?? null,
     }));
+    setErrors({});
   }, []);
 
   const save = useCallback(async () => {
-    setError(null);
+    // Same rules as before, but every failing field is flagged inline at once.
+    const next: AddressFormErrors = {};
     if (!form.areaStreet.trim()) {
-      setError('Enter the area, street, or sector');
-      return;
+      next.areaStreet = 'Enter the area, street, or sector';
     }
     if (!PIN_RE.test(form.postalCode.trim())) {
-      setError('Enter a valid 6-digit PIN code');
+      next.postalCode = 'Enter a valid 6-digit PIN code';
+    }
+    setErrors(next);
+    if (next.areaStreet || next.postalCode) {
       return;
     }
 
@@ -145,6 +170,7 @@ export function useAddAddressScreen({ route, navigation }: AddAddressScreenProps
       postalCode: form.postalCode.trim(),
       latitude: form.latitude ?? undefined,
       longitude: form.longitude ?? undefined,
+      ...(makeDefault && !alreadyDefault ? { isDefault: true } : {}),
     };
 
     try {
@@ -155,20 +181,48 @@ export function useAddAddressScreen({ route, navigation }: AddAddressScreenProps
       }
       navigation.goBack();
     } catch {
-      setError('Could not save the address. Please try again.');
+      setErrors({ submit: 'Could not save the address. Please try again.' });
     }
-  }, [form, isEdit, id, createAddress, updateAddress, navigation]);
+  }, [form, makeDefault, alreadyDefault, isEdit, id, createAddress, updateAddress, navigation]);
+
+  // Edit mode only — same confirm as the Addresses list.
+  const remove = useCallback(() => {
+    if (!id) {
+      return;
+    }
+    Alert.alert('Delete address', `Delete "${form.label.trim() || form.areaStreet}"?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteAddress(id).unwrap();
+            navigation.goBack();
+          } catch {
+            setErrors({ submit: 'Could not delete the address. Please try again.' });
+          }
+        },
+      },
+    ]);
+  }, [id, form.label, form.areaStreet, deleteAddress, navigation]);
 
   return {
     isEdit,
     form,
-    error,
+    errors,
     locating,
     resolvingPincode,
+    pinResolved,
     saving: creating || updating,
+    deleting,
+    isDefaultLocked: alreadyDefault || firstAddress,
+    makeDefault: makeDefault || alreadyDefault || firstAddress,
+    setMakeDefault,
     onField,
     onPostalCode,
     useCurrentLocation,
     save,
+    remove,
   };
 }

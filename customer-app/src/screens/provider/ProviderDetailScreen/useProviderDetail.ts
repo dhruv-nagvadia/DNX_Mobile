@@ -331,7 +331,7 @@ export function useProviderDetail() {
     [days, provider],
   );
 
-  const { offer, ratingBreakdown, hoursRows, address, onCall, onDirections, onShare } =
+  const { offer, ratingBreakdown, hoursRows, address, onDirections, onShare } =
     useBusinessExtras(provider, reviews, 'BOOKING');
 
   const depositPercent =
@@ -374,7 +374,6 @@ export function useProviderDetail() {
     hoursRows,
     address,
     depositPercent,
-    onCall,
     onDirections,
     onShare,
     goBack,

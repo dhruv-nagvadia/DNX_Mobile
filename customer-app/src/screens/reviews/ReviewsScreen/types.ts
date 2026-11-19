@@ -4,3 +4,6 @@ import { RootStackParamList } from '@/navigation/routes';
 
 export type ReviewsNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export type ReviewsRouteProp = RouteProp<RootStackParamList, 'ReviewsScreen'>;
+
+/** Review list filter: everything, one star rating, or only reviews with text. */
+export type ReviewFilter = 'all' | 'comments' | 1 | 2 | 3 | 4 | 5;

@@ -19,3 +19,11 @@ export interface AddressForm {
   latitude: number | null;
   longitude: number | null;
 }
+
+/** Inline validation / submit errors, keyed by field. */
+export interface AddressFormErrors {
+  areaStreet?: string;
+  postalCode?: string;
+  /** Save / delete / network failure — shown above the bottom bar. */
+  submit?: string;
+}

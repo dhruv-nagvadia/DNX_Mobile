@@ -55,7 +55,8 @@ function fmt(t: string): string {
 /**
  * Everything the redesigned business pages (service and store) share beyond
  * their own booking / shopping logic: the headline offer, rating breakdown,
- * weekly hours, full address, and the Call / Directions / Share actions.
+ * weekly hours, full address, and the Directions / Share actions (no Call:
+ * the business's number is only shared after a booking/order).
  */
 export function useBusinessExtras(
   provider: Provider | undefined,
@@ -107,12 +108,6 @@ export function useBusinessExtras(
         .join(', ')
     : '';
 
-  const onCall = useCallback(() => {
-    if (provider?.phone) {
-      Linking.openURL(`tel:${provider.phone}`);
-    }
-  }, [provider]);
-
   const onDirections = useCallback(() => {
     if (!provider) {
       return;
@@ -133,5 +128,5 @@ export function useBusinessExtras(
     }).catch(() => undefined);
   }, [provider, address]);
 
-  return { offer, ratingBreakdown, hoursRows, address, onCall, onDirections, onShare };
+  return { offer, ratingBreakdown, hoursRows, address, onDirections, onShare };
 }

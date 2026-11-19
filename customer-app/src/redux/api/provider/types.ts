@@ -92,7 +92,9 @@ export interface Provider {
   businessName: string;
   type?: BusinessType;
   description?: string | null;
-  phone: string;
+  // Not sent on public business endpoints — the phone only comes with the
+  // customer's own bookings/orders (booking.provider.phone / order.provider.phone).
+  phone?: string;
   email?: string | null;
   addressLine?: string | null;
   city?: string | null;

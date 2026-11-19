@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Easing, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CreditCard, XCircle } from 'lucide-react-native';
+import { CreditCard, ShieldCheck, ShoppingBag, ShoppingCart, X } from 'lucide-react-native';
 
-import { Color } from '@/utils/Theme';
+import { LINK, PAGE_BG } from '@/utils/modernTheme';
 import { useAppDispatch } from '@/redux/hooks';
 import { clearProviderItems } from '@/redux/slices/cartSlice';
 import { providerApi } from '@/redux/api/provider/providerApi';
@@ -18,9 +18,11 @@ import type { CheckoutConfirmResult, PlacedCheckoutOrder } from '@/redux/api/ord
 import { openRazorpayCheckout } from '@/utils/razorpayCheckout';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
+import { StepList } from './parts';
 import { styles } from './styles';
 
 type Stage = 'placing' | 'awaiting-payment' | 'confirming';
+const STAGES: Stage[] = ['placing', 'awaiting-payment', 'confirming'];
 
 /**
  * Runs the whole place-order/pay flow (including opening Razorpay) from a
@@ -52,12 +54,27 @@ export default function CheckoutProcessingScreen() {
 
   useEffect(() => {
     const spinLoop = Animated.loop(
-      Animated.timing(spin, { toValue: 1, duration: 1100, easing: Easing.linear, useNativeDriver: true }),
+      Animated.timing(spin, {
+        toValue: 1,
+        duration: 1100,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
     );
     const pulseLoop = Animated.loop(
       Animated.sequence([
-        Animated.timing(pulse, { toValue: 1.08, duration: 650, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(pulse, { toValue: 1, duration: 650, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(pulse, {
+          toValue: 1.08,
+          duration: 650,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 650,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
       ]),
     );
     spinLoop.start();
@@ -73,7 +90,9 @@ export default function CheckoutProcessingScreen() {
 
     const onPlaced = (providerId: string) => {
       dispatch(clearProviderItems(providerId));
-      dispatch(providerApi.util.invalidateTags([{ type: 'Provider', id: providerId }, 'Providers']));
+      dispatch(
+        providerApi.util.invalidateTags([{ type: 'Provider', id: providerId }, 'Providers']),
+      );
     };
 
     type Placed = { orderId: string; providerName: string; amountMinor: number };
@@ -112,7 +131,11 @@ export default function CheckoutProcessingScreen() {
             couponCode: g.couponCode,
           }).unwrap();
           onPlaced(g.providerId);
-          placed.push({ orderId: res.order.id, providerName: g.providerName, amountMinor: res.order.amountMinor });
+          placed.push({
+            orderId: res.order.id,
+            providerName: g.providerName,
+            amountMinor: res.order.amountMinor,
+          });
         } catch {
           failed.push(g.providerName);
         }
@@ -133,23 +156,37 @@ export default function CheckoutProcessingScreen() {
       try {
         checkout = await startOrderCheckout({
           paymentMethod: method as 'ONLINE' | 'PARTIAL',
-          groups: groups.map((g) => ({ providerId: g.providerId, items: g.items, couponCode: g.couponCode })),
+          groups: groups.map((g) => ({
+            providerId: g.providerId,
+            items: g.items,
+            couponCode: g.couponCode,
+          })),
         }).unwrap();
       } catch (err) {
         const message = (err as { data?: { message?: string } })?.data?.message;
-        finish([], groups.map((g) => g.providerName), message);
+        finish(
+          [],
+          groups.map((g) => g.providerName),
+          message,
+        );
         return;
       }
 
       const toPlaced = (orders: PlacedCheckoutOrder[]): Placed[] =>
-        orders.map((o) => ({ orderId: o.id, providerName: o.businessName, amountMinor: o.amountMinor }));
+        orders.map((o) => ({
+          orderId: o.id,
+          providerName: o.businessName,
+          amountMinor: o.amountMinor,
+        }));
 
       const settle = (result: { orders: PlacedCheckoutOrder[]; failedStores: string[] }) => {
         result.orders.forEach((o) => onPlaced(o.providerId));
         finish(
           toPlaced(result.orders),
           result.failedStores,
-          result.orders.length === 0 ? 'Your payment is being refunded — nothing was ordered.' : undefined,
+          result.orders.length === 0
+            ? 'Your payment is being refunded — nothing was ordered.'
+            : undefined,
         );
       };
 
@@ -159,7 +196,10 @@ export default function CheckoutProcessingScreen() {
         return;
       }
       if (!checkout.razorpayOrderId) {
-        finish([], groups.map((g) => g.providerName));
+        finish(
+          [],
+          groups.map((g) => g.providerName),
+        );
         return;
       }
 
@@ -197,7 +237,10 @@ export default function CheckoutProcessingScreen() {
       if (result && (result.orders.length > 0 || result.failedStores.length > 0)) {
         settle(result);
       } else {
-        finish([], groups.map((g) => g.providerName));
+        finish(
+          [],
+          groups.map((g) => g.providerName),
+        );
       }
     };
 
@@ -237,21 +280,31 @@ export default function CheckoutProcessingScreen() {
   if (failure) {
     return (
       <View style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
         <View style={styles.content}>
-          <View style={styles.errorBadge}>
-            <XCircle size={44} color={Color.error} />
+          <View style={styles.errorWrap}>
+            <View style={styles.errorGlow} />
+            <View style={styles.errorBadge}>
+              <X size={46} color="#FFFFFF" strokeWidth={3} />
+            </View>
           </View>
-          <Text style={styles.title}>Payment not completed</Text>
-          <Text style={styles.subtitle}>
-            {failure.message ?? `${failure.failedNames.join(', ')} — please try again.`} Your cart items are still
-            saved.
+          <Text style={styles.title} accessibilityRole="header">
+            Payment not completed
           </Text>
+          <View style={styles.errorCard}>
+            <Text style={styles.errorText}>
+              {failure.message ?? `${failure.failedNames.join(', ')} — please try again.`} Your cart
+              items are still saved.
+            </Text>
+          </View>
           <View style={styles.actions}>
             <TouchableOpacity
               style={styles.primaryBtn}
               activeOpacity={0.9}
+              accessibilityRole="button"
               onPress={() => navigation.replace(ROUTES.CART)}
             >
+              <ShoppingCart size={20} color="#FFFFFF" strokeWidth={2} />
               <Text style={styles.primaryBtnText}>Back to cart</Text>
             </TouchableOpacity>
           </View>
@@ -264,22 +317,32 @@ export default function CheckoutProcessingScreen() {
   const current = groups[stepIndex];
   const label =
     stage === 'placing'
-      ? 'Placing your order…'
+      ? groups.length > 1
+        ? 'Placing your orders…'
+        : 'Placing your order…'
       : stage === 'awaiting-payment'
         ? 'Waiting for payment…'
         : 'Confirming your payment…';
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
       <View style={styles.content}>
-        <View style={styles.spinnerWrap}>
+        <View style={styles.spinnerWrap} accessibilityRole="progressbar" accessibilityLabel={label}>
+          <View style={styles.glow} />
           <Animated.View style={[styles.ring, { transform: [{ rotate: spinDeg }] }]} />
           <Animated.View style={[styles.badge, { transform: [{ scale: pulse }] }]}>
-            <CreditCard size={34} color={Color.primary} />
+            {stage === 'placing' ? (
+              <ShoppingBag size={34} color={LINK} strokeWidth={1.9} />
+            ) : (
+              <CreditCard size={34} color={LINK} strokeWidth={1.9} />
+            )}
           </Animated.View>
         </View>
 
-        <Text style={styles.title}>{label}</Text>
+        <Text style={styles.title} accessibilityLiveRegion="polite">
+          {label}
+        </Text>
         <Text style={styles.subtitle}>
           {method !== 'CASH' && groups.length > 1
             ? `${groups.length} stores · one payment`
@@ -288,15 +351,25 @@ export default function CheckoutProcessingScreen() {
               : current.providerName}
         </Text>
 
+        {method !== 'CASH' && (
+          <StepList
+            steps={['Checking your order', 'Completing payment', 'Confirming payment']}
+            current={STAGES.indexOf(stage)}
+          />
+        )}
+
         {method === 'CASH' && groups.length > 1 && (
-          <View style={styles.stepsRow}>
+          <View style={styles.storeDots}>
             {groups.map((_, i) => (
-              <View key={i} style={[styles.stepDot, i === stepIndex && styles.stepDotActive]} />
+              <View key={i} style={[styles.storeDot, i === stepIndex && styles.storeDotActive]} />
             ))}
           </View>
         )}
 
-        <Text style={styles.note}>Please don't close the app during this step.</Text>
+        <View style={styles.note}>
+          <ShieldCheck size={15} color="#64748B" strokeWidth={2} />
+          <Text style={styles.noteText}>Please don't close the app during this step.</Text>
+        </View>
       </View>
     </View>
   );

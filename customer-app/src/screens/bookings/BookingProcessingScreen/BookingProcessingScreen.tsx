@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Easing, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CalendarClock, XCircle } from 'lucide-react-native';
+import { CalendarClock, CreditCard, RotateCcw, ShieldCheck, X } from 'lucide-react-native';
 
-import { Color } from '@/utils/Theme';
+import { LINK, PAGE_BG } from '@/utils/modernTheme';
 import { useAppDispatch } from '@/redux/hooks';
 import { clearAppliedCoupon } from '@/redux/slices/couponSlice';
 import {
@@ -18,9 +18,11 @@ import {
 import { openRazorpayCheckout } from '@/utils/razorpayCheckout';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
+import { StepList } from './parts';
 import { styles } from './styles';
 
 type Stage = 'booking' | 'awaiting-payment' | 'confirming';
+const STAGES: Stage[] = ['booking', 'awaiting-payment', 'confirming'];
 type BookingSuccessOutcome = RootStackParamList[typeof ROUTES.BOOKING_SUCCESS]['outcome'];
 
 /**
@@ -66,12 +68,27 @@ export default function BookingProcessingScreen() {
 
   useEffect(() => {
     const spinLoop = Animated.loop(
-      Animated.timing(spin, { toValue: 1, duration: 1100, easing: Easing.linear, useNativeDriver: true }),
+      Animated.timing(spin, {
+        toValue: 1,
+        duration: 1100,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
     );
     const pulseLoop = Animated.loop(
       Animated.sequence([
-        Animated.timing(pulse, { toValue: 1.08, duration: 650, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(pulse, { toValue: 1, duration: 650, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(pulse, {
+          toValue: 1.08,
+          duration: 650,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 650,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
       ]),
     );
     spinLoop.start();
@@ -116,7 +133,8 @@ export default function BookingProcessingScreen() {
       if (!cancelled) {
         setFailure({
           title: 'Payment not completed',
-          message: "Your booking wasn't confirmed because the payment didn't go through. Please try again.",
+          message:
+            "Your booking wasn't confirmed because the payment didn't go through. Please try again.",
           buttonLabel: 'Back to booking summary',
           retry: 'summary',
         });
@@ -285,22 +303,36 @@ export default function BookingProcessingScreen() {
   if (failure) {
     return (
       <View style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
         <View style={styles.content}>
-          <View style={styles.errorBadge}>
-            <XCircle size={44} color={Color.error} />
+          <View style={styles.errorWrap}>
+            <View style={styles.errorGlow} />
+            <View style={styles.errorBadge}>
+              <X size={46} color="#FFFFFF" strokeWidth={3} />
+            </View>
           </View>
-          <Text style={styles.title}>{failure.title}</Text>
-          <Text style={styles.subtitle}>{failure.message}</Text>
+          <Text style={styles.title} accessibilityRole="header">
+            {failure.title}
+          </Text>
+          <View style={styles.errorCard}>
+            <Text style={styles.errorText}>{failure.message}</Text>
+          </View>
           <View style={styles.actions}>
             <TouchableOpacity
               style={styles.primaryBtn}
               activeOpacity={0.9}
+              accessibilityRole="button"
               onPress={() =>
                 failure.retry === 'reschedule'
                   ? navigation.replace(ROUTES.PROVIDER_DETAILS, { providerId, name: providerName })
                   : navigation.replace(ROUTES.BOOKING_SUMMARY, { providerId, serviceId, startTime })
               }
             >
+              {failure.retry === 'reschedule' ? (
+                <CalendarClock size={20} color="#FFFFFF" strokeWidth={2} />
+              ) : (
+                <RotateCcw size={20} color="#FFFFFF" strokeWidth={2} />
+              )}
               <Text style={styles.primaryBtnText}>{failure.buttonLabel}</Text>
             </TouchableOpacity>
           </View>
@@ -316,23 +348,43 @@ export default function BookingProcessingScreen() {
       : stage === 'awaiting-payment'
         ? 'Waiting for payment…'
         : 'Confirming your payment…';
+  // Pay-now bookings go through three phases; cash ones only the first.
+  const stepIndex = STAGES.indexOf(stage);
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
       <View style={styles.content}>
-        <View style={styles.spinnerWrap}>
+        <View style={styles.spinnerWrap} accessibilityRole="progressbar" accessibilityLabel={label}>
+          <View style={styles.glow} />
           <Animated.View style={[styles.ring, { transform: [{ rotate: spinDeg }] }]} />
           <Animated.View style={[styles.badge, { transform: [{ scale: pulse }] }]}>
-            <CalendarClock size={34} color={Color.primary} />
+            {stage === 'booking' ? (
+              <CalendarClock size={34} color={LINK} strokeWidth={1.9} />
+            ) : (
+              <CreditCard size={34} color={LINK} strokeWidth={1.9} />
+            )}
           </Animated.View>
         </View>
 
-        <Text style={styles.title}>{label}</Text>
+        <Text style={styles.title} accessibilityLiveRegion="polite">
+          {label}
+        </Text>
         <Text style={styles.subtitle}>
           {serviceName} at {providerName}
         </Text>
 
-        <Text style={styles.note}>Please don't close the app during this step.</Text>
+        {method !== 'CASH' && (
+          <StepList
+            steps={['Creating your booking', 'Completing payment', 'Confirming payment']}
+            current={stepIndex}
+          />
+        )}
+
+        <View style={styles.note}>
+          <ShieldCheck size={15} color="#64748B" strokeWidth={2} />
+          <Text style={styles.noteText}>Please don't close the app during this step.</Text>
+        </View>
       </View>
     </View>
   );
