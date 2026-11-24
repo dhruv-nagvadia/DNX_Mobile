@@ -113,7 +113,10 @@ function SaleRow({ t, last }: { t: EarningsTransaction; last: boolean }) {
         ) : (
           <>
             <Text style={[styles.saleAmount, styles.amountPositive]}>+{formatMoney(t.earningMinor)}</Text>
-            <Text style={styles.listMeta}>of {formatMoney(t.grossMinor)}</Text>
+            <Text style={styles.listMeta} numberOfLines={1}>
+              of {formatMoney(t.grossMinor)}
+              {t.gatewayFeeMinor > 0 ? `  •  fee ${formatMoney(t.gatewayFeeMinor)}` : ''}
+            </Text>
           </>
         )}
       </View>
@@ -292,6 +295,12 @@ export default function EarningsScreen() {
                 </View>
                 <View style={styles.breakdownRow}>
                   <Text style={styles.breakdownLabel} numberOfLines={1}>
+                    − Payment fee (incl. GST)
+                  </Text>
+                  <Text style={styles.breakdownValue}>{formatMoney(balance.earnedGatewayFeeMinor)}</Text>
+                </View>
+                <View style={styles.breakdownRow}>
+                  <Text style={styles.breakdownLabel} numberOfLines={1}>
                     − Paid out
                   </Text>
                   <Text style={styles.breakdownValue}>{formatMoney(balance.paidOutMinor)}</Text>
@@ -355,7 +364,7 @@ export default function EarningsScreen() {
                     </Text>
                   </View>
                 ) : (
-                  <Text style={styles.tileHint}>after commission</Text>
+                  <Text style={styles.tileHint}>after commission & fees</Text>
                 )
               }
             />
@@ -534,7 +543,7 @@ export default function EarningsScreen() {
           )}
           <View style={styles.headerText}>
             <Text style={styles.title}>Earnings</Text>
-            <Text style={styles.subtitle}>After DNX's commission</Text>
+            <Text style={styles.subtitle}>After DNX's commission and online payment fees</Text>
           </View>
           <TouchableOpacity
             style={styles.bellBtn}

@@ -16,7 +16,7 @@ import { CATEGORY_LABEL, FilterKey, NotificationCategory, categoryOf, groupByDay
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 const CATEGORY_ORDER: NotificationCategory[] = [
-  'booking',
+  // 'booking', // SERVICES-ONLY: bookings are the only main type for now, so the chip just repeats "All" — uncomment when orders are back
   'reminder',
   'order',
   'review',

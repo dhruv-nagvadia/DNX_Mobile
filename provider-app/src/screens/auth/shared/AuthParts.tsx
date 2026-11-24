@@ -1,7 +1,10 @@
 import React from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { AlertBanner } from '@/components/AlertBanner';
+import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
 import { authStyles as styles } from './styles';
 
@@ -75,13 +78,37 @@ export function AuthSwitchRow({ prompt, linkText, onPress, disabled }: AuthSwitc
   );
 }
 
-/** No web base URL constant in the app yet — plain text for now. */
-export function AuthLegalRow() {
+const LEGAL_LINKS = [
+  { route: ROUTES.PROVIDER_TERMS, label: 'Provider Terms' },
+  { route: ROUTES.TERMS, label: 'Terms' },
+  { route: ROUTES.PRIVACY, label: 'Privacy' },
+] as const;
+
+/**
+ * Links to the in-app legal pages. With `agreement` (sign-up), a line above
+ * says that creating an account means accepting them.
+ */
+export function AuthLegalRow({ agreement = false }: { agreement?: boolean }) {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   return (
-    <View style={styles.legalRow}>
-      <Text style={styles.legalText}>Terms</Text>
-      <Text style={styles.legalDot}>·</Text>
-      <Text style={styles.legalText}>Privacy</Text>
+    <View>
+      {agreement && (
+        <Text style={styles.legalAgree}>By creating an account, you agree to the DNX</Text>
+      )}
+      <View style={[styles.legalRow, agreement && styles.legalRowAgree]}>
+        {LEGAL_LINKS.map((l, i) => (
+          <React.Fragment key={l.route}>
+            {i > 0 && <Text style={styles.legalDot}>·</Text>}
+            <Pressable
+              onPress={() => navigation.navigate(l.route)}
+              hitSlop={LINK_HIT_SLOP}
+              accessibilityRole="link"
+            >
+              <Text style={[styles.legalText, styles.legalLink]}>{l.label}</Text>
+            </Pressable>
+          </React.Fragment>
+        ))}
+      </View>
     </View>
   );
 }

@@ -18,7 +18,8 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'NotificationsScreen'>;
 
 // SERVICES-ONLY: product businesses disabled for launch — restore the line below and drop the services-only one
 // const CATEGORY_ORDER: NotificationCategory[] = ['booking', 'order', 'review', 'payment', 'stock'];
-const CATEGORY_ORDER: NotificationCategory[] = ['booking', 'review', 'payment']; // SERVICES-ONLY
+// SERVICES-ONLY: 'booking' chip hidden too — bookings are the only type for now, so it just repeated "All". Restore: ['booking', 'review', 'payment']
+const CATEGORY_ORDER: NotificationCategory[] = ['review', 'payment'];
 
 /** Ports the customer app's `NotificationsScreen` read/tap flow. There's no
  * per-order/per-booking detail screen yet in provider-mobile, so a tap lands

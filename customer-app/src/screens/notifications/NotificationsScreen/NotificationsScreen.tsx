@@ -166,7 +166,9 @@ export default function NotificationsScreen() {
                 accessibilityRole="button"
                 accessibilityState={{ selected: active }}
               >
-                <Text style={[styles.chipText, active && styles.chipTextActive]}>{f.label}</Text>
+                <Text style={[styles.chipText, active && styles.chipTextActive]} numberOfLines={1}>
+                  {f.label}
+                </Text>
               </TouchableOpacity>
             );
           })}

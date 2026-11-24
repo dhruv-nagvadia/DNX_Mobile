@@ -12,6 +12,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1DD3A5A636E49446ED1FC4EC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		1FC2E3599038B5D422D39E50 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45B1ECC91ED69E28EF143B5E /* GoogleService-Info.plist */; };
 		3A46F1EC6F546457E66105BC /* Pods_DNXProvider.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90BCCCF0FBB4E21565D6CCEF /* Pods_DNXProvider.framework */; };
 		7CCF728546A6AA1F34262ACC /* Pods_DNXProvider_DNXProviderTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 737824466694330915671FCE /* Pods_DNXProvider_DNXProviderTests.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -39,6 +40,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = DNXProvider/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = DNXProvider/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-DNXProvider.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DNXProvider.debug.xcconfig"; path = "Target Support Files/Pods-DNXProvider/Pods-DNXProvider.debug.xcconfig"; sourceTree = "<group>"; };
+		45B1ECC91ED69E28EF143B5E /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-DNXProvider.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DNXProvider.release.xcconfig"; path = "Target Support Files/Pods-DNXProvider/Pods-DNXProvider.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-DNXProvider-DNXProviderTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DNXProvider-DNXProviderTests.debug.xcconfig"; path = "Target Support Files/Pods-DNXProvider-DNXProviderTests/Pods-DNXProvider-DNXProviderTests.debug.xcconfig"; sourceTree = "<group>"; };
 		737824466694330915671FCE /* Pods_DNXProvider_DNXProviderTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DNXProvider_DNXProviderTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,6 +97,7 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				45B1ECC91ED69E28EF143B5E /* GoogleService-Info.plist */,
 			);
 			name = DNXProvider;
 			sourceTree = "<group>";
@@ -248,6 +251,7 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				1DD3A5A636E49446ED1FC4EC /* PrivacyInfo.xcprivacy in Resources */,
+				1FC2E3599038B5D422D39E50 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

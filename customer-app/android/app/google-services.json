@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "730682365535",
+    "project_id": "dnx83-e3d91",
+    "storage_bucket": "dnx83-e3d91.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730682365535:android:78af747d9d2628a311adea",
+        "android_client_info": {
+          "package_name": "com.dnx.customer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtk_WmaLUhwf_nCeKHdMyg1M-65GAnBjw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730682365535:android:7a2e6c3e0c43cd2611adea",
+        "android_client_info": {
+          "package_name": "com.dnx.provider"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtk_WmaLUhwf_nCeKHdMyg1M-65GAnBjw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

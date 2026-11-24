@@ -15,6 +15,7 @@
 		6D84E85F0E0BCB9CE81F7BEA /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		C7F5B31B30B7EC6EB77F4EDE /* Pods_DNX_DNXTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 929D9FA267B292DBAA7C7952 /* Pods_DNX_DNXTests.framework */; };
+		DF5C90208618699CC18B3C40 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 80E85304EF001AF9527891E3 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +42,7 @@
 		3B4392A12AC88292D35C810B /* Pods-DNX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DNX.debug.xcconfig"; path = "Target Support Files/Pods-DNX/Pods-DNX.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-DNX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DNX.release.xcconfig"; path = "Target Support Files/Pods-DNX/Pods-DNX.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-DNX-DNXTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DNX-DNXTests.debug.xcconfig"; path = "Target Support Files/Pods-DNX-DNXTests/Pods-DNX-DNXTests.debug.xcconfig"; sourceTree = "<group>"; };
+		80E85304EF001AF9527891E3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = DNX/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-DNX-DNXTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DNX-DNXTests.release.xcconfig"; path = "Target Support Files/Pods-DNX-DNXTests/Pods-DNX-DNXTests.release.xcconfig"; sourceTree = "<group>"; };
 		929D9FA267B292DBAA7C7952 /* Pods_DNX_DNXTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DNX_DNXTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,6 +97,7 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				80E85304EF001AF9527891E3 /* GoogleService-Info.plist */,
 			);
 			name = DNX;
 			sourceTree = "<group>";
@@ -248,6 +251,7 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				6D84E85F0E0BCB9CE81F7BEA /* PrivacyInfo.xcprivacy in Resources */,
+				DF5C90208618699CC18B3C40 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

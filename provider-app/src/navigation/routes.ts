@@ -40,6 +40,9 @@ export const ROUTES = {
   NOTIFICATIONS: 'NotificationsScreen',
   BUSINESS_CREATE: 'BusinessCreateScreen',
   SUPPORT: 'SupportScreen',
+  PROVIDER_TERMS: 'ProviderTermsScreen',
+  TERMS: 'TermsScreen',
+  PRIVACY: 'PrivacyPolicyScreen',
 } as const;
 
 /** Type-safe params for every route. `undefined` = no params. */
@@ -82,4 +85,8 @@ export type RootStackParamList = {
   [ROUTES.NOTIFICATIONS]: undefined;
   [ROUTES.BUSINESS_CREATE]: undefined;
   [ROUTES.SUPPORT]: undefined;
+  // Legal pages — registered in both the auth stack and the app stack.
+  [ROUTES.PROVIDER_TERMS]: undefined;
+  [ROUTES.TERMS]: undefined;
+  [ROUTES.PRIVACY]: undefined;
 };

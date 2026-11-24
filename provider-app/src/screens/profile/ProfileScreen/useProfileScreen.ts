@@ -300,5 +300,8 @@ export function useProfileScreen() {
     goToReviews: () => navigation.navigate(ROUTES.REVIEWS),
     goToNotifications: () => navigation.navigate(ROUTES.NOTIFICATIONS),
     goToSupport: () => navigation.navigate(ROUTES.SUPPORT),
+    goToProviderTerms: () => navigation.navigate(ROUTES.PROVIDER_TERMS),
+    goToTerms: () => navigation.navigate(ROUTES.TERMS),
+    goToPrivacy: () => navigation.navigate(ROUTES.PRIVACY),
   };
 }

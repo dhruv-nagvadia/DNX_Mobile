@@ -17,8 +17,10 @@ import {
   CircleHelp,
   Coins,
   Command,
+  FileText,
   Lock,
   LogOut,
+  ShieldCheck,
   Package,
   Pencil,
   Star,
@@ -187,6 +189,9 @@ export default function ProfileScreen() {
     goToReviews,
     goToNotifications,
     goToSupport,
+    goToProviderTerms,
+    goToTerms,
+    goToPrivacy,
   } = useProfileScreen();
   const insets = useSafeAreaInsets();
 
@@ -354,13 +359,26 @@ export default function ProfileScreen() {
           />
         </MenuCard>
 
-        <MenuCard title="Help">
+        <MenuCard title="Help & legal">
           <MenuRow
             first
             icon={<CircleHelp />}
             label="Help & support"
             tone="blue"
             onPress={goToSupport}
+          />
+          <MenuRow
+            icon={<FileText />}
+            label="Provider terms"
+            tone="lavender"
+            onPress={goToProviderTerms}
+          />
+          <MenuRow icon={<FileText />} label="Terms of service" tone="blue" onPress={goToTerms} />
+          <MenuRow
+            icon={<ShieldCheck />}
+            label="Privacy policy"
+            tone="green"
+            onPress={goToPrivacy}
           />
         </MenuCard>
 

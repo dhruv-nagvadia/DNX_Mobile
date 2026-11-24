@@ -41,7 +41,7 @@ export default function RegisterScreen() {
             onPress={goToLogin}
             disabled={isLoading}
           />
-          <AuthLegalRow />
+          <AuthLegalRow agreement />
         </>
       }
     >

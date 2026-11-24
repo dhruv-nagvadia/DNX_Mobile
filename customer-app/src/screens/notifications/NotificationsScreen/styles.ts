@@ -95,6 +95,9 @@ export const styles = StyleSheet.create({
   // ── Filter chips ────────────────────────────────────────────────────────
   chipsScroll: {
     flexGrow: 0,
+    // ScrollView shrinks by default, so the list below squashed this row and
+    // clipped the chips top and bottom — keep it at its full height.
+    flexShrink: 0,
     marginBottom: Spacing.xs,
   },
   chips: {
@@ -104,6 +107,8 @@ export const styles = StyleSheet.create({
     paddingBottom: Spacing.sm,
   },
   chip: {
+    // Never squeeze a chip inside the horizontal row — that cut the labels off.
+    flexShrink: 0,
     minWidth: 56,
     alignItems: 'center',
     justifyContent: 'center',
@@ -120,12 +125,14 @@ export const styles = StyleSheet.create({
   },
   chipText: {
     fontSize: ModernType.secondary,
-    fontWeight: FontWeight.medium,
+    lineHeight: 18,
+    // Same weight in both states: switching to bold on select made the label
+    // wider than the chip that was measured for it, so it got cut off.
+    fontWeight: FontWeight.semibold,
     color: INK,
   },
   chipTextActive: {
     color: Color.white,
-    fontWeight: FontWeight.semibold,
   },
 
   // ── List + cards ────────────────────────────────────────────────────────

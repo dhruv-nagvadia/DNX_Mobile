@@ -38,6 +38,9 @@ import ProfileScreen from '@/screens/profile/ProfileScreen';
 import NotificationsScreen from '@/screens/notifications/NotificationsScreen';
 import BusinessCreateScreen from '@/screens/business/BusinessCreateScreen';
 import SupportScreen from '@/screens/profile/SupportScreen';
+import ProviderTermsScreen from '@/screens/legal/ProviderTermsScreen';
+import TermsScreen from '@/screens/legal/TermsScreen';
+import PrivacyPolicyScreen from '@/screens/legal/PrivacyPolicyScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -49,6 +52,9 @@ export function AuthStack() {
       <Stack.Screen name={ROUTES.LOGIN} component={LoginScreen} />
       <Stack.Screen name={ROUTES.REGISTER} component={RegisterScreen} />
       <Stack.Screen name={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordScreen} />
+      <Stack.Screen name={ROUTES.PROVIDER_TERMS} component={ProviderTermsScreen} />
+      <Stack.Screen name={ROUTES.TERMS} component={TermsScreen} />
+      <Stack.Screen name={ROUTES.PRIVACY} component={PrivacyPolicyScreen} />
     </Stack.Navigator>
   );
 }
@@ -147,6 +153,9 @@ export function MainStack() {
       <Stack.Screen name={ROUTES.NOTIFICATIONS} component={NotificationsScreen} />
       <Stack.Screen name={ROUTES.BUSINESS_CREATE} component={BusinessCreateScreen} />
       <Stack.Screen name={ROUTES.SUPPORT} component={SupportScreen} />
+      <Stack.Screen name={ROUTES.PROVIDER_TERMS} component={ProviderTermsScreen} />
+      <Stack.Screen name={ROUTES.TERMS} component={TermsScreen} />
+      <Stack.Screen name={ROUTES.PRIVACY} component={PrivacyPolicyScreen} />
     </Stack.Navigator>
   );
 }

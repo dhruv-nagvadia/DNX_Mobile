@@ -210,4 +210,16 @@ export const authStyles = StyleSheet.create({
     fontSize: ModernType.secondary,
     color: Color.textSecondary,
   },
+  legalLink: {
+    textDecorationLine: 'underline',
+  },
+  legalAgree: {
+    marginTop: 24,
+    textAlign: 'center',
+    fontSize: ModernType.secondary,
+    color: Color.textSecondary,
+  },
+  legalRowAgree: {
+    marginTop: 6,
+  },
 });

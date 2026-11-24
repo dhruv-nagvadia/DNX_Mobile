@@ -345,6 +345,8 @@ export interface EarningsTotals {
   count: number;
   grossMinor: number;
   commissionMinor: number;
+  // Online payment (gateway) fees deducted from the payout.
+  gatewayFeeMinor: number;
   netMinor: number;
   onlineMinor: number;
   cashMinor: number;
@@ -362,6 +364,8 @@ export interface EarningsTransaction {
   commissionBps: number;
   grossMinor: number;
   commissionMinor: number;
+  // Online payment (gateway) fee on this sale, deducted from the payout.
+  gatewayFeeMinor: number;
   earningMinor: number;
   onlineMinor: number;
   cashMinor: number;
@@ -388,6 +392,7 @@ export interface Earnings {
   balance: {
     earnedOnlineMinor: number;
     earnedCommissionMinor: number;
+    earnedGatewayFeeMinor: number;
     paidOutMinor: number;
     receivedMinor: number;
     // Positive: the platform owes the provider; negative: the provider owes the platform.
