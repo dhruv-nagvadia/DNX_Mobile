@@ -23,7 +23,7 @@ export const styles = StyleSheet.create({
     height: '100%',
   },
   placeholder: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,

@@ -17,6 +17,7 @@ import {
   ToggleRow,
 } from '@/screens/catalog/ServiceFormScreen/formKit';
 import { kit } from '@/screens/catalog/ServiceFormScreen/formKitStyles';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { OfferPreview } from './OfferPreview';
 import { useCouponFormScreen } from './useCouponFormScreen';
@@ -48,6 +49,7 @@ function dateInDays(days: number): string {
 }
 
 export default function CouponFormScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const {
     isNew,
     businessName,
@@ -84,7 +86,7 @@ export default function CouponFormScreen() {
       <KeyboardAvoidingView style={kit.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           style={kit.flex}
-          contentContainerStyle={kit.content}
+          contentContainerStyle={withBottomInset(kit.content)}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >

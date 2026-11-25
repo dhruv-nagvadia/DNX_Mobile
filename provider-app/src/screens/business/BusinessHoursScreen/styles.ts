@@ -249,7 +249,7 @@ export const styles = StyleSheet.create({
   },
   // Overlays the (hidden) time fields: starts under the start time, ends under the end time.
   closedBar: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'center',
     paddingHorizontal: Spacing.sm + 4,
     borderRadius: 10,

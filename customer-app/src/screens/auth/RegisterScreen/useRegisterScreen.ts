@@ -107,10 +107,10 @@ export function useRegisterScreen() {
         password: form.password,
       }).unwrap();
 
-      await AsyncStorage.multiSet([
-        [StorageKeys.accessToken, result.accessToken],
-        [StorageKeys.refreshToken, result.refreshToken],
-      ]);
+      await AsyncStorage.setMany({
+        [StorageKeys.accessToken]: result.accessToken,
+        [StorageKeys.refreshToken]: result.refreshToken,
+      });
       setTokenCache(result.accessToken);
       resetAllApiCaches(dispatch);
 

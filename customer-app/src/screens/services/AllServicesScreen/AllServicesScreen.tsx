@@ -7,11 +7,13 @@ import { INK, LINK } from '@/utils/modernTheme';
 // Same row as Home's "Popular services to book", so both look identical.
 import { PopularServiceRow } from '@/screens/home/HomeScreen/HomeSections';
 import { styles } from '@/screens/provider/AllBusinessesScreen/styles';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { useAllServicesScreen } from './useAllServicesScreen';
 
 /** Full list behind Home's "Popular services to book" → View all. */
 export default function AllServicesScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const {
     items,
     total,
@@ -40,7 +42,7 @@ export default function AllServicesScreen() {
         <FlatList
           data={items}
           keyExtractor={(s) => s.id}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={withBottomInset(styles.content)}
           showsVerticalScrollIndicator={false}
           onEndReached={loadMore}
           onEndReachedThreshold={0.4}

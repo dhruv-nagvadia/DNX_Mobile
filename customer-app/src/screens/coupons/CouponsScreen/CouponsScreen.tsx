@@ -14,6 +14,7 @@ import { discountLabel } from '@/components/CouponSheet';
 import { StoreCoupon } from '@/redux/api/order/types';
 import { ACTION, PILL } from '@/utils/modernTheme';
 import { formatMoney } from '@/utils/units';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { CouponRow, useCouponsScreen } from './useCouponsScreen';
 import { styles, MUTED, PEACH_FG, LAVENDER_FG } from './styles';
@@ -163,6 +164,7 @@ function CouponCard({
 
 /** Full list of a business's offers, in its own screen (opened from cart / booking summary). */
 export default function CouponsScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const {
     businessName,
     isBooking,
@@ -193,7 +195,7 @@ export default function CouponsScreen() {
       <ScreenHeader title="Offers" subtitle={subtitle} />
 
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={withBottomInset(styles.content)}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >

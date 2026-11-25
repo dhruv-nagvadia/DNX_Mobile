@@ -13,6 +13,7 @@ import { Search, X } from 'lucide-react-native';
 
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { INK, LINK, ModernSize } from '@/utils/modernTheme';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { BusinessListCard } from './BusinessListCard';
 import { ListSort, useProviderListScreen } from './useProviderListScreen';
@@ -48,6 +49,7 @@ function Chip({ label, active, onPress, dot }: ChipProps) {
 
 /** Mockup "designs/customer/mobile/Unisex Salon Booking App Listings.png". */
 export default function ProviderListScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const {
     title,
     subtitle,
@@ -149,7 +151,7 @@ export default function ProviderListScreen() {
         <FlatList
           data={providers}
           keyExtractor={(p) => p.id}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={withBottomInset(styles.content)}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           ListHeaderComponent={header}

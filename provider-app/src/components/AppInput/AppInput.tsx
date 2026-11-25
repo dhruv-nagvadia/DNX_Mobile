@@ -1,15 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import {
-  NativeSyntheticEvent,
-  Text,
-  TextInput,
-  TextInputFocusEventData,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
 
 import { Color } from '@/utils/Theme';
 import { AppInputProps } from './types';
+
+type FocusEvent = Parameters<NonNullable<TextInputProps['onFocus']>>[0];
+type BlurEvent = Parameters<NonNullable<TextInputProps['onBlur']>>[0];
 import { styles } from './styles';
 
 /**
@@ -36,7 +32,7 @@ export function AppInput({
   // Compose with the caller's handlers — passing onBlur must not break the
   // focus ring, which is what happened when `rest` overrode these.
   const handleFocus = useCallback(
-    (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    (e: FocusEvent) => {
       setFocused(true);
       onFocus?.(e);
     },
@@ -44,7 +40,7 @@ export function AppInput({
   );
 
   const handleBlur = useCallback(
-    (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    (e: BlurEvent) => {
       setFocused(false);
       onBlur?.(e);
     },

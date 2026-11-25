@@ -59,10 +59,10 @@ export function useLoginScreen() {
     try {
       const result = await login({ email: form.email.trim(), password: form.password }).unwrap();
 
-      await AsyncStorage.multiSet([
-        [StorageKeys.accessToken, result.accessToken],
-        [StorageKeys.refreshToken, result.refreshToken],
-      ]);
+      await AsyncStorage.setMany({
+        [StorageKeys.accessToken]: result.accessToken,
+        [StorageKeys.refreshToken]: result.refreshToken,
+      });
       // Without "Keep me signed in", the session lasts until the app is closed.
       if (keepSignedIn) {
         await AsyncStorage.removeItem(StorageKeys.sessionOnly);
@@ -84,7 +84,7 @@ export function useLoginScreen() {
           phone: result.phone,
         }),
       );
-    } catch (err) {
+    } catch {
       DEBUG_LOGGER('Login failed', 'onSubmit', FILE, '48', ERROR);
       setServerError('That email and password don’t match. Please try again.');
     }

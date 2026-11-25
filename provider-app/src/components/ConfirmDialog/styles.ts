@@ -12,10 +12,10 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
   },
   inlineRoot: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: SHEET_BACKDROP,
   },
   backdropPress: {

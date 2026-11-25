@@ -13,7 +13,7 @@ interface AuthFieldProps extends Omit<TextInputProps, 'style'> {
   /** Small grey text on the right of the label, e.g. "Optional". */
   hint?: string;
   error?: string;
-  inputRef?: RefObject<TextInput>;
+  inputRef?: RefObject<TextInput | null>;
   /** Renders an Eye/EyeOff toggle and masks the value. */
   password?: boolean;
 }

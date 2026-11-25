@@ -7,6 +7,7 @@ import { Color } from '@/utils/Theme';
 import { LINK } from '@/utils/modernTheme';
 import { Address } from '@/redux/api/address/types';
 import { formatAddress } from '@/utils/formatAddress';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { useAddressesScreen } from './useAddressesScreen';
 import { addressKind, KIND_ICON, KIND_TONE } from './addressLabel';
@@ -14,6 +15,7 @@ import { styles } from './styles';
 
 /** Profile → Addresses — manage saved addresses used for on-location bookings. */
 export default function AddressesScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const { addresses, isLoading, addNew, edit, makeDefault, remove } = useAddressesScreen();
 
   const renderCard = (a: Address) => {
@@ -128,7 +130,7 @@ export default function AddressesScreen() {
       ) : (
         <ScrollView
           style={styles.scroll}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={withBottomInset(styles.content)}
           showsVerticalScrollIndicator={false}
         >
           {addresses.map(renderCard)}

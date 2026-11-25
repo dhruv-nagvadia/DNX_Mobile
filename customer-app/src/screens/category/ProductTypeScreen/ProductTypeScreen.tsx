@@ -12,6 +12,7 @@ import { ShoppingBag } from 'lucide-react-native';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { StoreProductCard } from '@/components/StoreProductCard';
 import { ACTION, ModernSize } from '@/utils/modernTheme';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { useProductTypeScreen } from './useProductTypeScreen';
 import { styles, MUTED } from './styles';
@@ -37,6 +38,7 @@ function Chip({ label, active, onPress }: { label: string; active: boolean; onPr
 
 /** One product type pooled across every store. JSX only — logic in useProductTypeScreen. */
 export default function ProductTypeScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const { width } = useWindowDimensions();
   const { title, subtitle, products, stores, storeId, setStoreId, isFetching, onProductPress } =
     useProductTypeScreen();
@@ -60,7 +62,7 @@ export default function ProductTypeScreen() {
           <Text style={styles.stateText}>No products of this type yet — check back soon.</Text>
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={withBottomInset(styles.content)} showsVerticalScrollIndicator={false}>
           {/* ── Store filter chips (only when several stores sell it) ──── */}
           {stores.length > 1 && (
             <ScrollView

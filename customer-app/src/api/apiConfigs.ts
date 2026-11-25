@@ -62,10 +62,10 @@ async function refreshAccessToken(): Promise<string | null> {
     const accessToken: string | undefined = tokens?.accessToken;
     if (!accessToken) return null;
     setTokenCache(accessToken);
-    await AsyncStorage.multiSet([
-      [StorageKeys.accessToken, accessToken],
-      [StorageKeys.refreshToken, tokens.refreshToken ?? refreshToken],
-    ]);
+    await AsyncStorage.setMany({
+      [StorageKeys.accessToken]: accessToken,
+      [StorageKeys.refreshToken]: tokens.refreshToken ?? refreshToken,
+    });
     return accessToken;
   } catch {
     return null;
@@ -75,7 +75,7 @@ async function refreshAccessToken(): Promise<string | null> {
 /** Clears the session in Redux; RootNavigator swaps to the auth stack on its own. */
 async function endSession() {
   clearTokenCache();
-  await AsyncStorage.multiRemove([StorageKeys.accessToken, StorageKeys.refreshToken]);
+  await AsyncStorage.removeMany([StorageKeys.accessToken, StorageKeys.refreshToken]);
   try {
     // Lazy require avoids a circular import (store → apis → apiConfigs).
     const store = require('../redux/store').default;

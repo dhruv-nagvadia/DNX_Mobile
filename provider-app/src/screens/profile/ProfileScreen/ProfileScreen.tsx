@@ -75,7 +75,7 @@ function StatTile({
   onPress,
 }: {
   tint: (typeof TINT)[keyof typeof TINT];
-  icon: React.ReactElement;
+  icon: React.ReactElement<{ size?: number; color?: string }>;
   label: string;
   value: string;
   star?: boolean;
@@ -114,7 +114,7 @@ function MenuRow({
   trailing,
   danger,
 }: {
-  icon: React.ReactElement;
+  icon: React.ReactElement<{ size?: number; color?: string }>;
   label: string;
   onPress: () => void;
   first?: boolean;

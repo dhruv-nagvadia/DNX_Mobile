@@ -18,6 +18,7 @@ import { Category } from '@/redux/api/category/types';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 import { TILE_CYCLE } from '@/utils/homeTiles';
 import { LINK, ModernSize } from '@/utils/modernTheme';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { GAP, styles } from './styles';
 
@@ -33,6 +34,7 @@ const TITLES = { SERVICE: 'All services', STORE: 'Shop by business' } as const;
  * the name on the photo for store categories (2 per row).
  */
 export default function AllCategoriesScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const navigation = useNavigation<Nav>();
   const { params } = useRoute<RouteProp<RootStackParamList, 'AllCategoriesScreen'>>();
   const type = params?.type ?? 'SERVICE';
@@ -65,7 +67,7 @@ export default function AllCategoriesScreen() {
           <ActivityIndicator color={LINK} />
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={withBottomInset(styles.content)} showsVerticalScrollIndicator={false}>
           <View style={styles.grid}>
             {filtered.map((c, i) =>
               isStore ? (

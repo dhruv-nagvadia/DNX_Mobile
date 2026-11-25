@@ -21,7 +21,7 @@ export function useSessionBootstrap(): boolean {
     (async () => {
       // Signed in without "Keep me signed in": drop that session on a fresh launch.
       if ((await AsyncStorage.getItem(StorageKeys.sessionOnly)) === '1') {
-        await AsyncStorage.multiRemove([
+        await AsyncStorage.removeMany([
           StorageKeys.accessToken,
           StorageKeys.refreshToken,
           StorageKeys.sessionOnly,

@@ -204,7 +204,7 @@ export function useProfileScreen() {
 
   const clearSession = useCallback(async () => {
     clearTokenCache();
-    await AsyncStorage.multiRemove([StorageKeys.accessToken, StorageKeys.refreshToken]);
+    await AsyncStorage.removeMany([StorageKeys.accessToken, StorageKeys.refreshToken]);
     resetAllApiCaches(dispatch);
     dispatch(clearCurrentUser());
   }, [dispatch]);

@@ -15,6 +15,7 @@ import { RemoteImage } from '@/components/RemoteImage';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { IMAGE_FADE } from '@/utils/homeTiles';
 import { INK, LINK, ModernSize } from '@/utils/modernTheme';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { SubcategoryCard } from './SubcategoryCard';
 import { useCategoryScreen } from './useCategoryScreen';
@@ -28,6 +29,7 @@ const BANNER_FALLBACK = ['#1E3A8A', '#1D4ED8', '#3B82F6'];
  * counts, photo banner, search, 2-up sub-category cards and top-rated list.
  */
 export default function CategoryScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const {
     title,
     categorySlug,
@@ -58,7 +60,7 @@ export default function CategoryScreen() {
     <View style={styles.container}>
       <ScreenHeader title={title} subtitle={isLoading ? undefined : subtitle} />
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={withBottomInset(styles.content)} showsVerticalScrollIndicator={false}>
         {/* ── Banner ───────────────────────────────────────────────────── */}
         <View style={[styles.banner, { height: Math.round(contentW * 0.42) }]}>
           {/* Banner photo from the API (bannerUrl, else the category photo); plain blue if neither. */}

@@ -71,3 +71,6 @@ ios/Pods/
 
 # Logs
 *.log
+
+# Kotlin Gradle plugin cache
+.kotlin/

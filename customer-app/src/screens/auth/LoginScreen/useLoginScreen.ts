@@ -50,10 +50,10 @@ export function useLoginScreen() {
     try {
       const result = await login({ email: form.email.trim(), password: form.password }).unwrap();
 
-      await AsyncStorage.multiSet([
-        [StorageKeys.accessToken, result.accessToken],
-        [StorageKeys.refreshToken, result.refreshToken],
-      ]);
+      await AsyncStorage.setMany({
+        [StorageKeys.accessToken]: result.accessToken,
+        [StorageKeys.refreshToken]: result.refreshToken,
+      });
       setTokenCache(result.accessToken);
       // A previous account's session on this device may have left cached
       // data behind (e.g. bookings, reminders) — clear it before this
@@ -72,7 +72,7 @@ export function useLoginScreen() {
           state: result.state,
         }),
       );
-    } catch (err) {
+    } catch {
       DEBUG_LOGGER('Login failed', 'onSubmit', FILE, '48', ERROR);
       setServerError('That email and password don’t match. Please try again.');
     }

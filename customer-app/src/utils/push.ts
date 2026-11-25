@@ -3,12 +3,15 @@
  *
  * Everything here is a no-op until Firebase is configured natively, i.e. until
  * `android/app/google-services.json` / `ios/DNX/GoogleService-Info.plist` are
- * added (see android/app/build.gradle and ios/DNX/AppDelegate.mm). Without them
- * `firebase.apps` is empty and we never touch the messaging native module (whose
+ * added (see android/app/build.gradle and ios/DNX/AppDelegate.swift). Without them
+ * `getApps()` is empty and we never touch the messaging native module (whose
  * Android constants throw when no default Firebase app exists).
+ *
+ * Uses the modular Firebase API (v22+): functions that take the messaging
+ * instance, e.g. `getToken(m)` instead of `m.getToken()`.
  */
 import { PermissionsAndroid, Platform } from 'react-native';
-import type { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+import type { Messaging, RemoteMessage } from '@react-native-firebase/messaging';
 
 import { networkCall } from '@/api/apiConfigs';
 import { endpoints } from '@/api/APIUtils';
@@ -17,8 +20,7 @@ import DEBUG_LOGGER, { WARNING } from '@/utils/DebugLogger';
 const FILE = 'push';
 const APP = 'customer';
 
-type Messaging = FirebaseMessagingTypes.Module;
-type RemoteMessage = FirebaseMessagingTypes.RemoteMessage;
+type MessagingModule = typeof import('@react-native-firebase/messaging');
 
 /** Data payload the backend attaches to every push. */
 export interface PushData {
@@ -31,22 +33,26 @@ export interface PushData {
 
 const noop = () => undefined;
 
-/** The messaging instance, or null when Firebase isn't configured/linked. */
-export function getMessaging(): Messaging | null {
+/**
+ * The messaging instance plus the modular API functions, or null when Firebase
+ * isn't configured/linked. Loaded lazily so a missing native module never
+ * crashes app start.
+ */
+function loadMessaging(): { m: Messaging; api: MessagingModule } | null {
   try {
-    const firebase = require('@react-native-firebase/app').default;
-    if (!firebase?.apps?.length) {
+    const { getApps } = require('@react-native-firebase/app');
+    if (!getApps()?.length) {
       return null;
     }
-    const messaging = require('@react-native-firebase/messaging').default;
-    return messaging();
+    const api: MessagingModule = require('@react-native-firebase/messaging');
+    return { m: api.getMessaging(), api };
   } catch {
     return null;
   }
 }
 
 /** iOS: system prompt. Android 13+: POST_NOTIFICATIONS runtime permission. */
-async function requestPermission(m: Messaging): Promise<boolean> {
+async function requestPermission(m: Messaging, api: MessagingModule): Promise<boolean> {
   if (Platform.OS === 'android') {
     if (Number(Platform.Version) < 33) {
       return true;
@@ -55,7 +61,7 @@ async function requestPermission(m: Messaging): Promise<boolean> {
     return res === PermissionsAndroid.RESULTS.GRANTED;
   }
   // AuthorizationStatus: -1 NOT_DETERMINED, 0 DENIED, 1 AUTHORIZED, 2 PROVISIONAL, 3 EPHEMERAL.
-  const status = await m.requestPermission();
+  const status = await api.requestPermission(m);
   return status > 0;
 }
 
@@ -77,17 +83,18 @@ async function registerToken(token: string): Promise<void> {
  * returns a cleanup function.
  */
 export function startPushRegistration(): () => void {
-  const m = getMessaging();
-  if (!m) {
+  const fb = loadMessaging();
+  if (!fb) {
     return noop;
   }
+  const { m, api } = fb;
   let active = true;
   (async () => {
     try {
-      if (!(await requestPermission(m)) || !active) {
+      if (!(await requestPermission(m, api)) || !active) {
         return;
       }
-      const token = await m.getToken();
+      const token = await api.getToken(m);
       if (token && active) {
         await registerToken(token);
       }
@@ -104,7 +111,7 @@ export function startPushRegistration(): () => void {
 
   let unsubscribe: () => void = noop;
   try {
-    unsubscribe = m.onTokenRefresh((token) => {
+    unsubscribe = api.onTokenRefresh(m, (token) => {
       if (active) {
         registerToken(token).catch(noop);
       }
@@ -132,7 +139,7 @@ export async function unregisterPushToken(): Promise<void> {
   try {
     await Promise.race([
       networkCall.delete(endpoints.devices, { data: { token } }),
-      new Promise((resolve) => setTimeout(resolve, 4000)),
+      new Promise<void>((resolve) => setTimeout(() => resolve(), 4000)),
     ]);
   } catch {
     // Best effort — the backend also prunes tokens FCM reports as invalid.
@@ -166,15 +173,16 @@ export function subscribePushEvents(handlers: {
   onForeground: (data: PushData | null) => void;
   onOpen: (data: PushData) => void;
 }): () => void {
-  const m = getMessaging();
-  if (!m) {
+  const fb = loadMessaging();
+  if (!fb) {
     return noop;
   }
+  const { m, api } = fb;
   const subs: Array<() => void> = [];
   try {
-    subs.push(m.onMessage((msg) => handlers.onForeground(toPushData(msg))));
+    subs.push(api.onMessage(m, (msg) => handlers.onForeground(toPushData(msg))));
     subs.push(
-      m.onNotificationOpenedApp((msg) => {
+      api.onNotificationOpenedApp(m, (msg) => {
         const data = toPushData(msg);
         if (data) {
           handlers.onOpen(data);
@@ -183,7 +191,8 @@ export function subscribePushEvents(handlers: {
     );
     if (!initialHandled) {
       initialHandled = true;
-      m.getInitialNotification()
+      api
+        .getInitialNotification(m)
         .then((msg) => {
           const data = toPushData(msg);
           if (data) {
@@ -206,7 +215,8 @@ export function subscribePushEvents(handlers: {
  */
 export function registerBackgroundPushHandler(): void {
   try {
-    getMessaging()?.setBackgroundMessageHandler(async () => undefined);
+    const fb = loadMessaging();
+    fb?.api.setBackgroundMessageHandler(fb.m, async () => undefined);
   } catch {
     // Firebase not configured — ignore.
   }

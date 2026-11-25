@@ -29,7 +29,7 @@ export function iconTileColor(index = 0): string {
 
 const styles = StyleSheet.create({
   tile: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',

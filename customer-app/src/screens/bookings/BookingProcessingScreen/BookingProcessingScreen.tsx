@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CalendarClock, CreditCard, RotateCcw, ShieldCheck, X } from 'lucide-react-native';
@@ -33,6 +34,10 @@ type BookingSuccessOutcome = RootStackParamList[typeof ROUTES.BOOKING_SUCCESS]['
  * screen, never mid-transition or from inside another modal.
  */
 export default function BookingProcessingScreen() {
+  const insets = useSafeAreaInsets();
+  // Centered content: keep it clear of the status bar and the home indicator /
+  // Android navigation bar (the app draws edge-to-edge).
+  const safePad = { paddingTop: 32 + insets.top, paddingBottom: 32 + insets.bottom };
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { params } = useRoute<RouteProp<RootStackParamList, typeof ROUTES.BOOKING_PROCESSING>>();
   const {
@@ -304,7 +309,7 @@ export default function BookingProcessingScreen() {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
-        <View style={styles.content}>
+        <View style={[styles.content, safePad]}>
           <View style={styles.errorWrap}>
             <View style={styles.errorGlow} />
             <View style={styles.errorBadge}>
@@ -354,7 +359,7 @@ export default function BookingProcessingScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={PAGE_BG} />
-      <View style={styles.content}>
+      <View style={[styles.content, safePad]}>
         <View style={styles.spinnerWrap} accessibilityRole="progressbar" accessibilityLabel={label}>
           <View style={styles.glow} />
           <Animated.View style={[styles.ring, { transform: [{ rotate: spinDeg }] }]} />

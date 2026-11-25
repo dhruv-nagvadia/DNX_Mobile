@@ -8,6 +8,7 @@ import { useGetProductTypesQuery } from '@/redux/api/productType/productTypeApi'
 import { ProductType } from '@/redux/api/productType/types';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 import { LINK, ModernSize } from '@/utils/modernTheme';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { styles } from './styles';
 
@@ -17,6 +18,7 @@ type Nav = {
 
 /** Every product type — the same pastel-backed photo card as Home's "Shop by product", 3 per row. */
 export default function AllProductTypesScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const navigation = useNavigation<Nav>();
   const { data: productTypes = [], isLoading } = useGetProductTypesQuery();
 
@@ -39,7 +41,7 @@ export default function AllProductTypesScreen() {
           <ActivityIndicator color={LINK} />
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={withBottomInset(styles.content)} showsVerticalScrollIndicator={false}>
           <View style={styles.grid}>
             {productTypes.map((t, i) => (
               <ProductTypeCard key={t.id} type={t} width={cardW} index={i} onPress={onPress} />

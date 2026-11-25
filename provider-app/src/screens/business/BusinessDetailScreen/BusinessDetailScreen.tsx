@@ -30,6 +30,7 @@ import { GradientBackground } from '@/components/GradientBackground';
 import { TopSellersPanel } from '@/components/TopSellersPanel';
 import { Color } from '@/utils/Theme';
 import { INK, LINK, TINT } from '@/utils/modernTheme';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { useBusinessDetailScreen } from './useBusinessDetailScreen';
 import { AVATAR_COLORS, STAR_COLOR, styles } from './styles';
@@ -188,6 +189,7 @@ function ContactRow({
  * each section sitting on the page background, separated by dividers.
  */
 export default function BusinessDetailScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const {
     business,
     isStore,
@@ -250,7 +252,7 @@ export default function BusinessDetailScreen() {
       />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={withBottomInset(styles.scrollContent)}
         refreshControl={<RefreshControl refreshing={refreshing || isLoading} onRefresh={refresh} />}
       >
         {business && (

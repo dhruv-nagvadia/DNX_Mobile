@@ -8,10 +8,10 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-# @react-native-firebase (push notifications) requires static frameworks.
-# See https://rnfirebase.io/#configure-react-native-firebase-modules (iOS setup).
-$RNFirebaseAsStaticFramework = true
-linkage = ENV['USE_FRAMEWORKS'] || 'static'
+# @react-native-firebase v27+ pulls firebase-ios-sdk via Swift Package Manager, which
+# needs DYNAMIC framework linkage (static linkage causes duplicate Firebase symbols).
+# See https://rnfirebase.io/ios-spm
+linkage = ENV['USE_FRAMEWORKS'] || 'dynamic'
 Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
 use_frameworks! :linkage => linkage.to_sym
 

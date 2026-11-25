@@ -22,6 +22,7 @@ import {
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Color } from '@/utils/Theme';
 import { INK, LINK, PILL } from '@/utils/modernTheme';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { useLocationPicker } from './useLocationPicker';
 import { styles } from './styles';
@@ -34,6 +35,7 @@ const MODE_LABEL = {
 
 /** Sets where the customer is searching from — device GPS, or a typed city/PIN code. */
 export default function LocationPickerScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const {
     current,
     locating,
@@ -57,7 +59,7 @@ export default function LocationPickerScreen() {
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={withBottomInset(styles.content)}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >

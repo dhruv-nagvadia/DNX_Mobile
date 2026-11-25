@@ -5,6 +5,7 @@ import { Store } from 'lucide-react-native';
 import { ServiceRow, StoreCard } from '@/components/BusinessCards';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { INK, LINK, ModernSize } from '@/utils/modernTheme';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { useAllBusinessesScreen } from './useAllBusinessesScreen';
 import { GAP, styles } from './styles';
@@ -13,6 +14,7 @@ const TITLES = { STORE: 'All stores', SERVICE: 'Popular services' } as const;
 
 /** Full list behind Home's "View all": store cards 2 per row, or service rows. */
 export default function AllBusinessesScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const {
     type,
     title,
@@ -54,7 +56,7 @@ export default function AllBusinessesScreen() {
           keyExtractor={(p) => p.id}
           numColumns={grid ? 2 : 1}
           columnWrapperStyle={grid ? styles.row : undefined}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={withBottomInset(styles.content)}
           showsVerticalScrollIndicator={false}
           onEndReached={loadMore}
           onEndReachedThreshold={0.4}

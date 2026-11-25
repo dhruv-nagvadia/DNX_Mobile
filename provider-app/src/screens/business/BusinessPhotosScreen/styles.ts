@@ -257,7 +257,7 @@ export const styles = StyleSheet.create({
     backgroundColor: ADD_BG,
   },
   busyOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,

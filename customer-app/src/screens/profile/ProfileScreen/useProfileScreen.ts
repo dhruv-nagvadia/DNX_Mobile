@@ -224,7 +224,7 @@ export function useProfileScreen() {
   }, [pwForm, changePassword]);
 
   const endSession = useCallback(async () => {
-    await AsyncStorage.multiRemove([StorageKeys.accessToken, StorageKeys.refreshToken]);
+    await AsyncStorage.removeMany([StorageKeys.accessToken, StorageKeys.refreshToken]);
     clearTokenCache();
     dispatch(clearCart()); // drop the local copy; it's saved on the server per user
     dispatch(clearCurrentUser());

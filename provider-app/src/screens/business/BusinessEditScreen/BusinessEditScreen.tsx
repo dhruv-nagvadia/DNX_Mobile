@@ -6,6 +6,7 @@ import { AppHeader } from '@/components/AppHeader';
 import { LoadingView } from '@/components/LoadingView';
 import { Color } from '@/utils/Theme';
 import { INK } from '@/utils/modernTheme';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { FormField } from './FormField';
 import { useBusinessEditScreen } from './useBusinessEditScreen';
@@ -14,6 +15,7 @@ import { styles } from './styles';
 const DESCRIPTION_MAX_LENGTH = 500;
 
 export default function BusinessEditScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const { isLoading, saving, form, onChange, error, save } = useBusinessEditScreen();
 
   if (isLoading) {
@@ -29,7 +31,7 @@ export default function BusinessEditScreen() {
     <View style={styles.root}>
       <AppHeader title="Edit Business" variant="light" />
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={withBottomInset(styles.content)} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           {!!error && <Text style={styles.errorText}>{error}</Text>}
 
           <View style={styles.card}>

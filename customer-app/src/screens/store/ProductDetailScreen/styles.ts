@@ -49,7 +49,7 @@ export const styles = StyleSheet.create({
     height: '82%',
   },
   noImage: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
