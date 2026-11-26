@@ -9,38 +9,38 @@ import {
   StyleProp,
   TextStyle,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
+  ArrowRight,
   Bell,
   CalendarClock,
   CalendarDays,
   CalendarX,
-  ChevronDown,
   ChevronUp,
   Plus,
   type LucideIcon,
 } from 'lucide-react-native';
 
 import { GradientBackground } from '@/components/GradientBackground';
-import { TINT } from '@/utils/modernTheme';
-import { TYPE_LABEL } from '@/utils/reminderMeta';
+import { Color } from '@/utils/Theme';
+import { INK, TINT } from '@/utils/modernTheme';
+import { TYPE_ICON, TYPE_LABEL } from '@/utils/reminderMeta';
 import { Reminder } from '@/redux/api/reminder/types';
 
 import { useRemindersScreen } from './useRemindersScreen';
 import { ReminderCard } from './ReminderCard';
-import { styles, COLORS } from './styles';
+import { COLORS, styles } from './styles';
 
-type Tone = 'red' | 'amber' | 'blue' | 'grey';
+type Bar = 'red' | 'blue';
 
-const DOT_STYLE = {
-  red: styles.dotRed,
-  amber: styles.dotAmber,
-  blue: styles.dotBlue,
-  grey: styles.dotGrey,
+const BAR_STYLE = {
+  red: styles.barRed,
+  blue: styles.barBlue,
 };
 
 /** Reminders tab — renewals, services and follow-ups. */
 export default function RemindersScreen() {
+  const insets = useSafeAreaInsets();
   const {
     isLoading,
     total,
@@ -64,22 +64,21 @@ export default function RemindersScreen() {
     onBook,
   } = useRemindersScreen();
 
-  const card = (r: Reminder, isHistory: boolean, grouped: boolean, index: number) => (
+  const card = (r: Reminder, isHistory: boolean, index: number) => (
     <ReminderCard
       key={r.id}
       reminder={r}
       isHistory={isHistory}
-      grouped={grouped}
-      divider={grouped && index > 0}
+      divider={index > 0}
       onOpen={onOpen}
       onRespond={onRespond}
       onBook={onBook}
     />
   );
 
-  const sectionHeader = (label: string, count: number, tone: Tone) => (
+  const sectionHeader = (label: string, count: number, bar: Bar) => (
     <View style={styles.sectionRow} accessibilityRole="header">
-      <View style={[styles.dot, DOT_STYLE[tone]]} />
+      <View style={[styles.bar, BAR_STYLE[bar]]} />
       <Text style={styles.sectionTitle}>
         {label} ({count})
       </Text>
@@ -91,7 +90,8 @@ export default function RemindersScreen() {
     label: string,
     Icon: LucideIcon,
     tint: (typeof TINT)[keyof typeof TINT],
-    textStyle: StyleProp<TextStyle>,
+    labelStyle: StyleProp<TextStyle>,
+    valueStyle?: StyleProp<TextStyle>,
   ) => (
     <View
       style={[styles.statTile, { borderColor: tint.border }]}
@@ -100,10 +100,12 @@ export default function RemindersScreen() {
     >
       <GradientBackground colors={tint.colors} />
       <View style={styles.statTop}>
-        <Icon size={22} color={tint.icon} />
-        <Text style={styles.statValue}>{value}</Text>
+        <View style={styles.statIcon}>
+          <Icon size={18} color={tint.icon} />
+        </View>
+        <Text style={[styles.statValue, valueStyle]}>{value}</Text>
       </View>
-      <Text style={[styles.statLabel, textStyle]} numberOfLines={1}>
+      <Text style={[styles.statLabel, labelStyle]} numberOfLines={1}>
         {label}
       </Text>
     </View>
@@ -112,8 +114,9 @@ export default function RemindersScreen() {
   const nothingMatches = overdue.length + dueToday.length + upcoming.length + history.length === 0;
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <View style={styles.header}>
+    <View style={styles.container}>
+      {/* ── Header ───────────────────────────────────────────────────── */}
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <View style={styles.headerText}>
           <Text style={styles.title} accessibilityRole="header">
             Reminders
@@ -163,7 +166,14 @@ export default function RemindersScreen() {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
           <View style={styles.statsRow}>
-            {statTile(stats.overdue, 'Overdue', CalendarX, TINT.pink, styles.statLabelRed)}
+            {statTile(
+              stats.overdue,
+              'Overdue',
+              CalendarX,
+              TINT.pink,
+              styles.statLabelRed,
+              styles.statValueRed,
+            )}
             {statTile(stats.today, 'Due today', CalendarClock, TINT.peach, styles.statLabelAmber)}
             {statTile(stats.thisMonth, 'This month', CalendarDays, TINT.blue, styles.statLabelBlue)}
           </View>
@@ -176,6 +186,7 @@ export default function RemindersScreen() {
           >
             {(['all', ...categories] as const).map((c) => {
               const active = filter === c;
+              const Icon = c === 'all' ? null : TYPE_ICON[c];
               return (
                 <TouchableOpacity
                   key={c}
@@ -186,6 +197,7 @@ export default function RemindersScreen() {
                   accessibilityState={{ selected: active }}
                   accessibilityLabel={`Show ${c === 'all' ? 'all reminders' : TYPE_LABEL[c]}`}
                 >
+                  {Icon && <Icon size={16} color={active ? Color.white : INK} />}
                   <Text style={[styles.chipText, active && styles.chipTextActive]}>
                     {c === 'all' ? 'All' : TYPE_LABEL[c]}
                   </Text>
@@ -199,21 +211,24 @@ export default function RemindersScreen() {
           {overdue.length > 0 && (
             <>
               {sectionHeader('Overdue', overdue.length, 'red')}
-              {overdue.map((r, i) => card(r, false, false, i))}
+              <View style={styles.group}>{overdue.map((r, i) => card(r, false, i))}</View>
             </>
           )}
+
           {dueToday.length > 0 && (
             <>
-              {sectionHeader('Due today', dueToday.length, 'amber')}
-              {dueToday.map((r, i) => card(r, false, false, i))}
+              {sectionHeader('Due today', dueToday.length, 'blue')}
+              <View style={styles.group}>{dueToday.map((r, i) => card(r, false, i))}</View>
             </>
           )}
+
           {upcoming.length > 0 && (
             <>
               {sectionHeader('Upcoming', upcoming.length, 'blue')}
-              <View style={styles.group}>{upcoming.map((r, i) => card(r, false, true, i))}</View>
+              <View style={styles.group}>{upcoming.map((r, i) => card(r, false, i))}</View>
             </>
           )}
+
           {history.length > 0 && (
             <>
               <TouchableOpacity
@@ -225,39 +240,29 @@ export default function RemindersScreen() {
                 accessibilityState={{ expanded: historyExpanded, disabled: !historyCanExpand }}
                 accessibilityLabel={`History, ${history.length} reminders`}
               >
-                <View style={[styles.dot, DOT_STYLE.grey]} />
+                <View style={[styles.bar, BAR_STYLE.blue]} />
                 <Text style={[styles.sectionTitle, styles.sectionTitleFlex]}>
                   History ({history.length})
                 </Text>
-                {historyCanExpand &&
-                  (historyExpanded ? (
-                    <ChevronUp size={20} color={COLORS.ink} />
-                  ) : (
-                    <ChevronDown size={20} color={COLORS.ink} />
-                  ))}
+                {/* Latest few always visible; this link reveals (or hides) the rest. */}
+                {historyCanExpand && (
+                  <View style={styles.sectionLink}>
+                    <Text style={styles.sectionLinkText}>
+                      {historyExpanded ? 'Show less' : `Show all ${history.length}`}
+                    </Text>
+                    {historyExpanded ? (
+                      <ChevronUp size={16} color={COLORS.link} />
+                    ) : (
+                      <ArrowRight size={16} color={COLORS.link} />
+                    )}
+                  </View>
+                )}
               </TouchableOpacity>
-              {/* Latest few always visible; the chevron / "Show all" reveals the rest. */}
-              <View style={styles.group}>{historyShown.map((r, i) => card(r, true, true, i))}</View>
-              {historyCanExpand && (
-                <TouchableOpacity
-                  style={styles.showAllBtn}
-                  onPress={toggleHistory}
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.showAllText}>
-                    {historyExpanded ? 'Show less' : `Show all ${history.length}`}
-                  </Text>
-                  {historyExpanded ? (
-                    <ChevronUp size={16} color={COLORS.link} />
-                  ) : (
-                    <ChevronDown size={16} color={COLORS.link} />
-                  )}
-                </TouchableOpacity>
-              )}
+              <View style={styles.group}>{historyShown.map((r, i) => card(r, true, i))}</View>
             </>
           )}
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 }

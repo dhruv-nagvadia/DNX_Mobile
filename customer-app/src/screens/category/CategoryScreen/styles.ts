@@ -75,7 +75,7 @@ export const styles = StyleSheet.create({
 
   // ── Sections ────────────────────────────────────────────────────────────
   sectionTitle: {
-    marginTop: 22,
+    marginTop: 14,
     marginBottom: 12,
     fontSize: 19,
     fontWeight: FontWeight.bold,

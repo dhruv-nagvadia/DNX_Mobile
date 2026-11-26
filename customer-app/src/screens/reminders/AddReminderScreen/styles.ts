@@ -83,7 +83,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    paddingHorizontal: 4,
+    paddingHorizontal: 1,
     borderRadius: ModernRadius.box,
     // Same border width selected or not, so picking a tile never shifts the
     // icons/labels of the tiles around it — only the colour changes.
@@ -91,14 +91,18 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   tileActive: {},
-  // Fixed line box: a label that shrinks to fit ("Appointment") keeps the
-  // same height as the others, so every tile's icon + label line up.
+  // Fixed-height box so every tile's icon + label line up, even when a long label
+  // ("Appointment") shrinks to fit. The box is deliberately taller than the text:
+  // on Android, shrink-to-fit also shrinks until the text fits the box HEIGHT, and with
+  // the font's default extra padding a tight box made every label come out too small.
   tileText: {
     alignSelf: 'stretch',
-    height: 16,
-    lineHeight: 16,
+    height: 24,
+    lineHeight: 20,
     textAlign: 'center',
-    fontSize: ModernType.caption,
+    textAlignVertical: 'center',
+    includeFontPadding: false,
+    fontSize: ModernType.rowTitle,
     fontWeight: FontWeight.semibold,
     color: INK,
   },

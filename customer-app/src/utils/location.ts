@@ -16,6 +16,16 @@ export interface CustomerLocation {
   postalCode?: string;
 }
 
+/** Straight-line distance between two coordinates, in km (haversine). */
+export function distanceKm(aLat: number, aLng: number, bLat: number, bLng: number): number {
+  const rad = (d: number) => (d * Math.PI) / 180;
+  const dLat = rad(bLat - aLat);
+  const dLng = rad(bLng - aLng);
+  const h =
+    Math.sin(dLat / 2) ** 2 + Math.cos(rad(aLat)) * Math.cos(rad(bLat)) * Math.sin(dLng / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.sqrt(h));
+}
+
 /** Last-saved customer location (null if never set, or on any read error). */
 export async function getStoredLocation(): Promise<CustomerLocation | null> {
   try {

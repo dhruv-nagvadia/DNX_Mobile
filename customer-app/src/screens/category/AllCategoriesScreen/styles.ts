@@ -43,6 +43,8 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     overflow: 'hidden',
+    // Solid base under the gradient — Android only draws elevation for a filled view.
+    backgroundColor: Color.white,
     ...CARD_SHADOW,
   },
   catName: {

@@ -200,7 +200,8 @@ export function useBookingDetail() {
   const onRemind = useCallback(() => {
     if (!booking) {return;}
     navigation.navigate(ROUTES.ADD_REMINDER, {
-      prefillTitle: `${booking.provider.businessName} — next ${booking.service.name}`,
+      // The business is linked to the reminder and shown on its row, so keep it out of the title.
+      prefillTitle: booking.service.name,
       prefillType: 'appointment',
       providerId: booking.provider.id,
     });

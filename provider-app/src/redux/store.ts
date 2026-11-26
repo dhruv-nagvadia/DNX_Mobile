@@ -18,7 +18,11 @@ const store = configureStore({
     [categoryApi.reducerPath]: categoryApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(
+    // Redux Toolkit's immutability / serializability checks walk the WHOLE state tree after
+    // every action (all cached API lists, image URLs, ...) — in a development build that
+    // adds a noticeable delay to every tap. They are already off in release builds, so
+    // turning them off here makes debug feel like release.
+    getDefaultMiddleware({ immutableCheck: false, serializableCheck: false }).concat(
       authApi.middleware,
       businessApi.middleware,
       notificationApi.middleware,

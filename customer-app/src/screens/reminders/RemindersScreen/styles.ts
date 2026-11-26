@@ -17,6 +17,13 @@ const G = ModernSize.gutter;
 const BLUE = '#1D4ED8';
 const NAVY = '#1E3A8A';
 
+/** Line between reminders inside a group — darker than the card border so rows read as separate. */
+const DIVIDER = '#D3DAE6';
+
+/** Width of the category icon square — extra lines under a row line up with the title. */
+const ICON = 44;
+const ICON_GAP = 12;
+
 /** Colours the components pass to icons. */
 export const COLORS = {
   ink: INK,
@@ -28,7 +35,7 @@ export const COLORS = {
   green: '#16A34A',
 };
 
-/** Mockup "designs/customer/mobile/DNX Reminders App Interface.png" (left frame). */
+/** Reminders tab. Layout after "Modern Reminders App Dashboard.png", in the app's own colours. */
 export const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: PAGE_BG },
   fill: { width: '100%', height: '100%' },
@@ -40,7 +47,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 12,
     paddingHorizontal: G,
-    paddingTop: 10,
     paddingBottom: 12,
   },
   headerText: { flex: 1, minWidth: 0 },
@@ -73,47 +79,60 @@ export const styles = StyleSheet.create({
 
   content: { paddingHorizontal: G, paddingBottom: 32 },
 
-  // ── Stat tiles ──────────────────────────────────────────────────────────
+  // ── Summary tiles ───────────────────────────────────────────────────────
   statsRow: { flexDirection: 'row', gap: 10 },
   statTile: {
     flex: 1,
-    minHeight: 72,
+    minHeight: 76,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    borderRadius: 14,
+    borderRadius: 16,
     borderWidth: 1,
     overflow: 'hidden',
     justifyContent: 'center',
+    // Solid base under the gradient — Android only draws elevation for a filled view.
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
-  statTop: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  statTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  statIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+  },
   statValue: {
-    fontSize: ModernType.stat,
+    fontSize: ModernType.stat + 4,
+    lineHeight: ModernType.stat + 8,
     fontWeight: FontWeight.extrabold,
     color: INK,
   },
   statLabel: {
-    marginTop: 2,
-    marginLeft: 30,
+    marginTop: 6,
     fontSize: ModernType.caption,
-    fontWeight: FontWeight.medium,
+    fontWeight: FontWeight.semibold,
   },
   statLabelRed: { color: PILL.red.fg },
   statLabelAmber: { color: PILL.yellow.fg },
   statLabelBlue: { color: INK },
+  statValueRed: { color: PILL.red.fg },
 
-  // ── Filter chips ────────────────────────────────────────────────────────
-  chipsScroll: { marginHorizontal: -G, marginTop: 14 },
-  chips: { flexDirection: 'row', gap: 8, paddingHorizontal: G },
+  // ── Filter chips (with category icons) ──────────────────────────────────
+  chipsScroll: { marginHorizontal: -G, marginTop: 14, flexGrow: 0 },
+  chips: { flexDirection: 'row', gap: 8, paddingHorizontal: G, paddingVertical: 4 },
   chip: {
-    height: 34,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    borderRadius: 17,
-    borderWidth: 1,
-    borderColor: CARD_BORDER,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    height: 38,
+    paddingHorizontal: 14,
+    borderRadius: 19,
     backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
-  chipActive: { borderColor: NAVY, backgroundColor: NAVY },
+  chipActive: { backgroundColor: NAVY },
   chipText: { fontSize: ModernType.body, fontWeight: FontWeight.medium, color: INK },
   chipTextActive: { color: Color.white, fontWeight: FontWeight.semibold },
   noMatch: {
@@ -123,19 +142,17 @@ export const styles = StyleSheet.create({
     color: COLORS.muted,
   },
 
-  // ── Section headers ─────────────────────────────────────────────────────
+  // ── Section headers: coloured bar + title (+ "Show all" link) ───────────
   sectionRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginTop: 18,
+    marginTop: 20,
     marginBottom: 10,
   },
-  dot: { width: 10, height: 10, borderRadius: 5 },
-  dotRed: { backgroundColor: COLORS.red },
-  dotAmber: { backgroundColor: '#F59E0B' },
-  dotBlue: { backgroundColor: BLUE },
-  dotGrey: { backgroundColor: '#94A3B8' },
+  bar: { width: 4, height: 20, borderRadius: 2 },
+  barRed: { backgroundColor: COLORS.red },
+  barBlue: { backgroundColor: BLUE },
   sectionTitle: {
     fontSize: 19,
     fontWeight: FontWeight.bold,
@@ -143,45 +160,43 @@ export const styles = StyleSheet.create({
     color: INK,
   },
   sectionTitleFlex: { flex: 1 },
-
-  // ── Cards ───────────────────────────────────────────────────────────────
-  card: {
+  sectionLink: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    padding: 14,
-    marginBottom: 10,
-    borderRadius: 16,
-    backgroundColor: Color.white,
-    ...CARD_SHADOW,
+    gap: 4,
   },
+  sectionLinkText: {
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+    color: LINK,
+  },
+
+  // ── Group card + rows ───────────────────────────────────────────────────
   group: {
     borderRadius: 16,
     backgroundColor: Color.white,
     ...CARD_SHADOW,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
   },
-  rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: CARD_BORDER },
-  accentRed: { borderLeftWidth: 3, borderLeftColor: COLORS.red },
-  accentAmber: { borderLeftWidth: 3, borderLeftColor: '#F59E0B' },
+  rowDivider: { borderTopWidth: 1, borderTopColor: DIVIDER },
+  rowTop: { flexDirection: 'row', alignItems: 'center', gap: ICON_GAP },
+  // Lines under the main row (business, Done / Missed) line up with the title.
+  rowExtra: { marginTop: 10, marginLeft: ICON + ICON_GAP },
 
   iconTile: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
+    width: ICON,
+    height: ICON,
+    borderRadius: 12,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconTileSm: {
-    width: 40,
-    height: 40,
+    width: ICON,
+    height: ICON,
     borderRadius: 12,
     borderWidth: 1,
     alignItems: 'center',
@@ -200,15 +215,12 @@ export const styles = StyleSheet.create({
   dueMuted: { color: COLORS.muted },
 
   repeatChip: {
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    marginTop: 2,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingHorizontal: 11,
+    paddingVertical: 5,
     borderRadius: 999,
-    backgroundColor: SOFT_FILL,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
   },
   repeatText: { fontSize: ModernType.caption, fontWeight: FontWeight.medium, color: INK },
 
@@ -216,68 +228,58 @@ export const styles = StyleSheet.create({
   bizRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 8,
-    marginTop: 4,
+    gap: 10,
   },
-  bizChip: {
-    flexShrink: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingLeft: 3,
-    paddingRight: 10,
-    paddingVertical: 3,
-    borderRadius: 999,
-    backgroundColor: SOFT_FILL,
-  },
-  bizAvatar: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+  bizThumb: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.white,
+    backgroundColor: SOFT_FILL,
   },
   bizName: {
-    flexShrink: 1,
-    fontSize: ModernType.caption,
+    flex: 1,
+    minWidth: 0,
+    fontSize: ModernType.secondary,
     fontWeight: FontWeight.medium,
     color: INK,
   },
   bookBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    height: 28,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    borderWidth: 1,
+    gap: 5,
+    height: 32,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    borderWidth: 1.2,
     borderColor: LINK,
     backgroundColor: Color.white,
   },
   bookText: { fontSize: ModernType.caption, fontWeight: FontWeight.semibold, color: LINK },
 
-  // ── Actions / outcome ───────────────────────────────────────────────────
-  actionsRow: { flexDirection: 'row', gap: 10 },
-  roundBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 1.6,
+  // ── Done / Missed buttons and the outcome pill ──────────────────────────
+  actionsRow: { flexDirection: 'row', justifyContent: 'flex-end', gap: 10 },
+  pillBtn: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 5,
+    height: 34,
+    paddingHorizontal: 16,
+    borderRadius: 17,
+    borderWidth: 1.4,
     backgroundColor: Color.white,
   },
-  roundBtnDone: { borderColor: COLORS.green },
-  roundBtnMissed: { borderColor: COLORS.red },
+  pillBtnDone: { borderColor: COLORS.green },
+  pillBtnMissed: { borderColor: COLORS.red },
+  pillBtnText: { fontSize: ModernType.secondary, fontWeight: FontWeight.semibold },
   outcome: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    height: 30,
-    paddingHorizontal: 12,
+    height: 32,
+    paddingHorizontal: 14,
     borderRadius: 999,
   },
   outcomeDone: { backgroundColor: PILL.green.bg },
@@ -315,17 +317,4 @@ export const styles = StyleSheet.create({
     backgroundColor: BLUE,
   },
   emptyBtnText: { color: Color.white, fontSize: ModernType.rowTitle, fontWeight: FontWeight.bold },
-  showAllBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    height: 40,
-    marginTop: 8,
-  },
-  showAllText: {
-    fontSize: 14,
-    fontWeight: FontWeight.semibold,
-    color: LINK,
-  },
 });

@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Pressable, PressableProps } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  createBottomTabNavigator,
+  type BottomTabBarButtonProps,
+} from '@react-navigation/bottom-tabs';
 import { Home, CalendarDays, Bell, User, type LucideIcon } from 'lucide-react-native';
 
 import { ROUTES, RootStackParamList } from './routes';
@@ -68,12 +71,30 @@ const BookingsTabIcon = tabIcon(CalendarDays);
 const RemindersTabIcon = tabIcon(Bell);
 const ProfileTabIcon = tabIcon(User);
 
+/**
+ * Tab button with no press feedback (the default one shows an Android ripple /
+ * dimming). Selection is still shown by the active icon + label colour.
+ */
+function TabBarButton(props: BottomTabBarButtonProps) {
+  // Drop the default button's feedback-only props so they don't reach the native view.
+  const rest: Record<string, unknown> = { ...props };
+  ['children', 'android_ripple', 'pressColor', 'pressOpacity', 'hoverEffect'].forEach((k) => {
+    delete rest[k];
+  });
+  return (
+    <Pressable {...(rest as PressableProps)} android_ripple={null}>
+      {props.children as React.ReactNode}
+    </Pressable>
+  );
+}
+
 /** Bottom tabs for the signed-in customer: Home, Bookings, Reminders, Profile. */
 function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
+        tabBarButton: (props) => <TabBarButton {...props} />,
         tabBarActiveTintColor: LINK,
         tabBarInactiveTintColor: Color.textSecondary,
         tabBarStyle: {

@@ -15,7 +15,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   ChevronDown,
   Flower2,
-  LayoutGrid,
   MapPin,
   Search,
   // ShoppingCart, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
@@ -24,7 +23,9 @@ import {
 
 import {
   // ProductTypeCard, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
+  ServiceCategoryTile,
   StoreCard,
+  categoryGridMetrics,
   // StoreCategoryCard, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
   // useCardWidth, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
 } from '@/components/BusinessCards';
@@ -32,7 +33,6 @@ import { CategoryIcon } from '@/components/CategoryIcon';
 import { GradientBackground } from '@/components/GradientBackground';
 import { NotificationBellButton } from '@/components/NotificationBellButton';
 import { INK, LINK, ModernSize, PAGE_BG, TINT } from '@/utils/modernTheme';
-import { TILE_CYCLE } from '@/utils/homeTiles';
 
 import { BookAgainCard, PopularServiceRow, UpcomingBookingCard } from './HomeSections';
 import { useHomeScreen } from './useHomeScreen';
@@ -43,9 +43,21 @@ const HIT = { top: 8, bottom: 8, left: 8, right: 8 };
 
 const OFFER_ICONS = [TicketPercent, Flower2];
 
-function SectionHead({ title, onViewAll }: { title: string; onViewAll?: () => void }) {
+/** Service categories shown on Home: 2 rows × 3. */
+const HOME_CATEGORY_SLOTS = 6;
+
+function SectionHead({
+  title,
+  onViewAll,
+  tight,
+}: {
+  title: string;
+  onViewAll?: () => void;
+  /** Smaller top margin — for a heading that directly follows the search bar. */
+  tight?: boolean;
+}) {
   return (
-    <View style={styles.sectionHead}>
+    <View style={[styles.sectionHead, tight && styles.sectionHeadTight]}>
       <Text style={styles.sectionTitle} numberOfLines={1}>
         {title}
       </Text>
@@ -111,7 +123,6 @@ export default function HomeScreen() {
     serviceCategories,
     // storeCategories, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
     // productTypes, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
-    hasMoreServiceCategories,
     // hasMoreStoreCategories, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
     // hasMoreProductTypes, // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
     categoriesLoading,
@@ -142,7 +153,8 @@ export default function HomeScreen() {
   // layouts fill the row exactly on any phone.
   const { width } = useWindowDimensions();
   const contentW = width - GUTTER * 2;
-  const quarterW = Math.floor((contentW - GAP * 3) / 4);
+  // Service categories: 3 per row (tile width + the gap that spreads them across the row).
+  const { width: categoryW, gap: categoryGap } = categoryGridMetrics(contentW, GAP);
   // Business cards use the same width as their "View all" grid (two per
   // screen width), so the card is identical in both places.
   // const cardW = useCardWidth(); // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
@@ -163,7 +175,9 @@ export default function HomeScreen() {
     setHeroIndex(Math.round(e.nativeEvent.contentOffset.x / heroW));
 
   // With more categories than fit, the 8th tile becomes "More" (like the mockup).
-  const serviceTiles = hasMoreServiceCategories ? serviceCategories.slice(0, 7) : serviceCategories;
+  // Two rows of three; "View all" (when there are more) opens the full list.
+  const showMoreCategories = serviceCategories.length > HOME_CATEGORY_SLOTS;
+  const serviceTiles = serviceCategories.slice(0, HOME_CATEGORY_SLOTS);
   // const productTiles = productTypes; // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
   // const businessTiles = storeCategories; // SERVICES-ONLY: unused while products/stores hidden — uncomment to restore
 
@@ -179,11 +193,13 @@ export default function HomeScreen() {
             activeOpacity={0.7}
             onPress={goToLocationPicker}
             accessibilityRole="button"
-            accessibilityLabel={`Deliver to ${location}. Change location`}
+            accessibilityLabel={`Deliver to ${firstName}, ${location}. Change location`}
           >
             <MapPin size={22} color={LINK} strokeWidth={2} />
             <View style={styles.locationText}>
-              <Text style={styles.locationLabel}>Deliver to</Text>
+              <Text style={styles.locationLabel} numberOfLines={1}>
+                Deliver to <Text style={styles.locationName}>{firstName}</Text>
+              </Text>
               <View style={styles.locationValueRow}>
                 <Text style={styles.locationValue} numberOfLines={1}>
                   {location}
@@ -223,10 +239,6 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* ── Greeting ─────────────────────────────────────────────────── */}
-        <Text style={styles.greeting}>Hi {firstName}</Text>
-        <Text style={styles.greetingSub}>What would you like to book today?</Text>
-
         {/* ── Search ───────────────────────────────────────────────────── */}
         <TouchableOpacity
           style={styles.search}
@@ -244,6 +256,7 @@ export default function HomeScreen() {
           <>
             <SectionHead
               title="Your next booking"
+              tight
               onViewAll={upcomingCount > 1 ? goToBookings : undefined}
             />
             <UpcomingBookingCard
@@ -260,33 +273,38 @@ export default function HomeScreen() {
           pagingEnabled
           showsHorizontalScrollIndicator={false}
           onMomentumScrollEnd={onHeroScroll}
-          style={styles.heroScroll}
+          style={[styles.heroScroll, !nextBooking && styles.heroAfterSearch]}
         >
-          {heroBanners.map((b) => (
-            <View key={b.id} style={[styles.heroCard, { width: heroW }]}>
-              <Image source={b.image} style={styles.heroImage} resizeMode="cover" />
-              <View
-                style={b.textPosition === 'bottom' ? styles.heroTextBottom : styles.heroTextLeft}
-              >
-                <Text
-                  style={[
-                    styles.heroHeadline,
-                    b.textPosition === 'bottom' && styles.heroHeadlineDark,
-                  ]}
+          {heroBanners.map((b) => {
+            const onLight = b.textTone === 'dark';
+            return (
+              <View key={b.id} style={[styles.heroCard, { width: heroW }]}>
+                <Image source={b.image} style={styles.heroImage} resizeMode="cover" />
+                <View
+                  style={b.textPosition === 'bottom' ? styles.heroTextBottom : styles.heroTextLeft}
                 >
-                  {b.headline}
-                </Text>
-                <Text
-                  style={[
-                    styles.heroSubtitle,
-                    b.textPosition === 'bottom' ? styles.heroSubtitleDark : styles.heroSubtitleBold,
-                  ]}
-                >
-                  {b.subtitle}
-                </Text>
+                  <Text
+                    style={[
+                      styles.heroHeadline,
+                      (b.textPosition === 'bottom' || onLight) && styles.heroHeadlineDark,
+                    ]}
+                  >
+                    {b.headline}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.heroSubtitle,
+                      b.textPosition === 'bottom'
+                        ? styles.heroSubtitleDark
+                        : [styles.heroSubtitleBold, onLight && styles.heroSubtitleOnLight],
+                    ]}
+                  >
+                    {b.subtitle}
+                  </Text>
+                </View>
               </View>
-            </View>
-          ))}
+            );
+          })}
         </ScrollView>
         {heroBanners.length > 1 && (
           <View style={styles.heroDots}>
@@ -346,45 +364,24 @@ export default function HomeScreen() {
           </>
         )}
 
-        {/* ── Service categories (4 × 2 pastel grid) ───────────────────── */}
+        {/* ── Service categories (3 × 2 photo grid) ────────────────────── */}
         <SectionHead
           title="What service do you need?"
-          onViewAll={hasMoreServiceCategories ? goToAllServiceCategories : undefined}
+          onViewAll={showMoreCategories ? goToAllServiceCategories : undefined}
         />
         {categoriesLoading ? (
           <ActivityIndicator color={LINK} />
         ) : (
-          <View style={styles.grid}>
-            {serviceTiles.map((c, i) => {
-              const tint = TILE_CYCLE[i % TILE_CYCLE.length];
-              return (
-                <TouchableOpacity
-                  key={c.id}
-                  style={[styles.catTile, { width: quarterW, borderColor: tint.border }]}
-                  activeOpacity={0.8}
-                  onPress={() => onCategoryPress(c)}
-                >
-                  <GradientBackground colors={tint.colors} />
-                  <CategoryIcon slug={c.slug} size={26} color={tint.icon} strokeWidth={1.7} />
-                  {/* Full size text; long names wrap to a second line instead of shrinking. */}
-                  <Text style={styles.catName} numberOfLines={2}>
-                    {c.name}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-            {hasMoreServiceCategories && (
-              <TouchableOpacity
-                style={[styles.catTile, { width: quarterW, borderColor: TINT.blue.border }]}
-                activeOpacity={0.8}
-                onPress={goToAllServiceCategories}
-                accessibilityLabel="More categories"
-              >
-                <GradientBackground colors={TINT.blue.colors} />
-                <LayoutGrid size={26} color={TINT.blue.icon} strokeWidth={1.7} />
-                <Text style={styles.catName}>More</Text>
-              </TouchableOpacity>
-            )}
+          <View style={[styles.grid, { gap: categoryGap }]}>
+            {serviceTiles.map((c, i) => (
+              <ServiceCategoryTile
+                key={c.id}
+                category={c}
+                width={categoryW}
+                index={i}
+                onPress={onCategoryPress}
+              />
+            ))}
           </View>
         )}
 

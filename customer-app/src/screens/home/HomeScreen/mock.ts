@@ -11,28 +11,31 @@ import { HeroBanner } from './types';
 
 export const LOCATION = 'Ahmedabad';
 
-// The top hero carousel — value-prop banners, swapped in for the old
-// "Trusted by thousands" stat banner until we have real numbers worth showing.
+// The top hero carousel — value-prop banners. Each picture keeps its left side quiet
+// for the headline + subtitle drawn over it. Services only (stores are hidden at launch).
 export const HERO_BANNERS: HeroBanner[] = [
   {
     id: 'h1',
-    image: Images.bannerServicesShopping,
-    headline: 'Services & shopping,\none app',
-    subtitle: 'Book a pro or order from local stores — all in DNX.',
+    image: Images.bannerServicesCollage,
+    headline: 'All your local\nservices, one app',
+    subtitle: 'Book trusted pros near you in a few taps.',
     textPosition: 'left',
+    textTone: 'dark',
   },
   {
     id: 'h2',
-    image: Images.bannerFreshGroceries,
-    headline: 'Daily essentials,\ndelivered fast',
-    subtitle: 'Groceries, pharmacy & more from stores near you.',
+    image: Images.bannerBookAndPay,
+    headline: 'Book in minutes,\npay your way',
+    subtitle: 'Pick a time, confirm, and pay online or in person.',
     textPosition: 'left',
+    textTone: 'dark',
   },
   {
     id: 'h3',
-    image: Images.bannerVerifiedLocal,
-    headline: 'Verified local businesses you can trust',
+    image: Images.bannerVerifiedPros,
+    headline: 'Verified businesses\nyou can trust',
     subtitle: 'Every provider on DNX is reviewed & verified.',
-    textPosition: 'bottom',
+    textPosition: 'left',
+    textTone: 'dark',
   },
 ];

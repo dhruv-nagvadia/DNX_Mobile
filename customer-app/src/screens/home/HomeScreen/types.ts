@@ -25,4 +25,6 @@ export interface HeroBanner {
   subtitle: string;
   // Which third of the artwork is left quiet for this text overlay to sit over.
   textPosition: 'left' | 'bottom';
+  // 'dark' = dark text, for artwork whose quiet area is light; default is light text.
+  textTone?: 'light' | 'dark';
 }

@@ -64,6 +64,33 @@ export const styles = StyleSheet.create({
     color: Color.white,
   },
 
+  // ── Service category tile ("What service do you need?") ─────────────────
+  svcCatTile: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#CBD5E1',
+    ...CARD_SHADOW,
+  },
+  // Icon sits a little above centre so the name strip below stays clear.
+  svcCatIconTile: {
+    paddingBottom: 16,
+  },
+  svcCatName: {
+    position: 'absolute',
+    left: 5,
+    right: 5,
+    bottom: 7,
+    textAlign: 'center',
+    fontSize: 11.5,
+    lineHeight: 14,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0.1,
+    color: Color.white,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+  },
+
   // ── Order from stores ───────────────────────────────────────────────────
   storeCard: {
     borderRadius: 14,

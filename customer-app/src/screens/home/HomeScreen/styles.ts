@@ -9,6 +9,9 @@ import { CARD_SHADOW, INK, LINK, ModernSize, PAGE_BG, PILL } from '@/utils/moder
  * these styles carry the look.
  */
 const G = ModernSize.gutter;
+/** Space under a rail's cards so their bottom shadow isn't clipped by the scroll view. */
+const RAIL_SHADOW_ROOM = 14;
+
 /** Gap between cards in every grid / rail. */
 export const GAP = 10;
 const MUTED = Color.textSecondary;
@@ -28,11 +31,16 @@ export const styles = StyleSheet.create({
     height: '100%',
   },
   // Horizontal rails run edge-to-edge while their first card lines up with the gutter.
+  // A scroll view clips anything outside its bounds, so the rail keeps RAIL_SHADOW_ROOM of
+  // padding below the cards (and `bleed` pulls the layout back up by the same amount) —
+  // otherwise the cards' bottom shadow gets cut off.
   bleed: {
     marginHorizontal: -G,
+    marginBottom: -RAIL_SHADOW_ROOM,
   },
   hRow: {
     paddingHorizontal: G,
+    paddingBottom: RAIL_SHADOW_ROOM,
     gap: GAP,
   },
   grid: {
@@ -62,6 +70,10 @@ export const styles = StyleSheet.create({
   locationLabel: {
     fontSize: 12,
     color: MUTED,
+  },
+  locationName: {
+    fontWeight: FontWeight.bold,
+    color: INK,
   },
   locationValueRow: {
     flexDirection: 'row',
@@ -118,19 +130,7 @@ export const styles = StyleSheet.create({
     color: LINK,
   },
 
-  // ── Greeting + search ───────────────────────────────────────────────────
-  greeting: {
-    marginTop: 10,
-    fontSize: 26,
-    fontWeight: FontWeight.bold,
-    letterSpacing: -0.5,
-    color: INK,
-  },
-  greetingSub: {
-    marginTop: 2,
-    fontSize: 15,
-    color: '#475569',
-  },
+  // ── Search ──────────────────────────────────────────────────────────────
   search: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -153,8 +153,14 @@ export const styles = StyleSheet.create({
     marginTop: Spacing.lg,
     borderRadius: Radius.lg,
   },
+  // Banner straight under the search bar (no "next booking" card in between).
+  heroAfterSearch: {
+    marginTop: 14,
+  },
   heroCard: {
-    height: 170,
+    // Same 2:1 shape as the banner pictures, so they show whole on every screen width
+    // (a fixed height would zoom in and crop the top/bottom on wider phones).
+    aspectRatio: 2,
     borderRadius: Radius.lg,
     overflow: 'hidden',
     backgroundColor: Color.primary,
@@ -169,10 +175,10 @@ export const styles = StyleSheet.create({
     left: 0,
     top: 0,
     bottom: 0,
-    width: '48%',
+    width: '50%',
     justifyContent: 'center',
     paddingLeft: Spacing.sm,
-    paddingRight: Spacing.xl,
+    paddingRight: Spacing.md,
   },
   heroTextBottom: {
     position: 'absolute',
@@ -197,6 +203,7 @@ export const styles = StyleSheet.create({
     lineHeight: 16,
   },
   heroSubtitleBold: { fontWeight: FontWeight.semibold },
+  heroSubtitleOnLight: { color: Color.textSecondary },
   heroSubtitleDark: { color: Color.textSecondary, marginTop: 2, textAlign: 'center' },
   heroDots: {
     flexDirection: 'row',
@@ -223,6 +230,9 @@ export const styles = StyleSheet.create({
     gap: 12,
     marginTop: 22,
     marginBottom: 12,
+  },
+  sectionHeadTight: {
+    marginTop: 14,
   },
   sectionTitle: {
     flexShrink: 1,
@@ -254,6 +264,8 @@ export const styles = StyleSheet.create({
     borderRadius: 14,
     borderWidth: 1,
     overflow: 'hidden',
+    // Solid base under the gradient — Android only draws elevation for a filled view.
+    backgroundColor: Color.white,
     ...CARD_SHADOW,
   },
   offerText: {
@@ -309,6 +321,8 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     overflow: 'hidden',
+    // Solid base under the gradient — Android only draws elevation for a filled view.
+    backgroundColor: Color.white,
     ...CARD_SHADOW,
   },
   catName: {

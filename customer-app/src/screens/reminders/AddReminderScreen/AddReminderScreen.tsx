@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
+  useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Bell, CalendarDays, Check, ChevronDown, Pencil, Save, Trash2 } from 'lucide-react-native';
@@ -14,7 +15,7 @@ import { ScreenHeader } from '@/components/ScreenHeader';
 import { CalendarModal } from '@/components/CalendarModal';
 import { GradientBackground } from '@/components/GradientBackground';
 import { Color } from '@/utils/Theme';
-import { INK, LINK } from '@/utils/modernTheme';
+import { INK, LINK, ModernSize } from '@/utils/modernTheme';
 import { TYPE_ICON, TYPE_LABEL, TYPE_OPTIONS, isReminderOccurrence } from '@/utils/reminderMeta';
 import { ReminderRepeat } from '@/redux/api/reminder/types';
 
@@ -38,6 +39,14 @@ const DATE_OPTS: Intl.DateTimeFormatOptions = {
   year: 'numeric',
 };
 
+/**
+ * Names shown on the category tiles. The tiles are narrow and all labels share one font
+ * size, so the longest name decides how big that size can be — "Appointment" is far longer
+ * than the rest, so here it reads "Visit". Everywhere else the full name is used.
+ */
+const TILE_LABEL: typeof TYPE_LABEL = { ...TYPE_LABEL, appointment: 'Visit' };
+const TILE_LONGEST = Math.max(...Object.values(TILE_LABEL).map((l) => l.length));
+
 /** Matches the backend zod limits in reminder.validation.ts. */
 const TITLE_MAX = 120;
 const NOTE_MAX = 500;
@@ -46,6 +55,15 @@ const NOTE_MAX = 500;
 export default function AddReminderScreen() {
   const r = useAddReminder();
   const insets = useSafeAreaInsets();
+  // One font size for every tile label: as big as the longest label fits in a tile
+  // (4 per row), worked out from the screen width. Capped at 14 so it never gets too big.
+  const { width: screenWidth } = useWindowDimensions();
+  const tileLabelStyle = useMemo(() => {
+    const cardInner = screenWidth - ModernSize.gutter * 2 - ModernSize.cardPad * 2;
+    const textWidth = cardInner * 0.23 - 6; // tile width minus its border + padding
+    const fit = Math.floor((textWidth / (TILE_LONGEST * 0.52)) * 2) / 2;
+    return { fontSize: Math.max(11, Math.min(14, fit)) };
+  }, [screenWidth]);
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
 
@@ -123,12 +141,10 @@ export default function AddReminderScreen() {
                   <GradientBackground colors={active ? SELECTED_TINT_COLORS : tint.colors} />
                   <Icon size={24} color={active ? LINK : tint.icon} strokeWidth={1.9} />
                   <Text
-                    style={[styles.tileText, active && styles.tileTextActive]}
+                    style={[styles.tileText, tileLabelStyle, active && styles.tileTextActive]}
                     numberOfLines={1}
-                    adjustsFontSizeToFit
-                    minimumFontScale={0.8}
                   >
-                    {TYPE_LABEL[t]}
+                    {TILE_LABEL[t]}
                   </Text>
                   {active && (
                     <View style={styles.checkBadge}>

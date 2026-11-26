@@ -45,15 +45,25 @@ const styles = StyleSheet.create({
   btn: { padding: 2 },
   badge: {
     position: 'absolute',
-    top: -7,
-    right: -9,
-    minWidth: 22,
-    height: 22,
+    top: -6,
+    right: -8,
+    minWidth: 18,
+    height: 18,
     paddingHorizontal: 4,
-    borderRadius: 11,
+    borderRadius: 9,
     backgroundColor: Color.error,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  badgeText: { color: Color.white, fontSize: 14, fontWeight: FontWeight.bold },
+  // Android adds extra font padding above/below text, which pushes the number off-centre;
+  // switch it off and fix the line height so the number sits in the middle of the badge.
+  badgeText: {
+    color: Color.white,
+    fontSize: 11,
+    lineHeight: 13,
+    fontWeight: FontWeight.bold,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    includeFontPadding: false,
+  },
 });

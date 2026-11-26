@@ -41,6 +41,11 @@ export const styles = StyleSheet.create({
     borderColor: Color.white,
     backgroundColor: Color.white,
     ...CARD_SHADOW,
+    // A touch more lift than the shared card shadow, so saved addresses stand out.
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.09,
+    shadowRadius: 8,
+    elevation: 3,
   },
   cardDefault: {
     borderColor: '#BFD3F8',

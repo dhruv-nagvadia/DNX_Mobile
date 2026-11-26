@@ -3,7 +3,8 @@ import Geolocation from '@react-native-community/geolocation';
 
 import { networkCall } from '@/api/apiConfigs';
 import { endpoints } from '@/api/APIUtils';
-import { CustomerLocation } from './location';
+import DEBUG_LOGGER, { INFO, WARNING } from '@/utils/DebugLogger';
+import { CustomerLocation, distanceKm } from './location';
 
 /** One post office entry from India Post's free, keyless PIN-code directory. */
 export interface PostOffice {
@@ -135,14 +136,32 @@ export async function requestLocationPermission(): Promise<boolean> {
   }
 }
 
-function getCurrentCoords(): Promise<{ lat: number; lng: number } | null> {
+function readCoords(
+  highAccuracy: boolean,
+  timeout: number,
+): Promise<{ lat: number; lng: number } | null> {
   return new Promise((resolve) => {
     Geolocation.getCurrentPosition(
       (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () => resolve(null),
-      { enableHighAccuracy: true, timeout: 15_000, maximumAge: 10_000 },
+      (err) => {
+        DEBUG_LOGGER(
+          `GPS ${highAccuracy ? 'high-accuracy' : 'network'} fix failed: ${err?.message ?? err}`,
+          'readCoords',
+          'locationApi',
+          '',
+          WARNING,
+        );
+        resolve(null);
+      },
+      // maximumAge 0: always a fresh reading, never a cached one from earlier.
+      { enableHighAccuracy: highAccuracy, timeout, maximumAge: 0 },
     );
   });
+}
+
+/** Fresh position: precise GPS first, then (indoors / weak sky view) a quicker network fix. */
+async function getCurrentCoords(): Promise<{ lat: number; lng: number } | null> {
+  return (await readCoords(true, 8_000)) ?? (await readCoords(false, 8_000));
 }
 
 /**
@@ -161,5 +180,56 @@ export async function resolveGpsLocation(): Promise<CustomerLocation | null> {
 
   const { address, city, state, postalCode } = await reverseGeocode(coords.lat, coords.lng);
   const label = [address, postalCode].filter(Boolean).join(', ') || 'Current location';
+  return { mode: 'gps', label, address, lat: coords.lat, lng: coords.lng, city, state, postalCode };
+}
+
+/**
+ * Quiet re-check of where the customer is now. Unlike resolveGpsLocation it never
+ * asks for permission (returns null unless it is already granted), and returns null
+ * when the customer is within `minMoveKm` (200 m) of `previous` — so it only reverse-geocodes
+ * and updates when they have actually moved.
+ */
+export async function refreshGpsLocation(
+  previous: CustomerLocation,
+  minMoveKm = 0.2,
+): Promise<CustomerLocation | null> {
+  const log = (msg: string) =>
+    DEBUG_LOGGER(msg, 'refreshGpsLocation', 'locationApi', '', INFO);
+  if (Platform.OS === 'android') {
+    try {
+      // Android 12+ lets people share only an approximate location — that's enough here.
+      const fine = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      const coarse = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+      );
+      if (!fine && !coarse) {
+        log('skipped — location permission not granted, keeping saved location');
+        return null;
+      }
+    } catch {
+      return null;
+    }
+  }
+  const coords = await getCurrentCoords();
+  if (!coords) {
+    log('skipped — could not read GPS, keeping saved location');
+    return null;
+  }
+  if (previous.lat != null && previous.lng != null) {
+    const moved = distanceKm(previous.lat, previous.lng, coords.lat, coords.lng);
+    if (moved < minMoveKm) {
+      log(`skipped — only ${moved.toFixed(2)} km from the saved location`);
+      return null;
+    }
+    log(`moved ${moved.toFixed(1)} km from "${previous.label}" — updating`);
+  } else {
+    log(`saved location "${previous.label}" has no coordinates — updating from GPS`);
+  }
+
+  const { address, city, state, postalCode } = await reverseGeocode(coords.lat, coords.lng);
+  const label = [address, postalCode].filter(Boolean).join(', ') || 'Current location';
+  log(`now at "${label}" (${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)})`);
   return { mode: 'gps', label, address, lat: coords.lat, lng: coords.lng, city, state, postalCode };
 }

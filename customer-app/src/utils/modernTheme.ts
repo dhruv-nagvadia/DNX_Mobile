@@ -27,10 +27,10 @@ export const ModernRadius = {
 
 export const CARD_SHADOW = {
   shadowColor: '#1E293B',
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.07,
-  shadowRadius: 12,
-  elevation: 3,
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.04,
+  shadowRadius: 8,
+  elevation: 1,
 };
 
 export type PillColors = { bg: string; fg: string };
