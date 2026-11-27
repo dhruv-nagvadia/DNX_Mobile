@@ -192,9 +192,9 @@ export const styles = StyleSheet.create({
   },
   tile: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
+    // Title on top (full width), then icon + count on one line below it.
+    justifyContent: 'center',
+    gap: 6,
     paddingHorizontal: Spacing.sm + 2,
     paddingVertical: ModernSize.gap,
     borderRadius: ModernRadius.box,
@@ -202,16 +202,18 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
     minHeight: 76,
   },
+  tileBottom: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   tileIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(255,255,255,0.55)',
-  },
-  tileText: {
-    flex: 1,
   },
   tileLabel: {
     fontSize: ModernType.caption,

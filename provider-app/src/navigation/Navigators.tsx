@@ -1,10 +1,17 @@
 import React from 'react';
+import { Pressable, PressableProps, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { CalendarDays, Home, Store, User } from 'lucide-react-native';
+import {
+  createBottomTabNavigator,
+  type BottomTabBarButtonProps,
+} from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CalendarDays, Home, Store, User, type LucideIcon } from 'lucide-react-native';
 
 import { ROUTES, RootStackParamList } from './routes';
+import { styles } from './styles';
 import { Color, FontWeight } from '@/utils/Theme';
+import { LINK, PILL } from '@/utils/modernTheme';
 import LoginScreen from '@/screens/auth/LoginScreen';
 import RegisterScreen from '@/screens/auth/RegisterScreen';
 import ForgotPasswordScreen from '@/screens/auth/ForgotPasswordScreen';
@@ -59,31 +66,71 @@ export function AuthStack() {
   );
 }
 
+/** Height of the tab bar's own content (icon pill + label), above the bottom inset. */
+const TAB_CONTENT_HEIGHT = 64;
+
+/** Tab icon with a soft blue pill behind it when active (same as the customer app). */
+function tabIcon(Icon: LucideIcon) {
+  return ({ color, focused }: { color: string; focused: boolean }) => (
+    <View style={[styles.tabIconWrap, focused && { backgroundColor: PILL.blue.bg }]}>
+      <Icon color={color} size={22} strokeWidth={focused ? 2.2 : 1.9} />
+    </View>
+  );
+}
+
+// Built once so React sees a stable icon renderer per tab.
+const HomeTabIcon = tabIcon(Home);
+const BookingsTabIcon = tabIcon(CalendarDays);
+const BusinessesTabIcon = tabIcon(Store);
+const ProfileTabIcon = tabIcon(User);
+
+/**
+ * Tab button with no press feedback (the default one shows an Android ripple /
+ * dimming). Selection is still shown by the active icon + label colour.
+ */
+function TabBarButton(props: BottomTabBarButtonProps) {
+  // Drop the default button's feedback-only props so they don't reach the native view.
+  const rest: Record<string, unknown> = { ...props };
+  ['children', 'android_ripple', 'pressColor', 'pressOpacity', 'hoverEffect'].forEach((k) => {
+    delete rest[k];
+  });
+  return (
+    <Pressable {...(rest as PressableProps)} android_ripple={null}>
+      {props.children as React.ReactNode}
+    </Pressable>
+  );
+}
+
 /**
  * Bottom tabs — the 4 a provider reaches for constantly: Home, Bookings &
  * Orders, Businesses, Profile. Earnings and Offers are one tap away from
  * Home's quick cards; everything else from Profile's menu.
  */
 function TabNavigator() {
+  // The bar's height is fixed, and React Navigation puts the bottom inset (Android's navigation
+  // buttons / the iPhone home indicator) INSIDE it — so the height must be the tab content
+  // (TAB_CONTENT_HEIGHT) PLUS that inset, or the labels slide down behind the buttons.
+  const insets = useSafeAreaInsets();
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Color.primary,
+        tabBarButton: (props) => <TabBarButton {...props} />,
+        tabBarActiveTintColor: LINK,
         tabBarInactiveTintColor: Color.textSecondary,
         tabBarStyle: {
           backgroundColor: Color.surface,
           borderTopColor: Color.border,
-          height: 88,
-          paddingTop: 8,
+          height: TAB_CONTENT_HEIGHT + insets.bottom,
+          paddingTop: 6,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: FontWeight.semibold },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: FontWeight.semibold, marginTop: 4 },
       }}
     >
       <Tab.Screen
         name={ROUTES.HOME}
         component={HomeScreen}
-        options={{ tabBarLabel: 'Home', tabBarIcon: ({ color, size }) => <Home color={color} size={size} /> }}
+        options={{ tabBarLabel: 'Home', tabBarIcon: HomeTabIcon }}
       />
       <Tab.Screen
         name={ROUTES.BOOKINGS_ORDERS}
@@ -91,7 +138,7 @@ function TabNavigator() {
         options={{
           // SERVICES-ONLY: product businesses disabled for launch — label was 'Bookings & Orders'; restore when products return
           tabBarLabel: 'Bookings',
-          tabBarIcon: ({ color, size }) => <CalendarDays color={color} size={size} />,
+          tabBarIcon: BookingsTabIcon,
         }}
       />
       <Tab.Screen
@@ -99,7 +146,7 @@ function TabNavigator() {
         component={BusinessesScreen}
         options={{
           tabBarLabel: 'Businesses',
-          tabBarIcon: ({ color, size }) => <Store color={color} size={size} />,
+          tabBarIcon: BusinessesTabIcon,
         }}
       />
       <Tab.Screen
@@ -107,7 +154,7 @@ function TabNavigator() {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
+          tabBarIcon: ProfileTabIcon,
         }}
       />
     </Tab.Navigator>

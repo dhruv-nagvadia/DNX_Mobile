@@ -10,6 +10,7 @@ import {
 import { CouponScope } from '@/redux/api/business/types';
 
 import { CouponForm, CouponFormNavigationProp, CouponFormRouteProp } from './types';
+import { apiErrorMessage } from '@/utils/apiError';
 
 const EMPTY: CouponForm = {
   code: '',
@@ -113,8 +114,7 @@ export function useCouponFormScreen() {
       }
       navigation.goBack();
     } catch (err) {
-      const msg = (err as { data?: { message?: string } })?.data?.message;
-      setError(msg || 'Could not save this coupon. Please try again.');
+      setError(apiErrorMessage(err, 'Could not save this coupon. Please try again.'));
     }
   }, [form, isNew, itemScope, businessId, couponId, createCoupon, updateCoupon, navigation]);
 

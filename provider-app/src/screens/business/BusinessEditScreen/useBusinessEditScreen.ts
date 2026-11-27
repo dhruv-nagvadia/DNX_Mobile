@@ -4,6 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { useGetMyBusinessQuery, useUpdateBusinessMutation } from '@/redux/api/business/businessApi';
 
 import { BusinessEditForm, BusinessEditNavigationProp, BusinessEditRouteProp } from './types';
+import { apiErrorMessage } from '@/utils/apiError';
 
 const EMPTY: BusinessEditForm = {
   businessName: '',
@@ -72,8 +73,7 @@ export function useBusinessEditScreen() {
       }).unwrap();
       navigation.goBack();
     } catch (err) {
-      const data = (err as { data?: { message?: string } })?.data;
-      setError(data?.message || 'Could not save your changes. Please try again.');
+      setError(apiErrorMessage(err, 'Could not save your changes. Please try again.'));
     }
   }, [form, businessId, updateBusiness, navigation]);
 

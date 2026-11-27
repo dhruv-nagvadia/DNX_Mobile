@@ -67,13 +67,15 @@ interface SectionCardProps {
   subtitle?: string;
   Icon: LucideIcon;
   tint: PillColors;
+  /** Draw a line under the header row, separating it from the fields below. */
+  divided?: boolean;
   children: ReactNode;
 }
 
-export function SectionCard({ title, subtitle, Icon, tint, children }: SectionCardProps) {
+export function SectionCard({ title, subtitle, Icon, tint, divided, children }: SectionCardProps) {
   return (
     <View style={kit.card}>
-      <View style={kit.cardHeader}>
+      <View style={[kit.cardHeader, divided && kit.cardHeaderDivided]}>
         <View style={[kit.iconBox, { backgroundColor: tint.bg }]}>
           <Icon size={20} color={tint.fg} strokeWidth={2} />
         </View>

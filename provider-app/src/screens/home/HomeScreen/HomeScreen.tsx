@@ -41,14 +41,10 @@ const PREVIEW_LIMIT = 3;
 // SERVICES-ONLY: product businesses disabled for launch — set to true to restore Open Orders / Orders to Fulfil / Low Stock
 const PRODUCTS_ENABLED = false;
 
-// Money-card bars: last 4 months' collected amounts, scaled to the tallest bar.
-const HERO_BAR_MAX = 52;
-const HERO_BAR_MIN = 8;
-
-function heroBarHeight(value: number, all: number[]): number {
-  const max = Math.max(...all, 0);
-  return max > 0 ? Math.max(Math.round((value / max) * HERO_BAR_MAX), HERO_BAR_MIN) : HERO_BAR_MIN;
-}
+// Money-card decoration: four fixed bars, each taller than the one before (not data).
+const HERO_BAR_HEIGHTS = [34, 52, 72, 94];
+// Same blue gradient as the website's bars: lighter at the top, deeper and softer below.
+const HERO_BAR_GRADIENT = ['rgba(96, 165, 250, 0.75)', 'rgba(59, 130, 246, 0.45)'];
 
 function initialsOf(name: string): string {
   return (
@@ -195,7 +191,6 @@ export default function HomeScreen() {
     openOrdersCount,
     needsActionCount,
     collectedThisMonth,
-    monthlyCollected,
     monthTrendPct,
     isNewMonthTrend,
     currency,
@@ -236,7 +231,7 @@ export default function HomeScreen() {
           )}
           <View style={styles.headerText}>
             <Text style={styles.headerGreeting} numberOfLines={1}>
-              Hello, {firstName} 👋
+              Hello, {firstName}
             </Text>
             <Text style={styles.headerSubtitle} numberOfLines={1}>
               Manage your businesses and bookings
@@ -304,8 +299,14 @@ export default function HomeScreen() {
             <View style={styles.heroCard}>
               <GradientBackground colors={HERO_GRADIENT} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
               <View style={styles.heroBars} pointerEvents="none">
-                {monthlyCollected.map((v, i) => (
-                  <View key={i} style={[styles.heroBar, { height: heroBarHeight(v, monthlyCollected) }]} />
+                {HERO_BAR_HEIGHTS.map((h) => (
+                  <View key={h} style={[styles.heroBar, { height: h }]}>
+                    <GradientBackground
+                      colors={HERO_BAR_GRADIENT}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 0, y: 1 }}
+                    />
+                  </View>
                 ))}
               </View>
               <View style={styles.heroLeft}>

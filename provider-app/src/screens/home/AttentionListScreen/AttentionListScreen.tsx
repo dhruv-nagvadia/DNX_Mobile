@@ -10,6 +10,7 @@ import { Color } from '@/utils/Theme';
 import { INK, PAGE_BG, PILL } from '@/utils/modernTheme';
 import { formatMoney } from '@/utils/money';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { useAttentionListScreen } from './useAttentionListScreen';
 import { AttentionItem } from './types';
@@ -45,6 +46,7 @@ function formatWhen(iso: string): string {
 }
 
 export default function AttentionListScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const { attention, isLoading, refreshing, refresh } = useAttentionListScreen();
   const navigation = useNavigation<Nav>();
   const insets = useSafeAreaInsets();
@@ -125,7 +127,7 @@ export default function AttentionListScreen() {
           data={attention}
           keyExtractor={(item) => item.booking.id}
           renderItem={renderItem}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={withBottomInset(styles.listContent)}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
           ListEmptyComponent={

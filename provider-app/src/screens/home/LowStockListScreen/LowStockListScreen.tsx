@@ -10,6 +10,7 @@ import { Color } from '@/utils/Theme';
 import { INK, PAGE_BG, PILL } from '@/utils/modernTheme';
 import { formatAmount } from '@/utils/units';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { useLowStockListScreen } from './useLowStockListScreen';
 import { LowStockItem } from './types';
@@ -21,6 +22,7 @@ const HIT_SLOP = { top: 10, bottom: 10, left: 10, right: 10 };
 const SKELETON_ROWS = [0, 1, 2, 3];
 
 export default function LowStockListScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const { lowStock, isLoading, refreshing, refresh } = useLowStockListScreen();
   const navigation = useNavigation<Nav>();
   const insets = useSafeAreaInsets();
@@ -101,7 +103,7 @@ export default function LowStockListScreen() {
           data={lowStock}
           keyExtractor={(item) => item.product.id}
           renderItem={renderItem}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={withBottomInset(styles.listContent)}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
           ListEmptyComponent={

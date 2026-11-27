@@ -198,7 +198,11 @@ export const styles = StyleSheet.create({
     fontSize: ModernType.cardTitle,
     fontWeight: FontWeight.bold,
     color: INK,
+    // A line under the title separates the header from the rows below it.
+    paddingBottom: 10,
     marginBottom: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: Color.border,
   },
   logoutCard: {
     backgroundColor: Color.surface,

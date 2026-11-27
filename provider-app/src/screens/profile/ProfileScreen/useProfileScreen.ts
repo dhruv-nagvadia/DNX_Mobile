@@ -27,6 +27,7 @@ import { useGetUnreadCountQuery } from '@/redux/api/notification/notificationApi
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
 import { PasswordForm, ProfileForm } from './types';
+import { apiErrorMessage } from '@/utils/apiError';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -251,8 +252,7 @@ export function useProfileScreen() {
       if (status === 400 || status === 401 || status === 403) {
         setDeleteError('Incorrect password');
       } else {
-        const msg = (err as { data?: { message?: string } })?.data?.message;
-        setDeleteError(msg || 'Could not delete your account. Please try again.');
+        setDeleteError(apiErrorMessage(err, 'Could not delete your account. Please try again.'));
       }
     }
   }, [deletePassword, deleteAccount, clearSession]);

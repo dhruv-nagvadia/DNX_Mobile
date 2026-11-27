@@ -352,6 +352,7 @@ function Activity({ booking }: { booking: BookingDetail }) {
         <Clock size={20} color={INK} strokeWidth={1.8} />
         <Text style={styles.cardTitle}>Activity</Text>
       </View>
+      <View style={styles.divider} />
       <View style={styles.timeline}>
         {items.map((it, i) => {
           const last = i === items.length - 1;
@@ -380,7 +381,9 @@ function Activity({ booking }: { booking: BookingDetail }) {
                 >
                   {it.title}
                 </Text>
-                {!!it.time && <Text style={styles.tlTime}>{it.time}</Text>}
+                {/* Always take the time line's height — even with no time yet (a step that
+                    hasn't happened) — so the spacing between steps is the same either way. */}
+                <Text style={styles.tlTime}>{it.time ?? '\u00A0'}</Text>
               </View>
             </View>
           );

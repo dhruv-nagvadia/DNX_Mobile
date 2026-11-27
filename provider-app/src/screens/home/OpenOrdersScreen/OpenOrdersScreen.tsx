@@ -12,6 +12,7 @@ import { formatMoney } from '@/utils/money';
 import { orderStatusBadge } from '@/utils/status';
 import { BusinessOrder, OrderStatus } from '@/redux/api/business/types';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { useOpenOrdersScreen } from './useOpenOrdersScreen';
 import { EMPTY_TINT, styles } from './styles';
@@ -58,6 +59,7 @@ function paymentColorsFor(o: BusinessOrder): PillColors {
 }
 
 export default function OpenOrdersScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const { openOrders, isLoading, refreshing, refresh } = useOpenOrdersScreen();
   const navigation = useNavigation<Nav>();
   const insets = useSafeAreaInsets();
@@ -135,7 +137,7 @@ export default function OpenOrdersScreen() {
           data={openOrders}
           keyExtractor={(o) => o.id}
           renderItem={renderItem}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={withBottomInset(styles.listContent)}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
           ListEmptyComponent={

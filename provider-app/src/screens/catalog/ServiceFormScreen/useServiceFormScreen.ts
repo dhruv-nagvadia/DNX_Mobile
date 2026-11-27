@@ -4,6 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { useCreateServiceMutation, useGetMyBusinessQuery, useUpdateServiceMutation } from '@/redux/api/business/businessApi';
 
 import { ServiceForm, ServiceFormNavigationProp, ServiceFormRouteProp } from './types';
+import { apiErrorMessage } from '@/utils/apiError';
 
 const EMPTY: ServiceForm = {
   name: '',
@@ -82,8 +83,7 @@ export function useServiceFormScreen() {
       }
       navigation.goBack();
     } catch (err) {
-      const msg = (err as { data?: { message?: string } })?.data?.message;
-      setError(msg || 'Could not save this service. Please try again.');
+      setError(apiErrorMessage(err, 'Could not save this service. Please try again.'));
     }
   }, [form, isNew, businessId, serviceId, createService, updateService, partialPayLocked, navigation]);
 

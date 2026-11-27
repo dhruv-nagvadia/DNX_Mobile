@@ -34,6 +34,7 @@ import { Color } from '@/utils/Theme';
 import { INK, PAGE_BG, PILL, TINT } from '@/utils/modernTheme';
 import { formatMoney } from '@/utils/money';
 import { serviceIcon } from '@/utils/serviceIcon';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { FILTERS, ServiceStats, useServicesScreen } from './useServicesScreen';
 import { BRAND_BLUE, FLAME, ICON_LAVENDER, SWITCH_OFF, TAG, styles } from './styles';
@@ -189,6 +190,7 @@ function ServiceCard({
 }
 
 export default function ServicesScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const insets = useSafeAreaInsets();
   const {
     businessName,
@@ -264,7 +266,7 @@ export default function ServicesScreen() {
         style={styles.flex}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={withBottomInset(styles.listContent)}
         refreshControl={<RefreshControl refreshing={refreshing || isLoading} onRefresh={refresh} />}
       >
         {!hasServices && !isLoading ? (

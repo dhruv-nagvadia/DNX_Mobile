@@ -29,6 +29,7 @@ import {
   PendingAction,
   StatusFilter,
 } from './types';
+import { apiErrorMessage } from '@/utils/apiError';
 
 /** Short order reference shown on cards: last 6 chars of the id, uppercased. */
 export function shortOrderId(id: string): string {
@@ -48,11 +49,6 @@ function bookingChipOf(status: BookingStatus): BookingChip {
 /** Outstanding (uncollected) amount on a booking, in minor units. */
 export function bookingOutstanding(b: { amountMinor: number; amountPaidMinor?: number }): number {
   return b.amountMinor - (b.amountPaidMinor ?? 0);
-}
-
-/** Server error message from an RTK Query rejection, if any. */
-function serverMessage(err: unknown): string | undefined {
-  return (err as { data?: { message?: string } } | undefined)?.data?.message;
 }
 
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
@@ -202,7 +198,7 @@ export function useBookingsOrdersScreen() {
       } catch (err) {
         notify({
           title: 'Could not update booking',
-          message: serverMessage(err) ?? 'Something went wrong. Please try again.',
+          message: apiErrorMessage(err, 'Something went wrong. Please try again.'),
           tone: 'danger',
         });
       }

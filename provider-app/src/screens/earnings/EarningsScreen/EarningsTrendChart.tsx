@@ -16,6 +16,7 @@ export function EarningsTrendChart({ points }: { points: TrendPoint[] }) {
       secondaryLabel="Commission"
       showSecondary
       emptyText="No completed sales in this period yet."
+      fitAxisWidth
     />
   );
 }

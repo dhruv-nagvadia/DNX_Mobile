@@ -12,6 +12,7 @@ import DEBUG_LOGGER, { ERROR } from '@/utils/DebugLogger';
 
 import { RegisterErrors, RegisterForm, RegisterScreenNavigationProp } from './types';
 import { validateRegister } from './validation';
+import { apiErrorMessage } from '@/utils/apiError';
 
 const FILE = 'useRegisterScreen';
 
@@ -77,8 +78,7 @@ export function useRegisterScreen() {
       );
     } catch (err) {
       DEBUG_LOGGER('Registration failed', 'onSubmit', FILE, '58', ERROR);
-      const data = (err as { data?: { message?: string } })?.data;
-      setServerError(data?.message || 'Could not create your account. Please try again.');
+      setServerError(apiErrorMessage(err, 'Could not create your account. Please try again.'));
     }
   }, [form, register, dispatch]);
 

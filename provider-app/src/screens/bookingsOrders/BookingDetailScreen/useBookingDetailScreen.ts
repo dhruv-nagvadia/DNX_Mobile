@@ -12,14 +12,10 @@ import { BookingStatus } from '@/redux/api/business/types';
 import { bookingNeedsCollection } from '@/utils/status';
 
 import { BookingDetail, BookingDetailNavigationProp, BookingDetailRouteProp } from './types';
-
-/** Server error message from an RTK Query rejection, if any. */
-function serverMessage(err: unknown): string | undefined {
-  return (err as { data?: { message?: string } } | undefined)?.data?.message;
-}
+import { apiErrorMessage } from '@/utils/apiError';
 
 function alertFailure(title: string, err: unknown) {
-  notifyDialog({ title, message: serverMessage(err) ?? 'Something went wrong. Please try again.', tone: 'danger' });
+  notifyDialog({ title, message: apiErrorMessage(err, 'Something went wrong. Please try again.'), tone: 'danger' });
 }
 
 /**

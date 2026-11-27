@@ -79,6 +79,12 @@ export const kit = StyleSheet.create({
     alignItems: 'center',
     gap: ModernSize.gap,
   },
+  // Optional: a line under the header row (see SectionCard `divided`).
+  cardHeaderDivided: {
+    paddingBottom: ModernSize.gap,
+    borderBottomWidth: 1,
+    borderBottomColor: Color.border,
+  },
   iconBox: {
     width: ModernSize.iconBox,
     height: ModernSize.iconBox,

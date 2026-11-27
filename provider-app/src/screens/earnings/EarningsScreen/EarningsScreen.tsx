@@ -38,6 +38,7 @@ import { INK, PAGE_BG, PILL, TINT } from '@/utils/modernTheme';
 import { Color } from '@/utils/Theme';
 import { EarningsSettlement, EarningsTransaction } from '@/redux/api/business/types';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { useEarningsScreen } from './useEarningsScreen';
 import { BusinessSelectSheet } from './BusinessSelectSheet';
@@ -175,6 +176,7 @@ function PayoutRow({
  * call for the % change) and `getMyBusinesses` (photos).
  */
 export default function EarningsScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const {
     period,
     setPeriod,
@@ -399,7 +401,9 @@ export default function EarningsScreen() {
 
         {/* How you were paid */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>How you were paid</Text>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>How you were paid</Text>
+          </View>
           <View style={styles.splitBar}>
             {paidTotal === 0 ? (
               <View style={styles.splitEmpty} />
@@ -433,7 +437,9 @@ export default function EarningsScreen() {
         {/* By business */}
         {businessRows.length > 0 && (
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>By business</Text>
+            <View style={styles.cardHeader}>
+              <Text style={styles.cardTitle}>By business</Text>
+            </View>
             {businessRows.map((b, i) => {
               const photo = photoById.get(b.id);
               return (
@@ -499,7 +505,9 @@ export default function EarningsScreen() {
 
         {/* Payouts & settlements */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Payouts & settlements</Text>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>Payouts & settlements</Text>
+          </View>
           {payouts.length === 0 ? (
             <Text style={styles.emptyText}>No payouts yet — DNX settles your balance manually.</Text>
           ) : (
@@ -525,7 +533,7 @@ export default function EarningsScreen() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={withBottomInset(styles.scrollContent)}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
       >
         {/* Header */}

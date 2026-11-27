@@ -150,12 +150,14 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md + 4,
     minHeight: 136,
     justifyContent: 'center',
+    // Solid base under the gradient — Android only draws elevation for a filled view.
+    backgroundColor: '#0A1730',
     ...CARD_SHADOW,
   },
   heroLeft: {
     gap: 6,
     // Leaves room for the bar chart on the right.
-    marginRight: 96,
+    marginRight: 116,
   },
   heroLabelRow: {
     flexDirection: 'row',
@@ -196,12 +198,16 @@ export const styles = StyleSheet.create({
     bottom: Spacing.md + 2,
     flexDirection: 'row',
     alignItems: 'flex-end',
-    gap: 6,
+    gap: 8,
   },
   heroBar: {
-    width: 16,
-    borderRadius: 5,
-    backgroundColor: 'rgba(120, 150, 230, 0.35)',
+    width: 20,
+    overflow: 'hidden',
+    // Rounded top, nearly square bottom — same as the website's bars.
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2,
   },
 
   // ── 4. Stat tiles ───────────────────────────────────────────────────────

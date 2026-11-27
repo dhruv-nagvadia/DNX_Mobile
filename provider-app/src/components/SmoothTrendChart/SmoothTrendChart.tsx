@@ -28,6 +28,11 @@ export interface SmoothTrendChartProps {
   height?: number;
   /** Caption shown under the chart when every value is zero. */
   emptyText?: string;
+  /**
+   * Size the left (₹ axis) column to the widest label instead of the fixed 58px, so a small
+   * amount like "₹500" doesn't leave a wide blank strip at the left of the graph.
+   */
+  fitAxisWidth?: boolean;
 }
 
 const DEFAULT_HEIGHT = 168;
@@ -38,6 +43,12 @@ const PAD_BOTTOM = 22; // x labels
 const TICKS = 6;
 
 type Pt = { x: number; y: number };
+
+/** Left padding just wide enough for the longest axis label (10px digits ≈ 5.8px each). */
+function axisPadLeft(ticks: number[]): number {
+  const longest = Math.max(...ticks.map((t) => axisMoney(t).length));
+  return Math.ceil(longest * 5.8) + 10;
+}
 
 /** Compact ₹ for axis labels: ₹0, ₹2,500, ₹1.5L, ₹2.3Cr. */
 function axisMoney(minor: number): string {
@@ -129,6 +140,7 @@ export function SmoothTrendChart({
   showSecondary,
   height = DEFAULT_HEIGHT,
   emptyText,
+  fitAxisWidth = false,
 }: SmoothTrendChartProps) {
   const [width, setWidth] = useState(0);
   const onLayout = (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width);
@@ -140,13 +152,15 @@ export function SmoothTrendChart({
     ...points.map((p) => Math.max(p.value, withSecondary ? p.secondary ?? 0 : 0)),
   );
   const yMax = niceMax(maxValue);
-  const plotW = Math.max(width - PAD_LEFT - PAD_RIGHT, 1);
+  const ticks = yMax > 0 ? Array.from({ length: TICKS }, (_, i) => (yMax / (TICKS - 1)) * i) : [0];
+  const padLeft = fitAxisWidth ? axisPadLeft(ticks) : PAD_LEFT;
+  const plotW = Math.max(width - padLeft - PAD_RIGHT, 1);
   const plotH = height - PAD_TOP - PAD_BOTTOM;
   const baseY = PAD_TOP + plotH;
 
   // A single bucket (e.g. "Today" by day) is drawn as a flat line across.
   const series = points.length === 1 ? [points[0], points[0]] : points;
-  const xAt = (i: number) => PAD_LEFT + (series.length > 1 ? (i / (series.length - 1)) * plotW : plotW / 2);
+  const xAt = (i: number) => padLeft + (series.length > 1 ? (i / (series.length - 1)) * plotW : plotW / 2);
   const yAt = (v: number) => (yMax > 0 ? baseY - (v / yMax) * plotH : baseY);
 
   const mainPts = series.map((p, i) => ({ x: xAt(i), y: yAt(p.value) }));
@@ -157,7 +171,6 @@ export function SmoothTrendChart({
       ? `${mainLine} L${mainPts[mainPts.length - 1].x},${baseY} L${mainPts[0].x},${baseY} Z`
       : '';
 
-  const ticks = yMax > 0 ? Array.from({ length: TICKS }, (_, i) => (yMax / (TICKS - 1)) * i) : [0];
   const xLabelIdx = labelIndices(points.length, width > 340 ? 8 : 6);
 
   const last = points[points.length - 1];
@@ -184,7 +197,7 @@ export function SmoothTrendChart({
               {ticks.map((t) => (
                 <React.Fragment key={t}>
                   <Line
-                    x1={PAD_LEFT}
+                    x1={padLeft}
                     x2={width - PAD_RIGHT}
                     y1={yAt(t)}
                     y2={yAt(t)}
@@ -192,7 +205,7 @@ export function SmoothTrendChart({
                     strokeWidth={1}
                   />
                   <SvgText
-                    x={PAD_LEFT - 8}
+                    x={padLeft - 8}
                     y={yAt(t) + 3.5}
                     fontSize={10}
                     fill={Color.textSecondary}
@@ -202,7 +215,7 @@ export function SmoothTrendChart({
                   </SvgText>
                 </React.Fragment>
               ))}
-              <Line x1={PAD_LEFT} x2={PAD_LEFT} y1={PAD_TOP - 6} y2={baseY} stroke="#CBD5E1" strokeWidth={1} />
+              <Line x1={padLeft} x2={padLeft} y1={PAD_TOP - 6} y2={baseY} stroke="#CBD5E1" strokeWidth={1} />
 
               {!!area && <Path d={area} fill={`url(#${gradientId})`} />}
               {withSecondary && (
@@ -219,7 +232,7 @@ export function SmoothTrendChart({
               {xLabelIdx.map((i) => (
                 <SvgText
                   key={i}
-                  x={points.length === 1 ? PAD_LEFT + plotW / 2 : xAt(i)}
+                  x={points.length === 1 ? padLeft + plotW / 2 : xAt(i)}
                   y={height - 6}
                   fontSize={10}
                   fill={Color.textSecondary}

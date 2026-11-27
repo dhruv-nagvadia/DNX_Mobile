@@ -23,6 +23,7 @@ import {
 
 import { INK, ModernSize, PAGE_BG } from '@/utils/modernTheme';
 import { AppNotification } from '@/redux/api/notification/types';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { useNotificationsScreen } from './useNotificationsScreen';
 import { NotificationCategory, NotificationSection, categoryOf, isCancelled, timeAgo } from './helpers';
@@ -46,6 +47,7 @@ function visualCategory(n: AppNotification): NotificationCategory {
 }
 
 export default function NotificationsScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const {
     hasAny,
     sections,
@@ -184,7 +186,7 @@ export default function NotificationsScreen() {
           renderItem={renderItem}
           renderSectionHeader={renderSectionHeader}
           stickySectionHeadersEnabled={false}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={withBottomInset(styles.listContent)}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
           ListEmptyComponent={

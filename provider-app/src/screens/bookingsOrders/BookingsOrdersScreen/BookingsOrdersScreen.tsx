@@ -78,11 +78,13 @@ function SummaryTile({
   return (
     <View style={[styles.tile, { borderColor: theme.border }]}>
       <GradientBackground colors={theme.colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-      <View style={styles.tileIcon}>{icon}</View>
-      <View style={styles.tileText}>
-        <Text style={styles.tileLabel} numberOfLines={1}>
-          {label}
-        </Text>
+      {/* Title on its own line, full tile width, so it never gets cut. */}
+      <Text style={styles.tileLabel} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
+        {label}
+      </Text>
+      {/* Icon to the left of the count. */}
+      <View style={styles.tileBottom}>
+        <View style={styles.tileIcon}>{icon}</View>
         <Text
           style={styles.tileValue}
           numberOfLines={1}
@@ -243,19 +245,19 @@ export default function BookingsOrdersScreen() {
                 label="New"
                 value={String(orderStats.counts.PENDING)}
                 theme={TINT.lavender}
-                icon={<Handbag size={20} color={TINT.lavender.icon} strokeWidth={1.8} />}
+                icon={<Handbag size={16} color={TINT.lavender.icon} strokeWidth={1.8} />}
               />
               <SummaryTile
                 label="Ready"
                 value={String(orderStats.counts.READY)}
                 theme={TINT.mint}
-                icon={<ShoppingBag size={20} color={TINT.mint.icon} strokeWidth={1.8} />}
+                icon={<ShoppingBag size={16} color={TINT.mint.icon} strokeWidth={1.8} />}
               />
               <SummaryTile
                 label="To collect"
                 value={formatMoney(orderStats.toCollectMinor, orderStats.currency)}
                 theme={TINT.peach}
-                icon={<Wallet size={20} color={TINT.peach.icon} strokeWidth={1.8} />}
+                icon={<Wallet size={16} color={TINT.peach.icon} strokeWidth={1.8} />}
               />
             </View>
 
@@ -316,19 +318,19 @@ export default function BookingsOrdersScreen() {
                 label="New"
                 value={String(bookingStats.counts.PENDING)}
                 theme={TINT.lavender}
-                icon={<Bell size={20} color={TINT.lavender.icon} strokeWidth={1.8} />}
+                icon={<Bell size={16} color={TINT.lavender.icon} strokeWidth={1.8} />}
               />
               <SummaryTile
                 label="In progress"
                 value={String(bookingStats.counts.IN_PROGRESS)}
                 theme={TEAL_TINT}
-                icon={<Command size={20} color={TEAL_TINT.icon} strokeWidth={1.8} />}
+                icon={<Command size={16} color={TEAL_TINT.icon} strokeWidth={1.8} />}
               />
               <SummaryTile
                 label="To collect"
                 value={formatMoney(bookingStats.toCollectMinor, bookingStats.currency)}
                 theme={TINT.peach}
-                icon={<Wallet size={20} color={TINT.peach.icon} strokeWidth={1.8} />}
+                icon={<Wallet size={16} color={TINT.peach.icon} strokeWidth={1.8} />}
               />
             </View>
 

@@ -6,6 +6,7 @@ import { Measure } from '@/redux/api/business/types';
 import { measureUnits, splitAmount, toBase, unitFactor } from '@/utils/units';
 
 import { ProductForm, ProductFormNavigationProp, ProductFormRouteProp } from './types';
+import { apiErrorMessage } from '@/utils/apiError';
 
 const EMPTY: ProductForm = {
   name: '',
@@ -108,8 +109,7 @@ export function useProductFormScreen() {
       }
       navigation.goBack();
     } catch (err) {
-      const msg = (err as { data?: { message?: string } })?.data?.message;
-      setError(msg || 'Could not save this product. Please try again.');
+      setError(apiErrorMessage(err, 'Could not save this product. Please try again.'));
     }
   }, [form, isNew, businessId, productId, createProduct, updateProduct, codLocked, partialPayLocked, navigation]);
 

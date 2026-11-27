@@ -10,6 +10,7 @@ import { Color } from '@/utils/Theme';
 import { INK, PAGE_BG, PILL, PillColors } from '@/utils/modernTheme';
 import { BookingStatus, DashboardBooking } from '@/redux/api/business/types';
 import { ROUTES, RootStackParamList } from '@/navigation/routes';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { useTodaysScheduleScreen } from './useTodaysScheduleScreen';
 import { EMPTY_TINT, styles } from './styles';
@@ -38,6 +39,7 @@ function timeParts(iso: string): { time: string; meridiem: string } {
 }
 
 export default function TodaysScheduleScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const { todays, isLoading, refreshing, refresh } = useTodaysScheduleScreen();
   const navigation = useNavigation<Nav>();
   const insets = useSafeAreaInsets();
@@ -113,7 +115,7 @@ export default function TodaysScheduleScreen() {
           data={todays}
           keyExtractor={(b) => b.id}
           renderItem={renderItem}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={withBottomInset(styles.listContent)}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
           ListEmptyComponent={

@@ -65,6 +65,7 @@ export function EarningsPanel({ businessId, isStore }: EarningsPanelProps) {
           seriesLabel="Earnings"
           showSecondary={false}
           emptyText="No completed sales in this period yet."
+          fitAxisWidth
         />
       </View>
     </View>

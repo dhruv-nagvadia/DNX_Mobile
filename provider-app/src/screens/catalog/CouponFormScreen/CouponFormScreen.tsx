@@ -92,7 +92,7 @@ export default function CouponFormScreen() {
         >
           <OfferPreview form={form} itemScope={itemScope} itemName={selectedItemName} />
 
-          <SectionCard title="Discount" Icon={Percent} tint={PILL.blue}>
+          <SectionCard divided title="Discount" Icon={Percent} tint={PILL.blue}>
             <View style={kit.field}>
               <FieldLabel label="Offer type" />
               <Segmented options={TYPE_OPTIONS} value={form.discountType} onChange={(v) => onChange('discountType', v)} />
@@ -109,7 +109,7 @@ export default function CouponFormScreen() {
             />
           </SectionCard>
 
-          <SectionCard title="Code" subtitle="Customers enter this at checkout" Icon={Tag} tint={PILL.lavender}>
+          <SectionCard divided title="Code" subtitle="Customers enter this at checkout" Icon={Tag} tint={PILL.lavender}>
             <Field
               label="Code"
               placeholder="e.g. WELCOME50"
@@ -129,7 +129,7 @@ export default function CouponFormScreen() {
             />
           </SectionCard>
 
-          <SectionCard title="Applies to" Icon={Target} tint={PILL.teal}>
+          <SectionCard divided title="Applies to" Icon={Target} tint={PILL.teal}>
             <Segmented options={scopeOptions} value={form.scope} onChange={setScope} />
             {form.scope !== 'ORDER' &&
               (items.length === 0 ? (
@@ -160,7 +160,7 @@ export default function CouponFormScreen() {
               ))}
           </SectionCard>
 
-          <SectionCard title="Conditions" Icon={SlidersHorizontal} tint={PILL.orange}>
+          <SectionCard divided title="Conditions" Icon={SlidersHorizontal} tint={PILL.orange}>
             {(form.scope === 'ORDER' || isPercent) && (
               <View style={kit.row}>
                 {form.scope === 'ORDER' && (
@@ -202,7 +202,7 @@ export default function CouponFormScreen() {
             />
           </SectionCard>
 
-          <SectionCard title="Validity" Icon={CalendarDays} tint={PILL.yellow}>
+          <SectionCard divided title="Validity" Icon={CalendarDays} tint={PILL.yellow}>
             <ChipRow>
               {EXPIRY_PRESETS.map((p) => {
                 const date = dateInDays(p.days);
@@ -228,7 +228,7 @@ export default function CouponFormScreen() {
             />
           </SectionCard>
 
-          <SectionCard title="Status" Icon={Power} tint={PILL.green}>
+          <SectionCard divided title="Status" Icon={Power} tint={PILL.green}>
             <ToggleRow
               title="Active"
               hint={form.isActive ? 'Customers can use this code' : 'Hidden — customers can’t use it'}

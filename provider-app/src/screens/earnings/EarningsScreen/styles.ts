@@ -157,6 +157,8 @@ export const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.md,
     gap: Spacing.sm + 4,
+    // Solid base under the gradient — Android only draws elevation for a filled view.
+    backgroundColor: '#0F2A6E',
     ...CARD_SHADOW,
   },
   balanceLeft: {
@@ -325,6 +327,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: Spacing.sm,
+    // A line under the title row separates the header from the content below it.
+    paddingBottom: ModernSize.gap,
+    borderBottomWidth: 1,
+    borderBottomColor: Color.border,
   },
   cardTitle: {
     flexShrink: 1,

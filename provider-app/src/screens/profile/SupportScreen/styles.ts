@@ -66,6 +66,8 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
     padding: ModernSize.cardPad,
     gap: ModernSize.gap,
+    // Solid base under the gradient — Android only draws elevation for a filled view.
+    backgroundColor: '#0F2E8C',
     ...CARD_SHADOW,
   },
   heroTop: {

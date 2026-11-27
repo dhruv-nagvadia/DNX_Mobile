@@ -430,6 +430,7 @@ export const styles = StyleSheet.create({
   },
   tlTime: {
     fontSize: ModernType.caption,
+    lineHeight: 16,
     color: Color.textSecondary,
   },
 

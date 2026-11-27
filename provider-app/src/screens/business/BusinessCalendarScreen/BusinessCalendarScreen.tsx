@@ -16,6 +16,7 @@ import { Color } from '@/utils/Theme';
 import { INK, PAGE_BG, PILL, PillColors } from '@/utils/modernTheme';
 import { formatMoney } from '@/utils/money';
 import { BookingStatus, OrderStatus } from '@/redux/api/business/types';
+import { useBottomInsetStyle } from '@/hooks/useBottomInsetStyle';
 
 import { TimePill } from '../BusinessHoursScreen/TimePill';
 import { DayCell } from './DayCell';
@@ -53,6 +54,7 @@ const SOURCE_PILL: Record<HoursSource, { label: string; colors: PillColors }> = 
 };
 
 export default function BusinessCalendarScreen() {
+  const withBottomInset = useBottomInsetStyle();
   const {
     view,
     setView,
@@ -143,7 +145,7 @@ export default function BusinessCalendarScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.flex} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.flex} contentContainerStyle={withBottomInset(styles.content)} showsVerticalScrollIndicator={false}>
         {/* ── Month | Week segment ─────────────────────────────────────── */}
         <View style={styles.segment}>
           <TouchableOpacity

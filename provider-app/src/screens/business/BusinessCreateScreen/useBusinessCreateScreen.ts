@@ -19,6 +19,7 @@ import {
   BusinessCreateStepId,
   LocalPhoto,
 } from './types';
+import { apiErrorMessage } from '@/utils/apiError';
 
 const EMPTY: BusinessCreateForm = {
   type: 'SERVICE',
@@ -321,8 +322,7 @@ export function useBusinessCreateScreen() {
         partialPayEnabled: form.partialPayEnabled,
       }).unwrap();
     } catch (err) {
-      const msg = (err as { data?: { message?: string } })?.data?.message;
-      setServerError(msg || 'Could not create this business. Please try again.');
+      setServerError(apiErrorMessage(err, 'Could not create this business. Please try again.'));
       return;
     }
 

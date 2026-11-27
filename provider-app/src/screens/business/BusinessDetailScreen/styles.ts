@@ -1,113 +1,223 @@
 import { StyleSheet } from 'react-native';
-import { Color, FontWeight, Spacing } from '@/utils/Theme';
-import { CARD_BORDER, INK, LINK, ModernRadius, ModernSize, ModernType, PAGE_BG, SOFT_FILL } from '@/utils/modernTheme';
+import { Color, FontWeight } from '@/utils/Theme';
+import { CARD_BORDER, CARD_SHADOW, INK, ModernSize, PAGE_BG, PILL } from '@/utils/modernTheme';
 
-export const STAR_COLOR = '#F5B301';
+export const AMBER = '#F59E0B';
+const BLUE = '#1D4ED8';
+const MUTED = '#64748B';
+const META = '#475569';
+const G = ModernSize.gutter;
 
-/** Review avatar circle colours, alternating (blue, lavender). */
-export const AVATAR_COLORS = [
-  { bg: '#E0E7FF', fg: '#3730A3' },
-  { bg: '#EDE9FE', fg: '#6D28D9' },
-];
-
+/**
+ * Business Detail — laid out like the customer app's business page: one rounded
+ * photo + identity card at the top, then white section cards (title on the left,
+ * action link on the right) on the page background.
+ */
 export const styles = StyleSheet.create({
-  root: {
+  container: {
     flex: 1,
     backgroundColor: PAGE_BG,
   },
-  scrollContent: {
-    paddingHorizontal: ModernSize.gutter,
-    paddingBottom: Spacing.xl,
-    gap: ModernSize.gap + 4,
-  },
-
-  // Header actions
-  headerActions: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  headerBtn: {
-    width: ModernSize.controlSm,
-    height: ModernSize.controlSm,
-    borderRadius: ModernRadius.box,
+  center: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#E9EEF6',
+    gap: 10,
+    paddingHorizontal: 32,
   },
-
-  // Cover + identity
-  cover: {
+  content: {
+    paddingBottom: 24,
+  },
+  body: {
+    paddingHorizontal: G,
+  },
+  fill: {
     width: '100%',
-    height: 176,
-    borderRadius: ModernRadius.card,
-    backgroundColor: SOFT_FILL,
+    height: '100%',
   },
-  coverEmpty: {
+  muted: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: MUTED,
+  },
+
+  // ── Top card: photo + identity share one rounded, inset card ────────────
+  topCard: {
+    marginHorizontal: G,
+    borderRadius: 18,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
+  },
+  hero: {
+    width: '100%',
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    backgroundColor: '#CBD5E1',
+    overflow: 'hidden',
+  },
+  heroEmpty: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.xs,
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: Color.border,
+    gap: 8,
+    backgroundColor: '#E6EEFC',
   },
-  coverEmptyText: {
-    fontSize: ModernType.body,
-    color: Color.textSecondary,
+  heroEmptyText: {
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+    color: BLUE,
   },
-  identity: {
-    gap: Spacing.xs + 2,
-    paddingHorizontal: Spacing.xs,
+  heroBtn: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    ...CARD_SHADOW,
+  },
+  heroBtnLeft: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+  },
+  heroBtnRow: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    flexDirection: 'row',
+    gap: 10,
+  },
+  counter: {
+    position: 'absolute',
+    right: 12,
+    bottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+  },
+  counterText: {
+    fontSize: 12,
+    fontWeight: FontWeight.semibold,
+    color: Color.white,
+  },
+  dots: {
+    position: 'absolute',
+    bottom: 16,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  dot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+  },
+  dotActive: {
+    width: 18,
+    backgroundColor: '#3B82F6',
+  },
+
+  // ── Identity (under the photo) ──────────────────────────────────────────
+  headerCard: {
+    padding: 16,
+    gap: 6,
   },
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  nameWrap: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
+    minWidth: 0,
   },
   name: {
     flexShrink: 1,
-    fontSize: ModernType.title,
-    fontWeight: FontWeight.bold,
+    fontSize: 24,
+    fontWeight: FontWeight.extrabold,
+    letterSpacing: -0.5,
     color: INK,
   },
-  categoryPill: {
+  ratingPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'flex-start',
     gap: 5,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 8,
-    backgroundColor: '#EEF1F8',
+    paddingHorizontal: 11,
+    paddingVertical: 5,
+    borderRadius: 999,
+    backgroundColor: '#FEF3C7',
   },
-  categoryText: {
-    fontSize: ModernType.caption,
-    color: '#4F5D8A',
+  ratingPillText: {
+    fontSize: 16,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
   },
-  ratingRow: {
+  subline: {
+    fontSize: 14,
+    color: META,
+  },
+  infoChips: {
+    gap: 8,
+    paddingTop: 6,
+  },
+  infoChip: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    height: 32,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    backgroundColor: Color.white,
   },
-  ratingValue: {
-    fontSize: ModernType.body,
-    fontWeight: FontWeight.bold,
+  infoChipOpen: {
+    borderColor: PILL.green.bg,
+    backgroundColor: PILL.green.bg,
+  },
+  infoChipClosed: {
+    backgroundColor: '#F1F5F9',
+  },
+  infoChipText: {
+    fontSize: 13,
+    fontWeight: FontWeight.medium,
     color: INK,
   },
-  ratingCount: {
-    fontSize: ModernType.body,
-    color: INK,
+  infoChipOpenText: {
+    color: PILL.green.fg,
+    fontWeight: FontWeight.semibold,
   },
-  mutedText: {
-    fontSize: ModernType.body,
-    color: Color.textSecondary,
+  dotSmall: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  dotOpen: {
+    backgroundColor: '#22C55E',
+  },
+  dotClosed: {
+    backgroundColor: '#94A3B8',
   },
 
-  // Blocked banner
+  // ── Blocked banner ──────────────────────────────────────────────────────
   banner: {
     flexDirection: 'row',
-    gap: ModernSize.gap,
-    padding: ModernSize.cardPad,
-    borderRadius: ModernRadius.box,
+    gap: 12,
+    marginTop: 16,
+    padding: 14,
+    borderRadius: 14,
     backgroundColor: '#FDECEC',
     borderWidth: 1,
     borderColor: '#F7C9C9',
@@ -117,31 +227,47 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   bannerTitle: {
-    fontSize: ModernType.rowTitle,
+    fontSize: 15,
     fontWeight: FontWeight.bold,
-    color: '#991B1B',
+    color: Color.error,
   },
   bannerText: {
-    fontSize: ModernType.body,
-    color: '#7F1D1D',
-    lineHeight: 20,
+    fontSize: 13,
+    lineHeight: 18,
+    color: INK,
   },
 
-  // Sections
-  section: {
-    gap: ModernSize.gap,
+  // ── Section titles / cards ──────────────────────────────────────────────
+  sectionTitle: {
+    marginTop: 22,
+    marginBottom: 10,
+    fontSize: 19,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.3,
+    color: INK,
   },
-  divider: {
-    height: 1,
-    backgroundColor: CARD_BORDER,
+  card: {
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
-  sectionHeader: {
+  cardHead: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: 12,
+    // A line under the title row separates the header from the content below it.
+    paddingBottom: 12,
+    marginBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: Color.border,
   },
-  sectionTitle: {
-    fontSize: ModernType.cardTitle,
+  cardTitle: {
+    flex: 1,
+    minWidth: 0,
+    fontSize: 18,
     fontWeight: FontWeight.bold,
     color: INK,
   },
@@ -149,155 +275,207 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    // Keep the action at its natural width — only the title may shrink.
+    flexShrink: 0,
   },
   linkText: {
-    fontSize: ModernType.body,
+    fontSize: 14,
     fontWeight: FontWeight.semibold,
-    color: LINK,
+    color: BLUE,
   },
 
-  // Manage grid
+  // ── Manage grid: pastel gradient tiles, three per row ───────────────────
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    rowGap: ModernSize.gap,
+    gap: 10,
   },
-  tile: {
-    width: '48.5%',
-    height: 84,
-    overflow: 'hidden',
+  manageTile: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.sm,
-    borderRadius: ModernRadius.box,
+    gap: 8,
+    height: 92,
+    overflow: 'hidden',
+    borderRadius: 14,
     borderWidth: 1,
   },
-  tileText: {
-    fontSize: ModernType.body,
-    fontWeight: FontWeight.bold,
+  manageIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  manageLabel: {
+    fontSize: 13,
+    fontWeight: FontWeight.semibold,
     color: INK,
   },
 
-  // About
-  aboutText: {
-    fontSize: ModernType.body,
-    color: INK,
+  // ── About ───────────────────────────────────────────────────────────────
+  about: {
+    fontSize: 14,
     lineHeight: 20,
+    color: META,
   },
-  showMoreBtn: {
+  readMore: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'center',
-    gap: 4,
+    gap: 2,
+    marginTop: 6,
   },
 
-  // Contact
+  // ── Opening hours ───────────────────────────────────────────────────────
+  hoursRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 9,
+  },
+  hoursRowDivider: {
+    borderTopWidth: 1,
+    borderTopColor: Color.border,
+  },
+  hoursDay: {
+    fontSize: 14,
+    color: META,
+  },
+  hoursTime: {
+    fontSize: 14,
+    color: META,
+  },
+  hoursToday: {
+    color: BLUE,
+    fontWeight: FontWeight.bold,
+  },
+  hoursClosed: {
+    color: '#DC2626',
+    fontWeight: FontWeight.semibold,
+  },
+
+  // ── Contact & location ──────────────────────────────────────────────────
   contactRow: {
     flexDirection: 'row',
-    gap: Spacing.md,
+    alignItems: 'center',
+    gap: 12,
   },
   contactIcon: {
-    width: 24,
-    paddingTop: Spacing.sm + 2,
+    width: 40,
+    height: 40,
+    borderRadius: 12,
     alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EAF1FF',
   },
   contactMain: {
     flex: 1,
     gap: 2,
-    paddingVertical: Spacing.sm,
+    paddingVertical: 12,
   },
   contactDivider: {
     borderBottomWidth: 1,
-    borderBottomColor: CARD_BORDER,
+    borderBottomColor: Color.border,
   },
   contactLabel: {
-    fontSize: ModernType.secondary,
-    fontWeight: FontWeight.bold,
-    color: INK,
+    fontSize: 12,
+    color: MUTED,
   },
   contactValue: {
-    fontSize: ModernType.body,
+    fontSize: 14,
+    fontWeight: FontWeight.medium,
     color: INK,
-    lineHeight: 20,
   },
 
-  // Reviews
+  // ── Reviews ─────────────────────────────────────────────────────────────
+  summary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  summaryAvg: {
+    fontSize: 38,
+    fontWeight: FontWeight.extrabold,
+    color: INK,
+  },
+  summaryCount: {
+    fontSize: 13,
+    color: MUTED,
+  },
+  summaryBody: {
+    gap: 4,
+  },
   stars: {
     flexDirection: 'row',
     gap: 2,
   },
   halfStar: {
     position: 'absolute',
-    top: 0,
     left: 0,
+    top: 0,
     overflow: 'hidden',
-  },
-  reviewSummary: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.sm,
-    paddingBottom: Spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: CARD_BORDER,
-  },
-  reviewSummaryValue: {
-    fontSize: ModernType.stat,
-    fontWeight: FontWeight.extrabold,
-    color: INK,
-  },
-  reviewSummaryCount: {
-    fontSize: ModernType.body,
-    color: INK,
   },
   reviewEmpty: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
+    gap: 10,
   },
-  reviewRow: {
+  reviewCard: {
     flexDirection: 'row',
-    gap: ModernSize.gap,
-    paddingVertical: Spacing.xs,
+    gap: 12,
+    marginTop: 12,
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: Color.white,
+    ...CARD_SHADOW,
   },
-  reviewRowDivider: {
-    borderTopWidth: 1,
-    borderTopColor: CARD_BORDER,
-    paddingTop: ModernSize.gap,
-  },
-  reviewAvatar: {
-    width: ModernSize.avatar,
-    height: ModernSize.avatar,
-    borderRadius: ModernSize.avatar / 2,
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  reviewAvatarText: {
-    fontSize: ModernType.rowTitle,
+  avatarText: {
+    fontSize: 16,
     fontWeight: FontWeight.bold,
   },
-  reviewMain: {
+  reviewBody: {
     flex: 1,
     gap: 3,
   },
-  reviewAuthor: {
-    fontSize: ModernType.rowTitle,
+  reviewName: {
+    fontSize: 15,
     fontWeight: FontWeight.bold,
     color: INK,
   },
-  reviewMetaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+  reviewAgo: {
+    fontSize: 12,
+    color: MUTED,
   },
-  reviewTime: {
-    fontSize: ModernType.caption,
-    color: Color.textSecondary,
-  },
-  reviewComment: {
-    fontSize: ModernType.body,
-    color: INK,
+  reviewText: {
+    marginTop: 4,
+    fontSize: 14,
     lineHeight: 20,
+    color: INK,
+  },
+  reply: {
+    marginTop: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderLeftWidth: 3,
+    borderLeftColor: BLUE,
+    borderRadius: 8,
+    backgroundColor: '#F1F5FB',
+    gap: 2,
+  },
+  replyTitle: {
+    fontSize: 13,
+    fontWeight: FontWeight.bold,
+    color: INK,
+  },
+  replyText: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: META,
   },
 });

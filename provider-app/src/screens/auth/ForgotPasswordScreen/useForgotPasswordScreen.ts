@@ -14,6 +14,7 @@ import {
   ForgotPasswordStep,
 } from './types';
 import { validateForgotPassword } from './validation';
+import { apiErrorMessage } from '@/utils/apiError';
 
 const FILE = 'useForgotPasswordScreen';
 
@@ -58,8 +59,7 @@ export function useForgotPasswordScreen() {
       }
     } catch (err) {
       DEBUG_LOGGER('Password reset step failed', 'onSubmit', FILE, '48', ERROR);
-      const data = (err as { data?: { message?: string } })?.data;
-      setServerError(data?.message || 'Something went wrong. Please try again.');
+      setServerError(apiErrorMessage(err, 'Something went wrong. Please try again.'));
     }
   }, [form, step, requestReset, resetPassword, navigation]);
 
