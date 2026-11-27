@@ -12,6 +12,7 @@ import { ROUTES, RootStackParamList } from '@/navigation/routes';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { styles } from './styles';
+import { apiErrorMessage } from '@/utils/apiError';
 
 function money(minor: number, currency: string): string {
   const amount = Math.round(minor / 100).toLocaleString('en-IN');
@@ -70,8 +71,7 @@ function OfferGroupRow({ group, currency, compact }: OfferGroupRowProps) {
       }).unwrap();
       dispatch(setAppliedCoupon({ providerId: group.providerId, coupon: preview }));
     } catch (err) {
-      const msg = (err as { data?: { message?: string } })?.data?.message;
-      setError(msg || 'That code didn’t work.');
+      setError(apiErrorMessage(err, 'That code didn’t work.'));
     }
   };
 

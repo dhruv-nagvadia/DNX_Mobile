@@ -13,6 +13,7 @@ import DEBUG_LOGGER, { ERROR } from '@/utils/DebugLogger';
 
 import { LoginErrors, LoginForm, LoginScreenNavigationProp } from './types';
 import { validateLogin } from './validation';
+import { apiErrorMessage, apiErrorStatus } from '@/utils/apiError';
 
 const FILE = 'useLoginScreen';
 
@@ -72,9 +73,15 @@ export function useLoginScreen() {
           state: result.state,
         }),
       );
-    } catch {
+    } catch (err) {
       DEBUG_LOGGER('Login failed', 'onSubmit', FILE, '48', ERROR);
-      setServerError('That email and password don’t match. Please try again.');
+      // Only a 401 means wrong credentials — anything else (offline, server asleep,
+      // blocked account, rate limit) should say what actually happened.
+      setServerError(
+        apiErrorStatus(err) === 401
+          ? 'That email and password don’t match. Please try again.'
+          : apiErrorMessage(err, 'That email and password don’t match. Please try again.'),
+      );
     }
   }, [form, login, dispatch]);
 

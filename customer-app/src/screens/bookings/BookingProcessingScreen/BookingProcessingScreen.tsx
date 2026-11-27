@@ -21,6 +21,7 @@ import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
 import { StepList } from './parts';
 import { styles } from './styles';
+import { apiErrorMessage } from '@/utils/apiError';
 
 type Stage = 'booking' | 'awaiting-payment' | 'confirming';
 const STAGES: Stage[] = ['booking', 'awaiting-payment', 'confirming'];
@@ -180,7 +181,7 @@ export default function BookingProcessingScreen() {
         } else {
           setFailure({
             title: 'Could not book',
-            message: 'Something went wrong. Please try again.',
+            message: apiErrorMessage(err),
             buttonLabel: 'Try again',
             retry: 'summary',
           });

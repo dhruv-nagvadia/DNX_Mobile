@@ -13,6 +13,7 @@ import { PlatformCoupon, StoreCoupon } from '@/redux/api/order/types';
 import { couponEligibility } from '@/components/CouponSheet';
 
 import { CouponsNavigationProp, CouponsRouteProp } from './types';
+import { apiErrorMessage } from '@/utils/apiError';
 
 export interface CouponRow {
   coupon: StoreCoupon;
@@ -101,8 +102,7 @@ export function useCouponsScreen() {
         dispatch(setAppliedCoupon({ providerId: params.providerId, coupon: preview }));
         navigation.goBack();
       } catch (err) {
-        const msg = (err as { data?: { message?: string } })?.data?.message;
-        setError(msg || 'That code didn’t work.');
+        setError(apiErrorMessage(err, 'That code didn’t work.'));
       }
     },
     [

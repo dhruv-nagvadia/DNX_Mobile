@@ -5,6 +5,7 @@ import {
   createBottomTabNavigator,
   type BottomTabBarButtonProps,
 } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Home, CalendarDays, Bell, User, type LucideIcon } from 'lucide-react-native';
 
 import { ROUTES, RootStackParamList } from './routes';
@@ -56,6 +57,9 @@ import AddAddressScreen from '@/screens/addresses/AddAddressScreen';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
+/** Height of the tab bar's own content (icon pill + label), above the bottom inset. */
+const TAB_CONTENT_HEIGHT = 64;
+
 /** Tab icon with a soft blue pill behind it when active (Home mockup). */
 function tabIcon(Icon: LucideIcon) {
   return ({ color, focused }: { color: string; focused: boolean }) => (
@@ -90,6 +94,10 @@ function TabBarButton(props: BottomTabBarButtonProps) {
 
 /** Bottom tabs for the signed-in customer: Home, Bookings, Reminders, Profile. */
 function TabNavigator() {
+  // The bar's height is fixed, and React Navigation puts the bottom inset (Android's navigation
+  // buttons / the iPhone home indicator) INSIDE it — so the height must be the tab content
+  // (TAB_CONTENT_HEIGHT) PLUS that inset, or the labels slide down behind the buttons.
+  const insets = useSafeAreaInsets();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -100,7 +108,7 @@ function TabNavigator() {
         tabBarStyle: {
           backgroundColor: Color.surface,
           borderTopColor: Color.border,
-          height: 90,
+          height: TAB_CONTENT_HEIGHT + insets.bottom,
           paddingTop: 6,
         },
         tabBarLabelStyle: { fontSize: 11, fontWeight: FontWeight.semibold, marginTop: 4 },

@@ -23,6 +23,7 @@ import { lookupByPincode } from '@/utils/locationApi';
 import { unregisterPushToken } from '@/utils/push';
 
 import { ProfileScreenNavigationProp } from './types';
+import { apiErrorMessage } from '@/utils/apiError';
 
 const PIN_RE = /^\d{6}$/;
 
@@ -218,8 +219,7 @@ export function useProfileScreen() {
       }).unwrap();
       setPwOpen(false);
     } catch (err) {
-      const message = (err as { data?: { message?: string } })?.data?.message;
-      setPwError(message ?? 'Could not update password. Please try again.');
+      setPwError(apiErrorMessage(err, 'Could not update password. Please try again.'));
     }
   }, [pwForm, changePassword]);
 
@@ -269,8 +269,7 @@ export function useProfileScreen() {
       // same cleanup as a normal logout.
       await endSession();
     } catch (err) {
-      const message = (err as { data?: { message?: string } })?.data?.message;
-      setDeleteError(message ?? 'Could not delete your account. Please try again.');
+      setDeleteError(apiErrorMessage(err, 'Could not delete your account. Please try again.'));
     }
   }, [deleteForm, deleteAccount, endSession]);
 

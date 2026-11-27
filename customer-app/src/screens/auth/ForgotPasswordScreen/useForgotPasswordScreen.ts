@@ -13,9 +13,7 @@ import {
   ResetForm,
 } from './types';
 import { validateEmail, validateReset } from './validation';
-
-const serverMessage = (err: unknown, fallback: string) =>
-  (err as { data?: { message?: string } })?.data?.message ?? fallback;
+import { apiErrorMessage } from '@/utils/apiError';
 
 /** All state, effects, and handlers for the two-step forgot-password flow. */
 export function useForgotPasswordScreen() {
@@ -56,7 +54,7 @@ export function useForgotPasswordScreen() {
       setNotice('If that email is registered, a 6-digit code is on its way — it can take a minute.');
       setStep('reset');
     } catch (err) {
-      setServerError(serverMessage(err, 'Could not send the code. Please try again.'));
+      setServerError(apiErrorMessage(err, 'Could not send the code. Please try again.'));
     }
   }, [emailForm, requestReset]);
 
@@ -74,7 +72,7 @@ export function useForgotPasswordScreen() {
       }).unwrap();
       navigation.navigate(ROUTES.LOGIN);
     } catch (err) {
-      setServerError(serverMessage(err, 'Could not reset your password. Please try again.'));
+      setServerError(apiErrorMessage(err, 'Could not reset your password. Please try again.'));
     }
   }, [emailForm, resetForm, resetPassword, navigation]);
 

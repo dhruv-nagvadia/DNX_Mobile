@@ -21,6 +21,7 @@ import { ROUTES, RootStackParamList } from '@/navigation/routes';
 
 import { StepList } from './parts';
 import { styles } from './styles';
+import { apiErrorMessage } from '@/utils/apiError';
 
 type Stage = 'placing' | 'awaiting-payment' | 'confirming';
 const STAGES: Stage[] = ['placing', 'awaiting-payment', 'confirming'];
@@ -168,11 +169,10 @@ export default function CheckoutProcessingScreen() {
           })),
         }).unwrap();
       } catch (err) {
-        const message = (err as { data?: { message?: string } })?.data?.message;
         finish(
           [],
           groups.map((g) => g.providerName),
-          message,
+          apiErrorMessage(err),
         );
         return;
       }
